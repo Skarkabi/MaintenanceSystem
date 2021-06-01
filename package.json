@@ -1,5 +1,5 @@
 {
-  "name": "cms",
+  "name": "connectsql",
   "version": "0.0.0",
   "private": true,
   "dependencies": {
@@ -19,6 +19,7 @@
     "gherkin": "^9.0.0",
     "handlebars": "^4.7.6",
     "handlebars-helpers": "^0.10.0",
+    "hapi": "^18.1.0",
     "http-errors": "^1.6.3",
     "jquery": "^3.5.1",
     "lodash": "^4.17.20",

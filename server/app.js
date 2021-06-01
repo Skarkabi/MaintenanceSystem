@@ -69,7 +69,7 @@ app.use((req, res, next) =>
 });
 
 app.use(breadcrumbs.init());
-app.use(breadcrumbs.setHome({name: 'Dashboard', url: '/'}));
+app.use(breadcrumbs.setHome({name: 'Dashboard', url: '/users/login'}));
 
 /**
  * Passport initiliaziation and config
@@ -90,7 +90,7 @@ app.use('/jquery', express.static(path.join(__dirname, '../node_modules/jquery/d
 
 
 //app.use('/', dashboardRouter);
-app.use('/users', usersRouter);
+app.use('/', usersRouter);
 /** 
 app.use('/courses', coursesRouter);
 app.use('/faculties', facultiesRouter);

@@ -95,7 +95,7 @@ app.use(function (req, res, next) {
 app.use(_expressBreadcrumbs["default"].init());
 app.use(_expressBreadcrumbs["default"].setHome({
   name: 'Dashboard',
-  url: '/'
+  url: '/users/login'
 }));
 /**
  * Passport initiliaziation and config
@@ -114,7 +114,7 @@ app.get('*', (req, res, next) =>
 app.use('/bootstrap', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/bootstrap/dist')));
 app.use('/jquery', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/jquery/dist'))); //app.use('/', dashboardRouter);
 
-app.use('/users', _users["default"]);
+app.use('/', _users["default"]);
 /** 
 app.use('/courses', coursesRouter);
 app.use('/faculties', facultiesRouter);

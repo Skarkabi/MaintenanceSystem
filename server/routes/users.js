@@ -28,14 +28,16 @@ const router = express.Router();
 /**
  * Displays login page.
  */
-router.get('/login', async (req, res, next) =>
+router.get('/', async (req, res, next) =>
 {
     if (req.user)
     {
+        console.log("I am here")
         res.redirect('/');
     }
     else
     {
+        console.log("No Actually I am here")
         res.render('login', { title: 'Login', landingPage: true });
     }
 });

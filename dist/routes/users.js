@@ -44,15 +44,17 @@ var router = _express["default"].Router();
  */
 
 
-router.get('/login', /*#__PURE__*/function () {
+router.get('/', /*#__PURE__*/function () {
   var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(req, res, next) {
     return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             if (req.user) {
+              console.log("I am here");
               res.redirect('/');
             } else {
+              console.log("No Actually I am here");
               res.render('login', {
                 title: 'Login',
                 landingPage: true

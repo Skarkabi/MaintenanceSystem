@@ -1,0 +1,64 @@
+<div class="col-md-9">
+	<div class="section-title">
+		<h4><i class="fas fa-book"></i> Courses</h4>
+		<hr class="my-3">
+	</div>
+	<div class="accordion" id="accordionTerms">
+		{{#each courses}}
+			<div class="card">
+				<div class="card-header">
+					<h2 class="mb-0">
+						<button class="btn btn-link btn-block text-left font-weight-bold" type="button" data-toggle="collapse" data-target="#collapse{{this.term}}" aria-expanded="true" aria-controls="collapse{{this.term}}">
+							{{this.term}}
+						</button>
+					</h2>
+				</div>
+
+				<div id="collapse{{this.term}}" class="collapse coursesByTerms" aria-labelledby="heading{{this.term}}" data-parent="#accordionTerms">
+					<div class="card-body">
+						<div class="row row-cols-1 row-cols-md-3">
+							{{#each this.instances}}
+								<div class="col mb-4">
+									<div class="card h-100">
+										<div class="card-text-logo">{{this.code}}{{this.section}}</div>
+										<ul class="list-group list-group-flush">
+											<li class="list-group-item">
+												<div class="font-weight-bold"><i class="far fa-gem"></i> Course Description</div>
+												<div>{{this.description}}</div>
+											</li>
+											<li class="list-group-item">
+												<div class="font-weight-bold"><i class="fas fa-user-graduate"></i> Instructor</div>
+												<div>{{this.instructorFullName}}</div>
+											</li>
+											<li class="list-group-item">
+												<div class="font-weight-bold"><i class="fas fa-clock"></i> Lecture Time and Day</div>
+												<div>{{this.scheduleTime}}, {{this.scheduleDay}}</div>
+											</li>
+										</ul>
+										<div class="card-body text-center">
+											<a href="/courses/course/{{this._id}}" class="card-link font-weight-bold" id="course-{{this.code}}{{this.section}}">View Course</a>
+										</div>
+									</div>
+								</div>
+							{{/each}}
+						</div>
+					</div>
+				</div>
+			</div>
+		{{/each}}
+	</div>
+</div>
+
+<div class="col-md-3">
+	{{!-- Quick Actions --}}
+	<div class="quick-actions">
+		<div class="section-title">
+			<h4><i class="fas fa-bolt"></i> Quick Actions</h4>
+			<hr class="my-3">
+		</div>
+		{{!-- Quick actions for students --}}
+		<ul class="list-group">
+			<li class="list-group-item"><a href="/users/transcript"><i class="fas fa-book-open"></i> View Transcript</a></li>
+		</ul>
+	</div>
+</div>

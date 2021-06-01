@@ -1,0 +1,16 @@
+
+<div id="allCourses">
+  {{#each semesters}}
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 40%; background:#0062CC;">
+        {{this.title}}
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          {{#each this.courses}}
+              <a class="dropdown-item" href="/courses/{{this._id}}">{{this.name}} {{this.section}}</a>
+          {{/each}}
+      </div>
+    </div>
+  {{/each}}
+</div>
+

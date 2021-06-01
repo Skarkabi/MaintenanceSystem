@@ -1,0 +1,58 @@
+{{!-- Course Assignments --}}
+{{#if assignments}}
+	<div class="course-section-wrapper">
+		<div class="section-title">
+			<h4><i class="fas fa-book-reader"></i> Assignments</h4>
+			<hr class="my-3">
+		</div>
+		<div class="section-content">
+			{{#each assignments}}
+				<div class="card mb-4">
+					<div class="card-body">
+						<div class="row">
+							<div class="{{#unless ../user.student}}col-md-7{{else}}col-md-12{{/unless}}">
+								<h5 class="card-title"><a href="/courses/course/{{../id}}/view-assignment/{{this._id}}" id="assignment-{{this.assignmentTitle}}">{{this.assignmentTitle}}</a></h5>
+							</div>
+							{{#unless ../user.student}}
+							<div class="col-md-5 text-right">
+								<a href="/courses/course/{{../id}}/delete-assignment/{{this._id}}" class="btn btn-danger delete" role="button" data-confirm="Are you sure to delete assignment {{this.assignmentTitle}}?" id="deleteAssignment-{{this.assignmentTitle}}"><i class="far fa-trash-alt"></i> Delete</a>
+								<a href="/courses/course/{{../id}}/update-assignment/{{this._id}}" class="btn btn-outline-dark" role="button" id="editAssignment-{{this.assignmentTitle}}"><i class="far fa-edit"></i> Edit</a>
+								<a href="/courses/course/{{../id}}/grade-assignment/{{this._id}}/users" class="btn btn-outline-dark" role="button" title="Add a grade for this assignment" id="grade-{{this.assignmentTitle}}"><i class="fas fa-marker"></i> Grade</a>
+							</div>
+							{{/unless}}
+						</div>
+						<p class="card-text">{{this.assignmentDescription}}</p>
+						<p class="card-text">
+							<small class="text-muted"><strong>Last modified: </strong></small><small class="text-muted timeago" datetime="{{this.assignmentLastUpdated}}" title="{{this.assignmentLastUpdated}}"></small>
+						</p>
+					</div>
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item">
+							<div class="row">
+								<div class="col-md-8">
+									<strong>Due Date: </strong> <span class="due-date">{{this.assignmentDueDate}}</span>
+								</div>
+								<div class="col-md-4 text-right">
+									<strong>Remaining: </strong> <span data-countdown="{{this.assignmentDueDate}}"></span>
+								</div>
+							</div>
+						</li>
+						<li class="list-group-item">
+							<strong>Mark Received: </strong> NA/{{this.assignmentMaxGrade}}
+						</li>
+					</ul>
+				</div>
+			{{/each}}
+		</div>
+	</div>
+{{/if}}
+
+{{>courseInstanceCreateAssignmentModal}}
+
+<script>
+	const date = new Date().toISOString();
+	const currentDate = date.slice(0, date.lastIndexOf(":"));
+	
+	document.getElementById("assignmentStartDate").value = currentDate;
+	document.getElementById("assignmentStartDate").min = currentDate;
+</script>

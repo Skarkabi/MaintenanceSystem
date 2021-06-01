@@ -1,0 +1,40 @@
+<section id="login" class="min-vh-100">
+	<div class="container">
+		<div class="row">
+			<div class="col-xl-5 col-lg-6 col-md-8 col-sm-10 form p-7 bg-white-box">
+				<h1 class="display-5 py-2 font-weight-bold">Login</h1>
+				<div class="px-2">
+					<form action="/users/login" method="POST" class="justify-content-left">
+						<div class="form-group">
+							<label>E-mail address</label>
+							<input type="email" name="email" data-test="email" id="email" id="email" class="form-control" placeholder="johndoe@example.com">
+						</div>
+
+						<div class="form-group">
+							<label>Password</label>
+							<input type="password" id="password" data-test="password" name="password" class="form-control">
+						</div>
+
+						<div class="form-group">
+							<small><a href="#">Forgot password?</a></small>
+						</div>
+						<button type="submit" id="login-btn" data-test="login-btn" class="btn btn-primary justfiy-content-end">Login</button>
+					</form>
+					<div class="registration-errors">
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<style>
+	body {
+		background: #36D1DC;
+		/* fallback for old browsers */
+		background: -webkit-linear-gradient(to right, #5B86E5, #36D1DC);
+		/* Chrome 10-25, Safari 5.1-6 */
+		background: linear-gradient(to right, #5B86E5, #36D1DC);
+		/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	}
+</style>

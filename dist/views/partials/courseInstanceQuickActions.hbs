@@ -1,0 +1,31 @@
+{{!-- Quick Actions --}}
+<div class="quick-actions">
+	<div class="section-title">
+		<h4><i class="fas fa-bolt"></i> Quick Actions</h4>
+		<hr class="my-3">
+	</div>
+	{{#if user.student}}
+		{{!-- Quick actions for students --}}
+		<ul class="list-group">
+			<li class="list-group-item"><a href="/courses/course/{{id}}/users"><i class="fas fa-user-friends"></i> Students</a></li>
+		</ul>
+	{{else}}
+		{{!-- Quick actions for admins and profs --}}
+		<ul class="list-group">
+			<li class="list-group-item"><a href="#" data-toggle="modal" data-target="#CreateCourseContentModal"><i class="fas fa-book-reader"></i> Create Course Content</a></li>
+			<li class="list-group-item"><a href="/courses/course/{{id}}/announcements/create"><i class="fas fa-bullhorn"></i> Create Announcement</a></li>
+			<li class="list-group-item"><a href="#" data-toggle="modal" data-target="#createAssignmentModal"><i class="fas fa-flask"></i> Create assignment</a></li>
+			<li class="list-group-item"><a href="/courses/course/{{id}}/users" id="studentsLink"><i class="fas fa-user-friends"></i></i> Students</a></li>
+			<li class="list-group-item"><a href="/gradeBooks/{{id}}" id="gradeBook"><i class="fas fa-user-friends"></i></i> View Course Gradebook</a></li>
+		</ul>
+	{{/if}}
+</div>
+
+
+<div class="modal fade" id="CreateCourseContentModal" tabindex="-1" role="dialog" aria-labelledby="CreateCourseContentModal" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			{{>courseInstanceCreateTopicModal}}
+		</div>
+	</div>
+</div>

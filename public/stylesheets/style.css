@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;300;400;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  color: #000;
+  font-size: 0.9rem;
+}
+
+a {
+  color: #000;
+  text-decoration: none !important;
+}
+
+.small, small {
+  font-size: 90%;
+  font-weight: 400;
+}
+
+.form-group.required label:after {
+  content: "*";
+  color: #510101;
+  margin-left: 0.1rem;
+}
+
+/* Font awesome */
+i {
+  font-size: 80%;
+  margin-right: 0.3rem;
+}
+
+i.far.fa-save {
+  font-size: 90%;
+}
+
+/* Breadcrumb */
+
+.breadcrumb {
+  margin-bottom: 2rem;
+}
+
+.bg-white-box {
+  background: #fff;
+  border-radius: 0.5rem;
+}
+
+.p-7 {
+  padding: 5rem 3rem;
+}
+
+section#login {
+  padding: 8rem;
+}
+
+.registration-errors {
+  margin-top: 1rem;
+}
+
+/* Junmbotron - Page headers */
+.jumbotron {
+  background: none;
+  padding: 0px;
+}
+.display-4 {
+  font-weight: 700;
+}
+
+/* Navbar */
+.navbar {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.navbar-light .navbar-brand {
+  color: rgb(8 22 216 / 90%);
+  font-weight: 900;
+}
+
+.navbar-expand-lg .navbar-nav .dropdown-menu {
+  position: absolute;
+  margin-top: 9px;
+  padding: 0px;
+  border-radius: 0px;
+  border: 1px solid #eaeaea;
+  border-top: none;
+}
+
+.dropdown-item {
+  border-bottom: 1px solid #e9ecef;
+  padding: 0.8rem 1.6rem;
+  font-size: 0.9rem;
+}
+
+.nav-link {
+  color: #000 !important;
+}
+
+/* Filterable table */
+
+td.table-actions > a {
+  margin-right: 1rem;
+}
+
+.table-buttons {
+  margin-bottom: 2rem;
+}
+
+/* Course instance page */
+.course-section-wrapper, .section-wrapper {
+  margin-bottom: 2rem;
+}
+
+.course-section-wrapper > .section-content > .course-content {
+  border-bottom: 1px solid #e8e8e8;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+}
+
+.course-section-wrapper > .section-title > h4 {
+  font-weight: 700;
+}
+
+h5.card-title {
+  font-weight: 700;
+}
+
+/* assignment submission */
+.submission-description {
+  margin-bottom: 2rem;
+}
+
+/* dashboard */
+.card-text-logo {
+  height: 180px;
+  text-align: center;
+  background: green;
+  color: white;
+  font-weight: bold;
+  font-size: 1.4rem;
+  padding: 30% 0%;
+}
+.dashboard-list {
+  height: 90px;
+}
+/* Jumbotron */
+.lead {
+  font-size: 1rem;
+}
+
+/* Display individual user */
+.display-user > .form-control:disabled,
+.display-user > .form-control[readonly] {
+  background-color: white !important;
+  border: none;
+  border-bottom: 1px solid #e8e8e8;
+  border-radius: 0;
+  padding-left: 0px;
+}
+
+.display-user > label {
+  color: #737373;
+  font-weight: 300;
+  font-size: 90%;
+}

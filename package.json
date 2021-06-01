@@ -1,0 +1,94 @@
+{
+  "name": "cms",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@handlebars/allow-prototype-access": "^1.0.3",
+    "bcrypt": "^5.0.0",
+    "bootstrap": "^4.5.3",
+    "connect-mongo": "^3.2.0",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "express-breadcrumbs": "0.0.2",
+    "express-flash": "0.0.2",
+    "express-handlebars": "^5.2.0",
+    "express-session": "^1.17.1",
+    "express-validator": "^6.8.0",
+    "generate-password": "^1.5.1",
+    "gherkin": "^9.0.0",
+    "handlebars": "^4.7.6",
+    "handlebars-helpers": "^0.10.0",
+    "http-errors": "^1.6.3",
+    "jquery": "^3.5.1",
+    "lodash": "^4.17.20",
+    "mongoose": "^5.10.11",
+    "mongoose-data-seed": "^2.1.6",
+    "morgan": "~1.9.1",
+    "multer": "^1.4.2",
+    "nodemailer": "^6.4.16",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "popper.js": "^1.16.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-stage-2": "^7.8.3",
+    "@babel/register": "^7.12.1",
+    "@cucumber/cucumber": "^7.0.0-rc.0",
+    "cpx": "^1.5.0",
+    "cross-env": "^7.0.2",
+    "cucumber-pretty": "^6.0.0",
+    "cypress": "^5.6.0",
+    "cypress-cucumber-preprocessor": "^4.0.0",
+    "cypress-file-upload": "^4.1.1",
+    "mocha": "^8.2.1",
+    "mochawesome": "^6.2.1",
+    "mochawesome-merge": "^4.2.0",
+    "mochawesome-report-generator": "^5.1.0",
+    "nodemon": "^2.0.6",
+    "npm-run-all": "^4.1.5",
+    "protractor-cucumber-framework": "^6.2.1",
+    "puppeteer": "^5.4.1",
+    "rimraf": "^3.0.2"
+  },
+  "nodemonConfig": {
+    "exec": "npm run prod",
+    "watch": [
+      "server/*"
+    ],
+    "ext": "js,hbs",
+    "ignore": []
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ],
+    "plugins": [
+      "@babel/transform-runtime"
+    ]
+  },
+  "scripts": {
+    "start": "nodemon",
+    "db:seed": "md-seed run --dropdb",
+    "db:seed:users": "md-seed run users",
+    "db:seed:faculties": "md-seed run facultys",
+    "db:seed:terms": "md-seed run terms",
+    "db:seed:courses": "md-seed run courses",
+    "db:seed:course:instances": "md-seed run course-instances",
+    "db:seed:assignments": "md-seed run assignments",
+    "test": "npx cypress open",
+    "build": "npm-run-all clean transpile",
+    "server": "node ./dist/bin/www",
+    "dev": "cross-env NODE_ENV=development & npm-run-all build server",
+    "prod": "cross-env NODE_ENV=production & npm-run-all build server",
+    "transpile": "babel ./server --out-dir dist && cpx \"./server/views/**/*\" ./dist/views --clean && cpx \"./server/uploads/*\" ./dist/uploads --clean",
+    "clean": "rimraf dist"
+  },
+  "mdSeed": {
+    "seedersFolder": "./seeders"
+  }
+}

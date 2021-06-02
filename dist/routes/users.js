@@ -15,13 +15,13 @@ var _express = _interopRequireDefault(require("express"));
 
 var _expressValidator = require("express-validator");
 
+var _User = _interopRequireDefault(require("../models/User"));
+
 //import passport from 'passport';
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
 
 /* 
 * Models
-
-import User from '../models/User';
 import Utils from '../Utils';
 import CourseInstance from '../models/CourseInstance';
 import Grade from '../models/Grade';
@@ -77,8 +77,19 @@ router.get('/', /*#__PURE__*/function () {
  * Allows users to login to system.
  */
 
-router.post('/', function (req, res, next) {
-  console.log("clicked"); // Make sure that we are not showing the user login page, if the user already logged in.
+router.post('/users/login', function (req, res, next) {
+  var firstName = req.body.fName;
+  var newUser = new _User["default"]({
+    firstName: req.body.fName,
+    lastName: req.body.lName
+  });
+
+  _User["default"].addUser(newUser).then(function (result) {
+    console.log("You successfully added user ".concat(result.firstName, "."));
+  })["catch"](function (err) {
+    console.log(err);
+  }); // Make sure that we are not showing the user login page, if the user already logged in.
+
 
   if (req.user) {
     console.log("AAAAAA1");

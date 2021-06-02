@@ -2,11 +2,10 @@ import express from 'express';
 //import passport from 'passport';
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
 import { body, validationResult } from 'express-validator';
+import User from '../models/User';
 
 /* 
 * Models
-
-import User from '../models/User';
 import Utils from '../Utils';
 import CourseInstance from '../models/CourseInstance';
 import Grade from '../models/Grade';
@@ -45,9 +44,24 @@ router.get('/', async (req, res, next) =>
 /**
  * Allows users to login to system.
  */
-router.post('/', (req, res, next) =>
+router.post('/users/login', (req, res, next) =>
 {
-    console.log("clicked");
+    var firstName = req.body.fName;
+    const newUser = new User(
+        {
+            firstName: req.body.fName,
+            lastName: req.body.lName
+        }
+    );
+
+    User.addUser(newUser).then(result =>
+        {
+            console.log(`You successfully added user ${result.firstName}.`);
+        }).catch(err =>
+        {
+            console.log(err);
+        });
+
     // Make sure that we are not showing the user login page, if the user already logged in.
     if (req.user)
     {

@@ -25,24 +25,13 @@ import usersRouter from './routes/users';
 //import termsRouter from './routes/terms';
 import User from './models/User';
 
+
 const multiHelpers = hbshelpers()
 
 
 var app = express();
 
 
-const SessionStore = sessionStore(session.Store);
-
-
-const myDatabase = new sequelize('calendar', 'root', 'mosjsfskmo1', {
-    host: 'localhost',
-    dialect: 'mysql',
-});
- 
-const sequelizeSessionStore = new SessionStore({
-    db: myDatabase,
-});
- 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.engine('hbs', hbs({helpers: multiHelpers, extname: 'hbs', defaultLayout: 'layout', layoutsDir: __dirname + '/views/', handlebars: allowInsecurePrototypeAccess(handlebars)}))
@@ -59,7 +48,6 @@ app.use(session(
     secret: 'secret',
     saveUninitialized: false,
     resave: false,
-    store: sequelizeSessionStore,
     cookie : {maxAge: 120 * 60 * 1000}
 }));
 
@@ -76,13 +64,39 @@ app.use((req, res, next) =>
 app.use(breadcrumbs.init());
 app.use(breadcrumbs.setHome({name: 'Dashboard', url: '/users/login'}));
 
-User.sync().then(function () {
-	// Table created
-	return User.create({
-  		firstName: 'Saleem',
-  		lastName: 'Karkabi'
-	});
-});
+
+
+// Find all users
+const jane = new User(
+    {   
+        firstName: "Jane", 
+        lastName: "Karkabi"
+    });
+
+    /** 
+User.addUser(jane).then(result =>
+    {
+        console.log(`You successfully created course ${result.code}.`);
+    }).catch(err =>
+    {
+        console.log(err);
+    });
+    */
+
+console.log(jane instanceof User); // true
+console.log(jane.firstName); // "Jane"
+
+User.findUsers().then(result =>
+    {
+        console.log("All users:", JSON.stringify(result, null, 2));
+   
+    }).catch(err =>
+    {
+        console.log(err);
+    });
+
+
+console.log('Jane was saved to the database!');
 /**
  * Passport initiliaziation and config
 

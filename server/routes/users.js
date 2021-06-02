@@ -45,15 +45,19 @@ router.get('/', async (req, res, next) =>
 /**
  * Allows users to login to system.
  */
-router.post('/login', (req, res, next) =>
+router.post('/', (req, res, next) =>
 {
+    console.log("clicked");
     // Make sure that we are not showing the user login page, if the user already logged in.
     if (req.user)
     {
-        res.redirect('/');
+        console.log("AAAAAA1");
+        res.render('/');
     }
     else
     {
+        console.log("AAAAAAAAAA");
+        res.render('login', { title: 'Login', landingPage: true });
     }
 });
 

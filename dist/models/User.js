@@ -7,33 +7,44 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+var _mySQLDB = _interopRequireDefault(require("../mySQLDB"));
+
 var _lodash = _interopRequireDefault(require("lodash"));
+
+var _sequelize = _interopRequireDefault(require("sequelize"));
 
 /**
  * User schema that represent the database schema.
  */
-var _require = require('sequelize'),
-    Sequelize = _require.Sequelize,
-    DataTypes = _require.DataTypes;
-
-var sequelize = new Sequelize('calendar', 'root', 'mosjsfskmo1', {
-  host: 'localhost',
-  dialect: 'mysql'
-});
-var User = sequelize.define('User', {
+var User = _mySQLDB["default"].define('User', {
   // Model attributes are defined here
   firstName: {
-    type: DataTypes.STRING,
+    type: _sequelize["default"].STRING,
     allowNull: false
   },
   lastName: {
-    type: DataTypes.STRING // allowNull defaults to true
+    type: _sequelize["default"].STRING // allowNull defaults to true
 
   }
-}, {// Other model options go here
-}); // `sequelize.define` also returns the model
+}, {
+  // Other model options go here
+  tableName: "people_in_test"
+});
 
-console.log(User === sequelize.models.User); // true
+User.findUsers = function () {
+  return User.findAll({
+    where: {
+      firstName: ["Saleem", "Jane"]
+    }
+  });
+};
+
+User.addUser = function (newUser) {
+  return newUser.save();
+}; // `sequelize.define` also returns the model
+
+
+console.log(User === _mySQLDB["default"].models.User); // true
 
 /**
  * Find users based on the given query and retrieves users with the given fields

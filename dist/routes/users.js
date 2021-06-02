@@ -77,11 +77,19 @@ router.get('/', /*#__PURE__*/function () {
  * Allows users to login to system.
  */
 
-router.post('/login', function (req, res, next) {
-  // Make sure that we are not showing the user login page, if the user already logged in.
+router.post('/', function (req, res, next) {
+  console.log("clicked"); // Make sure that we are not showing the user login page, if the user already logged in.
+
   if (req.user) {
-    res.redirect('/');
-  } else {}
+    console.log("AAAAAA1");
+    res.render('/');
+  } else {
+    console.log("AAAAAAAAAA");
+    res.render('login', {
+      title: 'Login',
+      landingPage: true
+    });
+  }
 });
 /**
  * Allows users to logout from the system.

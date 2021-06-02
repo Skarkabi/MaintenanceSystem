@@ -1,15 +1,12 @@
+import db from "../mySQLDB";
 import _ from 'lodash';
+import DataTypes from 'sequelize';
+
 /**
  * User schema that represent the database schema.
  */
 
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('calendar', 'root', 'mosjsfskmo1', {
-    host: 'localhost',
-    dialect: 'mysql',
-});
-
-const User = sequelize.define('User', {
+const User = db.define('User', {
   // Model attributes are defined here
   firstName: {
     type: DataTypes.STRING,
@@ -21,11 +18,24 @@ const User = sequelize.define('User', {
   }
 }, {
   // Other model options go here
+  tableName: "people_in_test"
 });
 
+User.findUsers = () =>
+{
+	return User.findAll({
+		where: {
+			firstName: ["Saleem", "Jane"]
+		}		
+	});
+}
 
+User.addUser = (newUser) =>
+{
+	return newUser.save()
+} 
 // `sequelize.define` also returns the model
-console.log(User === sequelize.models.User); // true
+console.log(User === db.models.User); // true
 /**
  * Find users based on the given query and retrieves users with the given fields
  * @param {*} query i.e. {firstName: "test"}

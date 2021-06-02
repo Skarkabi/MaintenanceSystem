@@ -48,15 +48,7 @@ var _User = _interopRequireDefault(require("./models/User"));
 //import centralRouter from './routes/central';
 //import termsRouter from './routes/terms';
 var multiHelpers = (0, _handlebarsHelpers["default"])();
-var app = (0, _express["default"])();
-var SessionStore = (0, _expressSessionSequelize["default"])(_expressSession["default"].Store);
-var myDatabase = new _sequelize["default"]('calendar', 'root', 'mosjsfskmo1', {
-  host: 'localhost',
-  dialect: 'mysql'
-});
-var sequelizeSessionStore = new SessionStore({
-  db: myDatabase
-}); // view engine setup
+var app = (0, _express["default"])(); // view engine setup
 
 app.set('views', _path["default"].join(__dirname, 'views'));
 app.engine('hbs', (0, _expressHandlebars["default"])({
@@ -78,7 +70,6 @@ app.use((0, _expressSession["default"])({
   secret: 'secret',
   saveUninitialized: false,
   resave: false,
-  store: sequelizeSessionStore,
   cookie: {
     maxAge: 120 * 60 * 1000
   }
@@ -95,15 +86,33 @@ app.use(_expressBreadcrumbs["default"].init());
 app.use(_expressBreadcrumbs["default"].setHome({
   name: 'Dashboard',
   url: '/users/login'
-}));
+})); // Find all users
 
-_User["default"].sync().then(function () {
-  // Table created
-  return _User["default"].create({
-    firstName: 'Saleem',
-    lastName: 'Karkabi'
-  });
+var jane = new _User["default"]({
+  firstName: "Jane",
+  lastName: "Karkabi"
 });
+/** 
+User.addUser(jane).then(result =>
+{
+    console.log(`You successfully created course ${result.code}.`);
+}).catch(err =>
+{
+    console.log(err);
+});
+*/
+
+console.log(jane instanceof _User["default"]); // true
+
+console.log(jane.firstName); // "Jane"
+
+_User["default"].findUsers().then(function (result) {
+  console.log("All users:", JSON.stringify(result, null, 2));
+})["catch"](function (err) {
+  console.log(err);
+});
+
+console.log('Jane was saved to the database!');
 /**
  * Passport initiliaziation and config
 
@@ -117,7 +126,6 @@ app.get('*', (req, res, next) =>
     next();
 })
 **/
-
 
 app.use('/bootstrap', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/bootstrap/dist')));
 app.use('/jquery', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/jquery/dist'))); //app.use('/', dashboardRouter);

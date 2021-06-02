@@ -27,15 +27,17 @@ var _expressSession = _interopRequireDefault(require("express-session"));
 
 var _expressFlash = _interopRequireDefault(require("express-flash"));
 
-var _mongoose = _interopRequireDefault(require("mongoose"));
+var _expressSessionSequelize = _interopRequireDefault(require("express-session-sequelize"));
 
-var _connectMongo = _interopRequireDefault(require("connect-mongo"));
+var _sequelize = _interopRequireDefault(require("sequelize"));
 
 var _expressBreadcrumbs = _interopRequireDefault(require("express-breadcrumbs"));
 
 var _allowPrototypeAccess = require("@handlebars/allow-prototype-access");
 
 var _users = _interopRequireDefault(require("./routes/users"));
+
+var _User = _interopRequireDefault(require("./models/User"));
 
 //import passport from 'passport';
 //import passportConfig from './pasport-config';
@@ -45,19 +47,16 @@ var _users = _interopRequireDefault(require("./routes/users"));
 //import gradeBooksRouter from './routes/gradeBooks';
 //import centralRouter from './routes/central';
 //import termsRouter from './routes/terms';
-//import User from './models/User';
 var multiHelpers = (0, _handlebarsHelpers["default"])();
 var app = (0, _express["default"])();
-/** 
-const MongoStorage = mongoConnect(session);
-//Change to 'mongodb+srv://dbUser:1234@testcluster.615t0.mongodb.net/TestCluster?retryWrites=true&w=majority' to get data from Test Cluster
-//mongoose.connect('mongodb+srv://comp4004:zMYvkzQLUrO0wfK6@cluster0.8sran.mongodb.net/CMS?retryWrites=true&w=majority', {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: false}).catch(err => 
-mongoose.connect('mongodb+srv://dbUser:1234@testcluster.615t0.mongodb.net/TestCluster?retryWrites=true&w=majority', {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: false}).catch(err => 
-{
-    console.error(`Database connection error ${err}`);
+var SessionStore = (0, _expressSessionSequelize["default"])(_expressSession["default"].Store);
+var myDatabase = new _sequelize["default"]('calendar', 'root', 'mosjsfskmo1', {
+  host: 'localhost',
+  dialect: 'mysql'
 });
-*/
-// view engine setup
+var sequelizeSessionStore = new SessionStore({
+  db: myDatabase
+}); // view engine setup
 
 app.set('views', _path["default"].join(__dirname, 'views'));
 app.engine('hbs', (0, _expressHandlebars["default"])({
@@ -79,7 +78,7 @@ app.use((0, _expressSession["default"])({
   secret: 'secret',
   saveUninitialized: false,
   resave: false,
-  //store: new MongoStorage({mongooseConnection: mongoose.connection}),
+  store: sequelizeSessionStore,
   cookie: {
     maxAge: 120 * 60 * 1000
   }
@@ -97,9 +96,17 @@ app.use(_expressBreadcrumbs["default"].setHome({
   name: 'Dashboard',
   url: '/users/login'
 }));
+
+_User["default"].sync().then(function () {
+  // Table created
+  return _User["default"].create({
+    firstName: 'Saleem',
+    lastName: 'Karkabi'
+  });
+});
 /**
  * Passport initiliaziation and config
- 
+
 passportConfig(passport, email => User.findOne({email: email}), id => User.findOne({ _id: id }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -110,6 +117,7 @@ app.get('*', (req, res, next) =>
     next();
 })
 **/
+
 
 app.use('/bootstrap', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/bootstrap/dist')));
 app.use('/jquery', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/jquery/dist'))); //app.use('/', dashboardRouter);

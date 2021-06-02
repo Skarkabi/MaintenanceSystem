@@ -8,8 +8,9 @@ import hbs from 'express-handlebars';
 import hbshelpers from 'handlebars-helpers';
 import session from 'express-session';
 import flash from 'express-flash';
-import mongoose from 'mongoose';
-import mongoConnect from 'connect-mongo';
+import sessionStore from 'express-session-sequelize';
+import sequelize from 'sequelize';
+
 //import passport from 'passport';
 //import passportConfig from './pasport-config';
 import breadcrumbs from 'express-breadcrumbs';
@@ -22,22 +23,26 @@ import usersRouter from './routes/users';
 //import gradeBooksRouter from './routes/gradeBooks';
 //import centralRouter from './routes/central';
 //import termsRouter from './routes/terms';
-//import User from './models/User';
+import User from './models/User';
 
 const multiHelpers = hbshelpers()
 
+
 var app = express();
 
-/** 
-const MongoStorage = mongoConnect(session);
-//Change to 'mongodb+srv://dbUser:1234@testcluster.615t0.mongodb.net/TestCluster?retryWrites=true&w=majority' to get data from Test Cluster
-//mongoose.connect('mongodb+srv://comp4004:zMYvkzQLUrO0wfK6@cluster0.8sran.mongodb.net/CMS?retryWrites=true&w=majority', {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: false}).catch(err => 
-mongoose.connect('mongodb+srv://dbUser:1234@testcluster.615t0.mongodb.net/TestCluster?retryWrites=true&w=majority', {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: false}).catch(err => 
-{
-    console.error(`Database connection error ${err}`);
-});
-*/
 
+const SessionStore = sessionStore(session.Store);
+
+
+const myDatabase = new sequelize('calendar', 'root', 'mosjsfskmo1', {
+    host: 'localhost',
+    dialect: 'mysql',
+});
+ 
+const sequelizeSessionStore = new SessionStore({
+    db: myDatabase,
+});
+ 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.engine('hbs', hbs({helpers: multiHelpers, extname: 'hbs', defaultLayout: 'layout', layoutsDir: __dirname + '/views/', handlebars: allowInsecurePrototypeAccess(handlebars)}))
@@ -54,7 +59,7 @@ app.use(session(
     secret: 'secret',
     saveUninitialized: false,
     resave: false,
-    //store: new MongoStorage({mongooseConnection: mongoose.connection}),
+    store: sequelizeSessionStore,
     cookie : {maxAge: 120 * 60 * 1000}
 }));
 
@@ -71,9 +76,16 @@ app.use((req, res, next) =>
 app.use(breadcrumbs.init());
 app.use(breadcrumbs.setHome({name: 'Dashboard', url: '/users/login'}));
 
+User.sync().then(function () {
+	// Table created
+	return User.create({
+  		firstName: 'Saleem',
+  		lastName: 'Karkabi'
+	});
+});
 /**
  * Passport initiliaziation and config
- 
+
 passportConfig(passport, email => User.findOne({email: email}), id => User.findOne({ _id: id }));
 app.use(passport.initialize());
 app.use(passport.session());

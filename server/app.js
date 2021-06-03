@@ -8,28 +8,107 @@ import hbs from 'express-handlebars';
 import hbshelpers from 'handlebars-helpers';
 import session from 'express-session';
 import flash from 'express-flash';
-import sessionStore from 'express-session-sequelize';
-import sequelize from 'sequelize';
+import passport from 'passport';
+import sequelizeStore from 'connect-session-sequelize'
 
-//import passport from 'passport';
-//import passportConfig from './pasport-config';
+import passportConfig from './passport';
+import sequelize from './mySQLDB';
+
 import breadcrumbs from 'express-breadcrumbs';
 import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access';
 
+require('./models/User');
+require('./models/Session');
 //import dashboardRouter from './routes/dashboard';
 import usersRouter from './routes/users';
-//import coursesRouter from './routes/courses';
-//import facultiesRouter from './routes/faculties';
-//import gradeBooksRouter from './routes/gradeBooks';
-//import centralRouter from './routes/central';
-//import termsRouter from './routes/terms';
-import User from './models/User';
+import signInRouter from './routes/sign-in';
+
+const app = express();
+
+const multiHelpers = hbshelpers()
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.engine('hbs', hbs({helpers: multiHelpers, extname: 'hbs', defaultLayout: 'layout', layoutsDir: __dirname + '/views/', handlebars: allowInsecurePrototypeAccess(handlebars)}))
+app.set('view engine', 'hbs');
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, '../public')));
+
+const SequelizeStore = sequelizeStore(session.Store);
 
 
+passportConfig(passport);
+
+console.log(1);
+app.use(session(
+    {
+        secret: 'secret',
+        saveUninitialized: false,
+        resave: false,
+        cookie : {maxAge: 120 * 60 * 1000},
+        store: new SequelizeStore({
+            db: sequelize,
+            table: 'Session',
+        }),
+    })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/', signInRouter);
+
+	
+//app.post('/sign-in', require('./routes/sign-in'));
+app.post('/sign-out', require('./routes/sign-out'));
+
+console.log(JSON.stringify(session));
+console.log(2);
+app.use(flash());
+app.use((req, res, next) =>
+{
+    res.locals.success_msg = req.flash('success_msg');
+    res.locals.error_msg = req.flash('error_msg');
+    res.locals.validation_error_msg = req.flash('validation_error_msg');
+    res.locals.error = req.flash('error');
+    next();
+});
+
+
+app.use(breadcrumbs.init());
+app.use(breadcrumbs.setHome({name: 'Dashboard', url: '/'}));
+
+app.use('/bootstrap', express.static(path.join(__dirname, '../node_modules/bootstrap/dist')));
+app.use('/jquery', express.static(path.join(__dirname, '../node_modules/jquery/dist')));
+    /** 
+    app.post('/sign-in', require('./routes/sign-in'));
+    app.post('/sign-out', require('./routes/sign-out'));
+    app.get('/sign-in', async (req, res, next) =>
+    {
+        console.log(req);
+        if (req.user)
+        {
+            console.log("I am here")
+            res.redirect('/');
+        }
+        else
+        {
+            console.log("No Actually I am here")
+            res.render('login', { title: 'Login', landingPage: true });
+        }
+    });
+    */
+    
+    
+
+    /*
 const multiHelpers = hbshelpers()
 
 
-var app = express();
+
 
 
 // view engine setup
@@ -43,13 +122,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
 
-app.use(session(
-{
-    secret: 'secret',
-    saveUninitialized: false,
-    resave: false,
-    cookie : {maxAge: 120 * 60 * 1000}
-}));
+
 
 app.use(flash());
 app.use((req, res, next) =>
@@ -67,11 +140,6 @@ app.use(breadcrumbs.setHome({name: 'Dashboard', url: '/users/login'}));
 
 
 // Find all users
-const jane = new User(
-    {   
-        firstName: "Jane", 
-        lastName: "Karkabi"
-    });
 
     /** 
 User.addUser(jane).then(result =>
@@ -83,20 +151,6 @@ User.addUser(jane).then(result =>
     });
     */
 
-console.log(jane instanceof User); // true
-console.log(jane.firstName); // "Jane"
-
-User.findUsers().then(result =>
-    {
-        console.log("All users:", JSON.stringify(result, null, 2));
-   
-    }).catch(err =>
-    {
-        console.log(err);
-    });
-
-
-console.log('Jane was saved to the database!');
 /**
  * Passport initiliaziation and config
 
@@ -111,6 +165,7 @@ app.get('*', (req, res, next) =>
 })
 **/
 
+/*
 app.use('/bootstrap', express.static(path.join(__dirname, '../node_modules/bootstrap/dist')));
 app.use('/jquery', express.static(path.join(__dirname, '../node_modules/jquery/dist')));
 
@@ -126,6 +181,7 @@ app.use('/terms', termsRouter);
 */
 
 // catch 404 and forward to error handler.
+/*
 app.use((req, res, next) =>
 {
     next(createError(404));
@@ -134,6 +190,7 @@ app.use((req, res, next) =>
 /**
  * Error handler
  */
+/*
 app.use((err, req, res, next) =>
 {
     // set locals, only providing error in development
@@ -144,5 +201,6 @@ app.use((err, req, res, next) =>
     res.status(err.status || 500);
     res.render('error');
 });
-
+*/
+console.log(3);
 export default app;

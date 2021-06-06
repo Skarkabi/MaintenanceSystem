@@ -22,27 +22,10 @@ var _User = _interopRequireDefault(require("../models/User"));
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
 //import { body, validationResult } from 'express-validator';
 var router = _express["default"].Router();
-/**
- * Allows users to login to system.
- */
-
-
-router.post('/users/login', function (req, res, next) {
-  // Make sure that we are not showing the user login page, if the user already logged in.
-  if (req.user) {
-    console.log("AAAAAA1");
-    res.render('/');
-  } else {
-    console.log("AAAAAAAAAA");
-    res.render('login', {
-      title: 'Login',
-      landingPage: true
-    });
-  }
-});
 /** 
  * Displays login page.
  */
+
 
 router.get('/', /*#__PURE__*/function () {
   var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(req, res, next) {
@@ -50,17 +33,16 @@ router.get('/', /*#__PURE__*/function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            console.log('This ONE');
+            console.log('This ONE User');
 
             if (req.user) {
-              console.log("I am here");
-              res.redirect('/');
+              console.log("I am here in the user");
+              res.render('layout', {
+                titele: 'User Page'
+              });
             } else {
               console.log("No Actually I am here");
-              res.render('login', {
-                title: 'Login',
-                landingPage: true
-              });
+              res.redirect('/');
             }
 
           case 2:

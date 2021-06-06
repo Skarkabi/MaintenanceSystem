@@ -13,7 +13,19 @@ var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/
 
 var _express = _interopRequireDefault(require("express"));
 
+var _passport = _interopRequireDefault(require("passport"));
+
+var _bluebird = _interopRequireDefault(require("bluebird"));
+
+var _User = _interopRequireDefault(require("../models/User"));
+
+//import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
+//import { body, validationResult } from 'express-validator';
 var router = _express["default"].Router();
+/** 
+ * Displays login page.
+ */
+
 
 router.get('/', /*#__PURE__*/function () {
   var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(req, res, next) {
@@ -21,8 +33,17 @@ router.get('/', /*#__PURE__*/function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            req.logout();
-            res.redirect('/login');
+            console.log('This ONE homePage');
+
+            if (req.user) {
+              console.log("I am here in the home page");
+              res.render('dashboardForAdmins', {
+                title: 'Home Page',
+                jumbotronDescription: "Welcome! This is your dashboard and you can access everything from here easily."
+              });
+            } else {
+              res.redirect('/login');
+            }
 
           case 2:
           case "end":

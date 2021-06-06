@@ -34,5 +34,13 @@ var Session = _mySQLDB["default"].define('Session', mappings, {
   }]
 });
 
+Session.getSessionById = function (sessionId) {
+  return User.findOne({
+    where: {
+      sessionId: sessionId
+    }
+  });
+};
+
 var _default = Session;
 exports["default"] = _default;

@@ -27,4 +27,9 @@ const Session = sequelize.define('Session', mappings, {
   ],
 });
 
+Session.getSessionById = sessionId => User.findOne({
+  where: { sessionId },
+});
+
+
 export default Session;

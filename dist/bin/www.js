@@ -32,7 +32,8 @@ var server = _http["default"].createServer(_app["default"]);
  */
 
 
-server.listen(port);
+var serv = _app["default"].listen(port, "192.168.6.104");
+
 server.on('error', onError);
 server.on('listening', onListening);
 /**

@@ -6,42 +6,26 @@ import Bluebird from 'bluebird';
 import User from '../models/User';
 
 const router = express.Router();
-/**
- * Allows users to login to system.
- */
- router.post('/users/login', (req, res, next) =>
- {
-     // Make sure that we are not showing the user login page, if the user already logged in.
-     if (req.user)
-     {
-         console.log("AAAAAA1");
-         res.render('/');
-     }
-     else
-     {
-         console.log("AAAAAAAAAA");
-         res.render('login', { title: 'Login', landingPage: true });
-     }
- });
 
 /** 
  * Displays login page.
  */
 router.get('/', async (req, res, next) => 
 {
-    console.log('This ONE');
+    console.log('This ONE User');
     if (req.user)
     {
-        console.log("I am here")
-        res.redirect('/');
+        console.log("I am here in the user")
+        res.render('layout', {titele: 'User Page'});
     }
     else
     {
         console.log("No Actually I am here")
-       
-        res.render('login', { title: 'Login', landingPage: true });
+        res.redirect('/');
     }
 });
+
+
 
 
 

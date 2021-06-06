@@ -39,14 +39,17 @@ var _expressBreadcrumbs = _interopRequireDefault(require("express-breadcrumbs"))
 
 var _allowPrototypeAccess = require("@handlebars/allow-prototype-access");
 
+var _signIn = _interopRequireDefault(require("./routes/sign-in"));
+
 var _users = _interopRequireDefault(require("./routes/users"));
 
-var _signIn = _interopRequireDefault(require("./routes/sign-in"));
+var _homePage = _interopRequireDefault(require("./routes/homePage"));
+
+var _signOut = _interopRequireDefault(require("./routes/sign-out"));
 
 require('./models/User');
 
-require('./models/Session'); //import dashboardRouter from './routes/dashboard';
-
+require('./models/Session');
 
 var app = (0, _express["default"])();
 var multiHelpers = (0, _handlebarsHelpers["default"])(); // view engine setup
@@ -68,8 +71,6 @@ app.use(_express["default"].urlencoded({
 app.use((0, _cookieParser["default"])());
 app.use(_express["default"]["static"](_path["default"].join(__dirname, '../public')));
 var SequelizeStore = (0, _connectSessionSequelize["default"])(_expressSession["default"].Store);
-(0, _passport2["default"])(_passport["default"]);
-console.log(1);
 app.use((0, _expressSession["default"])({
   secret: 'secret',
   saveUninitialized: false,
@@ -82,14 +83,24 @@ app.use((0, _expressSession["default"])({
     table: 'Session'
   })
 }));
+app.use((0, _expressFlash["default"])());
+app.use(function (req, res, next) {
+  // if there's a flash message in the session request, make it available in the response, then delete it
+  res.locals.sessionFlash = req.session.sessionFlash;
+  delete req.session.sessionFlash;
+  next();
+});
+(0, _passport2["default"])(_passport["default"]);
 app.use(_passport["default"].initialize());
 app.use(_passport["default"].session());
-app.use('/', _signIn["default"]); //app.post('/sign-in', require('./routes/sign-in'));
-
-app.post('/sign-out', require('./routes/sign-out'));
-console.log(JSON.stringify(_expressSession["default"]));
-console.log(2);
-app.use((0, _expressFlash["default"])());
+app.get('*', function (req, res, next) {
+  res.locals.user = req.user || null;
+  next();
+});
+app.use('/login', _signIn["default"]);
+app.use('/users', _users["default"]);
+app.use('/', _homePage["default"]);
+app.use('/logout', _signOut["default"]);
 app.use(function (req, res, next) {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');
@@ -187,29 +198,20 @@ app.use('/terms', termsRouter);
 */
 // catch 404 and forward to error handler.
 
-/*
-app.use((req, res, next) =>
-{
-    next(createError(404));
+app.use(function (req, res, next) {
+  next((0, _httpErrors["default"])(404));
 });
-
 /**
  * Error handler
  */
 
-/*
-app.use((err, req, res, next) =>
-{
-    // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use(function (err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {}; // render the error page
 
-    // render the error page
-    res.status(err.status || 500);
-    res.render('error');
+  res.status(err.status || 500);
+  res.render('error');
 });
-*/
-
-console.log(3);
 var _default = app;
 exports["default"] = _default;

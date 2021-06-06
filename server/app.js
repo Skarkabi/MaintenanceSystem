@@ -19,9 +19,10 @@ import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access
 
 require('./models/User');
 require('./models/Session');
-//import dashboardRouter from './routes/dashboard';
-import usersRouter from './routes/users';
 import signInRouter from './routes/sign-in';
+import usersRouter from './routes/users';
+import homePageRouter from './routes/homePage';
+import signOutRouter from './routes/sign-out';
 
 const app = express();
 
@@ -40,34 +41,41 @@ app.use(express.static(path.join(__dirname, '../public')));
 const SequelizeStore = sequelizeStore(session.Store);
 
 
-passportConfig(passport);
 
-console.log(1);
+
 app.use(session(
     {
         secret: 'secret',
         saveUninitialized: false,
         resave: false,
         cookie : {maxAge: 120 * 60 * 1000},
-        store: new SequelizeStore({
-            db: sequelize,
-            table: 'Session',
-        }),
+        store: new SequelizeStore({ db: sequelize, table: 'Session'}),
     })
 );
+app.use(flash());
 
+app.use(function(req, res, next){
+    // if there's a flash message in the session request, make it available in the response, then delete it
+    res.locals.sessionFlash = req.session.sessionFlash;
+    delete req.session.sessionFlash;
+    next();
+});
+
+passportConfig(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/', signInRouter);
+app.get('*', (req, res, next) =>
+{
+    res.locals.user = req.user || null;
+    next();
+})
 
-	
-//app.post('/sign-in', require('./routes/sign-in'));
-app.post('/sign-out', require('./routes/sign-out'));
+app.use('/login', signInRouter);
+app.use('/users', usersRouter);
+app.use('/', homePageRouter);
+app.use('/logout', signOutRouter);
 
-console.log(JSON.stringify(session));
-console.log(2);
-app.use(flash());
 app.use((req, res, next) =>
 {
     res.locals.success_msg = req.flash('success_msg');
@@ -181,7 +189,7 @@ app.use('/terms', termsRouter);
 */
 
 // catch 404 and forward to error handler.
-/*
+
 app.use((req, res, next) =>
 {
     next(createError(404));
@@ -190,7 +198,7 @@ app.use((req, res, next) =>
 /**
  * Error handler
  */
-/*
+
 app.use((err, req, res, next) =>
 {
     // set locals, only providing error in development
@@ -201,6 +209,5 @@ app.use((err, req, res, next) =>
     res.status(err.status || 500);
     res.render('error');
 });
-*/
-console.log(3);
+
 export default app;

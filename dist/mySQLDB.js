@@ -11,7 +11,7 @@ require("dotenv");
 
 var _sequelize = _interopRequireDefault(require("sequelize"));
 
-var dbName = 'calendar';
+var dbName = 'maintanence';
 var dbUserName = 'root';
 var dbPassword = 'mosjsfskmo1';
 var dbHost = 'localhost';

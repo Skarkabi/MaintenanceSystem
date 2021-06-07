@@ -17,7 +17,15 @@ const mappings = {
   },
   lastName: {
     type: Sequelize.DataTypes.STRING,
-    allowNull: true,
+    allowNull: false,
+  },
+  username: {
+    type: Sequelize.DataTypes.STRING,
+    allowNull: false, 
+  },
+  password: {
+    type: Sequelize.DataTypes.STRING,
+    allowNull: false, 
   },
   createdAt: {
     type: Sequelize.DataTypes.DATE,
@@ -45,6 +53,16 @@ const User = sequelize.define('User', mappings, {
       name: 'user_lastName_index',
       method: 'BTREE',
       fields: ['lastName'],
+    },
+    {
+      name: 'user_userName_index',
+      method: 'BTREE',
+      fields: ['userName'],
+    },
+    {
+      name: 'user_password_index',
+      method: 'BTREE',
+      fields: ['password'],
     },
     {
       name: 'user_createdAt_index',

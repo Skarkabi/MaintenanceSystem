@@ -33,7 +33,15 @@ var mappings = {
   },
   lastName: {
     type: _sequelize["default"].DataTypes.STRING,
-    allowNull: true
+    allowNull: false
+  },
+  username: {
+    type: _sequelize["default"].DataTypes.STRING,
+    allowNull: false
+  },
+  password: {
+    type: _sequelize["default"].DataTypes.STRING,
+    allowNull: false
   },
   createdAt: {
     type: _sequelize["default"].DataTypes.DATE,
@@ -58,6 +66,14 @@ var User = _mySQLDB["default"].define('User', mappings, {
     name: 'user_lastName_index',
     method: 'BTREE',
     fields: ['lastName']
+  }, {
+    name: 'user_userName_index',
+    method: 'BTREE',
+    fields: ['userName']
+  }, {
+    name: 'user_password_index',
+    method: 'BTREE',
+    fields: ['password']
   }, {
     name: 'user_createdAt_index',
     method: 'BTREE',

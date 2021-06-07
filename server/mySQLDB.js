@@ -1,7 +1,7 @@
 import 'dotenv';
 import Sequelize from 'sequelize';
 
-const dbName = 'calendar';
+const dbName = 'maintanence';
 const dbUserName = 'root';
 const dbPassword = 'mosjsfskmo1';
 const dbHost = 'localhost';

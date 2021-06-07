@@ -70,46 +70,44 @@ router.post('/', /*#__PURE__*/function () {
                 while (1) {
                   switch (_context2.prev = _context2.next) {
                     case 0:
-                      console.log("Did it work");
-                      _context2.next = 3;
+                      _context2.next = 2;
                       return (0, _authenticator.Authenticate)(req, res, next);
 
-                    case 3:
+                    case 2:
                       user = _context2.sent;
 
                       if (!user) {
-                        _context2.next = 16;
+                        _context2.next = 15;
                         break;
                       }
 
-                      _context2.next = 7;
+                      _context2.next = 6;
                       return (0, _authenticator.Login)(req, user);
 
-                    case 7:
+                    case 6:
                       temp = req.session.passport;
-                      _context2.next = 10;
+                      _context2.next = 9;
                       return (0, _authenticator.RegenerateSession)(req);
 
-                    case 10:
+                    case 9:
                       req.session.passport = temp;
-                      _context2.next = 13;
+                      _context2.next = 12;
                       return (0, _authenticator.SaveSession)(req);
 
-                    case 13:
+                    case 12:
                       // Make sure that we are not showing the user login page, if the user already logged in.
                       res.redirect('/');
-                      _context2.next = 18;
+                      _context2.next = 16;
                       break;
 
-                    case 16:
-                      console.log("AAAAAAAAAA");
+                    case 15:
                       res.render('login', {
                         error_msg: "Invalid Username or password",
                         title: 'Login',
                         landingPage: true
                       });
 
-                    case 18:
+                    case 16:
                     case "end":
                       return _context2.stop();
                   }

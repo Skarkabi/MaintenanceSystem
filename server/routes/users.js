@@ -12,15 +12,26 @@ const router = express.Router();
  */
 router.get('/', async (req, res, next) => 
 {
-    console.log('This ONE User');
     if (req.user)
     {
-        console.log("I am here in the user")
-        res.render('layout', {titele: 'User Page'});
+        return Bluebird.resolve().then( 
+            async() => {
+            const users = await User.findAndCountAll();
+            console.log("here: " + JSON.stringify(users.count));
+            var entriesNum = []; 
+            for(var i = 0; i < users.count; i++){
+                entriesNum[0] = i + 1;
+                
+            }
+            res.render("displayUsers", {
+                title: "Users",
+                jumbotronDescription: "View all user accounts for professors, students and admins registered in the university's system.",
+                users: users.rows
+            });
+        });
     }
     else
     {
-        console.log("No Actually I am here")
         res.redirect('/');
     }
 });

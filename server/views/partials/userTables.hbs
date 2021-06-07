@@ -1,0 +1,25 @@
+<div class="col-md-12">
+    <table id="user-table" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Employee ID</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">User Name</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {{#each users}}
+                <tr>
+                    <th>{{this.studentId}}</th>
+                    <td>{{this.email}}</td>
+                    <td>{{this.type}}</td>
+                    <td>{{this.firstName}}</td>
+                    <td>{{this.lastName}}</td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>

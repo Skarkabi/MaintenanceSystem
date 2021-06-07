@@ -85,22 +85,22 @@ const User = sequelize.define('User', mappings, {
  {
     var newUser = {
      id: "100944655",
-     firstName: "John",
-     lastName: "Larn",
+     firstName: "Saleem",
+     lastName: "Karkabi",
+     username: "skarkabi",
+     password: "123456789"
     };
 
     return new Promise((resolve,reject) => {
       bcrypt.genSalt(10,function (err, salt) {
-        bcrypt.hash(newUser.lastName, salt, function (e, hash){
+        bcrypt.hash(newUser.password, salt, function (e, hash){
           if (e) reject(e);
-          newUser.lastName = hash;
-          console.log("Creating user with lName: " + newUser.lastName);
+          newUser.password = hash;
           resolve(User.create(newUser));
         })
       })
     })
  }
- 
 
 User.getUserById = id => User.findOne({
   where:{id},
@@ -110,12 +110,15 @@ User.getUserByFirstName = firstName => User.findOne({
   where: {firstName},
 });
 
+User.getUserByUserName = userName => User.findOne({
+  where: {userName},
+});
 
-User.prototype.comparePassword = function (lastName) {
+
+User.prototype.comparePassword = function (password) {
   return Bluebird.resolve().then(() => 
-    bcrypt.compareSync(lastName, this.lastName)).catch(
+    bcrypt.compare(password, this.password)).catch(
       (err) => {
-        console.log(err);
         return false;
       }
     );

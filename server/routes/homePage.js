@@ -12,10 +12,8 @@ const router = express.Router();
  */
 router.get('/', async (req, res, next) => 
 {
-    console.log('This ONE homePage');
     if (req.user)
     {
-        console.log("I am here in the home page")
         res.render('dashboardForAdmins', {title: 'Home Page',
         jumbotronDescription: "Welcome! This is your dashboard and you can access everything from here easily.",});
     }

@@ -12,8 +12,6 @@ var _User = _interopRequireDefault(require("./models/User"));
 
 var LocalStrategy = require('passport-local').Strategy;
 
-console.log("I got into the passpott");
-
 module.exports = function (passport) {
   passport.serializeUser(function (user, done) {
     done(null, user.id);
@@ -25,15 +23,14 @@ module.exports = function (passport) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              console.log("this is my ID: " + id);
-              _context.next = 3;
+              _context.next = 2;
               return _User["default"].getUserById(id);
 
-            case 3:
+            case 2:
               user = _context.sent;
               done(null, user);
 
-            case 5:
+            case 4:
             case "end":
               return _context.stop();
           }
@@ -53,36 +50,35 @@ module.exports = function (passport) {
           switch (_context2.prev = _context2.next) {
             case 0:
               _context2.next = 2;
-              return _User["default"].getUserByFirstName(firstName);
+              return _User["default"].getUserByUserName(firstName);
 
             case 2:
               user = _context2.sent;
-              console.log("mine is: " + JSON.stringify(user));
               _context2.t0 = !user;
 
               if (_context2.t0) {
-                _context2.next = 9;
+                _context2.next = 8;
                 break;
               }
 
-              _context2.next = 8;
+              _context2.next = 7;
               return user.comparePassword(lastName);
 
-            case 8:
+            case 7:
               _context2.t0 = !_context2.sent;
 
-            case 9:
+            case 8:
               if (!_context2.t0) {
-                _context2.next = 11;
+                _context2.next = 10;
                 break;
               }
 
               return _context2.abrupt("return", done(null, null));
 
-            case 11:
+            case 10:
               return _context2.abrupt("return", done(null, user));
 
-            case 12:
+            case 11:
             case "end":
               return _context2.stop();
           }

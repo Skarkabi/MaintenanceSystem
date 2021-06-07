@@ -17,12 +17,16 @@ import sequelize from './mySQLDB';
 import breadcrumbs from 'express-breadcrumbs';
 import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access';
 
-require('./models/User');
+import User from './models/User';
 require('./models/Session');
 import signInRouter from './routes/sign-in';
 import usersRouter from './routes/users';
 import homePageRouter from './routes/homePage';
 import signOutRouter from './routes/sign-out';
+
+handlebars.registerHelper("counter", function (index){
+    return index + 1;
+});
 
 const app = express();
 
@@ -91,6 +95,7 @@ app.use(breadcrumbs.setHome({name: 'Dashboard', url: '/'}));
 
 app.use('/bootstrap', express.static(path.join(__dirname, '../node_modules/bootstrap/dist')));
 app.use('/jquery', express.static(path.join(__dirname, '../node_modules/jquery/dist')));
+//User.createUser();
     /** 
     app.post('/sign-in', require('./routes/sign-in'));
     app.post('/sign-out', require('./routes/sign-out'));

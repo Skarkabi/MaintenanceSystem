@@ -39,6 +39,8 @@ var _expressBreadcrumbs = _interopRequireDefault(require("express-breadcrumbs"))
 
 var _allowPrototypeAccess = require("@handlebars/allow-prototype-access");
 
+var _User = _interopRequireDefault(require("./models/User"));
+
 var _signIn = _interopRequireDefault(require("./routes/sign-in"));
 
 var _users = _interopRequireDefault(require("./routes/users"));
@@ -47,9 +49,11 @@ var _homePage = _interopRequireDefault(require("./routes/homePage"));
 
 var _signOut = _interopRequireDefault(require("./routes/sign-out"));
 
-require('./models/User');
-
 require('./models/Session');
+
+_handlebars["default"].registerHelper("counter", function (index) {
+  return index + 1;
+});
 
 var app = (0, _express["default"])();
 var multiHelpers = (0, _handlebarsHelpers["default"])(); // view engine setup
@@ -114,7 +118,8 @@ app.use(_expressBreadcrumbs["default"].setHome({
   url: '/'
 }));
 app.use('/bootstrap', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/bootstrap/dist')));
-app.use('/jquery', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/jquery/dist')));
+app.use('/jquery', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/jquery/dist'))); //User.createUser();
+
 /** 
 app.post('/sign-in', require('./routes/sign-in'));
 app.post('/sign-out', require('./routes/sign-out'));

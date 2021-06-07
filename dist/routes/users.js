@@ -28,29 +28,57 @@ var router = _express["default"].Router();
 
 
 router.get('/', /*#__PURE__*/function () {
-  var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(req, res, next) {
-    return _regenerator["default"].wrap(function _callee$(_context) {
+  var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(req, res, next) {
+    return _regenerator["default"].wrap(function _callee2$(_context2) {
       while (1) {
-        switch (_context.prev = _context.next) {
+        switch (_context2.prev = _context2.next) {
           case 0:
-            console.log('This ONE User');
-
-            if (req.user) {
-              console.log("I am here in the user");
-              res.render('layout', {
-                titele: 'User Page'
-              });
-            } else {
-              console.log("No Actually I am here");
-              res.redirect('/');
+            if (!req.user) {
+              _context2.next = 4;
+              break;
             }
 
-          case 2:
+            return _context2.abrupt("return", _bluebird["default"].resolve().then( /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+              var users, entriesNum, i;
+              return _regenerator["default"].wrap(function _callee$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      _context.next = 2;
+                      return _User["default"].findAndCountAll();
+
+                    case 2:
+                      users = _context.sent;
+                      console.log("here: " + JSON.stringify(users.count));
+                      entriesNum = [];
+
+                      for (i = 0; i < users.count; i++) {
+                        entriesNum[0] = i + 1;
+                      }
+
+                      res.render("displayUsers", {
+                        title: "Users",
+                        jumbotronDescription: "View all user accounts for professors, students and admins registered in the university's system.",
+                        users: users.rows
+                      });
+
+                    case 7:
+                    case "end":
+                      return _context.stop();
+                  }
+                }
+              }, _callee);
+            }))));
+
+          case 4:
+            res.redirect('/');
+
+          case 5:
           case "end":
-            return _context.stop();
+            return _context2.stop();
         }
       }
-    }, _callee);
+    }, _callee2);
   }));
 
   return function (_x, _x2, _x3) {

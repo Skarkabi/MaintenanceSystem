@@ -98,15 +98,16 @@ User.createUser = /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/
         case 0:
           newUser = {
             id: "100944655",
-            firstName: "John",
-            lastName: "Larn"
+            firstName: "Saleem",
+            lastName: "Karkabi",
+            username: "skarkabi",
+            password: "123456789"
           };
           return _context.abrupt("return", new Promise(function (resolve, reject) {
             _bcrypt["default"].genSalt(10, function (err, salt) {
-              _bcrypt["default"].hash(newUser.lastName, salt, function (e, hash) {
+              _bcrypt["default"].hash(newUser.password, salt, function (e, hash) {
                 if (e) reject(e);
-                newUser.lastName = hash;
-                console.log("Creating user with lName: " + newUser.lastName);
+                newUser.password = hash;
                 resolve(User.create(newUser));
               });
             });
@@ -136,13 +137,20 @@ User.getUserByFirstName = function (firstName) {
   });
 };
 
-User.prototype.comparePassword = function (lastName) {
+User.getUserByUserName = function (userName) {
+  return User.findOne({
+    where: {
+      userName: userName
+    }
+  });
+};
+
+User.prototype.comparePassword = function (password) {
   var _this = this;
 
   return _bluebird["default"].resolve().then(function () {
-    return _bcrypt["default"].compareSync(lastName, _this.lastName);
+    return _bcrypt["default"].compare(password, _this.password);
   })["catch"](function (err) {
-    console.log(err);
     return false;
   });
 };

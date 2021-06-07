@@ -30,7 +30,6 @@ router.get('/', async (req, res, next) =>
 
 router.post('/', async (req, res, next) => 
   Bluebird.resolve().then(async () => {
-    console.log("Did it work");
     const user = await Authenticate(req, res, next);
     if (user)
     {
@@ -47,7 +46,6 @@ router.post('/', async (req, res, next) =>
     }
     else
     {
-      console.log("AAAAAAAAAA");
       res.render('login', { error_msg: "Invalid Username or password" ,title: 'Login', landingPage: true }, );
     }
 

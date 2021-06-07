@@ -37,6 +37,59 @@ router.get('/', async (req, res, next) =>
 });
 
 
+/**
+ * Displays create user page.
+ */
+ router.get('/create', async (req, res, next) =>
+ {
+     if(req.user){
+        res.render('createUpdateUser', {
+            title: 'Create New User',
+            jumbotronDescription: `Register a new user account.`,
+            submitButtonText: 'Create',
+            action: "/users/create",
+        });
+     }
+        
+    
+ });
+
+ 
+ /**
+  * Creates an user.
+  
+ router.post('/create', Authenticated, IsAdmin, [
+     body('type', "Type field is mandatory").not().isEmpty(),
+     body('email', "You should enter a valid email").isEmail(),
+     body('email', "Your email is not valid").not().isEmpty(),
+     body('firstName', "First name field is mandatory").not().isEmpty(),
+     body('lastName', "Last name field is mandatory").not().isEmpty(),
+     body('phoneNumber', "Phone number field is mandatory").not().isEmpty(),
+     body('password', "Password field is mandatory").not().isEmpty(),
+     body('password', "Password lenght should be at least 6 chars long").isLength({ min: 5 })
+ ], (req, res, next) =>
+ {
+     const validationError = validationResult(req);
+ 
+     if (!validationError.isEmpty())
+     {
+         req.flash('validation_error_msg', validationError.array());
+         res.redirect('/users/create');
+     }
+     else
+     {
+         User.createUser(req.body).then(user =>
+         {
+             EmailSender.emailConfirmation({ email: user.email, password: req.body.password });
+             req.flash('success_msg', "User created successfully");
+             res.redirect(`/users/display-user/${user._id}`)
+         }).catch(err =>
+         {
+             ErrorHandler(req, res, `/`, `Sorry, could not created user error: ${err}`, err);
+         });
+     }
+ });
+ */
 
 
 

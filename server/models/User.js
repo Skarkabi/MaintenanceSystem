@@ -21,6 +21,7 @@ const mappings = {
   },
   username: {
     type: Sequelize.DataTypes.STRING,
+    unique: true,
     allowNull: false, 
   },
   password: {
@@ -81,26 +82,21 @@ const User = sequelize.define('User', mappings, {
  * Creates user with bcrypt.
  * @param {*} user
  */
- User.createUser = async () =>
- {
-    var newUser = {
-     id: "100944655",
-     firstName: "Saleem",
-     lastName: "Karkabi",
-     username: "skarkabi",
-     password: "123456789"
-    };
 
-    return new Promise((resolve,reject) => {
-      bcrypt.genSalt(10,function (err, salt) {
-        bcrypt.hash(newUser.password, salt, function (e, hash){
-          if (e) reject(e);
-          newUser.password = hash;
-          resolve(User.create(newUser));
-        })
-      })
-    })
- }
+User.createUser = function (newUser){
+  bcrypt.genSalt(10, function (err, salt) {
+    bcrypt.hash(newUser.password, salt, function (e, hash){
+      newUser.password = hash;
+      return Bluebird.resolve().then(() =>
+        User.create(newUser),
+        console.log("User Created")
+      ).catch((err => {
+        console.log("Could not add User (Error: " + err + ")");
+      })); 
+    });
+  })
+  
+}
 
 User.getUserById = id => User.findOne({
   where:{id},

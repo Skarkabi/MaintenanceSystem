@@ -118,8 +118,7 @@ app.use(_expressBreadcrumbs["default"].setHome({
   url: '/'
 }));
 app.use('/bootstrap', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/bootstrap/dist')));
-app.use('/jquery', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/jquery/dist'))); //User.createUser();
-
+app.use('/jquery', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/jquery/dist')));
 /** 
 app.post('/sign-in', require('./routes/sign-in'));
 app.post('/sign-out', require('./routes/sign-out'));

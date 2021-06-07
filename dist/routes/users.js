@@ -85,6 +85,73 @@ router.get('/', /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }());
+/**
+ * Displays create user page.
+ */
+
+router.get('/create', /*#__PURE__*/function () {
+  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(req, res, next) {
+    return _regenerator["default"].wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            if (req.user) {
+              res.render('createUpdateUser', {
+                title: 'Create New User',
+                jumbotronDescription: "Register a new user account.",
+                submitButtonText: 'Create',
+                action: "/users/create"
+              });
+            }
+
+          case 1:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3);
+  }));
+
+  return function (_x4, _x5, _x6) {
+    return _ref3.apply(this, arguments);
+  };
+}());
+/**
+ * Creates an user.
+ 
+router.post('/create', Authenticated, IsAdmin, [
+    body('type', "Type field is mandatory").not().isEmpty(),
+    body('email', "You should enter a valid email").isEmail(),
+    body('email', "Your email is not valid").not().isEmpty(),
+    body('firstName', "First name field is mandatory").not().isEmpty(),
+    body('lastName', "Last name field is mandatory").not().isEmpty(),
+    body('phoneNumber', "Phone number field is mandatory").not().isEmpty(),
+    body('password', "Password field is mandatory").not().isEmpty(),
+    body('password', "Password lenght should be at least 6 chars long").isLength({ min: 5 })
+], (req, res, next) =>
+{
+    const validationError = validationResult(req);
+
+    if (!validationError.isEmpty())
+    {
+        req.flash('validation_error_msg', validationError.array());
+        res.redirect('/users/create');
+    }
+    else
+    {
+        User.createUser(req.body).then(user =>
+        {
+            EmailSender.emailConfirmation({ email: user.email, password: req.body.password });
+            req.flash('success_msg', "User created successfully");
+            res.redirect(`/users/display-user/${user._id}`)
+        }).catch(err =>
+        {
+            ErrorHandler(req, res, `/`, `Sorry, could not created user error: ${err}`, err);
+        });
+    }
+});
+*/
+
 /* 
 * Models
 import Utils from '../Utils';

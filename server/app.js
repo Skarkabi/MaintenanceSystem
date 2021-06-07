@@ -95,7 +95,6 @@ app.use(breadcrumbs.setHome({name: 'Dashboard', url: '/'}));
 
 app.use('/bootstrap', express.static(path.join(__dirname, '../node_modules/bootstrap/dist')));
 app.use('/jquery', express.static(path.join(__dirname, '../node_modules/jquery/dist')));
-//User.createUser();
     /** 
     app.post('/sign-in', require('./routes/sign-in'));
     app.post('/sign-out', require('./routes/sign-out'));

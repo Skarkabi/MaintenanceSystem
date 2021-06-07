@@ -17,10 +17,11 @@ var _passport = _interopRequireDefault(require("passport"));
 
 var _bluebird = _interopRequireDefault(require("bluebird"));
 
+var _expressValidator = require("express-validator");
+
 var _User = _interopRequireDefault(require("../models/User"));
 
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
-//import { body, validationResult } from 'express-validator';
 var router = _express["default"].Router();
 /** 
  * Displays login page.
@@ -118,40 +119,21 @@ router.get('/create', /*#__PURE__*/function () {
 }());
 /**
  * Creates an user.
- 
-router.post('/create', Authenticated, IsAdmin, [
-    body('type', "Type field is mandatory").not().isEmpty(),
-    body('email', "You should enter a valid email").isEmail(),
-    body('email', "Your email is not valid").not().isEmpty(),
-    body('firstName', "First name field is mandatory").not().isEmpty(),
-    body('lastName', "Last name field is mandatory").not().isEmpty(),
-    body('phoneNumber', "Phone number field is mandatory").not().isEmpty(),
-    body('password', "Password field is mandatory").not().isEmpty(),
-    body('password', "Password lenght should be at least 6 chars long").isLength({ min: 5 })
-], (req, res, next) =>
-{
-    const validationError = validationResult(req);
+ */
 
-    if (!validationError.isEmpty())
-    {
-        req.flash('validation_error_msg', validationError.array());
-        res.redirect('/users/create');
-    }
-    else
-    {
-        User.createUser(req.body).then(user =>
-        {
-            EmailSender.emailConfirmation({ email: user.email, password: req.body.password });
-            req.flash('success_msg', "User created successfully");
-            res.redirect(`/users/display-user/${user._id}`)
-        }).catch(err =>
-        {
-            ErrorHandler(req, res, `/`, `Sorry, could not created user error: ${err}`, err);
-        });
-    }
+router.post('/create', [(0, _expressValidator.body)('eID', "Employee ID field is mandatory").not().isEmpty(), (0, _expressValidator.body)('firstName', "First name field is mandatory").not().isEmpty(), (0, _expressValidator.body)('lastName', "Last name field is mandatory").not().isEmpty(), (0, _expressValidator.body)('username', "Username field is mandatory").not().isEmpty(), (0, _expressValidator.body)('password', "Password field is mandatory").not().isEmpty(), (0, _expressValidator.body)('password', "Password lenght should be at least 6 chars long").isLength({
+  min: 5
+})], function (req, res, next) {
+  _User["default"].createUser(req.body);
+
+  res.render('createUpdateUser', {
+    title: 'Create New User',
+    jumbotronDescription: "Register a new user account.",
+    submitButtonText: 'Create',
+    action: "/users/create",
+    success_msg: "User created successfully"
+  });
 });
-*/
-
 /* 
 * Models
 import Utils from '../Utils';

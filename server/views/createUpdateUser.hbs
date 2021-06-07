@@ -25,7 +25,6 @@
                         <input type="text" placeholder="Last Name" value="{{existingUser.lastName}}" id="lastName" name="lastName" class="form-control" required>
                     </div>
                 </div>
-
                 <div class="form-row">
                     <div class="form-group col">
                         <label for="username">Username</label>
@@ -42,48 +41,6 @@
                 </div>
             </div>
         </div>
-        
-        {{#if user.admin}}
-        <div class="section-wrapper" id="userProgramInformation">
-            <div class="section-title">
-                <h4><i class="fas fa-user-graduate"></i> Program Information</h4>
-                <hr class="my-3">
-            </div>
-            <div class="section-content">
-                <div class="form-row">
-                    <div class="form-group col required">
-                        <label for="majorId">Major</label>
-                        <select id="majorId" name="majorId" onchange="checkMajorMinorRequirements()" class="form-control">
-                            {{#if existingUser.majorId}}
-                            <option value="{{existexistingUseringValues.majorId}}" selected>{{existingUser.major}}</option>
-                            {{else}}
-                            <option disabled selected value="">Choose one</option>
-                            {{/if}}
-                            {{#each faculties}}
-                            <option value="{{this._id}}">{{this.shortName}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
-                    <div class="form-group col required">
-                        <label for="minorId">Minor</label>
-                        <select id="minorId" name="minorId" class="form-control" onchange="checkMajorMinorRequirements()">
-                            {{#if existingUser.minorId}}
-                            <option value="{{existingUser.minorId}}" selected>{{existingUser.minor}}</option>
-                            {{else}}
-                            <option disabled selected value="">Choose one</option>
-                            {{/if}}
-                            {{#each faculties}}
-                            <option value="{{this._id}}">{{this.shortName}}</option>
-                            {{/each}}
-                            <option value="N/A">N/A</option>
-                        </select>
-                    </div>
-                    
-                </div>
-            </div>
-        </div>
-        {{/if}}
-
         <button type="submit" id="submit" name="submit" class="btn btn-primary justfiy-content-end"><i class="far fa-save"></i> {{submitButtonText}}</button>
     </form>
 </div>
@@ -104,43 +61,6 @@
         else
         {
             paswordField.type = "password";
-        }
-    }
-
-    /**
-    * Shows program information section if the user type is Student.
-    */
-    function showProgramInformation()
-    {
-        let userTypeConatiner = document.getElementById("type");
-        let userType = userTypeConatiner ? userTypeConatiner.value : null;
-        let userProgramInformation = document.getElementById("userProgramInformation");
-        
-        if (userType && userProgramInformation)
-        {
-            userProgramInformation.style.display = userType === "Student"
-                ? "block"
-                : "none";
-
-            document.getElementById("majorId").required = userType === "Student";
-            document.getElementById("minorId").required = userType === "Student";
-        }
-    }
-
-    showProgramInformation()
-
-    /**
-    * Prevents selecting same minor and major.
-    */
-    function checkMajorMinorRequirements()
-    {
-        let minor = document.getElementById("minorId");
-        let major = document.getElementById("majorId");
-
-        if (major.value === minor.value)
-        {
-            alert("Major and Minor cannot be same!");
-            minor.selectedIndex = 0;
         }
     }
 </script>

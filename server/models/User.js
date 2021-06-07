@@ -83,7 +83,16 @@ const User = sequelize.define('User', mappings, {
  * @param {*} user
  */
 
-User.createUser = function (newUser){
+User.createUser = function (createdUser){
+  var newUser = 
+  {
+    id: createdUser.eID,
+    firstName: createdUser.firstName,
+    lastName: createdUser.lastName,
+    username: createdUser.username,
+    password: createdUser.password
+  }
+
   bcrypt.genSalt(10, function (err, salt) {
     bcrypt.hash(newUser.password, salt, function (e, hash){
       newUser.password = hash;

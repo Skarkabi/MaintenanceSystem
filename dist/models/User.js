@@ -87,7 +87,15 @@ var User = _mySQLDB["default"].define('User', mappings, {
  */
 
 
-User.createUser = function (newUser) {
+User.createUser = function (createdUser) {
+  var newUser = {
+    id: createdUser.eID,
+    firstName: createdUser.firstName,
+    lastName: createdUser.lastName,
+    username: createdUser.username,
+    password: createdUser.password
+  };
+
   _bcrypt["default"].genSalt(10, function (err, salt) {
     _bcrypt["default"].hash(newUser.password, salt, function (e, hash) {
       newUser.password = hash;

@@ -83,33 +83,60 @@ const User = sequelize.define('User', mappings, {
  * @param {*} user
  */
 
-User.createUser = function (createdUser){
-  var newUser = 
+User.createUser = (createdUser) => {
+  const newUser =  
   {
+
     id: createdUser.eID,
     firstName: createdUser.firstName,
     lastName: createdUser.lastName,
     username: createdUser.username,
     password: createdUser.password
-  }
 
-  bcrypt.genSalt(10, function (err, salt) {
-    bcrypt.hash(newUser.password, salt, function (e, hash){
-      newUser.password = hash;
-      return Bluebird.resolve().then(() =>
-        User.create(newUser),
-        console.log("User Created")
-      ).catch((err => {
-        console.log("Could not add User (Error: " + err + ")");
-      })); 
-    });
-  })
+  };
   
+
+  return new Promise((resolve, reject) => {
+     bcrypt.genSalt(10, function (err, salt)
+     {
+      bcrypt.hash(newUser.password, salt, function (e, hash)
+      {
+        if(e) reject (e);
+        User.getUserById(newUser.id).then(isUserRegestered => 
+          {
+          if(isUserRegestered){
+            reject ("Employee ID " + newUser.id+ " already registered");
+
+          }else{
+            User.getUserByUserName(newUser.username).then(isUser =>
+              {
+              if(isUser){
+                reject ("Username " + newUser.username + " already taken")
+              }else{
+                newUser.password = hash;
+                resolve(User.create(newUser));
+              }
+
+            });
+
+          }
+
+        });
+
+      });
+
+    });
+
+  });
+
 }
 
+
+
 User.getUserById = id => User.findOne({
-  where:{id},
-});
+    where:{id},
+  });
+
 
 User.getUserByFirstName = firstName => User.findOne({
   where: {firstName},

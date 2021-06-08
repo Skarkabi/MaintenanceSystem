@@ -95,14 +95,24 @@ User.createUser = function (createdUser) {
     username: createdUser.username,
     password: createdUser.password
   };
-
-  _bcrypt["default"].genSalt(10, function (err, salt) {
-    _bcrypt["default"].hash(newUser.password, salt, function (e, hash) {
-      newUser.password = hash;
-      return _bluebird["default"].resolve().then(function () {
-        return User.create(newUser);
-      }, console.log("User Created"))["catch"](function (err) {
-        console.log("Could not add User (Error: " + err + ")");
+  return new Promise(function (resolve, reject) {
+    _bcrypt["default"].genSalt(10, function (err, salt) {
+      _bcrypt["default"].hash(newUser.password, salt, function (e, hash) {
+        if (e) reject(e);
+        User.getUserById(newUser.id).then(function (isUserRegestered) {
+          if (isUserRegestered) {
+            reject("Employee ID " + newUser.id + " already registered");
+          } else {
+            User.getUserByUserName(newUser.username).then(function (isUser) {
+              if (isUser) {
+                reject("Username " + newUser.username + " already taken");
+              } else {
+                newUser.password = hash;
+                resolve(User.create(newUser));
+              }
+            });
+          }
+        });
       });
     });
   });

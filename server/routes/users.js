@@ -10,13 +10,27 @@ const router = express.Router();
 /** 
  * Displays login page.
  */
+
+router.get('/display-user/:id', (req,res,next) =>
+{
+    if(req.user)
+    {
+        User.getUserById(req.params.id).then(foundUser => {
+            res.render('displayUser', {
+                title: (`${foundUser.firstName} ${foundUser.lastName}'s Page`),
+                jumbotronDescription: `This is ${foundUser.firstName} ${foundUser.lastName}'s profile page.`,
+                existingUser: foundUser,
+                showPii: req.user.admin || req.user.id == req.params.id,
+            });
+        });
+    }
+});
+
 router.get('/', async (req, res, next) => 
 {
     if (req.user)
     {
-        return Bluebird.resolve().then( 
-            async() => {
-            const users = await User.findAndCountAll();
+        User.findAndCountAll().then(users => {
             console.log("here: " + JSON.stringify(users.count));
             var entriesNum = []; 
             for(var i = 0; i < users.count; i++){
@@ -65,19 +79,26 @@ router.get('/', async (req, res, next) =>
      body('username', "Username field is mandatory").not().isEmpty(),
      body('password', "Password field is mandatory").not().isEmpty(),
      body('password', "Password lenght should be at least 6 chars long").isLength({ min: 5 })
- ], (req, res, next) =>
-     {
-         User.createUser(req.body);
-         res.render('createUpdateUser', {
-            title: 'Create New User',
-            jumbotronDescription: `Register a new user account.`,
-            submitButtonText: 'Create',
-            action: "/users/create",
-            success_msg: "User created successfully",
+ ], (req, res, next) =>{   
+        User.createUser(req.body).then(() => {
+            res.render('createUpdateUser', {
+                title: 'Create New User',
+                jumbotronDescription: `Register a new user account.`,
+                submitButtonText: 'Create',
+                action: "/users/create",
+                success_msg: "User created successfully",
+            });
+        }).catch(err => {
+            res.render('createUpdateUser', {
+                title: 'Create New User',
+                jumbotronDescription: `Register a new user account.`,
+                submitButtonText: 'Create',
+                action: "/users/create",
+                error_msg: "User could not be created (Error: " + err+ ")",
+            });
         });
-      
-     }
- );
+    });
+ 
  
 
 

@@ -122,5 +122,38 @@ var Vehicle = _mySQLDB["default"].define('vehicle_stocks', mappings, {
   }]
 });
 
+Vehicle.addVehicle = function (createVehicled) {
+  var newVehicle = {
+    dateAdded: createVehicled.dateAdded,
+    category: createVehicled.cateogry,
+    brand: createVehicled.brand,
+    model: createVehicled.model,
+    year: createVehicled.year,
+    plate: createVehicled.plate,
+    chassis: createVehicled.chassis,
+    kmDriven: createVehicled.kmDriven,
+    kmForOilChange: createVehicled.kmForOilChange,
+    oilType: createVehicled.oilType
+  };
+  return new Promise(function (resolve, reject) {
+    Vehicle.getVehicleByPlate(newVehicle.plate).then(function (isExists) {
+      if (isExists) {
+        reject("Vehicle Plate # " + newVehicle.plate + " Already Exists");
+      } else {
+        console.log("Added");
+        resolve(Vehicle.create(newVehicle));
+      }
+    });
+  });
+};
+
+Vehicle.getVehicleByPlate = function (plate) {
+  return Vehicle.findOne({
+    where: {
+      plate: plate
+    }
+  });
+};
+
 var _default = Vehicle;
 exports["default"] = _default;

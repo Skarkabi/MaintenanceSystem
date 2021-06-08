@@ -1,6 +1,6 @@
 <div class="col-md-12">
     <div class="table-buttons" id="table-buttons">
-        <a href="/vehicle/create" role="button" class="btn btn-outline-dark" id="create-new"><i class="fas fa-plus"></i>  Add New Vehicle</a>
+        <a href="/vehicles/add" role="button" class="btn btn-outline-dark" id="create-new"><i class="fas fa-plus"></i>  Add New Vehicle</a>
     </div>
 </div>
 {{!-- Displays all users --}}
@@ -32,6 +32,7 @@
                     <td><a href="/users/display-vehicle/{{this.plate}}">{{this.chassis}}</a></td>
                     <td><a href="/users/display-vehicle/{{this.plate}}">{{this.kmDriven}}</a></td>
                     <td><a href="/users/display-vehicle/{{this.plate}}">{{this.kmForOilChange}}</a></td>
+                    
                     <td class = "table-actions">
                         <a href="/users/update/{{this._id}}" id="updateUser-{{this._id}}"><i class="far fa-edit"></i> Update </a>
                         <a href="/users/delete/{{this._id}}" id="deleteUserId-{{this._id}}" class="delete" data-confirm="Are you sure to delete {{this.firstName}} {{this.lastName}}?"><i class="fas fa-trash"></i> Delete</a>

@@ -123,4 +123,35 @@ const Vehicle = sequelize.define('vehicle_stocks', mappings, {
   ],
 });
 
+Vehicle.addVehicle = (createVehicled) => {
+  const newVehicle = 
+  {
+    dateAdded: createVehicled.dateAdded,
+    category: createVehicled.cateogry,
+    brand: createVehicled.brand,
+    model: createVehicled.model,
+    year: createVehicled.year,
+    plate: createVehicled.plate,
+    chassis: createVehicled.chassis,
+    kmDriven: createVehicled.kmDriven,
+    kmForOilChange: createVehicled.kmForOilChange,
+    oilType: createVehicled.oilType
+  }
+
+  return new Promise((resolve, reject) => {
+    Vehicle.getVehicleByPlate(newVehicle.plate).then(isExists =>
+      {
+        if(isExists){
+          reject ("Vehicle Plate # " + newVehicle.plate + " Already Exists");
+        }else{
+          console.log("Added");
+          resolve(Vehicle.create(newVehicle));
+        }
+      });
+  });
+}
+
+Vehicle.getVehicleByPlate = plate => Vehicle.findOne({
+  where:{plate}
+});
 export default Vehicle;

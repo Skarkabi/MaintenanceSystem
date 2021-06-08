@@ -117,6 +117,40 @@ app.use(function (req, res, next) {
   res.locals.error = req.flash('error');
   next();
 });
+
+function taskDate() {
+  var today = new Date();
+  var dd = today.getDate();
+  var mm = today.getMonth() + 1;
+  var yyyy = today.getFullYear();
+
+  if (dd < 10) {
+    dd = '0' + dd;
+  }
+
+  if (mm < 10) {
+    mm = '0' + mm;
+  }
+
+  today = dd + '/' + mm + '/' + yyyy;
+  console.log(today);
+  return today;
+}
+
+var datemilli = Date.parse('Sun May 11,2014');
+console.log(taskDate(datemilli));
+var newVehicle = {
+  dateAdded: taskDate(),
+  cateogry: "Tester",
+  brand: "tester",
+  model: "tester",
+  year: "2019",
+  plate: "12232398",
+  chassis: "23234Ad3",
+  kmDrive: 0,
+  kmForOilChange: 1000,
+  oilType: "Disel"
+};
 app.use(_expressBreadcrumbs["default"].init());
 app.use(_expressBreadcrumbs["default"].setHome({
   name: 'Dashboard',

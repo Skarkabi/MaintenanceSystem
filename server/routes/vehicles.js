@@ -26,6 +26,21 @@ router.get('/display-vehicle/:plate', (req,res,next) =>
     }
 });
 */
+
+router.get('/add', async (req, res, next) =>
+{
+    if(req.user){
+       res.render('addUpdateVehicle', {
+           title: 'Add New Vehicle',
+           jumbotronDescription: `Register a new user account.`,
+           submitButtonText: 'Create',
+           action: "/users/create",
+       });
+    }
+       
+   
+});
+
 router.get('/', async (req, res, next) => 
 {
     if (req.user)

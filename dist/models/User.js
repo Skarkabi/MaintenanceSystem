@@ -7,6 +7,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
 var _lodash = _interopRequireDefault(require("lodash"));
 
 var _bcrypt = _interopRequireDefault(require("bcrypt"));
@@ -87,26 +91,46 @@ var User = _mySQLDB["default"].define('User', mappings, {
  */
 
 
-User.createUser = function (createdUser) {
-  var newUser = {
-    id: createdUser.eID,
-    firstName: createdUser.firstName,
-    lastName: createdUser.lastName,
-    username: createdUser.username,
-    password: createdUser.password
-  };
+User.createUser = /*#__PURE__*/function () {
+  var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(createdUser) {
+    var newUser;
+    return _regenerator["default"].wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            newUser = {
+              id: createdUser.eID,
+              firstName: createdUser.firstName,
+              lastName: createdUser.lastName,
+              username: createdUser.username,
+              password: createdUser.password
+            };
 
-  _bcrypt["default"].genSalt(10, function (err, salt) {
-    _bcrypt["default"].hash(newUser.password, salt, function (e, hash) {
-      newUser.password = hash;
-      return _bluebird["default"].resolve().then(function () {
-        return User.create(newUser);
-      }, console.log("User Created"))["catch"](function (err) {
-        console.log("Could not add User (Error: " + err + ")");
-      });
-    });
-  });
-};
+            _bcrypt["default"].genSalt(10, function (err, salt) {
+              _bcrypt["default"].hash(newUser.password, salt, function (e, hash) {
+                newUser.password = hash;
+                return _bluebird["default"].resolve().then(function () {
+                  User.create(newUser);
+                  return newUser;
+                })["catch"](function (err) {
+                  console.log("Could not add User (Error: " + err + ")");
+                  return false;
+                });
+              });
+            });
+
+          case 2:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+
+  return function (_x) {
+    return _ref.apply(this, arguments);
+  };
+}();
 
 User.getUserById = function (id) {
   return User.findOne({

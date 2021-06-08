@@ -83,7 +83,7 @@ const User = sequelize.define('User', mappings, {
  * @param {*} user
  */
 
-User.createUser = function (createdUser){
+User.createUser = async (createdUser) => {
   var newUser = 
   {
     id: createdUser.eID,
@@ -96,11 +96,12 @@ User.createUser = function (createdUser){
   bcrypt.genSalt(10, function (err, salt) {
     bcrypt.hash(newUser.password, salt, function (e, hash){
       newUser.password = hash;
-      return Bluebird.resolve().then(() =>
-        User.create(newUser),
-        console.log("User Created")
-      ).catch((err => {
+      return Bluebird.resolve().then(() => {
+        User.create(newUser);
+        return newUser;
+      }).catch((err => {
         console.log("Could not add User (Error: " + err + ")");
+        return false;
       })); 
     });
   })

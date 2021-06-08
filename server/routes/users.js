@@ -50,11 +50,8 @@ router.get('/', async (req, res, next) =>
             action: "/users/create",
         });
      }
-        
-    
  });
 
- 
  /**
   * Creates an user.
   */
@@ -67,17 +64,29 @@ router.get('/', async (req, res, next) =>
      body('password', "Password lenght should be at least 6 chars long").isLength({ min: 5 })
  ], (req, res, next) =>
      {
-         User.createUser(req.body);
-         res.render('createUpdateUser', {
-            title: 'Create New User',
-            jumbotronDescription: `Register a new user account.`,
-            submitButtonText: 'Create',
-            action: "/users/create",
-            success_msg: "User created successfully",
-        });
-      
-     }
- );
+         if(req.user){
+             try{
+                User.createUser(req.body);
+                res.render('createUpdateUser', {
+                    title: 'Create New User',
+                    jumbotronDescription: `Register a new user account.`,
+                    submitButtonText: 'Create',
+                    action: "/users/create",
+                    success_msg: "User created successfully",
+                });
+             }catch{
+                res.render('createUpdateUser', {
+                    title: 'Create New User',
+                    jumbotronDescription: `Register a new user account.`,
+                    submitButtonText: 'Create',
+                    action: "/users/create",
+                    error_msg: "User could not be created (Error: User already exists)",
+                });
+           
+        }
+         
+    };
+});
  
 
 

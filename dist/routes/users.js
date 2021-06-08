@@ -124,15 +124,29 @@ router.get('/create', /*#__PURE__*/function () {
 router.post('/create', [(0, _expressValidator.body)('eID', "Employee ID field is mandatory").not().isEmpty(), (0, _expressValidator.body)('firstName', "First name field is mandatory").not().isEmpty(), (0, _expressValidator.body)('lastName', "Last name field is mandatory").not().isEmpty(), (0, _expressValidator.body)('username', "Username field is mandatory").not().isEmpty(), (0, _expressValidator.body)('password', "Password field is mandatory").not().isEmpty(), (0, _expressValidator.body)('password', "Password lenght should be at least 6 chars long").isLength({
   min: 5
 })], function (req, res, next) {
-  _User["default"].createUser(req.body);
+  if (req.user) {
+    try {
+      _User["default"].createUser(req.body);
 
-  res.render('createUpdateUser', {
-    title: 'Create New User',
-    jumbotronDescription: "Register a new user account.",
-    submitButtonText: 'Create',
-    action: "/users/create",
-    success_msg: "User created successfully"
-  });
+      res.render('createUpdateUser', {
+        title: 'Create New User',
+        jumbotronDescription: "Register a new user account.",
+        submitButtonText: 'Create',
+        action: "/users/create",
+        success_msg: "User created successfully"
+      });
+    } catch (_unused) {
+      res.render('createUpdateUser', {
+        title: 'Create New User',
+        jumbotronDescription: "Register a new user account.",
+        submitButtonText: 'Create',
+        action: "/users/create",
+        error_msg: "User could not be created (Error: User already exists)"
+      });
+    }
+  }
+
+  ;
 });
 /* 
 * Models

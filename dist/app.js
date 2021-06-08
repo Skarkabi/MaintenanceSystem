@@ -41,6 +41,8 @@ var _allowPrototypeAccess = require("@handlebars/allow-prototype-access");
 
 var _User = _interopRequireDefault(require("./models/User"));
 
+var _Vehicle = _interopRequireDefault(require("./models/Vehicle"));
+
 var _signIn = _interopRequireDefault(require("./routes/sign-in"));
 
 var _users = _interopRequireDefault(require("./routes/users"));
@@ -48,6 +50,8 @@ var _users = _interopRequireDefault(require("./routes/users"));
 var _homePage = _interopRequireDefault(require("./routes/homePage"));
 
 var _signOut = _interopRequireDefault(require("./routes/sign-out"));
+
+var _vehicles = _interopRequireDefault(require("./routes/vehicles"));
 
 require('./models/Session');
 
@@ -105,6 +109,7 @@ app.use('/login', _signIn["default"]);
 app.use('/users', _users["default"]);
 app.use('/', _homePage["default"]);
 app.use('/logout', _signOut["default"]);
+app.use('/vehicles', _vehicles["default"]);
 app.use(function (req, res, next) {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');

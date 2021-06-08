@@ -18,11 +18,13 @@ import breadcrumbs from 'express-breadcrumbs';
 import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access';
 
 import User from './models/User';
+import Vehicle from './models/Vehicle';
 require('./models/Session');
 import signInRouter from './routes/sign-in';
 import usersRouter from './routes/users';
 import homePageRouter from './routes/homePage';
 import signOutRouter from './routes/sign-out';
+import vehicleRouter from './routes/vehicles';
 
 handlebars.registerHelper("counter", function (index){
     return index + 1;
@@ -79,6 +81,7 @@ app.use('/login', signInRouter);
 app.use('/users', usersRouter);
 app.use('/', homePageRouter);
 app.use('/logout', signOutRouter);
+app.use('/vehicles', vehicleRouter);
 
 app.use((req, res, next) =>
 {

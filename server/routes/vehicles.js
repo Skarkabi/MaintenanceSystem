@@ -57,8 +57,8 @@ router.get('/display-vehicle/:id', async (req, res, next) =>
             
 
             res.render('displayVehical', {
-                title: (`Vehicle ${foundVehicle.plate}'s Information`),
-                jumbotronDescription: `Information for Vehicle ${foundVehicle.plate}.`,
+                title: (`${foundVehicle.brand} ${foundVehicle.model} Plate # ${foundVehicle.plate}`),
+                jumbotronDescription: `Information for ${foundVehicle.brand} ${foundVehicle.model} Plate # ${foundVehicle.plate}.`,
                 existingVehicle: foundVehicle,
                 showPii: req.user.admin,
                 iconType: iconType

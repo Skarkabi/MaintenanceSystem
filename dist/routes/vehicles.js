@@ -72,11 +72,53 @@ router.get('/add', /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }());
-router.get('/', /*#__PURE__*/function () {
+router.get('/display-vehicle/:id', /*#__PURE__*/function () {
   var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(req, res, next) {
     return _regenerator["default"].wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
+          case 0:
+            if (req.user) {
+              console.log(req.params);
+
+              _Vehicle["default"].getVehicleByPlate(req.params.id).then(function (foundVehicle) {
+                var iconType;
+
+                if (foundVehicle.category.includes("PICKUP") || foundVehicle.category === "4X4") {
+                  iconType = "pickup";
+                } else if (foundVehicle.category.includes("TROLLY")) {
+                  iconType = "trolly";
+                } else {
+                  iconType = foundVehicle.category.toLowerCase();
+                }
+
+                res.render('displayVehical', {
+                  title: "Vehicle ".concat(foundVehicle.plate, "'s Information"),
+                  jumbotronDescription: "Information for Vehicle ".concat(foundVehicle.plate, "."),
+                  existingVehicle: foundVehicle,
+                  showPii: req.user.admin,
+                  iconType: iconType
+                });
+              });
+            }
+
+          case 1:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+
+  return function (_x4, _x5, _x6) {
+    return _ref2.apply(this, arguments);
+  };
+}());
+router.get('/', /*#__PURE__*/function () {
+  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(req, res, next) {
+    return _regenerator["default"].wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
           case 0:
             if (req.user) {
               _Vehicle["default"].findAndCountAll().then(function (vehicles) {
@@ -100,14 +142,14 @@ router.get('/', /*#__PURE__*/function () {
 
           case 1:
           case "end":
-            return _context2.stop();
+            return _context3.stop();
         }
       }
-    }, _callee2);
+    }, _callee3);
   }));
 
-  return function (_x4, _x5, _x6) {
-    return _ref2.apply(this, arguments);
+  return function (_x7, _x8, _x9) {
+    return _ref3.apply(this, arguments);
   };
 }());
 var _default = router;

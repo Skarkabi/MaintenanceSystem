@@ -23,15 +23,15 @@
         <tbody>
             {{#each users}}
                 <tr>
-                    <td><a href="/users/display-vehicle/{{this.plate}}" id="vehicle-{{counter @index}}"> {{counter @index}}</a></td>
-                    <td><a href="/users/display-vehicle/{{this.plate}}">{{this.category}}</a></td>
-                    <td><a href="/users/display-vehicle/{{this.plate}}">{{this.brand}}</a></td>
-                    <td><a href="/users/display-vehicle/{{this.plate}}">{{this.model}}</a></td>
-                     <td><a href="/users/display-vehicle/{{this.plate}}">{{this.year}}</a></td>
-                    <td><a href="/users/display-vehicle/{{this.plate}}">{{this.plate}}</a></td>
-                    <td><a href="/users/display-vehicle/{{this.plate}}">{{this.chassis}}</a></td>
-                    <td><a href="/users/display-vehicle/{{this.plate}}">{{this.kmDriven}}</a></td>
-                    <td><a href="/users/display-vehicle/{{this.plate}}">{{this.kmForOilChange}}</a></td>
+                    <td><a href="/vehicles/display-vehicle/{{this.plate}}" id="vehicle-{{counter @index}}"> {{counter @index}}</a></td>
+                    <td><a href="/vehicles/display-vehicle/{{this.plate}}">{{this.category}}</a></td>
+                    <td><a href="/vehicles/display-vehicle/{{this.plate}}">{{this.brand}}</a></td>
+                    <td><a href="/vehicles/display-vehicle/{{this.plate}}">{{this.model}}</a></td>
+                     <td><a href="/vehicles/display-vehicle/{{this.plate}}">{{this.year}}</a></td>
+                    <td><a href="/vehicles/display-vehicle/{{this.plate}}">{{this.plate}}</a></td>
+                    <td><a href="/vehicles/display-vehicle/{{this.plate}}">{{this.chassis}}</a></td>
+                    <td><a href="/vehicles/display-vehicle/{{this.plate}}">{{this.kmDriven}}</a></td>
+                    <td><a href="/vehicles/display-vehicle/{{this.plate}}">{{this.kmForOilChange}}</a></td>
                     
                     <td class = "table-actions">
                         <a href="/users/update/{{this._id}}" id="updateUser-{{this._id}}"><i class="far fa-edit"></i> Update </a>

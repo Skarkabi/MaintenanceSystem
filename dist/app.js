@@ -59,6 +59,11 @@ _handlebars["default"].registerHelper("counter", function (index) {
   return index + 1;
 });
 
+_handlebars["default"].registerHelper('isdefined', function (value, compare) {
+  console.log("I am in this function " + value + " " + compare);
+  return value === compare;
+});
+
 var app = (0, _express["default"])();
 var multiHelpers = (0, _handlebarsHelpers["default"])(); // view engine setup
 

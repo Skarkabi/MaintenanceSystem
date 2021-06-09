@@ -30,6 +30,11 @@ handlebars.registerHelper("counter", function (index){
     return index + 1;
 });
 
+handlebars.registerHelper('isdefined', function (value, compare) {
+    console.log("I am in this function " + value + " " + compare);
+    return value === compare;
+  });
+
 const app = express();
 
 const multiHelpers = hbshelpers()

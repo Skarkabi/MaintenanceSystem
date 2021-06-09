@@ -41,6 +41,32 @@ router.get('/add', async (req, res, next) =>
    
 });
 
+router.get('/display-vehicle/:id', async (req, res, next) =>
+{
+    if(req.user){
+        console.log(req.params);
+        Vehicle.getVehicleByPlate(req.params.id).then(foundVehicle => {
+            var iconType;
+            if(foundVehicle.category.includes("PICKUP") || foundVehicle.category === "4X4"){
+                iconType = "pickup";
+            }else if(foundVehicle.category.includes("TROLLY")){
+                iconType = "trolly"
+            }else{
+                iconType = foundVehicle.category.toLowerCase();
+            }
+            
+
+            res.render('displayVehical', {
+                title: (`Vehicle ${foundVehicle.plate}'s Information`),
+                jumbotronDescription: `Information for Vehicle ${foundVehicle.plate}.`,
+                existingVehicle: foundVehicle,
+                showPii: req.user.admin,
+                iconType: iconType
+            });
+        });
+    }
+});
+
 router.get('/', async (req, res, next) => 
 {
     if (req.user)

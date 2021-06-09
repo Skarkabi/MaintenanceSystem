@@ -61,10 +61,30 @@ router.get('/display-vehicle/:id', async (req, res, next) =>
                 jumbotronDescription: `Information for ${foundVehicle.brand} ${foundVehicle.model} Plate # ${foundVehicle.plate}.`,
                 existingVehicle: foundVehicle,
                 showPii: req.user.admin,
-                iconType: iconType
+                iconType: iconType,
+                msgType: req.flash()
             });
         });
     }
+});
+
+router.get('/delete/:id', (req, res, next) =>
+{
+    if(req.user){
+        Vehicle.getVehicleByPlate(req.params.id).then(foundVehicle => {
+            const vehicleDelete = {plate: foundVehicle.plate, chassis: foundVehicle.chassis}
+            Vehicle.deleteVehicleByPlateAndChassis(vehicleDelete).then(() => 
+        {
+            req.flash('success_msg', "Vehicle with Plate #: " + req.params.id + " deleted successfully.");
+            res.redirect(`/vehicles`);
+        }).catch(err =>
+        {
+            req.flash('error_msg', "Something happened while deleting the vehicle (Error: " + err +").");
+            res.redirect(`/vehicles/display-vehicle/${req.params.id}`);
+        });
+        })
+    }
+    
 });
 
 router.get('/', async (req, res, next) => 
@@ -72,17 +92,16 @@ router.get('/', async (req, res, next) =>
     if (req.user)
     {
         Vehicle.findAndCountAll().then(vehicles => {
-            console.log("here: " + JSON.stringify(vehicles.count));
             var entriesNum = []; 
             for(var i = 0; i < vehicles.count; i++){
                 entriesNum[0] = i + 1;
                 
             }
-            console.log(vehicles.rows);
             res.render("displayVehicles", {
                 title: "Vehicles",
                 jumbotronDescription: "View all user vehicles in the system.",
-                users: vehicles.rows
+                users: vehicles.rows,
+                msgType: req.flash()
             });
         });
     }

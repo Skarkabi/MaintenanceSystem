@@ -154,4 +154,9 @@ Vehicle.addVehicle = (createVehicled) => {
 Vehicle.getVehicleByPlate = plate => Vehicle.findOne({
   where:{plate}
 });
+
+Vehicle.deleteVehicleByPlateAndChassis = info => Vehicle.destroy({ 
+  where: {plate: info.plate, chassis: info.chassis}
+});
+
 export default Vehicle;

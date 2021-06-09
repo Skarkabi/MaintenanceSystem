@@ -97,7 +97,8 @@ router.get('/display-vehicle/:id', /*#__PURE__*/function () {
                   jumbotronDescription: "Information for ".concat(foundVehicle.brand, " ").concat(foundVehicle.model, " Plate # ").concat(foundVehicle.plate, "."),
                   existingVehicle: foundVehicle,
                   showPii: req.user.admin,
-                  iconType: iconType
+                  iconType: iconType,
+                  msgType: req.flash()
                 });
               });
             }
@@ -114,6 +115,24 @@ router.get('/display-vehicle/:id', /*#__PURE__*/function () {
     return _ref2.apply(this, arguments);
   };
 }());
+router.get('/delete/:id', function (req, res, next) {
+  if (req.user) {
+    _Vehicle["default"].getVehicleByPlate(req.params.id).then(function (foundVehicle) {
+      var vehicleDelete = {
+        plate: foundVehicle.plate,
+        chassis: foundVehicle.chassis
+      };
+
+      _Vehicle["default"].deleteVehicleByPlateAndChassis(vehicleDelete).then(function () {
+        req.flash('success_msg', "Vehicle with Plate #: " + req.params.id + " deleted successfully.");
+        res.redirect("/vehicles");
+      })["catch"](function (err) {
+        req.flash('error_msg', "Something happened while deleting the vehicle (Error: " + err + ").");
+        res.redirect("/vehicles/display-vehicle/".concat(req.params.id));
+      });
+    });
+  }
+});
 router.get('/', /*#__PURE__*/function () {
   var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(req, res, next) {
     return _regenerator["default"].wrap(function _callee3$(_context3) {
@@ -122,18 +141,17 @@ router.get('/', /*#__PURE__*/function () {
           case 0:
             if (req.user) {
               _Vehicle["default"].findAndCountAll().then(function (vehicles) {
-                console.log("here: " + JSON.stringify(vehicles.count));
                 var entriesNum = [];
 
                 for (var i = 0; i < vehicles.count; i++) {
                   entriesNum[0] = i + 1;
                 }
 
-                console.log(vehicles.rows);
                 res.render("displayVehicles", {
                   title: "Vehicles",
                   jumbotronDescription: "View all user vehicles in the system.",
-                  users: vehicles.rows
+                  users: vehicles.rows,
+                  msgType: req.flash()
                 });
               });
             } else {

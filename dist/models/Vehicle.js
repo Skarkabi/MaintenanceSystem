@@ -155,5 +155,14 @@ Vehicle.getVehicleByPlate = function (plate) {
   });
 };
 
+Vehicle.deleteVehicleByPlateAndChassis = function (info) {
+  return Vehicle.destroy({
+    where: {
+      plate: info.plate,
+      chassis: info.chassis
+    }
+  });
+};
+
 var _default = Vehicle;
 exports["default"] = _default;

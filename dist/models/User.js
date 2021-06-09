@@ -142,6 +142,14 @@ User.getUserByUserName = function (userName) {
   });
 };
 
+User.deleteUserById = function (id) {
+  return User.destroy({
+    where: {
+      id: id
+    }
+  });
+};
+
 User.prototype.comparePassword = function (password) {
   var _this = this;
 

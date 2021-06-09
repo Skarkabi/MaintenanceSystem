@@ -30,12 +30,15 @@ var router = _express["default"].Router();
 
 router.get('/display-user/:id', function (req, res, next) {
   if (req.user) {
+    var msg = req.flash();
+
     _User["default"].getUserById(req.params.id).then(function (foundUser) {
       res.render('displayUser', {
         title: "".concat(foundUser.firstName, " ").concat(foundUser.lastName, "'s Page"),
         jumbotronDescription: "This is ".concat(foundUser.firstName, " ").concat(foundUser.lastName, "'s profile page."),
         existingUser: foundUser,
-        showPii: req.user.admin || req.user.id == req.params.id
+        showPii: req.user.admin || req.user.id == req.params.id,
+        msgType: msg
       });
     });
   }
@@ -58,7 +61,8 @@ router.get('/', /*#__PURE__*/function () {
                 res.render("displayUsers", {
                   title: "Users",
                   jumbotronDescription: "View all user accounts for professors, students and admins registered in the university's system.",
-                  users: users.rows
+                  users: users.rows,
+                  msgType: req.flash()
                 });
               });
             } else {
@@ -92,7 +96,8 @@ router.get('/create', /*#__PURE__*/function () {
                 title: 'Create New User',
                 jumbotronDescription: "Register a new user account.",
                 submitButtonText: 'Create',
-                action: "/users/create"
+                action: "/users/create",
+                msgType: req.flash()
               });
             }
 
@@ -108,6 +113,17 @@ router.get('/create', /*#__PURE__*/function () {
     return _ref2.apply(this, arguments);
   };
 }());
+router.get('/delete/:id', function (req, res, next) {
+  if (req.user) {
+    _User["default"].deleteUserById(req.params.id).then(function () {
+      req.flash('success_msg', "User with Employee ID: " + req.params.id + " deleted successfully.");
+      res.redirect("/users");
+    })["catch"](function (err) {
+      req.flash('error_msg', "Something happened while deleting the user (Error: " + err + ").");
+      res.redirect("/users/display-user/".concat(req.params.id));
+    });
+  }
+});
 /**
  * Creates an user.
  */
@@ -116,21 +132,11 @@ router.post('/create', [(0, _expressValidator.body)('eID', "Employee ID field is
   min: 5
 })], function (req, res, next) {
   _User["default"].createUser(req.body).then(function () {
-    res.render('createUpdateUser', {
-      title: 'Create New User',
-      jumbotronDescription: "Register a new user account.",
-      submitButtonText: 'Create',
-      action: "/users/create",
-      success_msg: "User created successfully"
-    });
+    req.flash('success_msg', "User " + req.body.username + " created successfully.");
+    res.redirect('/users/create');
   })["catch"](function (err) {
-    res.render('createUpdateUser', {
-      title: 'Create New User',
-      jumbotronDescription: "Register a new user account.",
-      submitButtonText: 'Create',
-      action: "/users/create",
-      error_msg: "User could not be created (Error: " + err + ")"
-    });
+    req.flash('error_msg', "User could not be created (Error: " + err + ") ");
+    res.redirect('/users/create');
   });
 });
 /* 

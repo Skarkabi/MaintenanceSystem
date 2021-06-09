@@ -7,27 +7,27 @@
 	</div>
 </div>
 
-{{#if success_msg}}
+{{#if msgType.success_msg}}
 {{!-- Flash Messages --}}
 <div class="col-md-12 top-flash-message">
 	<div class="alert alert-success alert-dismissible" role="alert">
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		<small>{{success_msg}}</small>
+		<small>{{ msgType.success_msg}}</small>
 	</div>
 </div>
 {{/if}}
 
-{{#if error_msg}}
+{{#if msgType.error_msg}}
 {{!-- Flash Messages --}}
 <div class="col-md-12 top-flash-message">
 	<div class="alert alert-danger alert-dismissible" role="alert">
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		<small>{{error_msg}}</small>
+		<small>{{ msgType.error_msg}}</small>
 	</div>
 </div>
 {{/if}}
 
-{{#if validation_error_msg}}
+{{#if msgType.validation_error_msg}}
 {{!-- Flash Messages --}}
 <div class="col-md-12 top-flash-message">
 	<div class="alert alert-danger alert-dismissible" role="alert">

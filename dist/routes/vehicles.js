@@ -93,8 +93,8 @@ router.get('/display-vehicle/:id', /*#__PURE__*/function () {
                 }
 
                 res.render('displayVehical', {
-                  title: "Vehicle ".concat(foundVehicle.plate, "'s Information"),
-                  jumbotronDescription: "Information for Vehicle ".concat(foundVehicle.plate, "."),
+                  title: "".concat(foundVehicle.brand, " ").concat(foundVehicle.model, " Plate # ").concat(foundVehicle.plate),
+                  jumbotronDescription: "Information for ".concat(foundVehicle.brand, " ").concat(foundVehicle.model, " Plate # ").concat(foundVehicle.plate, "."),
                   existingVehicle: foundVehicle,
                   showPii: req.user.admin,
                   iconType: iconType

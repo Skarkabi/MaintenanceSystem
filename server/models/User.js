@@ -146,6 +146,10 @@ User.getUserByUserName = userName => User.findOne({
   where: {userName},
 });
 
+User.deleteUserById = id => User.destroy({ 
+    where: {id: id}
+});
+
 
 User.prototype.comparePassword = function (password) {
   return Bluebird.resolve().then(() => 

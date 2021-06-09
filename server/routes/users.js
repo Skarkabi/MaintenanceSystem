@@ -15,12 +15,14 @@ router.get('/display-user/:id', (req,res,next) =>
 {
     if(req.user)
     {
+        let msg = req.flash();
         User.getUserById(req.params.id).then(foundUser => {
             res.render('displayUser', {
                 title: (`${foundUser.firstName} ${foundUser.lastName}'s Page`),
                 jumbotronDescription: `This is ${foundUser.firstName} ${foundUser.lastName}'s profile page.`,
                 existingUser: foundUser,
                 showPii: req.user.admin || req.user.id == req.params.id,
+                msgType: msg
             });
         });
     }
@@ -40,7 +42,8 @@ router.get('/', async (req, res, next) =>
             res.render("displayUsers", {
                 title: "Users",
                 jumbotronDescription: "View all user accounts for professors, students and admins registered in the university's system.",
-                users: users.rows
+                users: users.rows,
+                msgType: req.flash()
             });
         });
     }
@@ -62,12 +65,29 @@ router.get('/', async (req, res, next) =>
             jumbotronDescription: `Register a new user account.`,
             submitButtonText: 'Create',
             action: "/users/create",
+            msgType: req.flash()
+
         });
      }
         
     
  });
 
+ router.get('/delete/:id', (req, res, next) =>
+{
+    if(req.user){
+        User.deleteUserById(req.params.id).then(() => 
+        {
+            req.flash('success_msg', "User with Employee ID: " + req.params.id + " deleted successfully.");
+            res.redirect(`/users`);
+        }).catch(err =>
+        {
+            req.flash('error_msg', "Something happened while deleting the user (Error: " + err +").");
+            res.redirect(`/users/display-user/${req.params.id}`);
+        });
+    }
+    
+});
  
  /**
   * Creates an user.
@@ -81,21 +101,13 @@ router.get('/', async (req, res, next) =>
      body('password', "Password lenght should be at least 6 chars long").isLength({ min: 5 })
  ], (req, res, next) =>{   
         User.createUser(req.body).then(() => {
-            res.render('createUpdateUser', {
-                title: 'Create New User',
-                jumbotronDescription: `Register a new user account.`,
-                submitButtonText: 'Create',
-                action: "/users/create",
-                success_msg: "User created successfully",
-            });
+            req.flash('success_msg', "User " + req.body.username + " created successfully.");
+            res.redirect('/users/create')
+
         }).catch(err => {
-            res.render('createUpdateUser', {
-                title: 'Create New User',
-                jumbotronDescription: `Register a new user account.`,
-                submitButtonText: 'Create',
-                action: "/users/create",
-                error_msg: "User could not be created (Error: " + err+ ")",
-            });
+            req.flash('error_msg', "User could not be created (Error: " + err+ ") ");
+            res.redirect('/users/create')
+            
         });
     });
  

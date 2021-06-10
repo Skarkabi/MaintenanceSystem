@@ -19,6 +19,7 @@ import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access
 
 import User from './models/User';
 import Vehicle from './models/Vehicle';
+import Consumable from './models/Consumables';
 require('./models/Session');
 import signInRouter from './routes/sign-in';
 import usersRouter from './routes/users';
@@ -134,6 +135,22 @@ const newVehicle = {
     oilType: "Disel"
 
 };
+
+/*
+Oil.findAndCountAll().then(foundBatteries =>{
+    var count = foundBatteries.count;
+    var newBatteris = foundBatteries.rows;
+    var totalQuant = 0;
+    var i;
+    for(i = 0; i < count; i++){
+       totalQuant += newBatteris[i].volume;
+    }
+    Consumable.addConsumable({category: "Oil", quantity: totalQuant})
+})
+*/
+
+
+
 
 
 app.use(breadcrumbs.init());

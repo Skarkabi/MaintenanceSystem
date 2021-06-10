@@ -19,19 +19,11 @@ var mappings = {
     autoIncrement: true,
     primaryKey: true
   },
-  greaseSpec: {
+  oilSpec: {
     type: _sequelize["default"].DataTypes.STRING,
     allowNull: false
   },
-  typeOfGrease: {
-    type: _sequelize["default"].DataTypes.STRING,
-    allowNull: false
-  },
-  carBrand: {
-    type: _sequelize["default"].DataTypes.STRING,
-    allowNull: false
-  },
-  carYear: {
+  typeOfOil: {
     type: _sequelize["default"].DataTypes.STRING,
     allowNull: false
   },
@@ -41,6 +33,10 @@ var mappings = {
   },
   minVolume: {
     type: _sequelize["default"].DataTypes.DOUBLE,
+    allowNull: false
+  },
+  preferredBrand: {
+    type: _sequelize["default"].DataTypes.STRING,
     allowNull: false
   },
   createdAt: {
@@ -53,45 +49,37 @@ var mappings = {
   }
 };
 
-var Grease = _mySQLDB["default"].define('grease_stocks', mappings, {
+var Oil = _mySQLDB["default"].define('oil_stocks', mappings, {
   indexes: [{
-    name: 'grease_id_index',
+    name: 'oil_id_index',
     method: 'BTREE',
     fields: ['id']
   }, {
-    name: 'grease_volume_index',
+    name: 'oil_volume_index',
     method: 'BTREE',
     fields: ['volume']
   }, {
-    name: 'grease_minVolume_index',
+    name: 'oil_minVolume_index',
     method: 'BTREE',
     fields: ['minVolume']
   }, {
-    name: 'grease_greaseSpec_index',
+    name: 'oil_oilSpec_index',
     method: 'BTREE',
-    fields: ['greaseSpec']
+    fields: ['oilSpec']
   }, {
-    name: 'grease_carBrand_index',
+    name: 'oil_typeOfOil_index',
     method: 'BTREE',
-    fields: ['carBrand']
+    fields: ['typeOfOil']
   }, {
-    name: 'grease_carYear_index',
-    method: 'BTREE',
-    fields: ['carYear']
-  }, {
-    name: 'grease_typeOfGrease_index',
-    method: 'BTREE',
-    fields: ['typeOfGrease']
-  }, {
-    name: 'grease_createdAt_index',
+    name: 'oil_createdAt_index',
     method: 'BTREE',
     fields: ['createdAt']
   }, {
-    name: 'grease_updatedAt_index',
+    name: 'oil_updatedAt_index',
     method: 'BTREE',
     fields: ['updatedAt']
   }]
 });
 
-var _default = Grease;
+var _default = Oil;
 exports["default"] = _default;

@@ -43,6 +43,8 @@ var _User = _interopRequireDefault(require("./models/User"));
 
 var _Vehicle = _interopRequireDefault(require("./models/Vehicle"));
 
+var _Consumables = _interopRequireDefault(require("./models/Consumables"));
+
 var _signIn = _interopRequireDefault(require("./routes/sign-in"));
 
 var _users = _interopRequireDefault(require("./routes/users"));
@@ -156,6 +158,19 @@ var newVehicle = {
   kmForOilChange: 1000,
   oilType: "Disel"
 };
+/*
+Oil.findAndCountAll().then(foundBatteries =>{
+    var count = foundBatteries.count;
+    var newBatteris = foundBatteries.rows;
+    var totalQuant = 0;
+    var i;
+    for(i = 0; i < count; i++){
+       totalQuant += newBatteris[i].volume;
+    }
+    Consumable.addConsumable({category: "Oil", quantity: totalQuant})
+})
+*/
+
 app.use(_expressBreadcrumbs["default"].init());
 app.use(_expressBreadcrumbs["default"].setHome({
   name: 'Dashboard',

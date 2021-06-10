@@ -1,0 +1,33 @@
+<div class="col-md-12">
+    <table id="batteries-table" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Category</th>
+                <th scope="col">Car Brand</th>
+                <th scope="col">Car Year</th>
+                <th scope="col">Chassis #</th>
+                <th scope="col">Battery Brand</th>
+                <th scope="col">Quantity (Boxes)</th>
+                <th scope="col">Single Cost</th>
+                <th scope="col">Total Cost</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {{#each consumables}}
+                <tr>
+                    <th>{{counter @index}}</th>
+                    <td>{{this.category}}</th>
+                    <td>{{this.carBrand}}</td>
+                    <td>{{this.carYear}}</td>
+                    <td>{{this.chassis}}</td>
+                    <td>{{this.bBrand}}</td>
+                    <td>{{this.quantity}}</td>
+                    <td>{{this.singleCost}}</td>
+                    <td>{{this.totalCosr}}</td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>

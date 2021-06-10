@@ -1,4 +1,6 @@
 import express from 'express';
+import passport from 'passport';
+import Bluebird from 'bluebird';
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
 import { body, validationResult } from 'express-validator';
 import Consumable from '../models/Consumables';
@@ -121,5 +123,21 @@ router.get('/', async (req, res, next) =>
         res.redirect('/');
     }
 });
+
+router.get('/:category', async (req, res, next) =>{
+    if(req.user){
+        var title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1);
+        Consumable.getSpecific(req.params.category).then(consumables => {
+            console.log(consumables);
+            res.render("displaySpecificConsumables", {
+                title: title,
+                typeOf: req.params.category,
+                jumbotronDescription: "View all " + req.params.category + " in the system.",
+                consumables: consumables.rows,
+                msgType: req.flash()
+            });
+        })
+    }
+})
 
 export default router;

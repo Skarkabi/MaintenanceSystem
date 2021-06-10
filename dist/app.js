@@ -68,6 +68,10 @@ _handlebars["default"].registerHelper('isdefined', function (value, compare) {
   return value === compare;
 });
 
+_handlebars["default"].registerHelper('lowerCase', function (value) {
+  return value.toLowerCase();
+});
+
 var app = (0, _express["default"])();
 var multiHelpers = (0, _handlebarsHelpers["default"])(); // view engine setup
 

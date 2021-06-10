@@ -13,6 +13,10 @@ var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/
 
 var _express = _interopRequireDefault(require("express"));
 
+var _passport = _interopRequireDefault(require("passport"));
+
+var _bluebird = _interopRequireDefault(require("bluebird"));
+
 var _expressValidator = require("express-validator");
 
 var _Consumables = _interopRequireDefault(require("../models/Consumables"));
@@ -164,6 +168,40 @@ router.get('/', /*#__PURE__*/function () {
 
   return function (_x7, _x8, _x9) {
     return _ref3.apply(this, arguments);
+  };
+}());
+router.get('/:category', /*#__PURE__*/function () {
+  var _ref4 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(req, res, next) {
+    var title;
+    return _regenerator["default"].wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            if (req.user) {
+              title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1);
+
+              _Consumables["default"].getSpecific(req.params.category).then(function (consumables) {
+                console.log(consumables);
+                res.render("displaySpecificConsumables", {
+                  title: title,
+                  typeOf: req.params.category,
+                  jumbotronDescription: "View all " + req.params.category + " in the system.",
+                  consumables: consumables.rows,
+                  msgType: req.flash()
+                });
+              });
+            }
+
+          case 1:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4);
+  }));
+
+  return function (_x10, _x11, _x12) {
+    return _ref4.apply(this, arguments);
   };
 }());
 var _default = router;

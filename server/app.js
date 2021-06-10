@@ -37,6 +37,10 @@ handlebars.registerHelper('isdefined', function (value, compare) {
     return value === compare;
   });
 
+handlebars.registerHelper('lowerCase', function (value){
+    return value.toLowerCase();
+})
+
 const app = express();
 
 const multiHelpers = hbshelpers()

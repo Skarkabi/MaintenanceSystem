@@ -9,6 +9,10 @@ exports["default"] = void 0;
 
 var _lodash = _interopRequireDefault(require("lodash"));
 
+var _bcrypt = _interopRequireDefault(require("bcrypt"));
+
+var _bluebird = _interopRequireDefault(require("bluebird"));
+
 var _sequelize = _interopRequireDefault(require("sequelize"));
 
 var _mySQLDB = _interopRequireDefault(require("../../mySQLDB"));

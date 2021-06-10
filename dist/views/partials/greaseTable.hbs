@@ -1,0 +1,27 @@
+<div class="col-md-12">
+    <table id="batteries-table" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Grease Spec</th>
+                <th scope="col">Grease Type</th>
+                <th scope="col">Car Brand</th>
+                <th scope="col">Car Year</th>
+                <th scope="col">Volume</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {{#each consumables}}
+                <tr>
+                    <th>{{counter @index}}</th>
+                    <td>{{this.greaseSpec}}</td>
+                    <td>{{this.typeOfGrease}}</td>
+                    <td>{{this.carBrand}}</td>
+                    <td>{{this.carYear}}</td>
+                    <td>{{this.volume}}</td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>

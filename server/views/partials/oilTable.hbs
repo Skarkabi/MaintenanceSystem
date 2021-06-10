@@ -1,0 +1,23 @@
+<div class="col-md-12">
+    <table id="batteries-table" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Oil Spec</th>
+                <th scope="col">Oil Type</th>
+                <th scope="col">Volume</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {{#each consumables}}
+                <tr>
+                    <th>{{counter @index}}</th>
+                    <td>{{this.oilSpec}}</td>
+                    <td>{{this.typeOfOil}}</td>
+                    <td>{{this.volume}}</td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>

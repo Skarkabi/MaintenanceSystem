@@ -1,6 +1,7 @@
 import _ from 'lodash';
+import bcrypt from 'bcrypt';
+import Bluebird from 'bluebird';
 import Sequelize from 'sequelize';
-
 import sequelize from '../mySQLDB';
 import Battery from './consumables/Battery';
 import Brake from './consumables/Brake';
@@ -87,5 +88,43 @@ Consumable.addConsumable = (createConsumable) => {
   Consumable.getConsumableByCategory = category => Consumable.findOne({
     where:{category}
   });
+
+Consumable.getSpecific = (consumable) => {
+   
+    return new Promise((resolve, reject) => {
+        if(consumable == "battery"){
+            Battery.findAndCountAll().then(batteries => {
+                resolve (batteries);
+            }).catch(err => {
+                reject(err);
+            });
+    
+        }else if(consumable == "brake"){   
+            Brake.findAndCountAll().then(brakes => {
+                resolve (brakes);
+            }).catch(err => {
+                reject(err);
+            });
+        }else if(consumable == "filter"){
+            Filter.findAndCountAll().then(filters => {
+                resolve(filters);
+            }).catch(err =>{
+                reject(err);
+            });
+        }else if(consumable == "grease"){
+            Grease.findAndCountAll().then(grease => {
+                resolve(grease);
+            }).catch(err =>{
+                reject(err);
+            });
+        }else if(consumable == "oil"){
+            Oil.findAndCountAll().then(oil => {
+                resolve(oil);
+            }).catch(err =>{
+                reject(err);
+            });
+        }
+    });
+};
 
 export default Consumable;

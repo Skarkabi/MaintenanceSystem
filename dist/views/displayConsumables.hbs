@@ -17,9 +17,9 @@
         <tbody>
             {{#each consumables}}
                 <tr>
-                    <td><a href="/consumable/display-consumables/{{this.category}}"> {{counter @index}}</a></td>
-                    <td><a href="/consumable/display-consumables/{{this.category}}">{{this.category}}</a></td>
-                    <td><a href="/consumable/display-consumables/{{this.category}}">{{this.quantity}} (
+                    <td><a href="/consumables/{{lowerCase this.category}}"> {{counter @index}}</a></td>
+                    <td><a href="/consumables/{{lowerCase this.category}}">{{this.category}}</a></td>
+                    <td><a href="/consumables/{{lowerCase this.category}}">{{this.quantity}} (
                             {{#if (isdefined "Battery" this.category)}}
                                 Pieces
                             {{/if}}
@@ -30,6 +30,9 @@
                                 Pieces
                             {{/if}}
                             {{#if (isdefined "Oil" this.category)}}
+                                Liters
+                            {{/if}}
+                            {{#if (isdefined "Grease" this.category)}}
                                 Liters
                             {{/if}}
                     )

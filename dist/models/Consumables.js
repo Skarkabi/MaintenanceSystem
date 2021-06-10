@@ -9,6 +9,10 @@ exports["default"] = void 0;
 
 var _lodash = _interopRequireDefault(require("lodash"));
 
+var _bcrypt = _interopRequireDefault(require("bcrypt"));
+
+var _bluebird = _interopRequireDefault(require("bluebird"));
+
 var _sequelize = _interopRequireDefault(require("sequelize"));
 
 var _mySQLDB = _interopRequireDefault(require("../mySQLDB"));
@@ -99,6 +103,42 @@ Consumable.getConsumableByCategory = function (category) {
   return Consumable.findOne({
     where: {
       category: category
+    }
+  });
+};
+
+Consumable.getSpecific = function (consumable) {
+  return new Promise(function (resolve, reject) {
+    if (consumable == "battery") {
+      _Battery["default"].findAndCountAll().then(function (batteries) {
+        resolve(batteries);
+      })["catch"](function (err) {
+        reject(err);
+      });
+    } else if (consumable == "brake") {
+      _Brake["default"].findAndCountAll().then(function (brakes) {
+        resolve(brakes);
+      })["catch"](function (err) {
+        reject(err);
+      });
+    } else if (consumable == "filter") {
+      _Filter["default"].findAndCountAll().then(function (filters) {
+        resolve(filters);
+      })["catch"](function (err) {
+        reject(err);
+      });
+    } else if (consumable == "grease") {
+      _Grease["default"].findAndCountAll().then(function (grease) {
+        resolve(grease);
+      })["catch"](function (err) {
+        reject(err);
+      });
+    } else if (consumable == "oil") {
+      _Oil["default"].findAndCountAll().then(function (oil) {
+        resolve(oil);
+      })["catch"](function (err) {
+        reject(err);
+      });
     }
   });
 };

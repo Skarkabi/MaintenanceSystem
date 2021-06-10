@@ -1,4 +1,6 @@
 import _ from 'lodash';
+import bcrypt from 'bcrypt';
+import Bluebird from 'bluebird';
 import Sequelize from 'sequelize';
 
 import sequelize from '../../mySQLDB';

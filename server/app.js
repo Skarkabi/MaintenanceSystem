@@ -26,6 +26,7 @@ import usersRouter from './routes/users';
 import homePageRouter from './routes/homePage';
 import signOutRouter from './routes/sign-out';
 import vehicleRouter from './routes/vehicles';
+import consumableRouter from './routes/consumables';
 
 handlebars.registerHelper("counter", function (index){
     return index + 1;
@@ -88,6 +89,7 @@ app.use('/users', usersRouter);
 app.use('/', homePageRouter);
 app.use('/logout', signOutRouter);
 app.use('/vehicles', vehicleRouter);
+app.use('/consumables', consumableRouter);
 
 app.use((req, res, next) =>
 {

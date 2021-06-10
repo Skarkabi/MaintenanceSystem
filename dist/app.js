@@ -55,6 +55,8 @@ var _signOut = _interopRequireDefault(require("./routes/sign-out"));
 
 var _vehicles = _interopRequireDefault(require("./routes/vehicles"));
 
+var _consumables = _interopRequireDefault(require("./routes/consumables"));
+
 require('./models/Session');
 
 _handlebars["default"].registerHelper("counter", function (index) {
@@ -117,6 +119,7 @@ app.use('/users', _users["default"]);
 app.use('/', _homePage["default"]);
 app.use('/logout', _signOut["default"]);
 app.use('/vehicles', _vehicles["default"]);
+app.use('/consumables', _consumables["default"]);
 app.use(function (req, res, next) {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');

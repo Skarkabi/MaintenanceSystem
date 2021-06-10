@@ -45,12 +45,12 @@ const Consumable = sequelize.define('consumable_stocks', mappings, {
       fields: ['quantity'],
     },
     {
-      name: 'user_createdAt_index',
+      name: 'consumable_createdAt_index',
       method: 'BTREE',
       fields: ['createdAt'],
     },
     {
-      name: 'user_updatedAt_index',
+      name: 'consumable_updatedAt_index',
       method: 'BTREE',
       fields: ['updatedAt'],
     },

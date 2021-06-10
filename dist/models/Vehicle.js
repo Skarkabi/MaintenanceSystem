@@ -124,23 +124,23 @@ var Vehicle = _mySQLDB["default"].define('vehicle_stocks', mappings, {
 
 Vehicle.addVehicle = function (createVehicled) {
   var newVehicle = {
-    dateAdded: createVehicled.dateAdded,
-    category: createVehicled.cateogry,
+    dateAdded: taskDate(),
+    category: createVehicled.category,
     brand: createVehicled.brand,
     model: createVehicled.model,
     year: createVehicled.year,
     plate: createVehicled.plate,
     chassis: createVehicled.chassis,
-    kmDriven: createVehicled.kmDriven,
-    kmForOilChange: createVehicled.kmForOilChange,
+    kmDriven: createVehicled.kmDrive,
+    kmForOilChange: createVehicled.kmTillOilChange,
     oilType: createVehicled.oilType
   };
+  console.log(newVehicle);
   return new Promise(function (resolve, reject) {
-    Vehicle.getVehicleByPlate(newVehicle.plate).then(function (isExists) {
-      if (isExists) {
-        reject("Vehicle Plate # " + newVehicle.plate + " Already Exists");
+    Vehicle.getVehicleByPlate(newVehicle.plate).then(function (isVehicle) {
+      if (isVehicle) {
+        reject("Vehicle With Plate # " + newVehicle.plate + " Already Exists");
       } else {
-        console.log("Added");
         resolve(Vehicle.create(newVehicle));
       }
     });
@@ -163,6 +163,25 @@ Vehicle.deleteVehicleByPlateAndChassis = function (info) {
     }
   });
 };
+
+function taskDate() {
+  var today = new Date();
+  var dd = today.getDate();
+  var mm = today.getMonth() + 1;
+  var yyyy = today.getFullYear();
+
+  if (dd < 10) {
+    dd = '0' + dd;
+  }
+
+  if (mm < 10) {
+    mm = '0' + mm;
+  }
+
+  today = dd + '/' + mm + '/' + yyyy;
+  console.log(today);
+  return today;
+}
 
 var _default = Vehicle;
 exports["default"] = _default;

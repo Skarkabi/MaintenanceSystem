@@ -47,16 +47,29 @@ router.get('/display-vehicle/:plate', (req,res,next) =>
 
 router.get('/add', /*#__PURE__*/function () {
   var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(req, res, next) {
+    var d, n, span, i;
     return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             if (req.user) {
+              d = new Date();
+              n = d.getFullYear();
+              span = [];
+
+              for (i = n - 2000; i >= 0; i--) {
+                span[i] = n - i;
+                console.log("In here" + span[i]);
+              }
+
+              console.log(span);
               res.render('addUpdateVehicle', {
                 title: 'Add New Vehicle',
                 jumbotronDescription: "Register a new user account.",
                 submitButtonText: 'Create',
-                action: "/users/create"
+                action: "/vehicles/add",
+                years: span,
+                msgType: req.flash()
               });
             }
 
@@ -72,6 +85,15 @@ router.get('/add', /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }());
+router.post('/add', [(0, _expressValidator.body)('category', "Vehicle Category field is mandatory").not().isEmpty(), (0, _expressValidator.body)('brand', "Vehicle brand field is mandatory").not().isEmpty(), (0, _expressValidator.body)('model', "Vehicle model field is mandatory").not().isEmpty(), (0, _expressValidator.body)('year', "Vehicle year field is mandatory").not().isEmpty(), (0, _expressValidator.body)('plate', "Vehicle Plate # field is mandatory").not().isEmpty(), (0, _expressValidator.body)('chassis', "Vehicle Chassis # field is mandatory").not().isEmpty(), (0, _expressValidator.body)('oilType', "Vehicle Oil Type field is mandatory").not().isEmpty()], function (req, res, next) {
+  _Vehicle["default"].addVehicle(req.body).then(function () {
+    req.flash('success_msg', req.body.brand + " " + req.body.model + " " + req.body.plate + " added successfully.");
+    res.redirect('/vehicles');
+  })["catch"](function (err) {
+    req.flash('error_msg', "Vehicle could not be add (Error: " + err + ") ");
+    res.redirect('/vehicles/add');
+  });
+});
 router.get('/display-vehicle/:id', /*#__PURE__*/function () {
   var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(req, res, next) {
     return _regenerator["default"].wrap(function _callee2$(_context2) {

@@ -3,40 +3,57 @@
         {{!-- User Information --}}
         <div class="section-wrapper">
             <div class="section-title">
-                <h4><i class="fas fa-user-alt"></i> User Information</h4>
+                <h4><i class="fas fa-user-alt"></i> Vehicle Information</h4>
                 <hr class="my-3">
             </div>
             <div class="section-content">
                 <div class="form-row">
                     <div class="form-group col required">
-                        <label for="type">Employee ID</label>
-                        {{#if isUpdate}}
-                        <input type="text" value="{{existingUser.id}}" class="form-control" readonly>
-                        {{else}}
-                        <input type="text" placeholder = "Employee ID #" id="eID" name="eID" class="form-control" required>
-                        {{/if}}
+                        <label for="type">Category</label>
+                        <input type="text" placeholder = "Vehicle Category" id="category" name="category" class="form-control" required>
                     </div>
                     <div class="form-group col required">
-                        <label for="firstName">First Name</label>
-                        <input type="text" placeholder="First Name" id="firstName" name="firstName" class="form-control" value="{{existingUser.firstName}}" required>
-                    </div>
-                    <div class="form-group col required">
-                        <label for="lastName">Last Name</label>
-                        <input type="text" placeholder="Last Name" value="{{existingUser.lastName}}" id="lastName" name="lastName" class="form-control" required>
+                        <label for="brand">Brand</label>
+                        <input type="text" placeholder="Vehicle Brand" id="brand" name="brand" class="form-control" value="{{existingVehicle.model}}" required>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group col">
-                        <label for="username">Username</label>
-                        <input type="text" placeholder="Username" id="username" name="username" class="form-control" required>
+                    <div class="form-group col required">
+                        <label for="type">Model</label>
+                        <input type="text" placeholder = "Vehicle Model" id="model" name="model" class="form-control" required>
                     </div>
-                     <div class="form-group col {{#unless isUpdate}}required{{/unless}}">
-                        <label for="password">Password</label>
-                        <input type="password" placeholder="{{#unless isUpdate}}Enter Password{{else}}Update Password{{/unless}}" id="password" name="password" class="form-control" {{#unless isUpdate}}required{{/unless}}>
+                    <div class="form-group col required">
+                        <label for="year">Year</label>
+                        <select type="text" id="year" name="year" class="form-control" value="{{existingVehicle.year}}" required>
+                             <option value="" disabled selected hidden>Select Year</option>
+                            {{#each years}}
+                                <option value="{{this}}">{{this}}</option>
+                            {{/each}}
+                        </select>
                     </div>
-                    <div class="form-group col">
-                        <label for="showPassword" style="display: block;">Show Password</label>
-                        <div onclick="showPass()" class="btn btn-light"><i class="far fa-eye" style="margin-right: 0px;"></i></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="type">Plate #</label>
+                        <input type="text" placeholder = "Vehicle Plate #" id="plate" name="plate" class="form-control" value="{{existingVehicle.plate}}" required>
+                    </div>
+                    <div class="form-group col required">
+                        <label for="brand">Chassis #</label>
+                        <input type="text" placeholder="Vehicle Chassis #" id="chassis" name="chassis" class="form-control" value="{{existingVehicle.chassis}}" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="type">Km Driven</label>
+                        <input type="text" placeholder = "Km Drivn" id="kmDrive" name="kmDrive" class="form-control" value="{{existingVehicle.kmDrive}}">
+                    </div>
+                    <div class="form-group col required">
+                        <label for="brand">Km Till Next Oil Change</label>
+                        <input type="text" placeholder="Km Till Oil Change" id="kmTillOilChange" name="kmTillOilChange" class="form-control" value="{{existingVehicle.kmTillOilChange}}" required>
+                    </div>
+                    <div class="form-group col required">
+                        <label for="brand">Oil Type</label>
+                        <input type="text" placeholder="Type of Oil" id="oilType" name="oilType" class="form-control" value="{{existingVehicle.oilType}}" required>
                     </div>
                 </div>
             </div>

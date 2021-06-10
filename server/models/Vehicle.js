@@ -55,7 +55,7 @@ const mappings = {
   updatedAt: {
     type: Sequelize.DataTypes.DATE,
     allowNull: true,
-  }
+  },
 };
 
 const Vehicle = sequelize.define('vehicle_stocks', mappings, {
@@ -126,28 +126,26 @@ const Vehicle = sequelize.define('vehicle_stocks', mappings, {
 Vehicle.addVehicle = (createVehicled) => {
   const newVehicle = 
   {
-    dateAdded: createVehicled.dateAdded,
-    category: createVehicled.cateogry,
+    dateAdded: taskDate(),
+    category: createVehicled.category,
     brand: createVehicled.brand,
     model: createVehicled.model,
     year: createVehicled.year,
     plate: createVehicled.plate,
     chassis: createVehicled.chassis,
-    kmDriven: createVehicled.kmDriven,
-    kmForOilChange: createVehicled.kmForOilChange,
+    kmDriven: createVehicled.kmDrive,
+    kmForOilChange: createVehicled.kmTillOilChange,
     oilType: createVehicled.oilType
   }
-
-  return new Promise((resolve, reject) => {
-    Vehicle.getVehicleByPlate(newVehicle.plate).then(isExists =>
-      {
-        if(isExists){
-          reject ("Vehicle Plate # " + newVehicle.plate + " Already Exists");
-        }else{
-          console.log("Added");
-          resolve(Vehicle.create(newVehicle));
-        }
-      });
+  console.log(newVehicle);
+  return new Promise ((resolve, reject) => {
+    Vehicle.getVehicleByPlate(newVehicle.plate).then(isVehicle => {
+      if (isVehicle){
+        reject("Vehicle With Plate # " + newVehicle.plate + " Already Exists");
+      }else{
+        resolve( Vehicle.create(newVehicle));
+      }
+    });  
   });
 }
 
@@ -158,5 +156,26 @@ Vehicle.getVehicleByPlate = plate => Vehicle.findOne({
 Vehicle.deleteVehicleByPlateAndChassis = info => Vehicle.destroy({ 
   where: {plate: info.plate, chassis: info.chassis}
 });
+
+function taskDate() {
+  var today = new Date();
+  var dd = today.getDate();
+
+  var mm = today.getMonth()+1; 
+  var yyyy = today.getFullYear();
+  if(dd<10) 
+  {
+      dd='0'+dd;
+  } 
+
+  if(mm<10) 
+  {
+      mm='0'+mm;
+  } 
+
+  today = dd+'/'+mm+'/'+yyyy;
+  console.log(today);
+  return today;
+}
 
 export default Vehicle;

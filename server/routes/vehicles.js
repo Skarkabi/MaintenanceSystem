@@ -30,16 +30,47 @@ router.get('/display-vehicle/:plate', (req,res,next) =>
 router.get('/add', async (req, res, next) =>
 {
     if(req.user){
+        var d = new Date();
+        var n = d.getFullYear();
+
+        var span = [];
+        var i;
+        for(i = n - 2000; i >= 0; i--){
+            span[i] = n - i;
+            console.log("In here" + span[i]);
+        }
+        console.log(span);
        res.render('addUpdateVehicle', {
            title: 'Add New Vehicle',
            jumbotronDescription: `Register a new user account.`,
            submitButtonText: 'Create',
-           action: "/users/create",
+           action: "/vehicles/add",
+           years: span,
+           msgType: req.flash()
+           
        });
     }
        
    
 });
+
+router.post('/add', [
+    body('category', "Vehicle Category field is mandatory").not().isEmpty(),
+    body('brand', "Vehicle brand field is mandatory").not().isEmpty(),
+    body('model', "Vehicle model field is mandatory").not().isEmpty(),
+    body('year', "Vehicle year field is mandatory").not().isEmpty(),
+    body('plate', "Vehicle Plate # field is mandatory").not().isEmpty(),
+    body('chassis', "Vehicle Chassis # field is mandatory").not().isEmpty(),
+    body('oilType', "Vehicle Oil Type field is mandatory").not().isEmpty()
+], (req, res, next) =>{
+        Vehicle.addVehicle(req.body).then(() => {
+            req.flash('success_msg', req.body.brand + " " + req.body.model + " " + req.body.plate + " added successfully.")
+            res.redirect('/vehicles')
+        }).catch(err => {
+            req.flash('error_msg', "Vehicle could not be add (Error: " + err+ ") ");
+            res.redirect('/vehicles/add')
+        })
+   });
 
 router.get('/display-vehicle/:id', async (req, res, next) =>
 {

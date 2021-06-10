@@ -29,7 +29,9 @@ var router = _express["default"].Router();
 
 
 router.get('/display-user/:id', function (req, res, next) {
-  if (req.user) {
+  console.log(req.user.id + " " + req.params.id);
+
+  if (req.user.id == req.params.id || req.user.admin) {
     var msg = req.flash();
 
     _User["default"].getUserById(req.params.id).then(function (foundUser) {
@@ -40,6 +42,12 @@ router.get('/display-user/:id', function (req, res, next) {
         showPii: req.user.admin || req.user.id == req.params.id,
         msgType: msg
       });
+    });
+  } else {
+    req.flash('error_msg', "You do not have access to this page.");
+    res.render("accessDenied", {
+      title: "Access Denied",
+      msgType: req.flash()
     });
   }
 });
@@ -96,12 +104,18 @@ router.get('/create', /*#__PURE__*/function () {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            if (req.user) {
+            if (req.user.admin) {
               res.render('createUpdateUser', {
                 title: 'Create New User',
                 jumbotronDescription: "Register a new user account.",
                 submitButtonText: 'Create',
                 action: "/users/create",
+                msgType: req.flash()
+              });
+            } else {
+              req.flash('error_msg', "You do not have access to this page.");
+              res.render("accessDenied", {
+                title: "Access Denied",
                 msgType: req.flash()
               });
             }

@@ -49,7 +49,7 @@ router.get('/', /*#__PURE__*/function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            if (req.user) {
+            if (req.user.admin) {
               _User["default"].findAndCountAll().then(function (users) {
                 console.log("here: " + JSON.stringify(users.count));
                 var entriesNum = [];
@@ -62,11 +62,16 @@ router.get('/', /*#__PURE__*/function () {
                   title: "Users",
                   jumbotronDescription: "View all user accounts for professors, students and admins registered in the university's system.",
                   users: users.rows,
+                  user: req.user,
                   msgType: req.flash()
                 });
               });
             } else {
-              res.redirect('/');
+              req.flash('error_msg', "You do not have access to this page.");
+              res.render("accessDenied", {
+                title: "Access Denied",
+                msgType: req.flash()
+              });
             }
 
           case 1:

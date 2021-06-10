@@ -10,6 +10,7 @@
 			<li class="nav-item dropdown">
 				<a class="nav-link" href="/">Dashboard</a>
 			</li>
+			{{#if user.admin}}
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" href="#" id="bootstrapDropDownNavbar" role="button" data-toggle="dropdown"
 						aria-haspopup="true" aria-expanded="false">
@@ -20,6 +21,7 @@
 						<a class="dropdown-item" href="/users"><i class="fab fa-buffer"></i> View All Users</a>
 					</div>
 			</li>
+			{{/if}}
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" href="#" id="bootstrapDropDownNavbar" role="button" data-toggle="dropdown"
 						aria-haspopup="true" aria-expanded="false">
@@ -30,70 +32,6 @@
 						<a class="dropdown-item" href="/vehicles"><i class="fab fa-buffer"></i> View All Vehicles</a>
 					</div>
 			</li>
-      
-			{{#if user.student}}
-			<li class="nav-item">
-				<a class="nav-link" href="/courses/instances">Courses</a>
-			</li>
-			{{/if}}
-
-			{{#if user.professor}}
-			<li class="nav-item">
-				<a class="nav-link" href="/courses/instances">Courses</a>
-			</li>
-			{{/if}}
-
-			{{#if user.admin}}
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="bootstrapDropDownNavbar" role="button" data-toggle="dropdown"
-						aria-haspopup="true" aria-expanded="false">
-						Course Management
-					</a>
-					<div class="dropdown-menu" aria-labelledby="bootstrapDropDownNavbar">
-						<a class="dropdown-item" href="/courses/create"><i class="fas fa-plus"></i> Create New Course</a>
-						<a class="dropdown-item" href="/courses" id="viewCourses"><i class="fab fa-buffer"></i> View All Courses</a>
-						<a class="dropdown-item" href="/courses/instances" id="viewAllCourseInstancesNavBar"><i class="fab fa-buffer"></i> View All Course Instances</a>
-					</div>
-				</li>
-
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="bootstrapDropDownNavbar" role="button" data-toggle="dropdown"
-						aria-haspopup="true" aria-expanded="false">
-						Faculty Management
-					</a>
-					<div class="dropdown-menu" aria-labelledby="bootstrapDropDownNavbar">
-						<a class="dropdown-item" href="/faculties/create" id="createFaculty"><i class="fas fa-plus"></i> Create New Faculty</a>
-						<a class="dropdown-item" href="/faculties"><i class="fab fa-buffer"></i> View All Faculties</a>
-						<a class="dropdown-item" href="/terms" id="viewTerms"><i class="fab fa-buffer"></i> View Terms</a>
-					</div>
-				</li>
-
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="bootstrapDropDownNavbar" role="button" data-toggle="dropdown"
-						aria-haspopup="true" aria-expanded="false">
-						Users
-					</a>
-					<div class="dropdown-menu" aria-labelledby="bootstrapDropDownNavbar">
-						{{!-- <a class="dropdown-item" href="/faculties/create"><i class="fas fa-plus"></i> Create New Faculty</a> --}}
-						<a class="dropdown-item" href = "/users/display-user/{{user.id}}" id = "myPage"><i class = "fas fa-plus"></i>View My Page</a>
-						<a class="dropdown-item" href = "/users/create" id = "createUser"><i class = "fas fa-plus"></i> Create New User</a>
-						<a class="dropdown-item" href="/users"><i class="fab fa-buffer" id="viewUsers"></i> View All Users</a>
-					</div>
-				</li>
-			{{/if}}
-
-			{{#unless user.professor}}
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="centralDropDown" role="button" data-toggle="dropdown"
-					aria-haspopup="true" aria-expanded="false">
-					Central
-				</a>
-				<div class="dropdown-menu" aria-labelledby="centralDropDown">
-					<a class="dropdown-item" href="/central/course-registration" id="courseRegistrationNavBar"><i class = "fas fa-plus"></i>Course Registration</a>
-					<a class="dropdown-item" href="/central/course-drop" id="dropCourse"><i class = "fas fa-minus"></i> Drop Course</a>
-				</div>
-			</li>
-			{{/unless}}
 		</ul>
 	</div>
 

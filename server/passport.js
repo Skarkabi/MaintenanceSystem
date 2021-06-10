@@ -10,8 +10,10 @@ module.exports = (passport) => {
 
   passport.deserializeUser((id, done) => Bluebird.resolve()
     .then(async () => {
-      const user = await userQueries.getUserById(id);
-
+      const dbUser = await userQueries.getUserById(id);
+      const user = { username: dbUser.username, }
+      user.id = dbUser.id;
+      Object.assign(user, getUserType(dbUser))
       done(null, user);
     })
     .catch(done));
@@ -32,4 +34,20 @@ module.exports = (passport) => {
       })
       .catch(done),
   ));
+
+  function getUserType(user)
+	{
+		const result = {};
+
+		if (user.userType === "admin")
+		{
+			result.admin = true;
+		}
+		else if (user.userType === "employee")
+		{
+			result.employee = true;
+		}
+		
+		return result;
+	}
 };

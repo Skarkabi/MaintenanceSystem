@@ -18,7 +18,7 @@ module.exports = function (passport) {
   });
   passport.deserializeUser(function (id, done) {
     return _bluebird["default"].resolve().then( /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
-      var user;
+      var dbUser, user;
       return _regenerator["default"].wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -27,10 +27,15 @@ module.exports = function (passport) {
               return _User["default"].getUserById(id);
 
             case 2:
-              user = _context.sent;
+              dbUser = _context.sent;
+              user = {
+                username: dbUser.username
+              };
+              user.id = dbUser.id;
+              Object.assign(user, getUserType(dbUser));
               done(null, user);
 
-            case 4:
+            case 7:
             case "end":
               return _context.stop();
           }
@@ -86,4 +91,16 @@ module.exports = function (passport) {
       }, _callee2);
     })))["catch"](done);
   }));
+
+  function getUserType(user) {
+    var result = {};
+
+    if (user.userType === "admin") {
+      result.admin = true;
+    } else if (user.userType === "employee") {
+      result.employee = true;
+    }
+
+    return result;
+  }
 };

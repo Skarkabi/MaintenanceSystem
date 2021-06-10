@@ -25,8 +25,8 @@
                     <td><a href="/users/display-user/{{this.id}}">{{this.lastName}}</a></td>
                     <td><a href="/users/display-user/{{this.id}}">{{this.username}}</a></td>
                     <td class = "table-actions">
-                        <a href="/users/update/{{this.id}}" id="updateUser-{{this._id}}"><i class="far fa-edit"></i> Update </a>
-                        <a href="/users/delete/{{this.id}}" id="deleteUserId-{{this._id}}" class="delete" data-confirm="Are you sure to delete {{this.firstName}} {{this.lastName}}?"><i class="fas fa-trash"></i> Delete</a>
+                        <a href="/users/update/{{this._id}}" id="updateUser-{{this._id}}"><i class="far fa-edit"></i> Update </a>
+                        <a href="/users/delete/{{this._id}}" id="deleteUserId-{{this._id}}" class="delete" data-confirm="Are you sure to delete {{this.firstName}} {{this.lastName}}?"><i class="fas fa-trash"></i> Delete</a>
                     </td>
                 </tr>
             {{/each}}

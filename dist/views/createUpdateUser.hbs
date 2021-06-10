@@ -9,13 +9,24 @@
             <div class="section-content">
                 <div class="form-row">
                     <div class="form-group col required">
-                        <label for="type">Employee ID</label>
+                        <label for="userType">Account Type</label>
+                        <select type="text" id="userType" name="userType" class="form-control" value="userType" required>
+                            <option value="" disabled selected hidden>Choose One</option>
+                            <option value="admin">Admin</option>
+                            <option value="employee">Employee</option>
+                        </select>
+                    </div>
+                    <div class="form-group col required">
+                        <label for="id">Employee ID</label>
                         {{#if isUpdate}}
                         <input type="text" value="{{existingUser.id}}" class="form-control" readonly>
                         {{else}}
                         <input type="text" placeholder = "Employee ID #" id="eID" name="eID" class="form-control" required>
                         {{/if}}
                     </div>
+                </div>
+                <div class="form-row">
+                    
                     <div class="form-group col required">
                         <label for="firstName">First Name</label>
                         <input type="text" placeholder="First Name" id="firstName" name="firstName" class="form-control" value="{{existingUser.firstName}}" required>

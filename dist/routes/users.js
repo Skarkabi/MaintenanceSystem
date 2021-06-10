@@ -128,7 +128,7 @@ router.get('/delete/:id', function (req, res, next) {
  * Creates an user.
  */
 
-router.post('/create', [(0, _expressValidator.body)('eID', "Employee ID field is mandatory").not().isEmpty(), (0, _expressValidator.body)('firstName', "First name field is mandatory").not().isEmpty(), (0, _expressValidator.body)('lastName', "Last name field is mandatory").not().isEmpty(), (0, _expressValidator.body)('username', "Username field is mandatory").not().isEmpty(), (0, _expressValidator.body)('password', "Password field is mandatory").not().isEmpty(), (0, _expressValidator.body)('password', "Password lenght should be at least 6 chars long").isLength({
+router.post('/create', [(0, _expressValidator.body)('eID', "Employee ID field is mandatory").not().isEmpty(), (0, _expressValidator.body)('firstName', "First name field is mandatory").not().isEmpty(), (0, _expressValidator.body)('lastName', "Last name field is mandatory").not().isEmpty(), (0, _expressValidator.body)('username', "Username field is mandatory").not().isEmpty(), (0, _expressValidator.body)('password', "Password lenght should be at least 6 chars long").isLength({
   min: 5
 })], function (req, res, next) {
   _User["default"].createUser(req.body).then(function () {

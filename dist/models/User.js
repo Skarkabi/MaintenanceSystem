@@ -47,6 +47,10 @@ var mappings = {
   updatedAt: {
     type: _sequelize["default"].DataTypes.DATE,
     allowNull: true
+  },
+  userType: {
+    type: _sequelize["default"].DataTypes.STRING,
+    allowNull: false
   }
 };
 
@@ -79,6 +83,10 @@ var User = _mySQLDB["default"].define('User', mappings, {
     name: 'user_updatedAt_index',
     method: 'BTREE',
     fields: ['updatedAt']
+  }, {
+    name: 'user_userType_index',
+    method: 'BTREE',
+    fields: ['userType']
   }]
 });
 /**
@@ -93,7 +101,8 @@ User.createUser = function (createdUser) {
     firstName: createdUser.firstName,
     lastName: createdUser.lastName,
     username: createdUser.username,
-    password: createdUser.password
+    password: createdUser.password,
+    userType: createdUser.userType
   };
   return new Promise(function (resolve, reject) {
     _bcrypt["default"].genSalt(10, function (err, salt) {

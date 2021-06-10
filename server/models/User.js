@@ -36,6 +36,10 @@ const mappings = {
     type: Sequelize.DataTypes.DATE,
     allowNull: true,
   },
+  userType: {
+    type: Sequelize.DataTypes.STRING,
+    allowNull: false,
+  },
 };
 
 const User = sequelize.define('User', mappings, {
@@ -75,6 +79,11 @@ const User = sequelize.define('User', mappings, {
       method: 'BTREE',
       fields: ['updatedAt'],
     },
+    {
+      name: 'user_userType_index',
+      method: 'BTREE',
+      fields: ['userType'],
+    }
   ],
 });
 
@@ -91,7 +100,8 @@ User.createUser = (createdUser) => {
     firstName: createdUser.firstName,
     lastName: createdUser.lastName,
     username: createdUser.username,
-    password: createdUser.password
+    password: createdUser.password,
+    userType: createdUser.userType,
 
   };
   

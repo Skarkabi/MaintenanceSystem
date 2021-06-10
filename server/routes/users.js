@@ -97,7 +97,6 @@ router.get('/', async (req, res, next) =>
      body('firstName', "First name field is mandatory").not().isEmpty(),
      body('lastName', "Last name field is mandatory").not().isEmpty(),
      body('username', "Username field is mandatory").not().isEmpty(),
-     body('password', "Password field is mandatory").not().isEmpty(),
      body('password', "Password lenght should be at least 6 chars long").isLength({ min: 5 })
  ], (req, res, next) =>{   
         User.createUser(req.body).then(() => {

@@ -4,52 +4,68 @@ import Bluebird from 'bluebird';
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
 import { body, validationResult } from 'express-validator';
 import Consumable from '../models/Consumables';
+import Battery from '../models/consumables/Battery';
+import Sequelize from 'sequelize';
 
 const router = express.Router();
+
+function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
+  }
+  
+  // usage example:
+  var a = ['a', 1, 'a', 2, '1'];
+  var unique = a.filter(onlyUnique);
+  
+  console.log(unique); // ['a', 1, 2, '1']
+
+
+
 
 
 router.get('/add', async (req, res, next) =>
 {
+    var batSpecs, carBrands, carYears;
+    await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `batSpec`'), 'batSpec']],raw:true, nest:true}).then(spec => {
+        batSpecs = spec
+        console.log(batSpecs);
+        
+    });
+    await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']]}).then(spec => {
+        carBrands = spec
+        console.log(carBrands);
+        
+    });
+    await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']]}).then(spec => {
+        carYears = spec
+        console.log(carYears);
+        
+    });
+    var values = {specs: batSpecs, brands: carBrands, years:carYears};
     if(req.user){
-        var d = new Date();
-        var n = d.getFullYear();
+        res.render('addConsumable', {
+            title: 'Add New Consumable',
+            jumbotronDescription: `Add a new user Consumable.`,
+            submitButtonText: 'Create',
+            action: "/consumable/add",
+            values: values,
+            msgType: req.flash()
+            
+        });
+     }
 
-        var span = [];
-        var i;
-        for(i = n - 2000; i >= 0; i--){
-            span[i] = n - i;
-            console.log("In here" + span[i]);
-        }
-        console.log(span);
-       res.render('addUpdateVehicle', {
-           title: 'Add New Vehicle',
-           jumbotronDescription: `Register a new user account.`,
-           submitButtonText: 'Create',
-           action: "/vehicles/add",
-           years: span,
-           msgType: req.flash()
-           
-       });
-    }
+    
        
    
 });
 
-router.post('/add', [
-    body('category', "Vehicle Category field is mandatory").not().isEmpty(),
-    body('brand', "Vehicle brand field is mandatory").not().isEmpty(),
-    body('model', "Vehicle model field is mandatory").not().isEmpty(),
-    body('year', "Vehicle year field is mandatory").not().isEmpty(),
-    body('plate', "Vehicle Plate # field is mandatory").not().isEmpty(),
-    body('chassis', "Vehicle Chassis # field is mandatory").not().isEmpty(),
-    body('oilType', "Vehicle Oil Type field is mandatory").not().isEmpty()
-], (req, res, next) =>{
-        Vehicle.addVehicle(req.body).then(() => {
-            req.flash('success_msg', req.body.brand + " " + req.body.model + " " + req.body.plate + " added successfully.")
-            res.redirect('/vehicles')
+router.post('/add', (req, res, next) =>{
+        Consumable.addVehicle(req.body).then(() => {
+            //req.flash('success_msg', req.body.brand + " " + req.body.model + " " + req.body.plate + " added successfully.")
+            res.redirect('/consumable/add')
         }).catch(err => {
-            req.flash('error_msg', "Vehicle could not be add (Error: " + err+ ") ");
-            res.redirect('/vehicles/add')
+            //req.flash('error_msg', "Vehicle could not be add (Error: " + err+ ") ");
+            res.redirect('/consumable/add')
         })
    });
 

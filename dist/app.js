@@ -39,12 +39,6 @@ var _expressBreadcrumbs = _interopRequireDefault(require("express-breadcrumbs"))
 
 var _allowPrototypeAccess = require("@handlebars/allow-prototype-access");
 
-var _User = _interopRequireDefault(require("./models/User"));
-
-var _Vehicle = _interopRequireDefault(require("./models/Vehicle"));
-
-var _Consumables = _interopRequireDefault(require("./models/Consumables"));
-
 var _signIn = _interopRequireDefault(require("./routes/sign-in"));
 
 var _users = _interopRequireDefault(require("./routes/users"));
@@ -185,89 +179,6 @@ app.use(_expressBreadcrumbs["default"].setHome({
 }));
 app.use('/bootstrap', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/bootstrap/dist')));
 app.use('/jquery', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/jquery/dist')));
-/** 
-app.post('/sign-in', require('./routes/sign-in'));
-app.post('/sign-out', require('./routes/sign-out'));
-app.get('/sign-in', async (req, res, next) =>
-{
-    console.log(req);
-    if (req.user)
-    {
-        console.log("I am here")
-        res.redirect('/');
-    }
-    else
-    {
-        console.log("No Actually I am here")
-        res.render('login', { title: 'Login', landingPage: true });
-    }
-});
-*/
-
-/*
-const multiHelpers = hbshelpers()
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.engine('hbs', hbs({helpers: multiHelpers, extname: 'hbs', defaultLayout: 'layout', layoutsDir: __dirname + '/views/', handlebars: allowInsecurePrototypeAccess(handlebars)}))
-app.set('view engine', 'hbs');
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../public')));
-app.use(flash());
-app.use((req, res, next) =>
-{
-res.locals.success_msg = req.flash('success_msg');
-res.locals.error_msg = req.flash('error_msg');
-res.locals.validation_error_msg = req.flash('validation_error_msg');
-res.locals.error = req.flash('error');
-next();
-});
-app.use(breadcrumbs.init());
-app.use(breadcrumbs.setHome({name: 'Dashboard', url: '/users/login'}));
-// Find all users
- /** 
-User.addUser(jane).then(result =>
-{
-    console.log(`You successfully created course ${result.code}.`);
-}).catch(err =>
-{
-    console.log(err);
-});
-*/
-
-/**
- * Passport initiliaziation and config
-
-passportConfig(passport, email => User.findOne({email: email}), id => User.findOne({ _id: id }));
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.get('*', (req, res, next) =>
-{
-    res.locals.user = req.user || null;
-    next();
-})
-**/
-
-/*
-app.use('/bootstrap', express.static(path.join(__dirname, '../node_modules/bootstrap/dist')));
-app.use('/jquery', express.static(path.join(__dirname, '../node_modules/jquery/dist')));
-
-
-//app.use('/', dashboardRouter);
-app.use('/', usersRouter);
-/** 
-app.use('/courses', coursesRouter);
-app.use('/faculties', facultiesRouter);
-app.use('/gradeBooks', gradeBooksRouter);
-app.use('/central', centralRouter);
-app.use('/terms', termsRouter);
-*/
-// catch 404 and forward to error handler.
-
 app.use(function (req, res, next) {
   next((0, _httpErrors["default"])(404));
 });

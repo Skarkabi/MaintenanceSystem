@@ -57,6 +57,10 @@ var Consumable = _mySQLDB["default"].define('consumable_stocks', mappings, {
     method: 'BTREE',
     fields: ['id']
   }, {
+    name: 'consumable_category_index',
+    method: 'BTREE',
+    fields: ['category']
+  }, {
     name: 'consumable_quantity_index',
     method: 'BTREE',
     fields: ['quantity']

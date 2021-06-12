@@ -21,38 +21,76 @@ var _expressValidator = require("express-validator");
 
 var _Consumables = _interopRequireDefault(require("../models/Consumables"));
 
+var _Battery = _interopRequireDefault(require("../models/consumables/Battery"));
+
+var _sequelize = _interopRequireDefault(require("sequelize"));
+
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
 var router = _express["default"].Router();
 
+function onlyUnique(value, index, self) {
+  return self.indexOf(value) === index;
+} // usage example:
+
+
+var a = ['a', 1, 'a', 2, '1'];
+var unique = a.filter(onlyUnique);
+console.log(unique); // ['a', 1, 2, '1']
+
 router.get('/add', /*#__PURE__*/function () {
   var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(req, res, next) {
-    var d, n, span, i;
+    var batSpecs, carBrands, carYears, values;
     return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
+            _context.next = 2;
+            return _Battery["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `batSpec`'), 'batSpec']],
+              raw: true,
+              nest: true
+            }).then(function (spec) {
+              batSpecs = spec;
+              console.log(batSpecs);
+            });
+
+          case 2:
+            _context.next = 4;
+            return _Battery["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
+            }).then(function (spec) {
+              carBrands = spec;
+              console.log(carBrands);
+            });
+
+          case 4:
+            _context.next = 6;
+            return _Battery["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
+            }).then(function (spec) {
+              carYears = spec;
+              console.log(carYears);
+            });
+
+          case 6:
+            values = {
+              specs: batSpecs,
+              brands: carBrands,
+              years: carYears
+            };
+
             if (req.user) {
-              d = new Date();
-              n = d.getFullYear();
-              span = [];
-
-              for (i = n - 2000; i >= 0; i--) {
-                span[i] = n - i;
-                console.log("In here" + span[i]);
-              }
-
-              console.log(span);
-              res.render('addUpdateVehicle', {
-                title: 'Add New Vehicle',
-                jumbotronDescription: "Register a new user account.",
+              res.render('addConsumable', {
+                title: 'Add New Consumable',
+                jumbotronDescription: "Add a new user Consumable.",
                 submitButtonText: 'Create',
-                action: "/vehicles/add",
-                years: span,
+                action: "/consumable/add",
+                values: values,
                 msgType: req.flash()
               });
             }
 
-          case 1:
+          case 8:
           case "end":
             return _context.stop();
         }
@@ -64,13 +102,13 @@ router.get('/add', /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }());
-router.post('/add', [(0, _expressValidator.body)('category', "Vehicle Category field is mandatory").not().isEmpty(), (0, _expressValidator.body)('brand', "Vehicle brand field is mandatory").not().isEmpty(), (0, _expressValidator.body)('model', "Vehicle model field is mandatory").not().isEmpty(), (0, _expressValidator.body)('year', "Vehicle year field is mandatory").not().isEmpty(), (0, _expressValidator.body)('plate', "Vehicle Plate # field is mandatory").not().isEmpty(), (0, _expressValidator.body)('chassis', "Vehicle Chassis # field is mandatory").not().isEmpty(), (0, _expressValidator.body)('oilType', "Vehicle Oil Type field is mandatory").not().isEmpty()], function (req, res, next) {
-  Vehicle.addVehicle(req.body).then(function () {
-    req.flash('success_msg', req.body.brand + " " + req.body.model + " " + req.body.plate + " added successfully.");
-    res.redirect('/vehicles');
+router.post('/add', function (req, res, next) {
+  _Consumables["default"].addVehicle(req.body).then(function () {
+    //req.flash('success_msg', req.body.brand + " " + req.body.model + " " + req.body.plate + " added successfully.")
+    res.redirect('/consumable/add');
   })["catch"](function (err) {
-    req.flash('error_msg', "Vehicle could not be add (Error: " + err + ") ");
-    res.redirect('/vehicles/add');
+    //req.flash('error_msg', "Vehicle could not be add (Error: " + err+ ") ");
+    res.redirect('/consumable/add');
   });
 });
 router.get('/display-vehicle/:id', /*#__PURE__*/function () {

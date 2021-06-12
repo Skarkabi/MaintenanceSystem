@@ -1,0 +1,67 @@
+<div class="col-md-12" onload="showAddPage()">
+    <form action="{{action}}" method="POST">
+        {{!-- User Information --}}
+        <div class="section-wrapper">
+            <div class="section-title">
+                <h4><i class="fas fa-gas-pump"></i> Consumable Information</h4>
+                <hr class="my-3">
+            </div>
+            <div class="section-content">
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="type">Category</label>
+                        <select type="text" placeholder = "Vehicle Category" id="category" name="category" class="form-control" onChange="showAddPage()" required>
+                            <option value="" disabled selected hidden>Choose One</option>
+                            <option value="battery">Battery</option>
+                            <option value="brake">Brake</option>
+                            <option value="filter">Filter</option>
+                            <option value="grease">Grease</option>
+                            <option value="oil">Oil</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div  class="section-content" id="battery">
+               {{>addBatteries}}
+            </div>
+             <div  class="section-content" id="brake">
+               {{>addBrakes}}
+            </div>
+            <div  class="section-content" id="filter">
+               {{>addFilters}}
+            </div>
+            <div  class="section-content" id="grease">
+               {{>addGrease}}
+            </div>
+            <div  class="section-content" id="oil">
+               {{>addOil}}
+            </div>
+        </div>
+        <button type="submit" id="submit" name="submit" class="btn btn-primary justfiy-content-end"><i class="far fa-save"></i> {{submitButtonText}}</button>
+    </form>
+</div>
+
+<script>
+    document.onload=hideAddPage();
+
+    function hideAddPage(){
+        document.getElementById("brake").style.display ="none";
+        document.getElementById("battery").style.display ="none";
+        document.getElementById("filter").style.display ="none";
+        document.getElementById("oil").style.display ="none";
+        document.getElementById("grease").style.display ="none";
+    }
+    function showAddPage() {
+        var category = document.getElementById("category");
+        var x = document.getElementById(category.value);
+        document.getElementById("brake").style.display ="none";
+        document.getElementById("battery").style.display ="none";
+        document.getElementById("filter").style.display ="none";
+        document.getElementById("oil").style.display ="none";
+        document.getElementById("grease").style.display ="none";
+        if (x.style.display === "none") {
+            console.log(category.value);
+             x.style.display = "block";
+        }
+    }
+</script>

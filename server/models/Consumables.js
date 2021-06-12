@@ -41,6 +41,11 @@ const Consumable = sequelize.define('consumable_stocks', mappings, {
       fields: ['id'],
     },
     {
+        name: 'consumable_category_index',
+        method: 'BTREE',
+        fields: ['category']
+    },
+    {
       name: 'consumable_quantity_index',
       method: 'BTREE',
       fields: ['quantity'],

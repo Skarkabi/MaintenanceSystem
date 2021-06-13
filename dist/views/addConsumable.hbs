@@ -10,8 +10,8 @@
                 <div class="form-row">
                     <div class="form-group col required">
                         <label for="type">Category</label>
-                        <select type="text" placeholder = "Vehicle Category" id="category" name="category" class="form-control" onChange="showAddPage()" required>
-                            <option value="" disabled selected hidden>Choose One</option>
+                        <select type="text" placeholder = "Consumable Category" id="category" name="category" class="form-control" onChange="showAddPage()" required>
+                            <option value="" disabled selected>Choose One</option>
                             <option value="battery">Battery</option>
                             <option value="brake">Brake</option>
                             <option value="filter">Filter</option>
@@ -19,12 +19,23 @@
                             <option value="oil">Oil</option>
                         </select>
                     </div>
+                    <div class="form-group col required">
+                        <label for="existing">New Or Existing Item</label>
+                        <select type="text" placeholder="Existing Or New" id="existing" name="existing" class="form-control" onChange="showAddPage()">
+                            <option value="" disabled selected>Choose One</option>
+                            <option value="new">New Item</option>
+                            <option value="existing">Existing Item</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            <div  class="section-content" id="battery">
+            <div  class="section-content" id="batterynew">
                {{>addBatteries}}
             </div>
-             <div  class="section-content" id="brake">
+            <div  class="section-content" id="batteryexisting">
+               {{>batteriesTable}}
+            </div>
+             <div  class="section-content" id="brakenew">
                {{>addBrakes}}
             </div>
             <div  class="section-content" id="filter">
@@ -45,23 +56,29 @@
     document.onload=hideAddPage();
 
     function hideAddPage(){
-        document.getElementById("brake").style.display ="none";
-        document.getElementById("battery").style.display ="none";
+        document.getElementById("brakenew").style.display ="none";
+        document.getElementById("batterynew").style.display ="none";
+        document.getElementById("batteryexisting").style.display ="none";
         document.getElementById("filter").style.display ="none";
         document.getElementById("oil").style.display ="none";
         document.getElementById("grease").style.display ="none";
     }
     function showAddPage() {
         var category = document.getElementById("category");
-        var x = document.getElementById(category.value);
-        document.getElementById("brake").style.display ="none";
-        document.getElementById("battery").style.display ="none";
+        var existing = document.getElementById("existing");
+        var x = document.getElementById(category.value + existing.value);
+        document.getElementById("brakenew").style.display ="none";
+        document.getElementById("batterynew").style.display ="none";
+        document.getElementById("batteryexisting").style.display ="none";
         document.getElementById("filter").style.display ="none";
         document.getElementById("oil").style.display ="none";
         document.getElementById("grease").style.display ="none";
-        if (x.style.display === "none") {
-            console.log(category.value);
-             x.style.display = "block";
+        if(category.value !== "" && existing.value !== ""){
+            if (x.style.display === "none") {
+                console.log(category.value + existing.value);
+                x.style.display = "block";
+            }
         }
+        
     }
 </script>

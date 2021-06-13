@@ -15,6 +15,7 @@
             </tr>
         </thead>
         <tbody>
+            {{#if (isdefined page "view")}}
             {{#each consumables}}
                 <tr>
                     <th>{{counter @index}}</th>
@@ -28,6 +29,7 @@
                     <td>{{this.totalCosr}}</td>
                 </tr>
             {{/each}}
+            {{/if}}
         </tbody>
     </table>
 </div>

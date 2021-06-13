@@ -38,6 +38,16 @@ handlebars.registerHelper('lowerCase', function (value){
     return value.toLowerCase();
 })
 
+handlebars.registerHelper('changeValue', function(variable, value){
+    variable = value;
+    console.log("Value is now " + variable)
+    return variable = value;
+})
+
+handlebars.registerHelper('console', function (value){
+    return console.log("Outputting " + JSON.stringify(value));
+})
+
 const app = express();
 
 const multiHelpers = hbshelpers()

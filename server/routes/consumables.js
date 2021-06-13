@@ -5,6 +5,7 @@ import Bluebird from 'bluebird';
 import { body, validationResult } from 'express-validator';
 import Consumable from '../models/Consumables';
 import Battery from '../models/consumables/Battery';
+import Brake from '../models/consumables/Brake';
 import Sequelize from 'sequelize';
 
 const router = express.Router();
@@ -21,11 +22,13 @@ function onlyUnique(value, index, self) {
 
 
 
-
-
-router.get('/add', async (req, res, next) =>
-{
-    var batSpecs, carBrands, carYears;
+async function getBatteryStocks(){
+    var batteriesC, batSpecs, carBrands, carYears, batteryQuantity;
+    await Consumable.getSpecific("battery").then(consumables => {
+        console.log(consumables);
+        batteriesC = consumables
+    });
+    
     await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `batSpec`'), 'batSpec']],raw:true, nest:true}).then(spec => {
         batSpecs = spec
         console.log(batSpecs);
@@ -41,16 +44,88 @@ router.get('/add', async (req, res, next) =>
         console.log(carYears);
         
     });
-    var values = {specs: batSpecs, brands: carBrands, years:carYears};
+    var values = {
+        consumable: batteriesC.rows, specs: batSpecs, brands: carBrands, years:carYears
+    }
+    return values;
+}
+
+async function getBrakeStock(){
+    var brakeC, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity;
+    await Consumable.getSpecific("brake").then(consumables => {
+        console.log(consumables);
+        brakeC = consumables
+    });
+    
+    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `category`'), 'category']],raw:true, nest:true}).then(category => {
+        brakeCategory = category 
+        console.log("B = " + JSON.stringify(brakeCategory));
+    });
+
+    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']]}).then(spec => {
+        brakeCBrand = spec
+        
+    });
+    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']]}).then(spec => {
+        brakeCYear = spec
+    });
+
+    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `chassis`'), 'chassis']]}).then(spec => {
+        brakeCChassis = spec
+        
+    });
+    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `bBrand`'), 'bBrand']]}).then(spec => {
+        brakeBrand = spec
+    });
+
+    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `preferredBrand`'), 'preferredBrand']]}).then(spec => {
+        brakePBrand = spec
+        
+    });
+    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `quantity`'), 'quantity']]}).then(spec => {
+        brakeQuantity = spec
+    });
+
+    var values = {
+        consumable: brakeC.rows, brakeCategory: brakeCategory, brakeCBrand: brakeCBrand, brakeCYear: brakeCYear,
+        brakeCChassis: brakeCChassis, brakeBrand: brakeBrand, brakePBrand: brakePBrand, brakeQuantity: brakeQuantity
+    };
+
+    return values;
+
+}
+
+async function getStocks(){
+    var batteries, brakes;
+    await getBatteryStocks().then(values =>{
+        batteries = values;
+    });
+
+    await getBrakeStock().then(values =>{
+        brakes = values;
+    })
+
+    var values = {batteries: batteries, brakes: brakes};
+    return values
+}
+
+router.get('/add', async (req, res, next) =>
+{
+
+    
+   
     if(req.user){
-        res.render('addConsumable', {
-            title: 'Add New Consumable',
-            jumbotronDescription: `Add a new user Consumable.`,
-            submitButtonText: 'Create',
-            action: "/consumable/add",
-            values: values,
-            msgType: req.flash()
-            
+        getStocks().then(values =>{
+            res.render('addConsumable', {
+                title: 'Add New Consumable',
+                jumbotronDescription: `Add a new user Consumable.`,
+                submitButtonText: 'Create',
+                action: "/consumable/add",
+                values: values,
+                page: "add",
+                msgType: req.flash()
+                
+            });
         });
      }
 
@@ -150,6 +225,7 @@ router.get('/:category', async (req, res, next) =>{
                 typeOf: req.params.category,
                 jumbotronDescription: "View all " + req.params.category + " in the system.",
                 consumables: consumables.rows,
+                page: "view",
                 msgType: req.flash()
             });
         })

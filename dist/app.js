@@ -66,6 +66,16 @@ _handlebars["default"].registerHelper('lowerCase', function (value) {
   return value.toLowerCase();
 });
 
+_handlebars["default"].registerHelper('changeValue', function (variable, value) {
+  variable = value;
+  console.log("Value is now " + variable);
+  return variable = value;
+});
+
+_handlebars["default"].registerHelper('console', function (value) {
+  return console.log("Outputting " + JSON.stringify(value));
+});
+
 var app = (0, _express["default"])();
 var multiHelpers = (0, _handlebarsHelpers["default"])(); // view engine setup
 

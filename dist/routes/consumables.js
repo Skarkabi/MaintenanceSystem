@@ -23,6 +23,8 @@ var _Consumables = _interopRequireDefault(require("../models/Consumables"));
 
 var _Battery = _interopRequireDefault(require("../models/consumables/Battery"));
 
+var _Brake = _interopRequireDefault(require("../models/consumables/Brake"));
+
 var _sequelize = _interopRequireDefault(require("sequelize"));
 
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
@@ -37,14 +39,25 @@ var a = ['a', 1, 'a', 2, '1'];
 var unique = a.filter(onlyUnique);
 console.log(unique); // ['a', 1, 2, '1']
 
-router.get('/add', /*#__PURE__*/function () {
-  var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(req, res, next) {
-    var batSpecs, carBrands, carYears, values;
-    return _regenerator["default"].wrap(function _callee$(_context) {
+function getBatteryStocks() {
+  return _getBatteryStocks.apply(this, arguments);
+}
+
+function _getBatteryStocks() {
+  _getBatteryStocks = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
+    var batteriesC, batSpecs, carBrands, carYears, batteryQuantity, values;
+    return _regenerator["default"].wrap(function _callee5$(_context5) {
       while (1) {
-        switch (_context.prev = _context.next) {
+        switch (_context5.prev = _context5.next) {
           case 0:
-            _context.next = 2;
+            _context5.next = 2;
+            return _Consumables["default"].getSpecific("battery").then(function (consumables) {
+              console.log(consumables);
+              batteriesC = consumables;
+            });
+
+          case 2:
+            _context5.next = 4;
             return _Battery["default"].findAll({
               attributes: [[_sequelize["default"].literal('DISTINCT `batSpec`'), 'batSpec']],
               raw: true,
@@ -54,8 +67,8 @@ router.get('/add', /*#__PURE__*/function () {
               console.log(batSpecs);
             });
 
-          case 2:
-            _context.next = 4;
+          case 4:
+            _context5.next = 6;
             return _Battery["default"].findAll({
               attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
             }).then(function (spec) {
@@ -63,8 +76,8 @@ router.get('/add', /*#__PURE__*/function () {
               console.log(carBrands);
             });
 
-          case 4:
-            _context.next = 6;
+          case 6:
+            _context5.next = 8;
             return _Battery["default"].findAll({
               attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
             }).then(function (spec) {
@@ -72,25 +85,184 @@ router.get('/add', /*#__PURE__*/function () {
               console.log(carYears);
             });
 
-          case 6:
+          case 8:
             values = {
+              consumable: batteriesC.rows,
               specs: batSpecs,
               brands: carBrands,
               years: carYears
             };
+            return _context5.abrupt("return", values);
 
+          case 10:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5);
+  }));
+  return _getBatteryStocks.apply(this, arguments);
+}
+
+function getBrakeStock() {
+  return _getBrakeStock.apply(this, arguments);
+}
+
+function _getBrakeStock() {
+  _getBrakeStock = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6() {
+    var brakeC, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity, values;
+    return _regenerator["default"].wrap(function _callee6$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            _context6.next = 2;
+            return _Consumables["default"].getSpecific("brake").then(function (consumables) {
+              console.log(consumables);
+              brakeC = consumables;
+            });
+
+          case 2:
+            _context6.next = 4;
+            return _Brake["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `category`'), 'category']],
+              raw: true,
+              nest: true
+            }).then(function (category) {
+              brakeCategory = category;
+              console.log("B = " + JSON.stringify(brakeCategory));
+            });
+
+          case 4:
+            _context6.next = 6;
+            return _Brake["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
+            }).then(function (spec) {
+              brakeCBrand = spec;
+            });
+
+          case 6:
+            _context6.next = 8;
+            return _Brake["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
+            }).then(function (spec) {
+              brakeCYear = spec;
+            });
+
+          case 8:
+            _context6.next = 10;
+            return _Brake["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `chassis`'), 'chassis']]
+            }).then(function (spec) {
+              brakeCChassis = spec;
+            });
+
+          case 10:
+            _context6.next = 12;
+            return _Brake["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `bBrand`'), 'bBrand']]
+            }).then(function (spec) {
+              brakeBrand = spec;
+            });
+
+          case 12:
+            _context6.next = 14;
+            return _Brake["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `preferredBrand`'), 'preferredBrand']]
+            }).then(function (spec) {
+              brakePBrand = spec;
+            });
+
+          case 14:
+            _context6.next = 16;
+            return _Brake["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `quantity`'), 'quantity']]
+            }).then(function (spec) {
+              brakeQuantity = spec;
+            });
+
+          case 16:
+            values = {
+              consumable: brakeC.rows,
+              brakeCategory: brakeCategory,
+              brakeCBrand: brakeCBrand,
+              brakeCYear: brakeCYear,
+              brakeCChassis: brakeCChassis,
+              brakeBrand: brakeBrand,
+              brakePBrand: brakePBrand,
+              brakeQuantity: brakeQuantity
+            };
+            return _context6.abrupt("return", values);
+
+          case 18:
+          case "end":
+            return _context6.stop();
+        }
+      }
+    }, _callee6);
+  }));
+  return _getBrakeStock.apply(this, arguments);
+}
+
+function getStocks() {
+  return _getStocks.apply(this, arguments);
+}
+
+function _getStocks() {
+  _getStocks = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7() {
+    var batteries, brakes, values;
+    return _regenerator["default"].wrap(function _callee7$(_context7) {
+      while (1) {
+        switch (_context7.prev = _context7.next) {
+          case 0:
+            _context7.next = 2;
+            return getBatteryStocks().then(function (values) {
+              batteries = values;
+            });
+
+          case 2:
+            _context7.next = 4;
+            return getBrakeStock().then(function (values) {
+              brakes = values;
+            });
+
+          case 4:
+            values = {
+              batteries: batteries,
+              brakes: brakes
+            };
+            return _context7.abrupt("return", values);
+
+          case 6:
+          case "end":
+            return _context7.stop();
+        }
+      }
+    }, _callee7);
+  }));
+  return _getStocks.apply(this, arguments);
+}
+
+router.get('/add', /*#__PURE__*/function () {
+  var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(req, res, next) {
+    return _regenerator["default"].wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
             if (req.user) {
-              res.render('addConsumable', {
-                title: 'Add New Consumable',
-                jumbotronDescription: "Add a new user Consumable.",
-                submitButtonText: 'Create',
-                action: "/consumable/add",
-                values: values,
-                msgType: req.flash()
+              getStocks().then(function (values) {
+                res.render('addConsumable', {
+                  title: 'Add New Consumable',
+                  jumbotronDescription: "Add a new user Consumable.",
+                  submitButtonText: 'Create',
+                  action: "/consumable/add",
+                  values: values,
+                  page: "add",
+                  msgType: req.flash()
+                });
               });
             }
 
-          case 8:
+          case 1:
           case "end":
             return _context.stop();
         }
@@ -225,6 +397,7 @@ router.get('/:category', /*#__PURE__*/function () {
                   typeOf: req.params.category,
                   jumbotronDescription: "View all " + req.params.category + " in the system.",
                   consumables: consumables.rows,
+                  page: "view",
                   msgType: req.flash()
                 });
               });

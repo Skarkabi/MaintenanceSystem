@@ -12,6 +12,7 @@
             </tr>
         </thead>
         <tbody>
+            {{#if (isdefined page "view")}}
             {{#each consumables}}
                 <tr>
                     <th>{{counter @index}}</th>
@@ -22,6 +23,7 @@
                     <td>{{this.volume}}</td>
                 </tr>
             {{/each}}
+            {{/if}}
         </tbody>
     </table>
 </div>

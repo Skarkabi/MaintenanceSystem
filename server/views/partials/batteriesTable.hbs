@@ -11,7 +11,9 @@
             </tr>
         </thead>
         <tbody>
-            {{#each consumables}}
+            {{console consumables}}
+            {{#if (isdefined page "view")}}
+                {{#each consumables}}
                 <tr>
                     <th>{{counter @index}}</th>
                     <td>{{this.batSpec}}</th>
@@ -19,7 +21,21 @@
                     <td>{{this.carYear}}</td>
                     <td>{{this.quantity}}</td>
                 </tr>
-            {{/each}}
+                {{/each}}
+            {{/if}}
+
+            {{#if (isdefined page "add")}}
+                {{#each values.batteries.consumable}}
+                <tr>
+                    <th>{{counter @index}}</th>
+                    <td>{{this.batSpec}}</th>
+                    <td>{{this.carBrand}}</td>
+                    <td>{{this.carYear}}</td>
+                    <td>{{this.quantity}}</td>
+                </tr>
+                {{/each}}
+            {{/if}}
+            
         </tbody>
     </table>
 </div>

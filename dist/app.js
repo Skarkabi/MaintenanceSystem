@@ -76,6 +76,10 @@ _handlebars["default"].registerHelper('console', function (value) {
   return console.log("Outputting " + JSON.stringify(value));
 });
 
+_handlebars["default"].registerHelper('convertToString', function (value) {
+  return JSON.stringify(value);
+});
+
 var app = (0, _express["default"])();
 var multiHelpers = (0, _handlebarsHelpers["default"])(); // view engine setup
 

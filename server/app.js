@@ -48,6 +48,10 @@ handlebars.registerHelper('console', function (value){
     return console.log("Outputting " + JSON.stringify(value));
 })
 
+handlebars.registerHelper('convertToString', function (value){
+    return JSON.stringify(value);
+})
+
 const app = express();
 
 const multiHelpers = hbshelpers()

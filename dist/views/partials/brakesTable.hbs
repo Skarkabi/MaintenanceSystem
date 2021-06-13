@@ -1,5 +1,5 @@
 <div class="col-md-12">
-    <table id="batteries-table" class="table table-bordered table-striped">
+    <table id="filterable-table" class="table table-bordered table-striped">
         <thead>
             <tr>
                 <th scope="col">#</th>
@@ -9,8 +9,13 @@
                 <th scope="col">Chassis #</th>
                 <th scope="col">Battery Brand</th>
                 <th scope="col">Quantity (Boxes)</th>
+                {{#if (isdefined page "view")}}
                 <th scope="col">Single Cost</th>
                 <th scope="col">Total Cost</th>
+                {{/if}}
+                {{#if (isdefined page "add")}}
+                <th scope"col">Actoin</th>
+                {{/if}}
                 
             </tr>
         </thead>
@@ -29,6 +34,28 @@
                     <td>{{this.totalCosr}}</td>
                 </tr>
             {{/each}}
+            {{/if}}
+
+             {{#if (isdefined page "add")}}
+                {{#each values.brakes.consumable}}
+                <tr>
+                   <th>{{counter @index}}</th>
+                    <td>{{this.category}}</th>
+                    <td>{{this.carBrand}}</td>
+                    <td>{{this.carYear}}</td>
+                    <td>{{this.chassis}}</td>
+                    <td>{{this.bBrand}}</td>
+                    <td>{{this.quantity}}</td>
+                    <td class = "table-actions">
+                        <div class="input-group">
+                            <input type="number" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary btn-sm" type="button"><i class="fas fa-plus-circle"></i></button>
+                            </div>
+                        </div>
+                    </td>  
+                </tr>
+                {{/each}}
             {{/if}}
         </tbody>
     </table>

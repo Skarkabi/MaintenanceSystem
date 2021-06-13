@@ -1,5 +1,5 @@
 <div class="col-md-12" onload="showAddPage()">
-    <form action="{{action}}" method="POST">
+    <form action="{{action}}" method="POST" id="mainForm" novalidate>
         {{!-- User Information --}}
         <div class="section-wrapper">
             <div class="section-title">
@@ -8,9 +8,9 @@
             </div>
             <div class="section-content">
                 <div class="form-row">
-                    <div class="form-group col required">
+                    <div class="form-group col">
                         <label for="type">Category</label>
-                        <select type="text" placeholder = "Consumable Category" id="category" name="category" class="form-control" onChange="showAddPage()" required>
+                        <select type="text" placeholder = "Consumable Category" id="category" name="category" class="form-control" onChange="showAddPage()">
                             <option value="" disabled selected>Choose One</option>
                             <option value="battery">Battery</option>
                             <option value="brake">Brake</option>
@@ -19,7 +19,7 @@
                             <option value="oil">Oil</option>
                         </select>
                     </div>
-                    <div class="form-group col required">
+                    <div class="form-group col">
                         <label for="existing">New Or Existing Item</label>
                         <select type="text" placeholder="Existing Or New" id="existing" name="existing" class="form-control" onChange="showAddPage()">
                             <option value="" disabled selected>Choose One</option>
@@ -38,6 +38,9 @@
              <div  class="section-content" id="brakenew">
                {{>addBrakes}}
             </div>
+            <div  class="section-content" id="brakeexisting">
+               {{>brakesTable}}
+            </div>
             <div  class="section-content" id="filter">
                {{>addFilters}}
             </div>
@@ -48,26 +51,33 @@
                {{>addOil}}
             </div>
         </div>
-        <button type="submit" id="submit" name="submit" class="btn btn-primary justfiy-content-end"><i class="far fa-save"></i> {{submitButtonText}}</button>
+        <button type="submit" id="submit" name="submit" class="btn btn-primary justfiy-content-end" onclick="addType()"><i class="far fa-save"></i> {{submitButtonText}}</button>
     </form>
 </div>
 
 <script>
     document.onload=hideAddPage();
 
+    function addType(){
+        document.getElementById("mainForm").action = "/consumables/add/" + document.getElementById("category").value;
+   
+    }
     function hideAddPage(){
         document.getElementById("brakenew").style.display ="none";
+        document.getElementById("brakeexisting").style.display ="none";
         document.getElementById("batterynew").style.display ="none";
         document.getElementById("batteryexisting").style.display ="none";
         document.getElementById("filter").style.display ="none";
         document.getElementById("oil").style.display ="none";
         document.getElementById("grease").style.display ="none";
+        document.getElementById("submit").style.display = "none";
     }
     function showAddPage() {
         var category = document.getElementById("category");
         var existing = document.getElementById("existing");
         var x = document.getElementById(category.value + existing.value);
         document.getElementById("brakenew").style.display ="none";
+        document.getElementById("brakeexisting").style.display ="none";
         document.getElementById("batterynew").style.display ="none";
         document.getElementById("batteryexisting").style.display ="none";
         document.getElementById("filter").style.display ="none";
@@ -78,6 +88,12 @@
                 console.log(category.value + existing.value);
                 x.style.display = "block";
             }
+        }
+
+        if(existing.value === "existing"){
+           document.getElementById("submit").style.display = "none";
+        }else if(category.value !== "" && existing.value !== ""){
+            document.getElementById("submit").style.display = "block";
         }
         
     }

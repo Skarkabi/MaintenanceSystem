@@ -17,6 +17,8 @@ var _sequelize = _interopRequireDefault(require("sequelize"));
 
 var _mySQLDB = _interopRequireDefault(require("../../mySQLDB"));
 
+var _express = require("express");
+
 var mappings = {
   id: {
     type: _sequelize["default"].INTEGER,
@@ -88,6 +90,63 @@ var Battery = _mySQLDB["default"].define('battery_stocks', mappings, {
     fields: ['updatedAt']
   }]
 });
+
+Battery.addBattery = function (newBattery) {
+  console.log(newBattery);
+  return new Promise(function (resolve, reject) {
+    if (newBattery.id) {
+      Battery.findOne({
+        where: {
+          id: newBattery.id
+        }
+      }).then(function (foundBattery) {
+        var quant = parseInt(newBattery.quantity) + foundBattery.quantity;
+        resolve(Battery.update({
+          quantity: quant
+        }, {
+          where: {
+            id: newBattery.id
+          }
+        }));
+      })["catch"](function (err) {
+        console.log(err);
+      });
+    } else {
+      Battery.findOne({
+        where: {
+          batSpec: newBattery.batSpec,
+          carBrand: newBattery.carBrand,
+          carYear: newBattery.carYear
+        }
+      }).then(function (foundBattery) {
+        console.log(JSON.stringify(foundBattery));
+
+        if (foundBattery) {
+          var quant = parseInt(newBattery.quantity) + foundBattery.quantity;
+          console.log("adding " + quant);
+          resolve(Battery.update({
+            quantity: quant
+          }, {
+            where: {
+              batSpec: newBattery.batSpec,
+              carBrand: newBattery.carBrand,
+              carYear: newBattery.carYear
+            }
+          }));
+        } else {
+          console.log("Adding this " + JSON.stringify(newBattery));
+          resolve(Battery.create(newBattery).then(function () {
+            console.log("created");
+          })["catch"](function (err) {
+            console.log(err);
+          }));
+        }
+      })["catch"](function (err) {
+        reject(err);
+      });
+    }
+  });
+};
 
 var _default = Battery;
 exports["default"] = _default;

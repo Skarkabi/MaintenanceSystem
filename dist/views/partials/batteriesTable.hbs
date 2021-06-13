@@ -1,5 +1,5 @@
 <div class="col-md-12">
-    <table id="batteries-table" class="table table-bordered table-striped">
+    <table id="filterable-table" class="table table-bordered table-striped">
         <thead>
             <tr>
                 <th scope="col">#</th>
@@ -7,6 +7,9 @@
                 <th scope="col">Car Brand</th>
                 <th scope="col">Car Year</th>
                 <th scope="col">Quantity (Boxes)</th>
+                 {{#if (isdefined page "add")}}
+                <th scope="col">Action</th>
+                 {{/if}}
                 
             </tr>
         </thead>
@@ -32,6 +35,14 @@
                     <td>{{this.carBrand}}</td>
                     <td>{{this.carYear}}</td>
                     <td>{{this.quantity}}</td>
+                    <td class = "table-actions">
+                        <div class="input-group">
+                            <input type="number" id="tableQuantity-{{this.id}}" name="tableQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <a href="/consumables/update-battery/{{this.id}}/" + "getQuantity({{this.id}})" class="btn btn-primary" role="button"  id="update-{{this.id}}"><i class="fas fa-plus-circle"></i></a>
+                            </div>
+                        </div>
+                    </td>  
                 </tr>
                 {{/each}}
             {{/if}}
@@ -39,3 +50,9 @@
         </tbody>
     </table>
 </div>
+
+<script>
+    function getQuantity(id){
+        return document.getElementById("tableQuantity-" + id).value
+    }
+</script>

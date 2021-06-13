@@ -67,7 +67,7 @@ Consumable.addConsumable = (createConsumable) => {
     const newConsumable = 
     {
       category: createConsumable.category,
-      quantity: createConsumable.quantity
+      quantity: parseInt(createConsumable.quantity)
     }
     console.log(newConsumable);
     return new Promise ((resolve, reject) => {

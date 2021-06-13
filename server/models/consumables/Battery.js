@@ -4,6 +4,7 @@ import Bluebird from 'bluebird';
 import Sequelize from 'sequelize';
 
 import sequelize from '../../mySQLDB';
+import { response } from 'express';
 
 const mappings = {
     id: {
@@ -85,5 +86,56 @@ const Battery = sequelize.define('battery_stocks', mappings, {
     },
   ],
 });
+
+Battery.addBattery = (newBattery) =>{
+    console.log(newBattery);
+    return new Promise((resolve, reject) => {
+        if(newBattery.id){
+            Battery.findOne({
+                where: {id: newBattery.id} 
+            }).then(foundBattery =>{
+                var quant = parseInt(newBattery.quantity) + foundBattery.quantity;
+                resolve(Battery.update({quantity: quant}, {
+                    where: {
+                        id: newBattery.id
+                    }
+                }));
+            }).catch(err=>{
+                console.log(err);
+            })
+        }else{
+            Battery.findOne({
+                where: {
+                    batSpec: newBattery.batSpec,
+                    carBrand: newBattery.carBrand,
+                    carYear: newBattery.carYear
+                }
+            }).then(foundBattery => {
+                console.log(JSON.stringify(foundBattery));
+                if(foundBattery){
+                    var quant = parseInt(newBattery.quantity) + foundBattery.quantity;
+                    console.log("adding " + quant);
+                    resolve(Battery.update({quantity: quant}, {
+                        where: {
+                            batSpec: newBattery.batSpec,
+                            carBrand: newBattery.carBrand,
+                            carYear: newBattery.carYear
+                        }
+                    }));
+                }else{
+                    console.log("Adding this " + JSON.stringify(newBattery));
+                    resolve(Battery.create(newBattery).then(()=> {
+                        console.log("created")
+                    }).catch(err =>{
+                        console.log(err);
+                    }));
+                }
+            }).catch(err =>{
+                reject(err);
+            });
+        }
+        
+    });
+}
 
 export default Battery;

@@ -2,11 +2,12 @@ import express from 'express';
 import passport from 'passport';
 import Bluebird from 'bluebird';
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
-import { body, validationResult } from 'express-validator';
+import { body, validationResult,check } from 'express-validator';
 import Consumable from '../models/Consumables';
 import Battery from '../models/consumables/Battery';
 import Brake from '../models/consumables/Brake';
 import Sequelize from 'sequelize';
+import { NetworkAuthenticationRequire } from 'http-errors';
 
 const router = express.Router();
 
@@ -111,16 +112,14 @@ async function getStocks(){
 
 router.get('/add', async (req, res, next) =>
 {
-
-    
-   
     if(req.user){
         getStocks().then(values =>{
+            console.log(JSON.stringify(values));
             res.render('addConsumable', {
                 title: 'Add New Consumable',
                 jumbotronDescription: `Add a new user Consumable.`,
                 submitButtonText: 'Create',
-                action: "/consumable/add",
+                action: "/consumables/add",
                 values: values,
                 page: "add",
                 msgType: req.flash()
@@ -135,14 +134,70 @@ router.get('/add', async (req, res, next) =>
 });
 
 router.post('/add', (req, res, next) =>{
-        Consumable.addVehicle(req.body).then(() => {
-            //req.flash('success_msg', req.body.brand + " " + req.body.model + " " + req.body.plate + " added successfully.")
-            res.redirect('/consumable/add')
-        }).catch(err => {
-            //req.flash('error_msg', "Vehicle could not be add (Error: " + err+ ") ");
-            res.redirect('/consumable/add')
-        })
+    console.log("posting");
+    console.log(req.body);
    });
+
+router.get('/update-battery/:id/:value', (req,res,next) =>{
+    console.log("my body is " + JSON.stringify(req.body));
+    const newBattery = {
+        id: req.params.id,
+        quantity: req.body.tableQuantity
+    }
+
+    Battery.addBattery(newBattery).then(() =>{
+        req.flash('success_msg', category + " was added to stock");
+        res.redirect("/consumables/add");
+    }).catch(err =>{
+        req.flash('error_msg', err +  " could not be added to");
+        res.redirect("/consumables/add");
+    });
+})
+router.post('/add/battery', 
+    [body('batSpec').not().isEmpty(), 
+    body('carBrand').not().isEmpty(),
+    body('carYear').not().isEmpty(),
+    body('quantityBatteries').not().isEmpty(),
+    body('quantityMinBatteries').not().isEmpty()
+]
+, (req, res, next) =>{   
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        console.log(req.body);
+        req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
+        res.redirect("/consumables/add");
+    }else{
+        const category = req.body.category.charAt(0).toUpperCase() + req.body.category.slice(1);
+        const newConsumable = {
+            category: category,
+            quantity: req.body.quantityBatteries
+          }
+
+        const newBattery = {
+            batSpec: req.body.batSpec,
+            carBrand: req.body.carBrand,
+            carYear: req.body.carYear,
+            quantity: req.body.quantityBatteries,
+            minQuantity: req.body.quantityMinBatteries
+        }
+        Battery.addBattery(newBattery).then(()=>{
+            Consumable.addConsumable(newConsumable).then(()=>{
+                req.flash('success_msg', category + " was added to stock");
+                res.redirect("/consumables/add");
+            
+            }).catch(err =>{
+                req.flash('error_msg', "Consumable could not be added");
+                res.redirect("/consumables/add");
+            });
+
+        }).catch(err =>{
+            req.flash('error_msg', category + " could not be added to");
+            res.redirect("/consumables/add");
+        })
+        
+    }
+   
+});
 
 router.get('/display-vehicle/:id', async (req, res, next) =>
 {

@@ -1,73 +1,73 @@
 <div class="form-row">
-    <div class="form-group col required">
+    <div class="form-group col">
         <label for="brakeCategory">Brake Category</label>
-         <input list="brakeCategory"  name="brakeCategory" class="form-control" required>
+         <input list="brakeCategory"  name="brakeCategory" class="form-control">
          <datalist id="brakeCategory">
             {{#each values.brakes.brakeCategory}}
-                <option value={{this.category}}>{{this.brakeCategory}}</option>
+                <option value="{{this.category}}">{{this.brakeCategory}}</option>
             {{/each}}
         </datalist>
     </div>
-    <div class="form-group col required">
+    <div class="form-group col">
         <label for="brakeCBrand">Car Brand</label>
-         <input list="brakeCBrand"  name="brakeCBrand" class="form-control" required>
+         <input list="brakeCBrand"  name="brakeCBrand" class="form-control">
          <datalist id="brakeCBrand">
             {{#each values.brakes.brakeCBrand}}
-                <option value={{this.carBrand}}>{{this.carBrand}}</option>
+                <option value="{{this.carBrand}}">{{this.carBrand}}</option>
             {{/each}}
         </datalist>
     </div>
 </div>
 <div class="form-row">
-    <div class="form-group col required">
+    <div class="form-group col">
         <label for="brakeCYear">Car Year</label>
-         <input list="brakeCYear"  name="brakeCYear" class="form-control" required>
+         <input list="brakeCYear"  name="brakeCYear" class="form-control">
          <datalist id="brakeCYear">
             {{#each values.brakes.brakeCYear}}
-                <option value={{this.carYear}}>{{this.carYear}}</option>
+                <option value="{{this.carYear}}">{{this.carYear}}</option>
             {{/each}}
         </datalist>
         </datalist>
     </div>
-    <div class="form-group col required">
+    <div class="form-group col">
         <label for="brakeChassis">Car Chassis</label>
-         <input list="brakeChassis"  name="brakeChassis" class="form-control" required>
+         <input list="brakeChassis"  name="brakeChassis" class="form-control">
          <datalist id="brakeChassis">
             {{#each values.brakes.brakeCChassis}}
-                <option value={{this.chassis}}>{{this.chassis}}</option>
+                <option value="{{this.chassis}}"">{{this.chassis}}</option>
             {{/each}}
         </datalist>
     </div>
 </div>
 <div class="form-row">
-    <div class="form-group col required">
+    <div class="form-group col">
         <label for="brakeBrand">Brake Brand</label>
-         <input list="brakeBrand"  name="brakeBrand" class="form-control" required>
+         <input list="brakeBrand"  name="brakeBrand" class="form-control">
          <datalist id="brakeBrand">
             {{#each values.brakes.brakeBrand}}
-                <option value={{this.bBrand}}>{{this.bBrand}}</option>
+                <option value="{{this.bBrand}}">{{this.bBrand}}</option>
             {{/each}}
         </datalist>
     </div>
-    <div class="form-group col required">
+    <div class="form-group col">
         <label for="brakePBrand">Preferred Brand</label>
-         <input list="brakePBrand"  name="brakePBrand" class="form-control" required>
+         <input list="brakePBrand"  name="brakePBrand" class="form-control">
          <datalist id="brakePBrand">
             {{#each values.brakes.brakePBrand}}
-                <option value={{this.preferredBrand}}>{{this.preferredBrand}}</option>
+                <option value="{{this.preferredBrand}}">{{this.preferredBrand}}</option>
             {{/each}}
         </datalist>
     </div>
 </div>
 <div class="form-row">
-    <div class="form-group col required">
-        <label for="quantity">Quantity</label>
-         <input type="number" id="quantity" name="quantity" class="form-control" required>
+    <div class="form-group col">
+        <label for="quantityBrakes">Quantity</label>
+         <input type="number" id="quantityBrakes" name="quantityBrakes" class="form-control">
          
     </div>
-    <div class="form-group col required">
+    <div class="form-group col">
         <label for="price">Price Per Box</label>
-         <input type="number" id="price" name="price" class="form-control" required>
+         <input type="number" id="price" name="price" class="form-control">
          
     </div>
 </div>

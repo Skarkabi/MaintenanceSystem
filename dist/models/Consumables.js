@@ -78,7 +78,7 @@ var Consumable = _mySQLDB["default"].define('consumable_stocks', mappings, {
 Consumable.addConsumable = function (createConsumable) {
   var newConsumable = {
     category: createConsumable.category,
-    quantity: createConsumable.quantity
+    quantity: parseInt(createConsumable.quantity)
   };
   console.log(newConsumable);
   return new Promise(function (resolve, reject) {

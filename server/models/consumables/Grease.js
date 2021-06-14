@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import Sequelize from 'sequelize';
-
+import Consumable from '../Consumables';
 import sequelize from '../../mySQLDB';
 
 const mappings = {
@@ -92,5 +92,34 @@ const Grease = sequelize.define('grease_stocks', mappings, {
     },
   ],
 });
+
+Grease.getGreaseStock = async () => {
+    var greaseC, greaseSpec, typeOfGrease, carBrand, carYear;
+    await Consumable.getSpecific("grease").then(consumables => {
+        greaseC = consumables;
+    });
+
+    await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `greaseSpec`'), 'greaseSpec']],raw:true, nest:true}).then(spec => {
+        greaseSpec = spec
+    });
+
+    await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `typeOfGrease`'), 'typeOfGrease']],raw:true, nest:true}).then(spec => {
+        typeOfGrease = spec
+    });
+
+    await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']],raw:true, nest:true}).then(spec => {
+        carBrand = spec
+    });
+
+    await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']],raw:true, nest:true}).then(spec => {
+        carYear = spec
+    });
+    var values = {
+        consumables: greaseC.rows, specs: greaseSpec, typeOfGrease: typeOfGrease, 
+        carBrands: carBrand, carYears: carYear
+    };
+
+    return values;
+};
 
 export default Grease;

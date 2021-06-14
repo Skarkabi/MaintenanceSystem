@@ -8,6 +8,9 @@
                 <th scope="col">Car Brand</th>
                 <th scope="col">Car Year</th>
                 <th scope="col">Volume</th>
+                {{#if (isdefined page "add")}}
+                    <th scope="col">Action</th>
+                {{/if}}
                 
             </tr>
         </thead>
@@ -21,6 +24,27 @@
                     <td>{{this.carBrand}}</td>
                     <td>{{this.carYear}}</td>
                     <td>{{this.volume}}</td>
+                </tr>
+            {{/each}}
+            {{/if}}
+
+            {{#if (isdefined page "add")}}
+            {{#each values.grease.consumables}}
+                 <tr>
+                    <th>{{counter @index}}</th>
+                    <td>{{this.greaseSpec}}</td>
+                    <td>{{this.typeOfGrease}}</td>
+                    <td>{{this.carBrand}}</td>
+                    <td>{{this.carYear}}</td>
+                    <td>{{this.volume}}</td>
+                    <td class = "table-actions">
+                        <div class="input-group">
+                            <input type="number" id="tableQuantity-{{this.id}}" name="tableQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <a href="#" onclick="updateBatter({{this.id}})" class="btn btn-primary" role="button"  id="update-{{this.id}}"><i class="fas fa-plus-circle"></i></a>
+                            </div>
+                        </div>
+                    </td>  
                 </tr>
             {{/each}}
             {{/if}}

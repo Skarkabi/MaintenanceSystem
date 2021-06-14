@@ -8,6 +8,7 @@ import Battery from '../models/consumables/Battery';
 import Brake from '../models/consumables/Brake';
 import Filter from '../models/consumables/Filter';
 import Sequelize from 'sequelize';
+import Grease from '../models/consumables/Grease';
 
 const router = express.Router();
 
@@ -22,20 +23,27 @@ function onlyUnique(value, index, self) {
   console.log(unique); // ['a', 1, 2, '1']
 
 async function getStocks(){
-    var batteries, brakes, filters;
+    var batteries, brakes, filters, grease;
     await Battery.getBatteryStocks().then(values =>{
         batteries = values;
     });
 
     await Brake.getBrakeStock().then(values =>{
         brakes = values;
-    })
+    });
 
     await Filter.getFilterStock().then(values =>{
         filters = values;
-    })
+    });
 
-    var values = {batteries: batteries, brakes: brakes, filters: filters};
+    await Grease.getGreaseStock().then(values => {
+        grease = values;
+    });
+
+    var values = {
+        batteries: batteries, brakes: brakes, filters: filters,
+        grease: grease
+    };
     return values
 }
 

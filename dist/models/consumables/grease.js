@@ -7,9 +7,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
 var _lodash = _interopRequireDefault(require("lodash"));
 
 var _sequelize = _interopRequireDefault(require("sequelize"));
+
+var _Consumables = _interopRequireDefault(require("../Consumables"));
 
 var _mySQLDB = _interopRequireDefault(require("../../mySQLDB"));
 
@@ -93,5 +99,73 @@ var Grease = _mySQLDB["default"].define('grease_stocks', mappings, {
   }]
 });
 
+Grease.getGreaseStock = /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+  var greaseC, greaseSpec, typeOfGrease, carBrand, carYear, values;
+  return _regenerator["default"].wrap(function _callee$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          _context.next = 2;
+          return _Consumables["default"].getSpecific("grease").then(function (consumables) {
+            greaseC = consumables;
+          });
+
+        case 2:
+          _context.next = 4;
+          return Grease.findAll({
+            attributes: [[_sequelize["default"].literal('DISTINCT `greaseSpec`'), 'greaseSpec']],
+            raw: true,
+            nest: true
+          }).then(function (spec) {
+            greaseSpec = spec;
+          });
+
+        case 4:
+          _context.next = 6;
+          return Grease.findAll({
+            attributes: [[_sequelize["default"].literal('DISTINCT `typeOfGrease`'), 'typeOfGrease']],
+            raw: true,
+            nest: true
+          }).then(function (spec) {
+            typeOfGrease = spec;
+          });
+
+        case 6:
+          _context.next = 8;
+          return Grease.findAll({
+            attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']],
+            raw: true,
+            nest: true
+          }).then(function (spec) {
+            carBrand = spec;
+          });
+
+        case 8:
+          _context.next = 10;
+          return Grease.findAll({
+            attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']],
+            raw: true,
+            nest: true
+          }).then(function (spec) {
+            carYear = spec;
+          });
+
+        case 10:
+          values = {
+            consumables: greaseC.rows,
+            specs: greaseSpec,
+            typeOfGrease: typeOfGrease,
+            carBrands: carBrand,
+            carYears: carYear
+          };
+          return _context.abrupt("return", values);
+
+        case 12:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, _callee);
+}));
 var _default = Grease;
 exports["default"] = _default;

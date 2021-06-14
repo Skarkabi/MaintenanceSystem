@@ -47,8 +47,11 @@
              <div  class="section-content" id="filterexisting">
                {{>filtersTable}}
             </div>
-            <div  class="section-content" id="grease">
+            <div  class="section-content" id="greasenew">
                {{>addGrease}}
+            </div>
+            <div  class="section-content" id="greaseexisting">
+               {{>greaseTable}}
             </div>
             <div  class="section-content" id="oil">
                {{>addOil}}
@@ -73,7 +76,8 @@
         document.getElementById("filternew").style.display ="none";
         document.getElementById("filterexisting").style.display ="none";
         document.getElementById("oil").style.display ="none";
-        document.getElementById("grease").style.display ="none";
+        document.getElementById("greasenew").style.display ="none";
+        document.getElementById("greaseexisting").style.display ="none";
         document.getElementById("submit").style.display = "none";
     }
     function showAddPage() {
@@ -87,7 +91,8 @@
         document.getElementById("filternew").style.display ="none";
         document.getElementById("filterexisting").style.display ="none";
         document.getElementById("oil").style.display ="none";
-        document.getElementById("grease").style.display ="none";
+        document.getElementById("greasenew").style.display ="none";
+        document.getElementById("greaseexisting").style.display ="none";
         if(category.value !== "" && existing.value !== ""){
             if (x.style.display === "none") {
                 console.log(category.value + existing.value);

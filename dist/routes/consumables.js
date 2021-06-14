@@ -29,6 +29,8 @@ var _Filter = _interopRequireDefault(require("../models/consumables/Filter"));
 
 var _sequelize = _interopRequireDefault(require("sequelize"));
 
+var _Grease = _interopRequireDefault(require("../models/consumables/Grease"));
+
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
 var router = _express["default"].Router();
 
@@ -47,7 +49,7 @@ function getStocks() {
 
 function _getStocks() {
   _getStocks = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
-    var batteries, brakes, filters, values;
+    var batteries, brakes, filters, grease, values;
     return _regenerator["default"].wrap(function _callee5$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
@@ -70,14 +72,21 @@ function _getStocks() {
             });
 
           case 6:
+            _context5.next = 8;
+            return _Grease["default"].getGreaseStock().then(function (values) {
+              grease = values;
+            });
+
+          case 8:
             values = {
               batteries: batteries,
               brakes: brakes,
-              filters: filters
+              filters: filters,
+              grease: grease
             };
             return _context5.abrupt("return", values);
 
-          case 8:
+          case 10:
           case "end":
             return _context5.stop();
         }

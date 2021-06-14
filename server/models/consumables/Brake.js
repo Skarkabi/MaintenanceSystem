@@ -124,6 +124,56 @@ const Brake = sequelize.define('brake_stocks', mappings, {
   ],
 });
 
+Brake.addBrake = (newBrake) => {
+    return new Promise((resolve, reject) => {
+        if(newBrake.id){
+            resolve(Brake.findOne({
+                where: {id: newBrake.id}
+            }).then(foundBrake => {
+                var quant = parseInt(newBrake.quantity) + foundBrake.quantity;
+                resolve(Brake.update({quantity:quant}, {
+                    where: {
+                        id: newBrake.id
+                    }
+                }).catch(err =>{
+                    reject(err);
+                }));
+
+            }).catch(err =>{
+                reject (err);
+            }));
+        }else{
+            Brake.findOne({
+                where: {
+                    category: newBrake.category,
+                    carBrand: newBrake.carBrand,
+                    carYear: newBrake.carYear,
+                    bBrand: newBrake.bBrand,
+                    preferredBrand: newBrake.preferredBrand,
+                    chassis: newBrake.chassis,
+                }
+            }).then(foundBrake => {
+                if(foundBrake){
+                    reject("This Brake Already Exists in the Stock");
+                }else{
+                    newBrake.singleCost = parseFloat(newBrake.singleCost);
+                    newBrake.quantity = parseInt(newBrake.quantity);
+                    newBrake.minQuantity = parseInt(newBrake.minQuantity);
+                    newBrake.totalCost = newBrake.singleCost * newBrake.quantity;
+                    resolve(Brake.create(newBrake).then(() => {
+                        console.log("created");
+                    }).catch(err => {
+                        console.log(err);
+                        reject(err);
+                    }));
+                }
+            }).catch(err => {
+                reject(err);
+            });
+        }
+    });
+}
+
 Brake.getBrakeStock = async () =>{
     var brakeC, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity;
     await Consumable.getSpecific("brake").then(consumables => {

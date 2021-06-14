@@ -189,6 +189,46 @@ router.post('/add/battery', [(0, _expressValidator.body)('batSpec').not().isEmpt
     });
   }
 });
+router.post('/add/brake', [(0, _expressValidator.body)('brakeCategory').not().isEmpty(), (0, _expressValidator.body)('brakeCBrand').not().isEmpty(), (0, _expressValidator.body)('brakeCYear').not().isEmpty(), (0, _expressValidator.body)('brakeChassis').not().isEmpty(), (0, _expressValidator.body)('brakeBrand').not().isEmpty(), (0, _expressValidator.body)('brakePBrand').not().isEmpty(), (0, _expressValidator.body)('quantityBrakes').not().isEmpty(), (0, _expressValidator.body)('minQuantityBrakes').not().isEmpty(), (0, _expressValidator.body)('brakePrice').not().isEmpty()], function (req, res, next) {
+  var errors = (0, _expressValidator.validationResult)(req);
+
+  if (!errors.isEmpty()) {
+    console.log(req.body);
+    req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
+    res.redirect("/consumables/add");
+  } else {
+    var category = req.body.category.charAt(0).toUpperCase() + req.body.category.slice(1);
+    var newConsumable = {
+      category: category,
+      quantity: req.body.quantityBrakes
+    };
+    var newBrake = {
+      category: req.body.brakeCategory,
+      carBrand: req.body.brakeCBrand,
+      carYear: req.body.brakeCYear,
+      bBrand: req.body.brakeBrand,
+      preferredBrand: req.body.brakePBrand,
+      chassis: req.body.brakeChassis,
+      singleCost: req.body.brakePrice,
+      quantity: req.body.quantityBrakes,
+      minQuantity: req.body.minQuantityBrakes
+    };
+    console.log(newBrake);
+
+    _Brake["default"].addBrake(newBrake).then(function () {
+      _Consumables["default"].addConsumable(newConsumable).then(function () {
+        req.flash('success_msg', category + " was added to stock");
+        res.redirect("/consumables/add");
+      })["catch"](function (err) {
+        req.flash('error_msg', "Consumable could not be added");
+        res.redirect("/consumables/add");
+      });
+    })["catch"](function (err) {
+      req.flash('error_msg', category + " could not be added to");
+      res.redirect("/consumables/add");
+    });
+  }
+});
 router.get('/display-vehicle/:id', /*#__PURE__*/function () {
   var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(req, res, next) {
     return _regenerator["default"].wrap(function _callee2$(_context2) {

@@ -141,6 +141,59 @@ router.post('/add/battery',
    
 });
 
+router.post('/add/brake', 
+[body('brakeCategory').not().isEmpty(), 
+body('brakeCBrand').not().isEmpty(),
+body('brakeCYear').not().isEmpty(),
+body('brakeChassis').not().isEmpty(),
+body('brakeBrand').not().isEmpty(),
+body('brakePBrand').not().isEmpty(),
+body('quantityBrakes').not().isEmpty(),
+body('minQuantityBrakes').not().isEmpty(),
+body('brakePrice').not().isEmpty()
+],
+ (req,res,next) => {
+     const errors = validationResult(req);
+     if(!errors.isEmpty()){
+        console.log(req.body);
+        req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
+        res.redirect("/consumables/add");
+    }else{
+        const category = req.body.category.charAt(0).toUpperCase() + req.body.category.slice(1);
+        const newConsumable = {
+            category: category,
+            quantity: req.body.quantityBrakes 
+        };
+        const newBrake = {
+            category: req.body.brakeCategory,
+            carBrand: req.body.brakeCBrand,
+            carYear: req.body.brakeCYear,
+            bBrand: req.body.brakeBrand,
+            preferredBrand: req.body.brakePBrand,
+            chassis: req.body.brakeChassis,
+            singleCost: req.body.brakePrice,
+            quantity: req.body.quantityBrakes,
+            minQuantity: req.body.minQuantityBrakes
+        }
+
+        console.log(newBrake);
+        Brake.addBrake(newBrake).then(()=>{
+            Consumable.addConsumable(newConsumable).then(()=>{
+                req.flash('success_msg', category + " was added to stock");
+                res.redirect("/consumables/add");
+            
+            }).catch(err =>{
+                req.flash('error_msg', "Consumable could not be added");
+                res.redirect("/consumables/add");
+            });
+
+        }).catch(err =>{
+            req.flash('error_msg', category + " could not be added to");
+            res.redirect("/consumables/add");
+        })
+    }
+ })
+
 router.get('/display-vehicle/:id', async (req, res, next) =>
 {
     if(req.user){

@@ -127,6 +127,59 @@ var Brake = _mySQLDB["default"].define('brake_stocks', mappings, {
   }]
 });
 
+Brake.addBrake = function (newBrake) {
+  return new Promise(function (resolve, reject) {
+    if (newBrake.id) {
+      resolve(Brake.findOne({
+        where: {
+          id: newBrake.id
+        }
+      }).then(function (foundBrake) {
+        var quant = parseInt(newBrake.quantity) + foundBrake.quantity;
+        resolve(Brake.update({
+          quantity: quant
+        }, {
+          where: {
+            id: newBrake.id
+          }
+        })["catch"](function (err) {
+          reject(err);
+        }));
+      })["catch"](function (err) {
+        reject(err);
+      }));
+    } else {
+      Brake.findOne({
+        where: {
+          category: newBrake.category,
+          carBrand: newBrake.carBrand,
+          carYear: newBrake.carYear,
+          bBrand: newBrake.bBrand,
+          preferredBrand: newBrake.preferredBrand,
+          chassis: newBrake.chassis
+        }
+      }).then(function (foundBrake) {
+        if (foundBrake) {
+          reject("This Brake Already Exists in the Stock");
+        } else {
+          newBrake.singleCost = parseFloat(newBrake.singleCost);
+          newBrake.quantity = parseInt(newBrake.quantity);
+          newBrake.minQuantity = parseInt(newBrake.minQuantity);
+          newBrake.totalCost = newBrake.singleCost * newBrake.quantity;
+          resolve(Brake.create(newBrake).then(function () {
+            console.log("created");
+          })["catch"](function (err) {
+            console.log(err);
+            reject(err);
+          }));
+        }
+      })["catch"](function (err) {
+        reject(err);
+      });
+    }
+  });
+};
+
 Brake.getBrakeStock = /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
   var brakeC, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity, values;
   return _regenerator["default"].wrap(function _callee$(_context) {

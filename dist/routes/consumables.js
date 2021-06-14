@@ -25,9 +25,9 @@ var _Battery = _interopRequireDefault(require("../models/consumables/Battery"));
 
 var _Brake = _interopRequireDefault(require("../models/consumables/Brake"));
 
-var _sequelize = _interopRequireDefault(require("sequelize"));
+var _Filter = _interopRequireDefault(require("../models/consumables/Filter"));
 
-var _httpErrors = require("http-errors");
+var _sequelize = _interopRequireDefault(require("sequelize"));
 
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
 var router = _express["default"].Router();
@@ -205,41 +205,159 @@ function _getBrakeStock() {
   return _getBrakeStock.apply(this, arguments);
 }
 
-function getStocks() {
-  return _getStocks.apply(this, arguments);
+function getFilterStock() {
+  return _getFilterStock.apply(this, arguments);
 }
 
-function _getStocks() {
-  _getStocks = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7() {
-    var batteries, brakes, values;
+function _getFilterStock() {
+  _getFilterStock = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7() {
+    var filterC, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand, values;
     return _regenerator["default"].wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
             _context7.next = 2;
-            return getBatteryStocks().then(function (values) {
-              batteries = values;
+            return _Consumables["default"].getSpecific("filter").then(function (consumables) {
+              console.log(consumables);
+              filterC = consumables;
             });
 
           case 2:
             _context7.next = 4;
-            return getBrakeStock().then(function (values) {
-              brakes = values;
+            return _Filter["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `category`'), 'category']],
+              raw: true,
+              nest: true
+            }).then(function (category) {
+              carCategory = category;
             });
 
           case 4:
+            _context7.next = 6;
+            return _Filter["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `fType`'), 'fType']],
+              raw: true,
+              nest: true
+            }).then(function (filterType) {
+              typeF = filterType;
+            });
+
+          case 6:
+            _context7.next = 8;
+            return _Filter["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
+            }).then(function (spec) {
+              carBrand = spec;
+            });
+
+          case 8:
+            _context7.next = 10;
+            return _Filter["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
+            }).then(function (spec) {
+              carYear = spec;
+            });
+
+          case 10:
+            _context7.next = 12;
+            return _Filter["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `carModel`'), 'carModel']],
+              raw: true,
+              nest: true
+            }).then(function (filterType) {
+              carModel = filterType;
+            });
+
+          case 12:
+            _context7.next = 14;
+            return _Filter["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `preferredBrand`'), 'preferredBrand']]
+            }).then(function (spec) {
+              preferredBrand = spec;
+            });
+
+          case 14:
+            _context7.next = 16;
+            return _Filter["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `actualBrand`'), 'actualBrand']]
+            }).then(function (spec) {
+              actualBrand = spec;
+            });
+
+          case 16:
+            _context7.next = 18;
+            return _Filter["default"].findAll({
+              attributes: [[_sequelize["default"].literal('DISTINCT `singleCost`'), 'singleCost']]
+            }).then(function (spec) {
+              singleCost = spec;
+            });
+
+          case 18:
             values = {
-              batteries: batteries,
-              brakes: brakes
+              consumable: filterC.rows,
+              filterType: typeF,
+              carBrand: carBrand,
+              carModel: carModel,
+              carYear: carYear,
+              preferredBrand: preferredBrand,
+              carCategory: carCategory,
+              singleCost: singleCost,
+              actualBrand: actualBrand
             };
             return _context7.abrupt("return", values);
 
-          case 6:
+          case 20:
           case "end":
             return _context7.stop();
         }
       }
     }, _callee7);
+  }));
+  return _getFilterStock.apply(this, arguments);
+}
+
+function getStocks() {
+  return _getStocks.apply(this, arguments);
+}
+
+function _getStocks() {
+  _getStocks = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8() {
+    var batteries, brakes, filters, values;
+    return _regenerator["default"].wrap(function _callee8$(_context8) {
+      while (1) {
+        switch (_context8.prev = _context8.next) {
+          case 0:
+            _context8.next = 2;
+            return getBatteryStocks().then(function (values) {
+              batteries = values;
+            });
+
+          case 2:
+            _context8.next = 4;
+            return getBrakeStock().then(function (values) {
+              brakes = values;
+            });
+
+          case 4:
+            _context8.next = 6;
+            return getFilterStock().then(function (values) {
+              filters = values;
+            });
+
+          case 6:
+            values = {
+              batteries: batteries,
+              brakes: brakes,
+              filters: filters
+            };
+            return _context8.abrupt("return", values);
+
+          case 8:
+          case "end":
+            return _context8.stop();
+        }
+      }
+    }, _callee8);
   }));
   return _getStocks.apply(this, arguments);
 }
@@ -281,15 +399,30 @@ router.post('/add', function (req, res, next) {
   console.log("posting");
   console.log(req.body);
 });
-router.get('/update-battery/:id/:value', function (req, res, next) {
-  console.log("my body is " + JSON.stringify(req.body));
+router.get('/update-battery/:id/:quantity', function (req, res, next) {
+  console.log("my body is " + req.body);
   var newBattery = {
     id: req.params.id,
-    quantity: req.body.tableQuantity
+    quantity: req.params.quantity
   };
+  console.log("my battery is " + new _Battery["default"]());
 
   _Battery["default"].addBattery(newBattery).then(function () {
-    req.flash('success_msg', category + " was added to stock");
+    var category = "Battery";
+    var newConsumable = {
+      category: category,
+      quantity: req.params.quantity
+    };
+
+    _Consumables["default"].addConsumable(newConsumable).then(function () {
+      req.flash('success_msg', category + " was added to stock");
+      res.redirect("/consumables/add");
+    })["catch"](function (err) {
+      req.flash('error_msg', "Consumable could not be added");
+      res.redirect("/consumables/add");
+    });
+
+    req.flash('success_msg', "Battery was added to stock");
     res.redirect("/consumables/add");
   })["catch"](function (err) {
     req.flash('error_msg', err + " could not be added to");
@@ -304,10 +437,9 @@ router.post('/add/battery', [(0, _expressValidator.body)('batSpec').not().isEmpt
     req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
     res.redirect("/consumables/add");
   } else {
-    var _category = req.body.category.charAt(0).toUpperCase() + req.body.category.slice(1);
-
+    var category = req.body.category.charAt(0).toUpperCase() + req.body.category.slice(1);
     var newConsumable = {
-      category: _category,
+      category: category,
       quantity: req.body.quantityBatteries
     };
     var newBattery = {
@@ -320,14 +452,14 @@ router.post('/add/battery', [(0, _expressValidator.body)('batSpec').not().isEmpt
 
     _Battery["default"].addBattery(newBattery).then(function () {
       _Consumables["default"].addConsumable(newConsumable).then(function () {
-        req.flash('success_msg', _category + " was added to stock");
+        req.flash('success_msg', category + " was added to stock");
         res.redirect("/consumables/add");
       })["catch"](function (err) {
         req.flash('error_msg', "Consumable could not be added");
         res.redirect("/consumables/add");
       });
     })["catch"](function (err) {
-      req.flash('error_msg', _category + " could not be added to");
+      req.flash('error_msg', category + " could not be added to");
       res.redirect("/consumables/add");
     });
   }

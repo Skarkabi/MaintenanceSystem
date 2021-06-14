@@ -6,8 +6,8 @@ import { body, validationResult,check } from 'express-validator';
 import Consumable from '../models/Consumables';
 import Battery from '../models/consumables/Battery';
 import Brake from '../models/consumables/Brake';
+import Filter from '../models/consumables/Filter';
 import Sequelize from 'sequelize';
-import { NetworkAuthenticationRequire } from 'http-errors';
 
 const router = express.Router();
 
@@ -96,8 +96,61 @@ async function getBrakeStock(){
 
 }
 
+async function getFilterStock(){
+    var filterC, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand;
+
+    await Consumable.getSpecific("filter").then(consumables => {
+        console.log(consumables);
+        filterC = consumables
+    });
+    
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `category`'), 'category']],raw:true, nest:true}).then(category => {
+        carCategory = category ;
+    });
+
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `fType`'), 'fType']],raw:true, nest:true}).then(filterType => {
+        typeF = filterType; 
+        
+    });
+
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']]}).then(spec => {
+        carBrand = spec
+        
+    });
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']]}).then(spec => {
+        carYear = spec
+    });
+
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `carModel`'), 'carModel']],raw:true, nest:true}).then(filterType => {
+        carModel = filterType; 
+        
+    });
+
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `preferredBrand`'), 'preferredBrand']]}).then(spec => {
+        preferredBrand = spec
+        
+    });
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `actualBrand`'), 'actualBrand']]}).then(spec => {
+        actualBrand = spec
+    });
+
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `singleCost`'), 'singleCost']]}).then(spec => {
+        singleCost = spec
+    
+    });
+
+    var values = {
+        consumable: filterC.rows, filterType: typeF, carBrand: carBrand, carModel: carModel,
+        carYear: carYear, preferredBrand: preferredBrand, carCategory: carCategory,
+        singleCost: singleCost, actualBrand: actualBrand
+    };
+
+    return values;
+
+}
+
 async function getStocks(){
-    var batteries, brakes;
+    var batteries, brakes, filters;
     await getBatteryStocks().then(values =>{
         batteries = values;
     });
@@ -106,7 +159,11 @@ async function getStocks(){
         brakes = values;
     })
 
-    var values = {batteries: batteries, brakes: brakes};
+    await getFilterStock().then(values =>{
+        filters = values;
+    })
+
+    var values = {batteries: batteries, brakes: brakes, filters: filters};
     return values
 }
 
@@ -127,10 +184,6 @@ router.get('/add', async (req, res, next) =>
             });
         });
      }
-
-    
-       
-   
 });
 
 router.post('/add', (req, res, next) =>{
@@ -138,21 +191,38 @@ router.post('/add', (req, res, next) =>{
     console.log(req.body);
    });
 
-router.get('/update-battery/:id/:value', (req,res,next) =>{
-    console.log("my body is " + JSON.stringify(req.body));
+router.get('/update-battery/:id/:quantity', (req,res,next) =>{
+    console.log("my body is " + req.body);
     const newBattery = {
         id: req.params.id,
-        quantity: req.body.tableQuantity
+        quantity: req.params.quantity
     }
+    console.log("my battery is " + new Battery);
 
     Battery.addBattery(newBattery).then(() =>{
-        req.flash('success_msg', category + " was added to stock");
+        const category = "Battery";
+        const newConsumable = {
+            category: category,
+            quantity: req.params.quantity
+        }
+        Consumable.addConsumable(newConsumable).then(()=>{
+            req.flash('success_msg', category + " was added to stock");
+            res.redirect("/consumables/add");
+        
+        }).catch(err =>{
+            req.flash('error_msg', "Consumable could not be added");
+            res.redirect("/consumables/add");
+        });
+
+        req.flash('success_msg', "Battery was added to stock");
         res.redirect("/consumables/add");
     }).catch(err =>{
         req.flash('error_msg', err +  " could not be added to");
         res.redirect("/consumables/add");
     });
 })
+
+
 router.post('/add/battery', 
     [body('batSpec').not().isEmpty(), 
     body('carBrand').not().isEmpty(),

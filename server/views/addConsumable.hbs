@@ -41,8 +41,11 @@
             <div  class="section-content" id="brakeexisting">
                {{>brakesTable}}
             </div>
-            <div  class="section-content" id="filter">
+            <div  class="section-content" id="filternew">
                {{>addFilters}}
+            </div>
+             <div  class="section-content" id="filterexisting">
+               {{>filtersTable}}
             </div>
             <div  class="section-content" id="grease">
                {{>addGrease}}
@@ -67,7 +70,8 @@
         document.getElementById("brakeexisting").style.display ="none";
         document.getElementById("batterynew").style.display ="none";
         document.getElementById("batteryexisting").style.display ="none";
-        document.getElementById("filter").style.display ="none";
+        document.getElementById("filternew").style.display ="none";
+        document.getElementById("filterexisting").style.display ="none";
         document.getElementById("oil").style.display ="none";
         document.getElementById("grease").style.display ="none";
         document.getElementById("submit").style.display = "none";
@@ -80,7 +84,8 @@
         document.getElementById("brakeexisting").style.display ="none";
         document.getElementById("batterynew").style.display ="none";
         document.getElementById("batteryexisting").style.display ="none";
-        document.getElementById("filter").style.display ="none";
+        document.getElementById("filternew").style.display ="none";
+        document.getElementById("filterexisting").style.display ="none";
         document.getElementById("oil").style.display ="none";
         document.getElementById("grease").style.display ="none";
         if(category.value !== "" && existing.value !== ""){

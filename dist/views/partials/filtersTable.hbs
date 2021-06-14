@@ -9,10 +9,14 @@
                 <th scope="col">Car Brand</th>
                 <th scope="col">Car Model</th>
                 <th scope="col">Car Year</th>
-                <th scope="col">Chassis #</th>
                 <th scope="col">Quantity (Boxes)</th>
+                 {{#if (isdefined page "add")}}
+                <th scope="col">Action</th>
+                 {{/if}}
+                 {{#if (isdefined page "view")}}
                 <th scope="col">Single Cost</th>
                 <th scope="col">Total Cost</th>
+                {{/if}}
                 
             </tr>
         </thead>
@@ -27,10 +31,32 @@
                     <td>{{this.carModel}}</td>
                     <td>{{this.carBrand}}</td>
                     <td>{{this.carYear}}</td>
-                    <td>{{this.chassis}}</td>
                     <td>{{this.quantity}}</td>
                     <td>{{this.singleCost}}</td>
                     <td>{{this.totalCost}}</td>
+                </tr>
+            {{/each}}
+            {{/if}}
+
+            {{#if (isdefined page "add")}}
+            {{#each values.filters.consumable}}
+                <tr>
+                    <th>{{counter @index}}</th>
+                    <td>{{this.category}}</td>
+                    <td>{{this.fType}}</td>
+                    <td>{{this.actualBrand}}</td>
+                    <td>{{this.carBrand}}</td>
+                    <td>{{this.carModel}}</td>
+                    <td>{{this.carYear}}</td>
+                    <td>{{this.quantity}}</td>
+                    <td class = "table-actions">
+                        <div class="input-group">
+                            <input type="number" id="tableQuantity-{{this.id}}" name="tableQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <a href="#" onclick="updateBatter({{this.id}})" class="btn btn-primary" role="button"  id="update-{{this.id}}"><i class="fas fa-plus-circle"></i></a>
+                            </div>
+                        </div>
+                    </td>  
                 </tr>
             {{/each}}
             {{/if}}

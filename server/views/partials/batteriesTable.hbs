@@ -39,7 +39,7 @@
                         <div class="input-group">
                             <input type="number" id="tableQuantity-{{this.id}}" name="tableQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
                             <div class="input-group-append">
-                                <a href="/consumables/update-battery/{{this.id}}/" + "getQuantity({{this.id}})" class="btn btn-primary" role="button"  id="update-{{this.id}}"><i class="fas fa-plus-circle"></i></a>
+                                <a href="#" onclick="updateBatter({{this.id}})" class="btn btn-primary" role="button"  id="update-{{this.id}}"><i class="fas fa-plus-circle"></i></a>
                             </div>
                         </div>
                     </td>  
@@ -54,5 +54,8 @@
 <script>
     function getQuantity(id){
         return document.getElementById("tableQuantity-" + id).value
+    }
+    function updateBatter(id){
+        return document.getElementById("update-" + id).href = "update-battery/" + id + "/" + document.getElementById("tableQuantity-" + id).value;
     }
 </script>

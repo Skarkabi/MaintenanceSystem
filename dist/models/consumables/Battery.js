@@ -7,6 +7,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
 var _lodash = _interopRequireDefault(require("lodash"));
 
 var _bcrypt = _interopRequireDefault(require("bcrypt"));
@@ -14,6 +18,8 @@ var _bcrypt = _interopRequireDefault(require("bcrypt"));
 var _bluebird = _interopRequireDefault(require("bluebird"));
 
 var _sequelize = _interopRequireDefault(require("sequelize"));
+
+var _Consumables = _interopRequireDefault(require("../Consumables"));
 
 var _mySQLDB = _interopRequireDefault(require("../../mySQLDB"));
 
@@ -148,5 +154,62 @@ Battery.addBattery = function (newBattery) {
   });
 };
 
+Battery.getBatteryStocks = /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+  var batteriesC, batSpecs, carBrands, carYears, batteryQuantity, values;
+  return _regenerator["default"].wrap(function _callee$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          _context.next = 2;
+          return _Consumables["default"].getSpecific("battery").then(function (consumables) {
+            console.log(consumables);
+            batteriesC = consumables;
+          });
+
+        case 2:
+          _context.next = 4;
+          return Battery.findAll({
+            attributes: [[_sequelize["default"].literal('DISTINCT `batSpec`'), 'batSpec']],
+            raw: true,
+            nest: true
+          }).then(function (spec) {
+            batSpecs = spec;
+            console.log(batSpecs);
+          });
+
+        case 4:
+          _context.next = 6;
+          return Battery.findAll({
+            attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
+          }).then(function (spec) {
+            carBrands = spec;
+            console.log(carBrands);
+          });
+
+        case 6:
+          _context.next = 8;
+          return Battery.findAll({
+            attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
+          }).then(function (spec) {
+            carYears = spec;
+            console.log(carYears);
+          });
+
+        case 8:
+          values = {
+            consumable: batteriesC.rows,
+            specs: batSpecs,
+            brands: carBrands,
+            years: carYears
+          };
+          return _context.abrupt("return", values);
+
+        case 10:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, _callee);
+}));
 var _default = Battery;
 exports["default"] = _default;

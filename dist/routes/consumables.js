@@ -41,306 +41,31 @@ var a = ['a', 1, 'a', 2, '1'];
 var unique = a.filter(onlyUnique);
 console.log(unique); // ['a', 1, 2, '1']
 
-function getBatteryStocks() {
-  return _getBatteryStocks.apply(this, arguments);
-}
-
-function _getBatteryStocks() {
-  _getBatteryStocks = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
-    var batteriesC, batSpecs, carBrands, carYears, batteryQuantity, values;
-    return _regenerator["default"].wrap(function _callee5$(_context5) {
-      while (1) {
-        switch (_context5.prev = _context5.next) {
-          case 0:
-            _context5.next = 2;
-            return _Consumables["default"].getSpecific("battery").then(function (consumables) {
-              console.log(consumables);
-              batteriesC = consumables;
-            });
-
-          case 2:
-            _context5.next = 4;
-            return _Battery["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `batSpec`'), 'batSpec']],
-              raw: true,
-              nest: true
-            }).then(function (spec) {
-              batSpecs = spec;
-              console.log(batSpecs);
-            });
-
-          case 4:
-            _context5.next = 6;
-            return _Battery["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
-            }).then(function (spec) {
-              carBrands = spec;
-              console.log(carBrands);
-            });
-
-          case 6:
-            _context5.next = 8;
-            return _Battery["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
-            }).then(function (spec) {
-              carYears = spec;
-              console.log(carYears);
-            });
-
-          case 8:
-            values = {
-              consumable: batteriesC.rows,
-              specs: batSpecs,
-              brands: carBrands,
-              years: carYears
-            };
-            return _context5.abrupt("return", values);
-
-          case 10:
-          case "end":
-            return _context5.stop();
-        }
-      }
-    }, _callee5);
-  }));
-  return _getBatteryStocks.apply(this, arguments);
-}
-
-function getBrakeStock() {
-  return _getBrakeStock.apply(this, arguments);
-}
-
-function _getBrakeStock() {
-  _getBrakeStock = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6() {
-    var brakeC, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity, values;
-    return _regenerator["default"].wrap(function _callee6$(_context6) {
-      while (1) {
-        switch (_context6.prev = _context6.next) {
-          case 0:
-            _context6.next = 2;
-            return _Consumables["default"].getSpecific("brake").then(function (consumables) {
-              console.log(consumables);
-              brakeC = consumables;
-            });
-
-          case 2:
-            _context6.next = 4;
-            return _Brake["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `category`'), 'category']],
-              raw: true,
-              nest: true
-            }).then(function (category) {
-              brakeCategory = category;
-              console.log("B = " + JSON.stringify(brakeCategory));
-            });
-
-          case 4:
-            _context6.next = 6;
-            return _Brake["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
-            }).then(function (spec) {
-              brakeCBrand = spec;
-            });
-
-          case 6:
-            _context6.next = 8;
-            return _Brake["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
-            }).then(function (spec) {
-              brakeCYear = spec;
-            });
-
-          case 8:
-            _context6.next = 10;
-            return _Brake["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `chassis`'), 'chassis']]
-            }).then(function (spec) {
-              brakeCChassis = spec;
-            });
-
-          case 10:
-            _context6.next = 12;
-            return _Brake["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `bBrand`'), 'bBrand']]
-            }).then(function (spec) {
-              brakeBrand = spec;
-            });
-
-          case 12:
-            _context6.next = 14;
-            return _Brake["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `preferredBrand`'), 'preferredBrand']]
-            }).then(function (spec) {
-              brakePBrand = spec;
-            });
-
-          case 14:
-            _context6.next = 16;
-            return _Brake["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `quantity`'), 'quantity']]
-            }).then(function (spec) {
-              brakeQuantity = spec;
-            });
-
-          case 16:
-            values = {
-              consumable: brakeC.rows,
-              brakeCategory: brakeCategory,
-              brakeCBrand: brakeCBrand,
-              brakeCYear: brakeCYear,
-              brakeCChassis: brakeCChassis,
-              brakeBrand: brakeBrand,
-              brakePBrand: brakePBrand,
-              brakeQuantity: brakeQuantity
-            };
-            return _context6.abrupt("return", values);
-
-          case 18:
-          case "end":
-            return _context6.stop();
-        }
-      }
-    }, _callee6);
-  }));
-  return _getBrakeStock.apply(this, arguments);
-}
-
-function getFilterStock() {
-  return _getFilterStock.apply(this, arguments);
-}
-
-function _getFilterStock() {
-  _getFilterStock = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7() {
-    var filterC, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand, values;
-    return _regenerator["default"].wrap(function _callee7$(_context7) {
-      while (1) {
-        switch (_context7.prev = _context7.next) {
-          case 0:
-            _context7.next = 2;
-            return _Consumables["default"].getSpecific("filter").then(function (consumables) {
-              console.log(consumables);
-              filterC = consumables;
-            });
-
-          case 2:
-            _context7.next = 4;
-            return _Filter["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `category`'), 'category']],
-              raw: true,
-              nest: true
-            }).then(function (category) {
-              carCategory = category;
-            });
-
-          case 4:
-            _context7.next = 6;
-            return _Filter["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `fType`'), 'fType']],
-              raw: true,
-              nest: true
-            }).then(function (filterType) {
-              typeF = filterType;
-            });
-
-          case 6:
-            _context7.next = 8;
-            return _Filter["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
-            }).then(function (spec) {
-              carBrand = spec;
-            });
-
-          case 8:
-            _context7.next = 10;
-            return _Filter["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
-            }).then(function (spec) {
-              carYear = spec;
-            });
-
-          case 10:
-            _context7.next = 12;
-            return _Filter["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `carModel`'), 'carModel']],
-              raw: true,
-              nest: true
-            }).then(function (filterType) {
-              carModel = filterType;
-            });
-
-          case 12:
-            _context7.next = 14;
-            return _Filter["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `preferredBrand`'), 'preferredBrand']]
-            }).then(function (spec) {
-              preferredBrand = spec;
-            });
-
-          case 14:
-            _context7.next = 16;
-            return _Filter["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `actualBrand`'), 'actualBrand']]
-            }).then(function (spec) {
-              actualBrand = spec;
-            });
-
-          case 16:
-            _context7.next = 18;
-            return _Filter["default"].findAll({
-              attributes: [[_sequelize["default"].literal('DISTINCT `singleCost`'), 'singleCost']]
-            }).then(function (spec) {
-              singleCost = spec;
-            });
-
-          case 18:
-            values = {
-              consumable: filterC.rows,
-              filterType: typeF,
-              carBrand: carBrand,
-              carModel: carModel,
-              carYear: carYear,
-              preferredBrand: preferredBrand,
-              carCategory: carCategory,
-              singleCost: singleCost,
-              actualBrand: actualBrand
-            };
-            return _context7.abrupt("return", values);
-
-          case 20:
-          case "end":
-            return _context7.stop();
-        }
-      }
-    }, _callee7);
-  }));
-  return _getFilterStock.apply(this, arguments);
-}
-
 function getStocks() {
   return _getStocks.apply(this, arguments);
 }
 
 function _getStocks() {
-  _getStocks = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8() {
+  _getStocks = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
     var batteries, brakes, filters, values;
-    return _regenerator["default"].wrap(function _callee8$(_context8) {
+    return _regenerator["default"].wrap(function _callee5$(_context5) {
       while (1) {
-        switch (_context8.prev = _context8.next) {
+        switch (_context5.prev = _context5.next) {
           case 0:
-            _context8.next = 2;
-            return getBatteryStocks().then(function (values) {
+            _context5.next = 2;
+            return _Battery["default"].getBatteryStocks().then(function (values) {
               batteries = values;
             });
 
           case 2:
-            _context8.next = 4;
-            return getBrakeStock().then(function (values) {
+            _context5.next = 4;
+            return _Brake["default"].getBrakeStock().then(function (values) {
               brakes = values;
             });
 
           case 4:
-            _context8.next = 6;
-            return getFilterStock().then(function (values) {
+            _context5.next = 6;
+            return _Filter["default"].getFilterStock().then(function (values) {
               filters = values;
             });
 
@@ -350,14 +75,14 @@ function _getStocks() {
               brakes: brakes,
               filters: filters
             };
-            return _context8.abrupt("return", values);
+            return _context5.abrupt("return", values);
 
           case 8:
           case "end":
-            return _context8.stop();
+            return _context5.stop();
         }
       }
-    }, _callee8);
+    }, _callee5);
   }));
   return _getStocks.apply(this, arguments);
 }

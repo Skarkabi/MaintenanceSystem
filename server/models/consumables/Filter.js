@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import Sequelize from 'sequelize';
-
+import Consumable from '../Consumables';
 import sequelize from '../../mySQLDB';
 
 const mappings = {
@@ -146,6 +146,59 @@ const Filter = sequelize.define('filter_stocks', mappings, {
     },
   ],
 });
+
+Filter.getFilterStock = async () => {
+    var filterC, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand;
+
+    await Consumable.getSpecific("filter").then(consumables => {
+        console.log(consumables);
+        filterC = consumables
+    });
+    
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `category`'), 'category']],raw:true, nest:true}).then(category => {
+        carCategory = category ;
+    });
+
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `fType`'), 'fType']],raw:true, nest:true}).then(filterType => {
+        typeF = filterType; 
+        
+    });
+
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']]}).then(spec => {
+        carBrand = spec
+        
+    });
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']]}).then(spec => {
+        carYear = spec
+    });
+
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `carModel`'), 'carModel']],raw:true, nest:true}).then(filterType => {
+        carModel = filterType; 
+        
+    });
+
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `preferredBrand`'), 'preferredBrand']]}).then(spec => {
+        preferredBrand = spec
+        
+    });
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `actualBrand`'), 'actualBrand']]}).then(spec => {
+        actualBrand = spec
+    });
+
+    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `singleCost`'), 'singleCost']]}).then(spec => {
+        singleCost = spec
+    
+    });
+
+    var values = {
+        consumable: filterC.rows, filterType: typeF, carBrand: carBrand, carModel: carModel,
+        carYear: carYear, preferredBrand: preferredBrand, carCategory: carCategory,
+        singleCost: singleCost, actualBrand: actualBrand
+    };
+
+    return values;
+
+}
 
 
 export default Filter;

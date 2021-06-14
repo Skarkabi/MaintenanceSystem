@@ -2,7 +2,7 @@ import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import Bluebird from 'bluebird';
 import Sequelize from 'sequelize';
-
+import Consumable from '../Consumables'
 import sequelize from '../../mySQLDB';
 import { response } from 'express';
 
@@ -136,6 +136,34 @@ Battery.addBattery = (newBattery) =>{
         }
         
     });
+}
+
+Battery.getBatteryStocks = async () =>{
+    var batteriesC, batSpecs, carBrands, carYears, batteryQuantity;
+    await Consumable.getSpecific("battery").then(consumables => {
+        console.log(consumables);
+        batteriesC = consumables
+    });
+    
+    await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `batSpec`'), 'batSpec']],raw:true, nest:true}).then(spec => {
+        batSpecs = spec
+        console.log(batSpecs);
+        
+    });
+    await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']]}).then(spec => {
+        carBrands = spec
+        console.log(carBrands);
+        
+    });
+    await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']]}).then(spec => {
+        carYears = spec
+        console.log(carYears);
+        
+    });
+    var values = {
+        consumable: batteriesC.rows, specs: batSpecs, brands: carBrands, years:carYears
+    }
+    return values;
 }
 
 export default Battery;

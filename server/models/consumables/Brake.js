@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import Sequelize from 'sequelize';
-
+import Consumable from '../Consumables';
 import sequelize from '../../mySQLDB';
 
 const mappings = {
@@ -123,5 +123,51 @@ const Brake = sequelize.define('brake_stocks', mappings, {
     },
   ],
 });
+
+Brake.getBrakeStock = async () =>{
+    var brakeC, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity;
+    await Consumable.getSpecific("brake").then(consumables => {
+        console.log(consumables);
+        brakeC = consumables
+    });
+    
+    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `category`'), 'category']],raw:true, nest:true}).then(category => {
+        brakeCategory = category 
+        console.log("B = " + JSON.stringify(brakeCategory));
+    });
+
+    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']]}).then(spec => {
+        brakeCBrand = spec
+        
+    });
+    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']]}).then(spec => {
+        brakeCYear = spec
+    });
+
+    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `chassis`'), 'chassis']]}).then(spec => {
+        brakeCChassis = spec
+        
+    });
+    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `bBrand`'), 'bBrand']]}).then(spec => {
+        brakeBrand = spec
+    });
+
+    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `preferredBrand`'), 'preferredBrand']]}).then(spec => {
+        brakePBrand = spec
+        
+    });
+    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `quantity`'), 'quantity']]}).then(spec => {
+        brakeQuantity = spec
+    });
+
+    var values = {
+        consumable: brakeC.rows, brakeCategory: brakeCategory, brakeCBrand: brakeCBrand, brakeCYear: brakeCYear,
+        brakeCChassis: brakeCChassis, brakeBrand: brakeBrand, brakePBrand: brakePBrand, brakeQuantity: brakeQuantity
+    };
+
+    return values;
+
+}
+
 
 export default Brake;

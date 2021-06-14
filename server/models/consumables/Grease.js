@@ -93,6 +93,52 @@ const Grease = sequelize.define('grease_stocks', mappings, {
   ],
 });
 
+Grease.addGrease = (newGrease) => {
+    return new Promise((resolve, reject) => {
+        if(newGrease.id){
+            Grease.findOne({
+                where: {id: newGrease.id}
+            }).then(foundGrease =>{
+                var quant = parseInt(newGrease.volume) + foundGrease.volume
+                Grease.update({volume: quant}, {
+                    where: {
+                        id: newGrease.id
+                    }
+                }).then(() => {
+                    resolve ("Grease was updated");
+                }).catch(err =>{
+                    reject("Grease could not be update (Error: " + err + ")");
+                });
+            }).catch(err => {
+                reject("Grease could not be found");
+            });
+        }else{
+            Grease.findOne({
+                where: {
+                    greaseSpec: newGrease.greaseSpec,
+                    typeOfGrease: newGrease.typeOfGrease,
+                    carBrand: newGrease.carBrand,
+                    carYear: newGrease.carYear
+                }
+            }).then(foundGrease => {
+                if(foundGrease){
+                    reject("This Grease Already Exists in the Stock");
+                }else{
+                    newGrease.volume = parseFloat(newGrease.volume);
+                    newGrease.minVolume = parseFloat(newGrease.minVolume);
+                    Grease.create(newGrease).then(() =>{
+                        resolve("New Grease was added into stock");
+                    }).catch(err => {
+                        reject("Grease could not be added into stock (Error: " + err + ")");
+                    });
+                }
+            }).catch(err =>{
+                reject("Error connecting to the database");
+            });
+        }
+    });
+}
+
 Grease.getGreaseStock = async () => {
     var greaseC, greaseSpec, typeOfGrease, carBrand, carYear;
     await Consumable.getSpecific("grease").then(consumables => {

@@ -251,6 +251,50 @@ router.get('/display-vehicle/:id', async (req, res, next) =>
     }
 });
 
+router.post('/add/grease',
+[body('greaseSpec').not().isEmpty(), 
+body('greaseType').not().isEmpty(),
+body('greaseCarBrand').not().isEmpty(),
+body('greaseCarYear').not().isEmpty(),
+body('quantityGrease').not().isEmpty(),
+body('quantityMinGrease').not().isEmpty()
+]
+, (req, res, next) => {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        console.log(req.body);
+        req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
+        res.redirect("/consumables/add");
+    }else{
+        const newConsumable = {
+            category: "Grease",
+            quantity: req.body.quantityGrease
+        };
+
+        const newGrease = {
+            greaseSpec: req.body.greaseSpec,
+            typeOfGrease: req.body.greaseType,
+            carBrand: req.body.greaseCarBrand,
+            carYear: req.body.greaseCarYear,
+            volume: req.body.quantityGrease,
+            minVolume: req.body.quantityMinGrease
+        };
+        Grease.addGrease(newGrease).then(() => {
+            Consumable.addConsumable(newConsumable).then(()=>{
+                req.flash('success_msg',  "Grease was added to stock");
+                res.redirect("/consumables/add");
+            
+            }).catch(err =>{
+                req.flash('error_msg', "Consumable could not be added");
+                res.redirect("/consumables/add");
+            });
+        }).catch(err =>{
+            req.flash('error_msg', category + " could not be added to");
+            res.redirect("/consumables/add");
+        });
+    }
+});
+
 router.get('/delete/:id', (req, res, next) =>
 {
     if(req.user){

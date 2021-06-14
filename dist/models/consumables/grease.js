@@ -99,6 +99,56 @@ var Grease = _mySQLDB["default"].define('grease_stocks', mappings, {
   }]
 });
 
+Grease.addGrease = function (newGrease) {
+  return new Promise(function (resolve, reject) {
+    if (newGrease.id) {
+      Grease.findOne({
+        where: {
+          id: newGrease.id
+        }
+      }).then(function (foundGrease) {
+        var quant = parseInt(newGrease.volume) + foundGrease.volume;
+        Grease.update({
+          volume: quant
+        }, {
+          where: {
+            id: newGrease.id
+          }
+        }).then(function () {
+          resolve("Grease was updated");
+        })["catch"](function (err) {
+          reject("Grease could not be update (Error: " + err + ")");
+        });
+      })["catch"](function (err) {
+        reject("Grease could not be found");
+      });
+    } else {
+      Grease.findOne({
+        where: {
+          greaseSpec: newGrease.greaseSpec,
+          typeOfGrease: newGrease.typeOfGrease,
+          carBrand: newGrease.carBrand,
+          carYear: newGrease.carYear
+        }
+      }).then(function (foundGrease) {
+        if (foundGrease) {
+          reject("This Grease Already Exists in the Stock");
+        } else {
+          newGrease.volume = parseFloat(newGrease.volume);
+          newGrease.minVolume = parseFloat(newGrease.minVolume);
+          Grease.create(newGrease).then(function () {
+            resolve("New Grease was added into stock");
+          })["catch"](function (err) {
+            reject("Grease could not be added into stock (Error: " + err + ")");
+          });
+        }
+      })["catch"](function (err) {
+        reject("Error connecting to the database");
+      });
+    }
+  });
+};
+
 Grease.getGreaseStock = /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
   var greaseC, greaseSpec, typeOfGrease, carBrand, carYear, values;
   return _regenerator["default"].wrap(function _callee$(_context) {

@@ -168,9 +168,10 @@ router.post('/add/battery', [(0, _expressValidator.body)('batSpec').not().isEmpt
     req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
     res.redirect("/consumables/add");
   } else {
-    var category = req.body.category.charAt(0).toUpperCase() + req.body.category.slice(1);
+    var _category = req.body.category.charAt(0).toUpperCase() + req.body.category.slice(1);
+
     var newConsumable = {
-      category: category,
+      category: _category,
       quantity: req.body.quantityBatteries
     };
     var newBattery = {
@@ -183,14 +184,14 @@ router.post('/add/battery', [(0, _expressValidator.body)('batSpec').not().isEmpt
 
     _Battery["default"].addBattery(newBattery).then(function () {
       _Consumables["default"].addConsumable(newConsumable).then(function () {
-        req.flash('success_msg', category + " was added to stock");
+        req.flash('success_msg', _category + " was added to stock");
         res.redirect("/consumables/add");
       })["catch"](function (err) {
         req.flash('error_msg', "Consumable could not be added");
         res.redirect("/consumables/add");
       });
     })["catch"](function (err) {
-      req.flash('error_msg', category + " could not be added to");
+      req.flash('error_msg', _category + " could not be added to");
       res.redirect("/consumables/add");
     });
   }
@@ -203,9 +204,10 @@ router.post('/add/brake', [(0, _expressValidator.body)('brakeCategory').not().is
     req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
     res.redirect("/consumables/add");
   } else {
-    var category = req.body.category.charAt(0).toUpperCase() + req.body.category.slice(1);
+    var _category2 = req.body.category.charAt(0).toUpperCase() + req.body.category.slice(1);
+
     var newConsumable = {
-      category: category,
+      category: _category2,
       quantity: req.body.quantityBrakes
     };
     var newBrake = {
@@ -223,14 +225,14 @@ router.post('/add/brake', [(0, _expressValidator.body)('brakeCategory').not().is
 
     _Brake["default"].addBrake(newBrake).then(function () {
       _Consumables["default"].addConsumable(newConsumable).then(function () {
-        req.flash('success_msg', category + " was added to stock");
+        req.flash('success_msg', _category2 + " was added to stock");
         res.redirect("/consumables/add");
       })["catch"](function (err) {
         req.flash('error_msg', "Consumable could not be added");
         res.redirect("/consumables/add");
       });
     })["catch"](function (err) {
-      req.flash('error_msg', category + " could not be added to");
+      req.flash('error_msg', _category2 + " could not be added to");
       res.redirect("/consumables/add");
     });
   }
@@ -301,6 +303,41 @@ router.get('/display-vehicle/:id', /*#__PURE__*/function () {
     return _ref2.apply(this, arguments);
   };
 }());
+router.post('/add/grease', [(0, _expressValidator.body)('greaseSpec').not().isEmpty(), (0, _expressValidator.body)('greaseType').not().isEmpty(), (0, _expressValidator.body)('greaseCarBrand').not().isEmpty(), (0, _expressValidator.body)('greaseCarYear').not().isEmpty(), (0, _expressValidator.body)('quantityGrease').not().isEmpty(), (0, _expressValidator.body)('quantityMinGrease').not().isEmpty()], function (req, res, next) {
+  var errors = (0, _expressValidator.validationResult)(req);
+
+  if (!errors.isEmpty()) {
+    console.log(req.body);
+    req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
+    res.redirect("/consumables/add");
+  } else {
+    var newConsumable = {
+      category: "Grease",
+      quantity: req.body.quantityGrease
+    };
+    var newGrease = {
+      greaseSpec: req.body.greaseSpec,
+      typeOfGrease: req.body.greaseType,
+      carBrand: req.body.greaseCarBrand,
+      carYear: req.body.greaseCarYear,
+      volume: req.body.quantityGrease,
+      minVolume: req.body.quantityMinGrease
+    };
+
+    _Grease["default"].addGrease(newGrease).then(function () {
+      _Consumables["default"].addConsumable(newConsumable).then(function () {
+        req.flash('success_msg', "Grease was added to stock");
+        res.redirect("/consumables/add");
+      })["catch"](function (err) {
+        req.flash('error_msg', "Consumable could not be added");
+        res.redirect("/consumables/add");
+      });
+    })["catch"](function (err) {
+      req.flash('error_msg', category + " could not be added to");
+      res.redirect("/consumables/add");
+    });
+  }
+});
 router.get('/delete/:id', function (req, res, next) {
   if (req.user) {
     Vehicle.getVehicleByPlate(req.params.id).then(function (foundVehicle) {

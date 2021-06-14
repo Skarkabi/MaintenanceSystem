@@ -146,9 +146,6 @@ router.get('/update-battery/:id/:quantity', function (req, res, next) {
       req.flash('error_msg', "Consumable could not be added");
       res.redirect("/consumables/add");
     });
-
-    req.flash('success_msg', "Battery was added to stock");
-    res.redirect("/consumables/add");
   })["catch"](function (err) {
     req.flash('error_msg', err + " could not be added to");
     res.redirect("/consumables/add");
@@ -228,6 +225,30 @@ router.post('/add/brake', [(0, _expressValidator.body)('brakeCategory').not().is
       res.redirect("/consumables/add");
     });
   }
+});
+router.get('/update-brake/:id/:quantity', function (req, res, next) {
+  var newBrake = {
+    id: req.params.id,
+    quantity: req.params.quantity
+  };
+
+  _Brake["default"].addBrake(newBrake).then(function () {
+    var newConsumable = {
+      category: "Brake",
+      quantity: req.params.quantity
+    };
+
+    _Consumables["default"].addConsumable(newConsumable).then(function () {
+      req.flash('success_msg', "Brake was added to stock");
+      res.redirect("/consumables/add");
+    })["catch"](function (err) {
+      req.flash('error_msg', "Brake could not be added");
+      res.redirect("/consumables/add");
+    });
+  })["catch"](function (err) {
+    req.flash('error_msg', err + "Brake could not be added to");
+    res.redirect("/consumables/add");
+  });
 });
 router.get('/display-vehicle/:id', /*#__PURE__*/function () {
   var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(req, res, next) {

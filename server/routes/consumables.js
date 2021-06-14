@@ -86,8 +86,6 @@ router.get('/update-battery/:id/:quantity', (req,res,next) =>{
             res.redirect("/consumables/add");
         });
 
-        req.flash('success_msg', "Battery was added to stock");
-        res.redirect("/consumables/add");
     }).catch(err =>{
         req.flash('error_msg', err +  " could not be added to");
         res.redirect("/consumables/add");
@@ -190,9 +188,33 @@ body('brakePrice').not().isEmpty()
         }).catch(err =>{
             req.flash('error_msg', category + " could not be added to");
             res.redirect("/consumables/add");
-        })
+        });
     }
- })
+ });
+
+router.get('/update-brake/:id/:quantity', (req,res,next) => {
+    const newBrake = {
+        id: req.params.id,
+        quantity: req.params.quantity
+    };
+
+    Brake.addBrake(newBrake).then(() => {
+        const newConsumable = {
+            category: "Brake",
+            quantity: req.params.quantity
+        };
+        Consumable.addConsumable(newConsumable).then(() => {
+            req.flash('success_msg', "Brake was added to stock");
+            res.redirect("/consumables/add");
+        }).catch(err =>{
+            req.flash('error_msg', "Brake could not be added");
+            res.redirect("/consumables/add");
+        });
+    }).catch(err => {
+        req.flash('error_msg', err +  "Brake could not be added to");
+        res.redirect("/consumables/add");
+    });
+});
 
 router.get('/display-vehicle/:id', async (req, res, next) =>
 {

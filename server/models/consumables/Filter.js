@@ -147,6 +147,69 @@ const Filter = sequelize.define('filter_stocks', mappings, {
   ],
 });
 
+Filter.addFilter = (newFilter) => {
+    return new Promise((resolve, reject) => {
+        const newConsumable = {
+            category: "Filter",
+            quantity: newFilter.quantity
+        };
+        if(newFilter.id){
+            Filter.addOne({
+                where: {id: newFilter.id}
+            }).then(foundFilter => {
+                var quant = parseInt(newFilter.quantity) + foundFilter.quantity;
+                Filter.update({quantity:quant}, {
+                    where: {
+                        id: newFilter.id
+                    }
+                }).then(() => {
+                    Consumable.addConsumable(newConsumable).then(() => {
+                        resolve("New Filter was Added to Stock");
+                    }).catch(err => {
+                        reject("Something happend (Error: " + err + ")");
+                    });
+                }).catch(err => {
+                    reject("Something happend (Error: " + err + ")");
+                });
+            }).catch(err => {
+                reject("Something happend (Error: " + err + ")");
+            });
+        }else{
+            Filter.findOne({
+                where: {
+                    carBrand: newFilter.carBrand,
+                    carModel: newFilter.carModel,
+                    category: newFilter.category,
+                    fTypy: newFilter.fType,
+                    preferredBrand: newFilter.preferredBrand,
+                    actualBrand: newFilter.actualBrand,
+                    singleCost: newFilter.singleCost
+                }
+            }).then(foundFilter => {
+                if(foundFilter){
+                    reject("This Filter Already Exists in the Stock");
+                }else{
+                    newFilter.quantity = parseInt(newFilter.quantity);
+                    newFilter.minQuantity = parseInt(newFilter.minQuantity);
+                    newFilter.singleCost = parseFloat(newFilter.singleCost);
+                    newFilter.totalCost = newFitler.singleCost * newFilter.quantity;
+                    Filter.create(newFilter).then(() => {
+                        Consumable.addConsumable(newConsumable).then(() => {
+                            resolve("New Filter was Added to Stock");
+                        }).catch(err => {
+                            reject("Something happened (Error: " + err + ")");
+                        });
+                    }).catch(err => {
+                        reject("Something happened (Error: " + err + ")");
+                    });
+                }
+            }).catch(err => {
+                reject("Something happened (Error: " + err + ")");
+            });
+        }
+    });
+}
+
 Filter.getFilterStock = async () => {
     var filterC, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand;
 

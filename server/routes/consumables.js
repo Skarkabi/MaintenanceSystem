@@ -295,6 +295,31 @@ body('quantityMinGrease').not().isEmpty()
     }
 });
 
+router.post('/update-grease/:id', (req,res,next) =>{
+    const newGrease = {
+        id: req.params.id,
+        volume: req.body.newQuantity
+    };
+
+    Grease.addGrease(newGrease).then(() => {
+        const newConsumable = {
+            category: "Grease",
+            quantity: req.body.newQuantity
+        };
+        Consumable.addConsumable(newConsumable).then(() =>{
+            req.flash('success_msg', "Grease was added to stock");
+            res.redirect("/consumables/add");
+        }).catch(err =>{
+            req.flash('error_msg', "Brake could not be added");
+            res.redirect("/consumables/add");
+        });
+    }).catch(err => {
+        req.flash('error_msg', err +  "Grease could not be added to");
+        res.redirect("/consumables/add");
+    });
+    
+})
+
 router.get('/delete/:id', (req, res, next) =>
 {
     if(req.user){

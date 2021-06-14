@@ -338,6 +338,30 @@ router.post('/add/grease', [(0, _expressValidator.body)('greaseSpec').not().isEm
     });
   }
 });
+router.post('/update-grease/:id', function (req, res, next) {
+  var newGrease = {
+    id: req.params.id,
+    volume: req.body.newQuantity
+  };
+
+  _Grease["default"].addGrease(newGrease).then(function () {
+    var newConsumable = {
+      category: "Grease",
+      quantity: req.body.newQuantity
+    };
+
+    _Consumables["default"].addConsumable(newConsumable).then(function () {
+      req.flash('success_msg', "Grease was added to stock");
+      res.redirect("/consumables/add");
+    })["catch"](function (err) {
+      req.flash('error_msg', "Brake could not be added");
+      res.redirect("/consumables/add");
+    });
+  })["catch"](function (err) {
+    req.flash('error_msg', err + "Grease could not be added to");
+    res.redirect("/consumables/add");
+  });
+});
 router.get('/delete/:id', function (req, res, next) {
   if (req.user) {
     Vehicle.getVehicleByPlate(req.params.id).then(function (foundVehicle) {

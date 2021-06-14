@@ -155,8 +155,8 @@ Grease.getGreaseStock = /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PU
             consumables: greaseC.rows,
             specs: greaseSpec,
             typeOfGrease: typeOfGrease,
-            carBrands: carBrand,
-            carYears: carYear
+            carBrand: carBrand,
+            carYear: carYear
           };
           return _context.abrupt("return", values);
 

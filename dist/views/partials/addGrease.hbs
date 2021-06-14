@@ -1,14 +1,51 @@
-<!--
 <div class="form-row">
-    <div class="form-group col required">
-        <label for="batSpec">Grease Specs</label>
-         <input type="text" placeholder = "Grease Specs" id="batSpec" name="batSpec" class="form-control" required>
-         <datalist id="productName">
-            <option value="Pen">Pen</option>
-            <option value="Pencil">Pencil</option>
-            <option value="Paper">Paper</option>
+    <div class="form-group col">
+        <label for="greaseSpec">Grease Specs</label>
+         <input list="greaseSpec"  name="greaseSpec" class="form-control">
+         <datalist id="greaseSpec">
+            {{#each values.grease.specs}}
+                <option value="{{this.greaseSpec}}"></option>
+            {{/each}}
+        </datalist>
+    </div>
+    <div class="form-group col ">
+        <label for="greaseType">Grease Type</label>
+         <input list="greaseType" name="greaseType" class="form-control" >
+         <datalist id="greaseType">
+             {{#each values.grease.typeOfGrease}}
+                <option value="{{this.typeOfGrease}}"></option>
+            {{/each}}
         </datalist>
     </div>
 </div>
--->
-                    
+<div class="form-row ">
+    <div class="form-group col ">
+        <label for="greaseCarBrand">Car Brand</label>
+         <input list="greaseCarBrand" name="greaseCarBrand" class="form-control">
+         <datalist id="greaseCarBrand">
+             {{#each values.grease.carBrand}}
+                <option value="{{this.carBrand}}"></option>
+            {{/each}}
+        </datalist>
+    </div>
+    <div class="form-group col ">
+        <label for="greaseCarYear">Car Year</label>
+         <input list="greaseCarYear" name="greaseCarYear" class="form-control" >
+         <datalist id="greaseCarYear">
+             {{#each values.grease.carYear}}
+                <option value="{{this.carYear}}"></option>
+            {{/each}}
+        </datalist>
+    </div>
+</div>
+<div class="form-row">
+    <div class="for-group col ">
+        <label for="quantityBatteries">Quantity</label>
+        <input type="number" placeholder = "0" id="quantityGrease" name="quantityGrease" class="form-control">
+    </div>
+    <div class="for-group col ">
+        <label for="quantityMinGrease">Minimum Quantity</label>
+        <input type="number" placeholder = "0" id="quantityMinGrease" name="quantityMinGrease" class="form-control">
+    </div>
+</div>
+    

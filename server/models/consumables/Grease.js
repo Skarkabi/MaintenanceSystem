@@ -116,7 +116,7 @@ Grease.getGreaseStock = async () => {
     });
     var values = {
         consumables: greaseC.rows, specs: greaseSpec, typeOfGrease: typeOfGrease, 
-        carBrands: carBrand, carYears: carYear
+        carBrand: carBrand, carYear: carYear
     };
 
     return values;

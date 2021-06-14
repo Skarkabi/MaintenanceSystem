@@ -66,33 +66,16 @@ router.get('/add', async (req, res, next) =>
      }
 });
 
-router.post('/add', (req, res, next) =>{
-    console.log("posting");
-    console.log(req.body);
-   });
 
-router.get('/update-battery/:id/:quantity', (req,res,next) =>{
-    console.log("my body is " + req.body);
+router.post('/update-battery/:id', (req,res,next) =>{
     const newBattery = {
         id: req.params.id,
-        quantity: req.params.quantity
+        quantity: req.body.newQuantity
     }
-    console.log("my battery is " + new Battery);
 
-    Battery.addBattery(newBattery).then(() =>{
-        const category = "Battery";
-        const newConsumable = {
-            category: category,
-            quantity: req.params.quantity
-        }
-        Consumable.addConsumable(newConsumable).then(()=>{
-            req.flash('success_msg', category + " was added to stock");
-            res.redirect("/consumables/add");
-        
-        }).catch(err =>{
-            req.flash('error_msg', "Consumable could not be added");
-            res.redirect("/consumables/add");
-        });
+    Battery.addBattery(newBattery).then(output =>{
+        req.flash('success_msg', output);
+        res.redirect("/consumables/add");
 
     }).catch(err =>{
         req.flash('error_msg', err +  " could not be added to");
@@ -115,12 +98,6 @@ router.post('/add/battery',
         req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
         res.redirect("/consumables/add");
     }else{
-        const category = req.body.category.charAt(0).toUpperCase() + req.body.category.slice(1);
-        const newConsumable = {
-            category: category,
-            quantity: req.body.quantityBatteries
-          }
-
         const newBattery = {
             batSpec: req.body.batSpec,
             carBrand: req.body.carBrand,
@@ -128,18 +105,12 @@ router.post('/add/battery',
             quantity: req.body.quantityBatteries,
             minQuantity: req.body.quantityMinBatteries
         }
-        Battery.addBattery(newBattery).then(()=>{
-            Consumable.addConsumable(newConsumable).then(()=>{
-                req.flash('success_msg', category + " was added to stock");
-                res.redirect("/consumables/add");
-            
-            }).catch(err =>{
-                req.flash('error_msg', "Consumable could not be added");
-                res.redirect("/consumables/add");
-            });
+        Battery.addBattery(newBattery).then(output =>{
+            req.flash('success_msg',  output);
+            res.redirect("/consumables/add");
 
         }).catch(err =>{
-            req.flash('error_msg', category + " could not be added to");
+            req.flash('error_msg', " could not be added to");
             res.redirect("/consumables/add");
         })
         
@@ -165,11 +136,6 @@ body('brakePrice').not().isEmpty()
         req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
         res.redirect("/consumables/add");
     }else{
-        const category = req.body.category.charAt(0).toUpperCase() + req.body.category.slice(1);
-        const newConsumable = {
-            category: category,
-            quantity: req.body.quantityBrakes 
-        };
         const newBrake = {
             category: req.body.brakeCategory,
             carBrand: req.body.brakeCBrand,
@@ -183,43 +149,29 @@ body('brakePrice').not().isEmpty()
         }
 
         console.log(newBrake);
-        Brake.addBrake(newBrake).then(()=>{
-            Consumable.addConsumable(newConsumable).then(()=>{
-                req.flash('success_msg', category + " was added to stock");
-                res.redirect("/consumables/add");
-            
-            }).catch(err =>{
-                req.flash('error_msg', "Consumable could not be added");
-                res.redirect("/consumables/add");
-            });
+        Brake.addBrake(newBrake).then(output =>{
+            req.flash('success_msg', output);
+            res.redirect("/consumables/add");
 
         }).catch(err =>{
             req.flash('error_msg', category + " could not be added to");
             res.redirect("/consumables/add");
+
         });
     }
  });
 
-router.get('/update-brake/:id/:quantity', (req,res,next) => {
+router.post('/update-brake/:id', (req,res,next) => {
     const newBrake = {
         id: req.params.id,
-        quantity: req.params.quantity
+        quantity: req.body.newQuantity
     };
 
-    Brake.addBrake(newBrake).then(() => {
-        const newConsumable = {
-            category: "Brake",
-            quantity: req.params.quantity
-        };
-        Consumable.addConsumable(newConsumable).then(() => {
-            req.flash('success_msg', "Brake was added to stock");
+    Brake.addBrake(newBrake).then(output => {
+            req.flash('success_msg', output);
             res.redirect("/consumables/add");
-        }).catch(err =>{
-            req.flash('error_msg', "Brake could not be added");
-            res.redirect("/consumables/add");
-        });
     }).catch(err => {
-        req.flash('error_msg', err +  "Brake could not be added to");
+        req.flash('error_msg', "Error " + err);
         res.redirect("/consumables/add");
     });
 });
@@ -317,7 +269,7 @@ router.post('/update-grease/:id', (req,res,next) =>{
         req.flash('error_msg', err +  "Grease could not be added to");
         res.redirect("/consumables/add");
     });
-    
+
 })
 
 router.get('/delete/:id', (req, res, next) =>

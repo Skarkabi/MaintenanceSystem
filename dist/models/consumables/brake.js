@@ -129,25 +129,36 @@ var Brake = _mySQLDB["default"].define('brake_stocks', mappings, {
 
 Brake.addBrake = function (newBrake) {
   return new Promise(function (resolve, reject) {
+    var newConsumable = {
+      category: "Brake",
+      quantity: newBrake.quantity
+    };
+
     if (newBrake.id) {
-      resolve(Brake.findOne({
+      Brake.findOne({
         where: {
           id: newBrake.id
         }
       }).then(function (foundBrake) {
         var quant = parseInt(newBrake.quantity) + foundBrake.quantity;
-        resolve(Brake.update({
+        Brake.update({
           quantity: quant
         }, {
           where: {
             id: newBrake.id
           }
+        }).then(function () {
+          _Consumables["default"].addConsumable(newConsumable).then(function () {
+            resolve("New Brake was Added to Stock");
+          })["catch"](function (err) {
+            reject("Something happened (Error: " + err + ")");
+          });
         })["catch"](function (err) {
-          reject(err);
-        }));
+          reject("Something happened (Error: " + err + ")");
+        });
       })["catch"](function (err) {
-        reject(err);
-      }));
+        reject("Something happened (Error: " + err + ")");
+      });
     } else {
       Brake.findOne({
         where: {
@@ -166,15 +177,18 @@ Brake.addBrake = function (newBrake) {
           newBrake.quantity = parseInt(newBrake.quantity);
           newBrake.minQuantity = parseInt(newBrake.minQuantity);
           newBrake.totalCost = newBrake.singleCost * newBrake.quantity;
-          resolve(Brake.create(newBrake).then(function () {
-            console.log("created");
+          Brake.create(newBrake).then(function () {
+            _Consumables["default"].addConsumable(newConsumable).then(function () {
+              resolve("New Brake was Added to Stock");
+            })["catch"](function (err) {
+              reject("Something happened (Error: " + err + ")");
+            });
           })["catch"](function (err) {
-            console.log(err);
-            reject(err);
-          }));
+            reject("Something happened (Error: " + err + ")");
+          });
         }
       })["catch"](function (err) {
-        reject(err);
+        reject("Something happened (Error: " + err + ")");
       });
     }
   });

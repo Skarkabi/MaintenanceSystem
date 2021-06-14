@@ -126,22 +126,31 @@ const Brake = sequelize.define('brake_stocks', mappings, {
 
 Brake.addBrake = (newBrake) => {
     return new Promise((resolve, reject) => {
+        const newConsumable = {
+            category: "Brake",
+            quantity: newBrake.quantity
+        };
         if(newBrake.id){
-            resolve(Brake.findOne({
+            Brake.findOne({
                 where: {id: newBrake.id}
             }).then(foundBrake => {
                 var quant = parseInt(newBrake.quantity) + foundBrake.quantity;
-                resolve(Brake.update({quantity:quant}, {
+                Brake.update({quantity:quant}, {
                     where: {
                         id: newBrake.id
                     }
-                }).catch(err =>{
-                    reject(err);
-                }));
-
-            }).catch(err =>{
-                reject (err);
-            }));
+                }).then(() => {
+                    Consumable.addConsumable(newConsumable).then(() => {
+                        resolve("New Brake was Added to Stock")
+                    }).catch(err => {
+                        reject("Something happened (Error: " + err + ")");
+                    });
+                }).catch(err => {
+                    reject("Something happened (Error: " + err + ")");
+                });
+            }).catch(err => {
+                reject("Something happened (Error: " + err + ")");
+            });
         }else{
             Brake.findOne({
                 where: {
@@ -160,15 +169,18 @@ Brake.addBrake = (newBrake) => {
                     newBrake.quantity = parseInt(newBrake.quantity);
                     newBrake.minQuantity = parseInt(newBrake.minQuantity);
                     newBrake.totalCost = newBrake.singleCost * newBrake.quantity;
-                    resolve(Brake.create(newBrake).then(() => {
-                        console.log("created");
+                    Brake.create(newBrake).then(() => {
+                        Consumable.addConsumable(newConsumable).then(() => {
+                            resolve("New Brake was Added to Stock")
+                        }).catch(err => {
+                            reject("Something happened (Error: " + err + ")");
+                        });
                     }).catch(err => {
-                        console.log(err);
-                        reject(err);
-                    }));
+                        reject("Something happened (Error: " + err + ")");
+                    });
                 }
             }).catch(err => {
-                reject(err);
+                reject("Something happened (Error: " + err + ")");
             });
         }
     });

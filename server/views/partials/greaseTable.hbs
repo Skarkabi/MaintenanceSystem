@@ -41,7 +41,7 @@
                         <div class="input-group">
                             <input type="number" id="tableGreaseQuantity-{{this.id}}" name="tableGreaseQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
                             <div class="input-group-append">
-                                <button type="submit" id="update-{{this.id}}" name="update-{{this.id}}" class="btn btn-primary" onclick="updatePost({{this.id}})"><i class="far fa-save"></i></button>
+                                <button type="submit" id="update-{{this.id}}" name="update-{{this.id}}" class="btn btn-primary" onclick="updatePost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
                             </div>
                         </div>
                     </td>  
@@ -54,6 +54,7 @@
 
 <script>
     function updatePost(id){
+        
         document.getElementById("tableGreaseQuantity-" + id).name = "newQuantity";
         document.getElementById("mainForm").action = "update-grease/" + id;
     }

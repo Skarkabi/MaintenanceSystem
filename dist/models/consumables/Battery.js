@@ -100,6 +100,11 @@ var Battery = _mySQLDB["default"].define('battery_stocks', mappings, {
 Battery.addBattery = function (newBattery) {
   console.log(newBattery);
   return new Promise(function (resolve, reject) {
+    var newConsumable = {
+      category: "Battery",
+      quantity: newBattery.quantity
+    };
+
     if (newBattery.id) {
       Battery.findOne({
         where: {
@@ -107,15 +112,23 @@ Battery.addBattery = function (newBattery) {
         }
       }).then(function (foundBattery) {
         var quant = parseInt(newBattery.quantity) + foundBattery.quantity;
-        resolve(Battery.update({
+        Battery.update({
           quantity: quant
         }, {
           where: {
             id: newBattery.id
           }
-        }));
+        }).then(function () {
+          _Consumables["default"].addConsumable(newConsumable).then(function () {
+            resolve("New Battery Added");
+          })["catch"](function (err) {
+            reject("Something happened (Error: " + err + ")");
+          });
+        })["catch"](function (err) {
+          reject("Something happened (Error: " + err + ")");
+        });
       })["catch"](function (err) {
-        console.log(err);
+        reject("Something happened (Error: " + err + ")");
       });
     } else {
       Battery.findOne({
@@ -130,7 +143,7 @@ Battery.addBattery = function (newBattery) {
         if (foundBattery) {
           var quant = parseInt(newBattery.quantity) + foundBattery.quantity;
           console.log("adding " + quant);
-          resolve(Battery.update({
+          Battery.update({
             quantity: quant
           }, {
             where: {
@@ -138,17 +151,29 @@ Battery.addBattery = function (newBattery) {
               carBrand: newBattery.carBrand,
               carYear: newBattery.carYear
             }
-          }));
+          }).then(function () {
+            _Consumables["default"].addConsumable(newConsumable).then(function () {
+              resolve("New Battery Added");
+            })["catch"](function (err) {
+              reject("Something happened (Error: " + err + ")");
+            });
+          })["catch"](function (err) {
+            reject("Something happened (Error: " + err + ")");
+          });
         } else {
           console.log("Adding this " + JSON.stringify(newBattery));
-          resolve(Battery.create(newBattery).then(function () {
-            console.log("created");
+          Battery.create(newBattery).then(function () {
+            _Consumables["default"].addConsumable(newConsumable).then(function () {
+              resolve("New Battery Added");
+            })["catch"](function (err) {
+              reject("Something happened (Error: " + err + ")");
+            });
           })["catch"](function (err) {
-            console.log(err);
-          }));
+            reject("Something happened (Error: " + err + ")");
+          });
         }
       })["catch"](function (err) {
-        reject(err);
+        reject("Something happened (Error: " + err + ")");
       });
     }
   });

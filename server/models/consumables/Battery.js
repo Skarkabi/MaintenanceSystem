@@ -90,19 +90,31 @@ const Battery = sequelize.define('battery_stocks', mappings, {
 Battery.addBattery = (newBattery) =>{
     console.log(newBattery);
     return new Promise((resolve, reject) => {
+        const newConsumable = {
+            category: "Battery",
+            quantity: newBattery.quantity
+        };
         if(newBattery.id){
             Battery.findOne({
                 where: {id: newBattery.id} 
             }).then(foundBattery =>{
                 var quant = parseInt(newBattery.quantity) + foundBattery.quantity;
-                resolve(Battery.update({quantity: quant}, {
+                Battery.update({quantity: quant}, {
                     where: {
                         id: newBattery.id
                     }
-                }));
+                }).then(() =>{
+                    Consumable.addConsumable(newConsumable).then(() =>{
+                        resolve("New Battery Added");
+                    }).catch(err =>{
+                        reject("Something happened (Error: " + err + ")");
+                    });
+                }).catch(err => {
+                    reject("Something happened (Error: " + err + ")");
+                });
             }).catch(err=>{
-                console.log(err);
-            })
+                reject("Something happened (Error: " + err + ")");
+            });
         }else{
             Battery.findOne({
                 where: {
@@ -115,23 +127,35 @@ Battery.addBattery = (newBattery) =>{
                 if(foundBattery){
                     var quant = parseInt(newBattery.quantity) + foundBattery.quantity;
                     console.log("adding " + quant);
-                    resolve(Battery.update({quantity: quant}, {
+                    Battery.update({quantity: quant}, {
                         where: {
                             batSpec: newBattery.batSpec,
                             carBrand: newBattery.carBrand,
                             carYear: newBattery.carYear
                         }
-                    }));
+                    }).then(() => {
+                        Consumable.addConsumable(newConsumable).then(() => {
+                            resolve("New Battery Added");
+                        }).catch(err => {
+                            reject("Something happened (Error: " + err + ")");
+                        });
+                    }).catch(err => {
+                        reject("Something happened (Error: " + err + ")");
+                    });
                 }else{
                     console.log("Adding this " + JSON.stringify(newBattery));
-                    resolve(Battery.create(newBattery).then(()=> {
-                        console.log("created")
+                    Battery.create(newBattery).then(()=> {
+                        Consumable.addConsumable(newConsumable).then(() => {
+                            resolve("New Battery Added");
+                        }).catch(err => {
+                            reject("Something happened (Error: " + err + ")");
+                        });
                     }).catch(err =>{
-                        console.log(err);
-                    }));
+                        reject("Something happened (Error: " + err + ")");
+                    });
                 }
             }).catch(err =>{
-                reject(err);
+                reject("Something happened (Error: " + err + ")");
             });
         }
         

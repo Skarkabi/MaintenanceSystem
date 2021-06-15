@@ -124,14 +124,16 @@ Oil.addOil = (newOil) => {
   if(newOil.id){
     console.log("Existing OIL: " + JSON.stringify(newOil));
     Oil.findOne({
-      where: {id: newOil.id}
+      where: {
+        id: newOil.id
+      }
     }).then(foundOil => {
       var quant = parseFloat(newOil.volume) + foundOil.volume;
-      Oil.update({volume: quant}), {
+      Oil.update({volume: quant}, {
         where: {
           id: newOil.id
         }
-      }.then(() => {
+      }).then(() => {
         Consumable.addConsumable(newConsumable).then(() => {
           resolve("New Oil was Added to Stock");
         }).catch(err => {

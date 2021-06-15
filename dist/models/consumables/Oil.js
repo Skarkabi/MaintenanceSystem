@@ -170,11 +170,11 @@ Oil.addOil = function (newOil) {
         var quant = parseFloat(newOil.volume) + foundOil.volume;
         Oil.update({
           volume: quant
-        }), {
+        }, {
           where: {
             id: newOil.id
           }
-        }.then(function () {
+        }).then(function () {
           _Consumables["default"].addConsumable(newConsumable).then(function () {
             resolve("New Oil was Added to Stock");
           })["catch"](function (err) {

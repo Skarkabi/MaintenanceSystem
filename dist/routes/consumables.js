@@ -395,6 +395,20 @@ router.post('/add/oil', [(0, _expressValidator.body)('oilSpec').not().isEmpty(),
     });
   }
 });
+router.post('/update-oil/:id', function (req, res, next) {
+  var newOil = {
+    id: req.params.id,
+    volume: req.body.newQuantity
+  };
+
+  _Oil["default"].addOil(newOil).then(function (output) {
+    req.flash('success_msg', output);
+    res.redirect("/consumables/add");
+  })["catch"](function (err) {
+    req.flash('error_msg', err + " could not be added to");
+    res.redirect("/consumables/add");
+  });
+});
 router.get('/delete/:id', function (req, res, next) {
   if (req.user) {
     Vehicle.getVehicleByPlate(req.params.id).then(function (foundVehicle) {

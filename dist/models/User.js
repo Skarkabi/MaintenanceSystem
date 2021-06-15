@@ -19,7 +19,7 @@ var _mySQLDB = _interopRequireDefault(require("../mySQLDB"));
 
 var mappings = {
   id: {
-    type: _sequelize["default"].DataTypes.INTEGER,
+    type: _sequelize["default"].DataTypes.STRING,
     primaryKey: true,
     defaultValue: _sequelize["default"].DataTypes.UUIDV4
   },

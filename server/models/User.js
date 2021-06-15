@@ -7,7 +7,7 @@ import sequelize from '../mySQLDB';
 
 const mappings = {
   id: {
-    type: Sequelize.DataTypes.INTEGER,
+    type: Sequelize.DataTypes.STRING,
     primaryKey: true,
     defaultValue: Sequelize.DataTypes.UUIDV4,
   },

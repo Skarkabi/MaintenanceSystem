@@ -374,6 +374,22 @@ body('quantityMinOil').not().isEmpty()
     }
 });
 
+router.post('/update-oil/:id', (req,res,next) => {
+    const newOil = { 
+        id: req.params.id,
+        volume: req.body.newQuantity
+    };
+
+    Oil.addOil(newOil).then(output => {
+        req.flash('success_msg', output);
+        res.redirect("/consumables/add");
+
+    }).catch(err =>{
+        req.flash('error_msg', err +  " could not be added to");
+        res.redirect("/consumables/add");
+    });
+})
+
 router.get('/delete/:id', (req, res, next) =>
 {
     if(req.user){

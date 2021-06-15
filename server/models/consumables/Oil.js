@@ -2,6 +2,7 @@ import _ from 'lodash';
 import Sequelize from 'sequelize';
 
 import sequelize from '../../mySQLDB';
+import Consumable from '../Consumables';
 
 const mappings = {
     id: {
@@ -78,5 +79,30 @@ const Oil = sequelize.define('oil_stocks', mappings, {
     },
   ],
 });
+
+Oil.getOilStock = async () => {
+  var oilC, oilSpecs, typeOfOils, preferredBrands
+  await Consumable.getSpecific("oil").then(consumables => {
+    oilC = consumables;
+  });
+
+  await Oil.findAll({attributes: [[Sequelize.literal('DISTINCT `oilSpec`'), 'oilSpec']],raw:true, nest:true}).then(spec => {
+    oilSpecs = spec
+  });
+
+  await Oil.findAll({attributes: [[Sequelize.literal('DISTINCT `typeOfOil`'), 'typeOfOil']],raw:true, nest:true}).then(spec => {
+    typeOfOils = spec
+  });
+
+  await Oil.findAll({attributes: [[Sequelize.literal('DISTINCT `preferredBrand`'), 'preferredBrand']],raw:true, nest:true}).then(spec => {
+    preferredBrands = spec
+  });
+
+  var values = {
+    consumables: oilC.rows, specs: oilSpecs, typeOfOils: typeOfOils, preferredBrands: preferredBrands
+  };
+
+  return values;
+}
 
 export default Oil;

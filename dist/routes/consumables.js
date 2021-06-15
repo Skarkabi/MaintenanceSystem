@@ -31,6 +31,8 @@ var _sequelize = _interopRequireDefault(require("sequelize"));
 
 var _Grease = _interopRequireDefault(require("../models/consumables/Grease"));
 
+var _Oil = _interopRequireDefault(require("../models/consumables/Oil"));
+
 var _puppeteer = require("puppeteer");
 
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
@@ -51,7 +53,7 @@ function getStocks() {
 
 function _getStocks() {
   _getStocks = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
-    var batteries, brakes, filters, grease, values;
+    var batteries, brakes, filters, grease, oil, values;
     return _regenerator["default"].wrap(function _callee5$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
@@ -80,15 +82,22 @@ function _getStocks() {
             });
 
           case 8:
+            _context5.next = 10;
+            return _Oil["default"].getOilStock().then(function (values) {
+              oil = values;
+            });
+
+          case 10:
             values = {
               batteries: batteries,
               brakes: brakes,
               filters: filters,
-              grease: grease
+              grease: grease,
+              oil: oil
             };
             return _context5.abrupt("return", values);
 
-          case 10:
+          case 12:
           case "end":
             return _context5.stop();
         }

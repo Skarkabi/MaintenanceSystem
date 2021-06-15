@@ -9,6 +9,7 @@ import Brake from '../models/consumables/Brake';
 import Filter from '../models/consumables/Filter';
 import Sequelize from 'sequelize';
 import Grease from '../models/consumables/Grease';
+import Oil from '../models/consumables/Oil';
 import { errors } from 'puppeteer';
 
 const router = express.Router();
@@ -24,7 +25,7 @@ function onlyUnique(value, index, self) {
   console.log(unique); // ['a', 1, 2, '1']
 
 async function getStocks(){
-    var batteries, brakes, filters, grease;
+    var batteries, brakes, filters, grease, oil;
     await Battery.getBatteryStocks().then(values =>{
         batteries = values;
     });
@@ -41,9 +42,13 @@ async function getStocks(){
         grease = values;
     });
 
+    await Oil.getOilStock().then(values => {
+        oil = values;
+    })
+
     var values = {
         batteries: batteries, brakes: brakes, filters: filters,
-        grease: grease
+        grease: grease, oil: oil
     };
     return values
 }
@@ -260,7 +265,7 @@ router.post('/update-filter/:id', (req,res,next) => {
         req.flash('error_msg', "Error " + err);
         res.redirect("/consumables/add");
     });
-    
+
 })
 
 router.post('/add/grease',

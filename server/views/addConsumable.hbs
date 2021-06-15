@@ -53,8 +53,11 @@
             <div  class="section-content" id="greaseexisting">
                {{>greaseTable}}
             </div>
-            <div  class="section-content" id="oil">
+            <div  class="section-content" id="oilnew">
                {{>addOil}}
+            </div>
+             <div  class="section-content" id="oilexisting">
+               {{>oilTable}}
             </div>
         </div>
         <button type="submit" id="submit" name="submit" class="btn btn-primary justfiy-content-end" onclick="addType()"><i class="far fa-save"></i> {{submitButtonText}}</button>
@@ -75,7 +78,8 @@
         document.getElementById("batteryexisting").style.display ="none";
         document.getElementById("filternew").style.display ="none";
         document.getElementById("filterexisting").style.display ="none";
-        document.getElementById("oil").style.display ="none";
+        document.getElementById("oilnew").style.display ="none";
+        document.getElementById("oilexisting").style.display ="none";
         document.getElementById("greasenew").style.display ="none";
         document.getElementById("greaseexisting").style.display ="none";
         document.getElementById("submit").style.display = "none";
@@ -90,7 +94,8 @@
         document.getElementById("batteryexisting").style.display ="none";
         document.getElementById("filternew").style.display ="none";
         document.getElementById("filterexisting").style.display ="none";
-        document.getElementById("oil").style.display ="none";
+        document.getElementById("oilnew").style.display ="none";
+        document.getElementById("oilexisting").style.display ="none";
         document.getElementById("greasenew").style.display ="none";
         document.getElementById("greaseexisting").style.display ="none";
         if(category.value !== "" && existing.value !== ""){

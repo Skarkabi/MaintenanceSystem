@@ -147,7 +147,7 @@ Filter.addFilter = function (newFilter) {
     };
 
     if (newFilter.id) {
-      Filter.addOne({
+      Filter.findOne({
         where: {
           id: newFilter.id
         }

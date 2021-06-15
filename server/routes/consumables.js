@@ -247,6 +247,22 @@ body('filterPrice').not().isEmpty(),
 
 });
 
+router.post('/update-filter/:id', (req,res,next) => {
+    const newFilter = {
+        id: req.params.id,
+        quantity: req.body.newQuantity
+    };
+
+    Filter.addFilter(newFilter).then(output => {
+        req.flash('success_msg', output);
+        res.redirect("/consumables/add");
+    }).catch(err => {
+        req.flash('error_msg', "Error " + err);
+        res.redirect("/consumables/add");
+    });
+    
+})
+
 router.post('/add/grease',
 [body('greaseSpec').not().isEmpty(), 
 body('greaseType').not().isEmpty(),

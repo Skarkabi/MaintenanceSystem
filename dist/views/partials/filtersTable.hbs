@@ -51,9 +51,9 @@
                     <td>{{this.quantity}}</td>
                     <td class = "table-actions">
                         <div class="input-group">
-                            <input type="number" id="tableQuantity-{{this.id}}" name="tableQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
+                            <input type="number" id="tableFilterQuantity-{{this.id}}" name="tableFilterQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
                             <div class="input-group-append">
-                                <a href="#" onclick="updateBatter({{this.id}})" class="btn btn-primary" role="button"  id="update-{{this.id}}"><i class="fas fa-plus-circle"></i></a>
+                                <button type="submit" id="updateFilter-{{this.id}}" name="updateFilter-{{this.id}}" class="btn btn-primary" onclick="updateFilterPost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
                             </div>
                         </div>
                     </td>  
@@ -63,3 +63,10 @@
         </tbody>
     </table>
 </div>
+
+<script>
+    function updateFilterPost(id){
+        document.getElementById("tableFilterQuantity-" + id).name = "newQuantity";
+        document.getElementById("mainForm").action = "update-filter/" + id;
+    }
+</script>

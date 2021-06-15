@@ -154,7 +154,7 @@ Filter.addFilter = (newFilter) => {
             quantity: newFilter.quantity
         };
         if(newFilter.id){
-            Filter.addOne({
+            Filter.findOne({
                 where: {id: newFilter.id}
             }).then(foundFilter => {
                 var quant = parseInt(newFilter.quantity) + foundFilter.quantity;

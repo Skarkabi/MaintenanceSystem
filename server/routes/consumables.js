@@ -9,6 +9,7 @@ import Brake from '../models/consumables/Brake';
 import Filter from '../models/consumables/Filter';
 import Sequelize from 'sequelize';
 import Grease from '../models/consumables/Grease';
+import { errors } from 'puppeteer';
 
 const router = express.Router();
 
@@ -204,7 +205,45 @@ router.get('/display-vehicle/:id', async (req, res, next) =>
 });
 
 router.post('/add/filter', 
-[], (req, res, next) => { 
+[body('filterType').not().isEmpty(),
+body('vehicleCategory').not().isEmpty(),
+body('filterABrand').not().isEmpty(),
+body('filterPBrand').not().isEmpty(),
+body('filterCarBrand').not().isEmpty(),
+body('filterCarModel').not().isEmpty(),
+body('filterCarYear').not().isEmpty(),
+body('quantityFilters').not().isEmpty(),
+body('minFilterQuantity').not().isEmpty(),
+body('filterPrice').not().isEmpty(),
+], (req, res, next) => { 
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
+        res.redirect("/consumables/add");
+    }else{
+        const newFilter = {
+            carBrand: req.body.filterCarBrand,
+            carModel: req.body.filterCarModel,
+            carYear: req.body.filterCarYear,
+            category: req.body.vehicleCategory,
+            fType: req.body.filterType,
+            preferredBrand: req.body.filterPBrand,
+            actualBrand: req.body.filterABrand,
+            singleCost: req.body.filterPrice,
+            quantity: req.body.quantityFilters,
+            minQuantity: req.body.minFilterQuantity
+
+        };
+        Filter.addFilter(newFilter).then(output => {    
+            req.flash('success_msg', output);
+            res.redirect("/consumables/add");
+
+        }).catch(err =>{
+            req.flash('error_msg', err);
+            res.redirect("/consumables/add");
+
+        });
+    }
 
 });
 

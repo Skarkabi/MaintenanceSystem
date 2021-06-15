@@ -31,6 +31,8 @@ var _sequelize = _interopRequireDefault(require("sequelize"));
 
 var _Grease = _interopRequireDefault(require("../models/consumables/Grease"));
 
+var _puppeteer = require("puppeteer");
+
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
 var router = _express["default"].Router();
 
@@ -254,6 +256,35 @@ router.get('/display-vehicle/:id', /*#__PURE__*/function () {
     return _ref2.apply(this, arguments);
   };
 }());
+router.post('/add/filter', [(0, _expressValidator.body)('filterType').not().isEmpty(), (0, _expressValidator.body)('vehicleCategory').not().isEmpty(), (0, _expressValidator.body)('filterABrand').not().isEmpty(), (0, _expressValidator.body)('filterPBrand').not().isEmpty(), (0, _expressValidator.body)('filterCarBrand').not().isEmpty(), (0, _expressValidator.body)('filterCarModel').not().isEmpty(), (0, _expressValidator.body)('filterCarYear').not().isEmpty(), (0, _expressValidator.body)('quantityFilters').not().isEmpty(), (0, _expressValidator.body)('minFilterQuantity').not().isEmpty(), (0, _expressValidator.body)('filterPrice').not().isEmpty()], function (req, res, next) {
+  var errors = (0, _expressValidator.validationResult)(req);
+
+  if (!errors.isEmpty()) {
+    req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
+    res.redirect("/consumables/add");
+  } else {
+    var newFilter = {
+      carBrand: req.body.filterCarBrand,
+      carModel: req.body.filterCarModel,
+      carYear: req.body.filterCarYear,
+      category: req.body.vehicleCategory,
+      fType: req.body.filterType,
+      preferredBrand: req.body.filterPBrand,
+      actualBrand: req.body.filterABrand,
+      singleCost: req.body.filterPrice,
+      quantity: req.body.quantityFilters,
+      minQuantity: req.body.minFilterQuantity
+    };
+
+    _Filter["default"].addFilter(newFilter).then(function (output) {
+      req.flash('success_msg', output);
+      res.redirect("/consumables/add");
+    })["catch"](function (err) {
+      req.flash('error_msg', err);
+      res.redirect("/consumables/add");
+    });
+  }
+});
 router.post('/add/grease', [(0, _expressValidator.body)('greaseSpec').not().isEmpty(), (0, _expressValidator.body)('greaseType').not().isEmpty(), (0, _expressValidator.body)('greaseCarBrand').not().isEmpty(), (0, _expressValidator.body)('greaseCarYear').not().isEmpty(), (0, _expressValidator.body)('quantityGrease').not().isEmpty(), (0, _expressValidator.body)('quantityMinGrease').not().isEmpty()], function (req, res, next) {
   var errors = (0, _expressValidator.validationResult)(req);
 

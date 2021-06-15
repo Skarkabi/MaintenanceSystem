@@ -139,6 +139,75 @@ var Filter = _mySQLDB["default"].define('filter_stocks', mappings, {
   }]
 });
 
+Filter.addFilter = function (newFilter) {
+  return new Promise(function (resolve, reject) {
+    var newConsumable = {
+      category: "Filter",
+      quantity: newFilter.quantity
+    };
+
+    if (newFilter.id) {
+      Filter.addOne({
+        where: {
+          id: newFilter.id
+        }
+      }).then(function (foundFilter) {
+        var quant = parseInt(newFilter.quantity) + foundFilter.quantity;
+        Filter.update({
+          quantity: quant
+        }, {
+          where: {
+            id: newFilter.id
+          }
+        }).then(function () {
+          _Consumables["default"].addConsumable(newConsumable).then(function () {
+            resolve("New Filter was Added to Stock");
+          })["catch"](function (err) {
+            reject("Something happend (Error: " + err + ")");
+          });
+        })["catch"](function (err) {
+          reject("Something happend (Error: " + err + ")");
+        });
+      })["catch"](function (err) {
+        reject("Something happend (Error: " + err + ")");
+      });
+    } else {
+      Filter.findOne({
+        where: {
+          carBrand: newFilter.carBrand,
+          carModel: newFilter.carModel,
+          category: newFilter.category,
+          fType: newFilter.fType,
+          preferredBrand: newFilter.preferredBrand,
+          actualBrand: newFilter.actualBrand,
+          singleCost: newFilter.singleCost
+        }
+      }).then(function (foundFilter) {
+        if (foundFilter) {
+          reject("This Filter Already Exists in the Stock");
+        } else {
+          newFilter.quantity = parseInt(newFilter.quantity);
+          newFilter.minQuantity = parseInt(newFilter.minQuantity);
+          newFilter.singleCost = parseFloat(newFilter.singleCost);
+          newFilter.totalCost = newFilter.singleCost * newFilter.quantity;
+          newFilter.totalCost = parseFloat(newFilter.totalCost);
+          Filter.create(newFilter).then(function () {
+            _Consumables["default"].addConsumable(newConsumable).then(function () {
+              resolve("New Filter was Added to Stock");
+            })["catch"](function (err) {
+              reject("Something happened (Error: " + err + ")");
+            });
+          })["catch"](function (err) {
+            reject("Something happened (Error: " + err + ")");
+          });
+        }
+      })["catch"](function (err) {
+        reject("Something happened (Error: " + err + ")");
+      });
+    }
+  });
+};
+
 Filter.getFilterStock = /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
   var filterC, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand, values;
   return _regenerator["default"].wrap(function _callee$(_context) {

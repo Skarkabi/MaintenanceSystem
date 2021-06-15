@@ -180,7 +180,7 @@ Filter.addFilter = (newFilter) => {
                     carBrand: newFilter.carBrand,
                     carModel: newFilter.carModel,
                     category: newFilter.category,
-                    fTypy: newFilter.fType,
+                    fType: newFilter.fType,
                     preferredBrand: newFilter.preferredBrand,
                     actualBrand: newFilter.actualBrand,
                     singleCost: newFilter.singleCost
@@ -192,7 +192,8 @@ Filter.addFilter = (newFilter) => {
                     newFilter.quantity = parseInt(newFilter.quantity);
                     newFilter.minQuantity = parseInt(newFilter.minQuantity);
                     newFilter.singleCost = parseFloat(newFilter.singleCost);
-                    newFilter.totalCost = newFitler.singleCost * newFilter.quantity;
+                    newFilter.totalCost = newFilter.singleCost * newFilter.quantity;
+                    newFilter.totalCost = parseFloat(newFilter.totalCost);
                     Filter.create(newFilter).then(() => {
                         Consumable.addConsumable(newConsumable).then(() => {
                             resolve("New Filter was Added to Stock");

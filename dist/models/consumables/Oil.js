@@ -45,6 +45,10 @@ var mappings = {
     type: _sequelize["default"].DataTypes.STRING,
     allowNull: false
   },
+  oilPrice: {
+    type: _sequelize["default"].DataTypes.DOUBLE,
+    allowNull: false
+  },
   createdAt: {
     type: _sequelize["default"].DataTypes.DATE,
     allowNull: true
@@ -76,6 +80,10 @@ var Oil = _mySQLDB["default"].define('oil_stocks', mappings, {
     name: 'oil_typeOfOil_index',
     method: 'BTREE',
     fields: ['typeOfOil']
+  }, {
+    name: 'oil_oilPrice_index',
+    method: 'BTREE',
+    fields: ['oilPrice']
   }, {
     name: 'oil_createdAt_index',
     method: 'BTREE',
@@ -144,5 +152,71 @@ Oil.getOilStock = /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/
     }
   }, _callee);
 }));
+
+Oil.addOil = function (newOil) {
+  return new Promise(function (resolve, reject) {
+    var newConsumable = {
+      category: "Oil",
+      quantity: newOil.volume
+    };
+
+    if (newOil.id) {
+      console.log("Existing OIL: " + JSON.stringify(newOil));
+      Oil.findOne({
+        where: {
+          id: newOil.id
+        }
+      }).then(function (foundOil) {
+        var quant = parseFloat(newOil.volume) + foundOil.volume;
+        Oil.update({
+          volume: quant
+        }), {
+          where: {
+            id: newOil.id
+          }
+        }.then(function () {
+          _Consumables["default"].addConsumable(newConsumable).then(function () {
+            resolve("New Oil was Added to Stock");
+          })["catch"](function (err) {
+            reject("Something happend (Error: " + err + ")");
+          });
+        })["catch"](function (err) {
+          reject("Something happend (Error: " + err + ")");
+        });
+      })["catch"](function (err) {
+        reject("Something happend (Error: " + err + ")");
+      });
+    } else {
+      Oil.findOne({
+        where: {
+          oilSpec: newOil.oilSpec,
+          typeOfOil: newOil.typeOfOil,
+          preferredBrand: newOil.preferredBrand
+        }
+      }).then(function (foundOil) {
+        if (foundOil) {
+          console.log("FOUNd OIL: " + JSON.stringify(foundOil));
+          reject("This Oil Already Exists in the Stock");
+        } else {
+          newOil.volume = parseFloat(newOil.volume);
+          newOil.minVolume = parseFloat(newOil.minVolume);
+          console.log("NEW OIL: " + JSON.stringify(newOil));
+          Oil.create(newOil).then(function () {
+            _Consumables["default"].addConsumable(newConsumable).then(function () {
+              resolve("New Oil was Added to Stock");
+            })["catch"](function (err) {
+              reject("Something happened (Error: " + err + ")");
+            });
+          })["catch"](function (err) {
+            reject("Something happened (Error: " + err + ")");
+          });
+        }
+      })["catch"](function (err) {
+        reject("Something happened (Error: " + err + ")");
+      });
+    }
+  });
+};
+
 var _default = Oil;
 exports["default"] = _default;

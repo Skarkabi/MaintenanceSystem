@@ -367,6 +367,34 @@ router.post('/update-grease/:id', function (req, res, next) {
     res.redirect("/consumables/add");
   });
 });
+router.post('/add/oil', [(0, _expressValidator.body)('oilSpec').not().isEmpty(), (0, _expressValidator.body)('oilType').not().isEmpty(), (0, _expressValidator.body)('preferredOilBrand').not().isEmpty(), (0, _expressValidator.body)('oilPrice').not().isEmpty(), (0, _expressValidator.body)('quantityOil').not().isEmpty(), (0, _expressValidator.body)('quantityMinOil').not().isEmpty()], function (req, res, next) {
+  var errors = (0, _expressValidator.validationResult)(req);
+
+  if (!errors.isEmpty()) {
+    console.log(req.body);
+    req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
+    res.redirect("/consumables/add");
+  } else {
+    var newOil = {
+      oilSpec: req.body.oilSpec,
+      typeOfOil: req.body.oilType,
+      preferredBrand: req.body.preferredOilBrand,
+      volume: req.body.quantityOil,
+      minVolume: req.body.quantityMinOil,
+      oilPrice: req.body.oilPrice
+    };
+    console.log("OIL : " + JSON.stringify(newOil));
+
+    _Oil["default"].addOil(newOil).then(function (output) {
+      req.flash('success_msg', output);
+      res.redirect("/consumables/add");
+    })["catch"](function (err) {
+      console.log(err);
+      req.flash('error_msg', JSON.stringify(err));
+      res.redirect("/consumables/add");
+    });
+  }
+});
 router.get('/delete/:id', function (req, res, next) {
   if (req.user) {
     Vehicle.getVehicleByPlate(req.params.id).then(function (foundVehicle) {

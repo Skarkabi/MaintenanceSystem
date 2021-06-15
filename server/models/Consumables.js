@@ -20,7 +20,7 @@ const mappings = {
         allowNull: false,
     },
     quantity:{
-        type: Sequelize.DataTypes.INTEGER,
+        type: Sequelize.DataTypes.DOUBLE,
         allowNull: true
     },
     createdAt: {
@@ -67,7 +67,7 @@ Consumable.addConsumable = (createConsumable) => {
     const newConsumable = 
     {
       category: createConsumable.category,
-      quantity: parseInt(createConsumable.quantity)
+      quantity: parseFloat(createConsumable.quantity)
     }
     console.log(newConsumable);
     return new Promise ((resolve, reject) => {

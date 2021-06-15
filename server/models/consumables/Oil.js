@@ -30,6 +30,10 @@ const mappings = {
         type: Sequelize.DataTypes.STRING,
         allowNull: false  
     },
+    oilPrice:{
+      type: Sequelize.DataTypes.DOUBLE,
+      allowNull: false
+    },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
         allowNull: true,
@@ -68,6 +72,11 @@ const Oil = sequelize.define('oil_stocks', mappings, {
         fields: ['typeOfOil']
     },
     {
+      name: 'oil_oilPrice_index',
+      method: 'BTREE',
+      fields: ['oilPrice']
+    },
+    {
       name: 'oil_createdAt_index',
       method: 'BTREE',
       fields: ['createdAt'],
@@ -103,6 +112,68 @@ Oil.getOilStock = async () => {
   };
 
   return values;
+}
+
+Oil.addOil = (newOil) => {
+  return new Promise((resolve, reject) => {
+    const newConsumable = {
+      category: "Oil",
+      quantity: newOil.volume
+  };
+
+  if(newOil.id){
+    console.log("Existing OIL: " + JSON.stringify(newOil));
+    Oil.findOne({
+      where: {id: newOil.id}
+    }).then(foundOil => {
+      var quant = parseFloat(newOil.volume) + foundOil.volume;
+      Oil.update({volume: quant}), {
+        where: {
+          id: newOil.id
+        }
+      }.then(() => {
+        Consumable.addConsumable(newConsumable).then(() => {
+          resolve("New Oil was Added to Stock");
+        }).catch(err => {
+          reject("Something happend (Error: " + err + ")");
+        });
+      }).catch(err => {
+        reject("Something happend (Error: " + err + ")");
+      });
+    }).catch(err => {
+      reject("Something happend (Error: " + err + ")");
+    });
+  }else{
+    Oil.findOne({
+      where: {
+        oilSpec: newOil.oilSpec,
+        typeOfOil: newOil.typeOfOil,
+        preferredBrand: newOil.preferredBrand
+      }
+    }).then(foundOil => {
+      if(foundOil){
+        console.log("FOUNd OIL: " + JSON.stringify(foundOil));
+        reject("This Oil Already Exists in the Stock");
+      }else{
+        newOil.volume = parseFloat(newOil.volume);
+        newOil.minVolume = parseFloat(newOil.minVolume);
+        console.log("NEW OIL: " + JSON.stringify(newOil));
+        Oil.create(newOil).then(() => {
+          Consumable.addConsumable(newConsumable).then(() => {
+            resolve("New Oil was Added to Stock");
+          }).catch(err => {
+            reject("Something happened (Error: " + err + ")");
+          });
+        }).catch(err => {
+          reject("Something happened (Error: " + err + ")");
+        });
+      }
+    }).catch(err => {
+      reject("Something happened (Error: " + err + ")");
+    });
+  }
+  });
+
 }
 
 export default Oil;

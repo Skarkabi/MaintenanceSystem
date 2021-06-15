@@ -38,7 +38,7 @@ var mappings = {
     allowNull: false
   },
   quantity: {
-    type: _sequelize["default"].DataTypes.INTEGER,
+    type: _sequelize["default"].DataTypes.DOUBLE,
     allowNull: true
   },
   createdAt: {
@@ -78,7 +78,7 @@ var Consumable = _mySQLDB["default"].define('consumable_stocks', mappings, {
 Consumable.addConsumable = function (createConsumable) {
   var newConsumable = {
     category: createConsumable.category,
-    quantity: parseInt(createConsumable.quantity)
+    quantity: parseFloat(createConsumable.quantity)
   };
   console.log(newConsumable);
   return new Promise(function (resolve, reject) {

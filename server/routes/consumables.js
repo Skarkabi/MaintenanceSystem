@@ -337,6 +337,43 @@ router.post('/update-grease/:id', (req,res,next) =>{
 
 })
 
+router.post('/add/oil',
+[body('oilSpec').not().isEmpty(), 
+body('oilType').not().isEmpty(),
+body('preferredOilBrand').not().isEmpty(),
+body('oilPrice').not().isEmpty(),
+body('quantityOil').not().isEmpty(),
+body('quantityMinOil').not().isEmpty()
+]
+, (req, res, next) => {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        console.log(req.body);
+        req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
+        res.redirect("/consumables/add");
+    }else{
+        const newOil = { 
+            oilSpec: req.body.oilSpec,
+            typeOfOil: req.body.oilType,
+            preferredBrand: req.body.preferredOilBrand,
+            volume: req.body.quantityOil,
+            minVolume: req.body.quantityMinOil,
+            oilPrice: req.body.oilPrice
+        }
+
+        console.log("OIL : " + JSON.stringify(newOil));
+        Oil.addOil(newOil).then(output => {
+            req.flash('success_msg', output);
+            res.redirect("/consumables/add");
+        }).catch(err =>{
+            console.log(err);
+            req.flash('error_msg', JSON.stringify(err));
+            res.redirect("/consumables/add");
+
+        });
+    }
+});
+
 router.get('/delete/:id', (req, res, next) =>
 {
     if(req.user){

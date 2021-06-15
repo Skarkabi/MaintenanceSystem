@@ -6,6 +6,9 @@
                 <th scope="col">Oil Spec</th>
                 <th scope="col">Oil Type</th>
                 <th scope="col">Volume</th>
+                {{#if (isdefined page "add")}}
+                <th scope="col">Action</th>
+                {{/if}}
                 
             </tr>
         </thead>
@@ -20,6 +23,32 @@
                 </tr>
             {{/each}}
             {{/if}}
+
+            {{#if (isdefined page "add")}}
+            {{#each values.oil.consumables}}
+                 <tr>
+                    <th>{{counter @index}}</th>
+                    <td>{{this.oilSpec}}</td>
+                    <td>{{this.typeOfOil}}</td>
+                    <td>{{this.volume}}</td>
+                    <td class = "table-actions">
+                        <div class="input-group">
+                            <input type="number" id="tableOilQuantity-{{this.id}}" name="tableOilQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button type="submit" id="updateOil-{{this.id}}" name="updateOil-{{this.id}}" class="btn btn-primary" onclick="updateOilPost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
+                            </div>
+                        </div>
+                    </td>  
+                </tr>
+            {{/each}}
+            {{/if}}
         </tbody>
     </table>
 </div>
+
+<script>
+    function updateOilPost(id){
+        document.getElementById("tableOilQuantity-" + id).name = "newQuantity";
+        document.getElementById("mainForm").action = "update-oil/" + id;
+    }
+</script>

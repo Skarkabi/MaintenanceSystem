@@ -129,6 +129,17 @@ User.createUser = function (createdUser) {
   });
 };
 
+User.deleteUserById = function (id) {
+  return new _bluebird["default"](function (resolve, reject) {
+    User.getUserById(id).then(function (foundUser) {
+      foundUser.destroy();
+      resolve("User with Employee ID# " + id + " Was Sucessfully Deleted!");
+    })["catch"](function (err) {
+      reject("An Error has Occured User with Employee ID# " + id + " Could not be Deleted");
+    });
+  });
+};
+
 User.getUserById = function (id) {
   return User.findOne({
     where: {
@@ -149,14 +160,6 @@ User.getUserByUserName = function (userName) {
   return User.findOne({
     where: {
       userName: userName
-    }
-  });
-};
-
-User.deleteUserById = function (id) {
-  return User.destroy({
-    where: {
-      id: id
     }
   });
 };

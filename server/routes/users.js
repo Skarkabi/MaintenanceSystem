@@ -95,14 +95,14 @@ router.get('/', async (req, res, next) =>
  router.get('/delete/:id', (req, res, next) =>
 {
     if(req.user){
-        User.deleteUserById(req.params.id).then(() => 
-        {
-            req.flash('success_msg', "User with Employee ID: " + req.params.id + " deleted successfully.");
+        User.deleteUserById(req.params.id).then(output => {
+            req.flash('success_msg', output);
             res.redirect(`/users`);
-        }).catch(err =>
-        {
-            req.flash('error_msg', "Something happened while deleting the user (Error: " + err +").");
+
+        }).catch(err => {
+            req.flash('error_msg', err);
             res.redirect(`/users/display-user/${req.params.id}`);
+
         });
     }
     

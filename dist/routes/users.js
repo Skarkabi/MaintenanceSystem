@@ -134,11 +134,11 @@ router.get('/create', /*#__PURE__*/function () {
 }());
 router.get('/delete/:id', function (req, res, next) {
   if (req.user) {
-    _User["default"].deleteUserById(req.params.id).then(function () {
-      req.flash('success_msg', "User with Employee ID: " + req.params.id + " deleted successfully.");
+    _User["default"].deleteUserById(req.params.id).then(function (output) {
+      req.flash('success_msg', output);
       res.redirect("/users");
     })["catch"](function (err) {
-      req.flash('error_msg', "Something happened while deleting the user (Error: " + err + ").");
+      req.flash('error_msg', err);
       res.redirect("/users/display-user/".concat(req.params.id));
     });
   }

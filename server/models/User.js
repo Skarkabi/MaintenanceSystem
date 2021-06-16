@@ -146,6 +146,21 @@ User.createUser = (createdUser) => {
 
 }
 
+User.deleteUserById = id => {
+  return new Bluebird((resolve, reject) => {
+    User.getUserById(id).then(foundUser => {
+      foundUser.destroy();
+      resolve("User with Employee ID# " + id + " Was Sucessfully Deleted!");
+    
+    }).catch(err => {
+      reject("An Error has Occured User with Employee ID# " + id + " Could not be Deleted");
+
+    });
+
+  });
+
+}
+
 
 
 User.getUserById = id => User.findOne({
@@ -161,10 +176,6 @@ User.getUserByUserName = userName => User.findOne({
   where: {userName},
 });
 
-User.deleteUserById = id => User.destroy({ 
-    where: {id: id}
-});
-
 
 User.prototype.comparePassword = function (password) {
   return Bluebird.resolve().then(() => 
@@ -175,7 +186,7 @@ User.prototype.comparePassword = function (password) {
       }
 
     );
-    
+
 };
 
 export default User;

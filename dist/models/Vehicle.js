@@ -161,11 +161,13 @@ Vehicle.getVehicleByPlate = function (plate) {
 };
 
 Vehicle.deleteVehicleByPlateAndChassis = function (info) {
-  return Vehicle.destroy({
-    where: {
-      plate: info.plate,
-      chassis: info.chassis
-    }
+  return new _bluebird["default"](function (resolve, reject) {
+    Vehicle.getVehicleByPlate(info.plate).then(function (foundVehicle) {
+      foundVehicle.destroy();
+      resolve("Vehicle Plate# " + info.plate + " Chassis# " + info.chassis + " Was Sucessfully Removed From the System!");
+    })["catch"](function (err) {
+      reject("An Error has Occured User with Employee ID# " + id + " Could not be Deleted");
+    });
   });
 };
 

@@ -150,7 +150,7 @@ User.deleteUserById = id => {
   return new Bluebird((resolve, reject) => {
     User.getUserById(id).then(foundUser => {
       foundUser.destroy();
-      resolve("User with Employee ID# " + id + " Was Sucessfully Deleted!");
+      resolve("User with Employee ID# " + id + " Was Sucessfully Removed From the System!");
     
     }).catch(err => {
       reject("An Error has Occured User with Employee ID# " + id + " Could not be Deleted");

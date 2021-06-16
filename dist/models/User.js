@@ -133,7 +133,7 @@ User.deleteUserById = function (id) {
   return new _bluebird["default"](function (resolve, reject) {
     User.getUserById(id).then(function (foundUser) {
       foundUser.destroy();
-      resolve("User with Employee ID# " + id + " Was Sucessfully Deleted!");
+      resolve("User with Employee ID# " + id + " Was Sucessfully Removed From the System!");
     })["catch"](function (err) {
       reject("An Error has Occured User with Employee ID# " + id + " Could not be Deleted");
     });

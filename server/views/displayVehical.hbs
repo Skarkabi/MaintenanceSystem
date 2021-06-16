@@ -2,7 +2,7 @@
     {{!-- Action Buttons --}}
     <div class="header-action-buttons pull-right">
         {{#if user.admin}}
-        <a href="/users/delete/{{existingUser._id}}" role="button" class="btn btn-danger delete" id="delete" class="delete" data-confirm="Are you sure to delete {{existingUser.firstName}} {{existingUser.lastName}}?"><i class="fas fa-trash" aria-hidden="true"></i> Delete</a>
+        <a href="/vehicles/delete/{{existingVehicle.plate}}/{{existingVehicle.chassis}}" role="button" class="btn btn-danger delete" id="delete" class="delete" data-confirm="Are you sure to delete {{existingVehicle.brand}} {{existingVehicle.model}} With Plate # {{existingVehicle.plate}}?"><i class="fas fa-trash" aria-hidden="true"></i> Delete</a>
         {{/if}}
         {{#if showPii}}
         <a href="/users/update/{{existingUser._id}}" role="button" class="btn btn-outline-dark" id="update"><i class="far fa-edit" aria-hidden="true"></i> Update</a>

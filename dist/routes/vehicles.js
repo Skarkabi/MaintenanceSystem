@@ -137,21 +137,21 @@ router.get('/display-vehicle/:id', /*#__PURE__*/function () {
     return _ref2.apply(this, arguments);
   };
 }());
-router.get('/delete/:id', function (req, res, next) {
-  if (req.user) {
-    _Vehicle["default"].getVehicleByPlate(req.params.id).then(function (foundVehicle) {
-      var vehicleDelete = {
-        plate: foundVehicle.plate,
-        chassis: foundVehicle.chassis
-      };
+router.get('/delete/:plate/:chassis', function (req, res, next) {
+  console.log("PArams: " + req.params);
 
-      _Vehicle["default"].deleteVehicleByPlateAndChassis(vehicleDelete).then(function () {
-        req.flash('success_msg', "Vehicle with Plate #: " + req.params.id + " deleted successfully.");
-        res.redirect("/vehicles");
-      })["catch"](function (err) {
-        req.flash('error_msg', "Something happened while deleting the vehicle (Error: " + err + ").");
-        res.redirect("/vehicles/display-vehicle/".concat(req.params.id));
-      });
+  if (req.user) {
+    var vehicleDelete = {
+      plate: req.params.plate,
+      chassis: req.params.chassis
+    };
+
+    _Vehicle["default"].deleteVehicleByPlateAndChassis(vehicleDelete).then(function (output) {
+      req.flash('success_msg', output);
+      res.redirect("/vehicles");
+    })["catch"](function (err) {
+      req.flash('error_msg', err);
+      res.redirect("/vehicles/display-vehicle/".concat(req.params.id));
     });
   }
 });

@@ -138,6 +138,7 @@ Vehicle.addVehicle = (createVehicled) => {
     oilType: createVehicled.oilType
   }
 
+
   return new Bluebird ((resolve, reject) => {
     Vehicle.getVehicleByPlate(newVehicle.plate).then(isVehicle => {
       if (isVehicle){
@@ -167,9 +168,20 @@ Vehicle.getVehicleByPlate = plate => Vehicle.findOne({
   where:{plate}
 });
 
-Vehicle.deleteVehicleByPlateAndChassis = info => Vehicle.destroy({ 
-  where: {plate: info.plate, chassis: info.chassis}
-});
+Vehicle.deleteVehicleByPlateAndChassis = info => {
+  return new Bluebird ((resolve, reject) => {
+    Vehicle.getVehicleByPlate(info.plate).then(foundVehicle => {
+      foundVehicle.destroy();
+      resolve("Vehicle Plate# " + info.plate + " Chassis# " + info.chassis + " Was Sucessfully Removed From the System!");
+
+    }).catch(err => {
+      reject("An Error has Occured User with Employee ID# " + id + " Could not be Deleted");
+
+    });
+
+  });
+
+}
 
 function taskDate() {
   var today = new Date();

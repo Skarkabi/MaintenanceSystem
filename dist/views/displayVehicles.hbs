@@ -35,7 +35,7 @@
                     
                     <td class = "table-actions">
                         <a href="/vehicles/update/{{this._id}}" id="updateUser-{{this._id}}"><i class="far fa-edit"></i> Update </a>
-                        <a href="/vehicles/delete/{{this.plate}}" id="deleteVehicleId-{{this.plate}}" class="delete" data-confirm="Are you sure to delete {{this.brand}} {{this.model}} With Plate # {{this.plate}}?"><i class="fas fa-trash"></i> Delete</a>
+                        <a href="/vehicles/delete/{{this.plate}}/{{this.chassis}}" id="deleteVehicleId-{{this.plate}}" class="delete" data-confirm="Are you sure to delete {{this.brand}} {{this.model}} With Plate # {{this.plate}}?"><i class="fas fa-trash"></i> Delete</a>
                     </td>
                 </tr>
             {{/each}}

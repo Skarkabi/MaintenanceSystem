@@ -99,21 +99,21 @@ router.get('/display-vehicle/:id', async (req, res, next) =>
     }
 });
 
-router.get('/delete/:id', (req, res, next) =>
+router.get('/delete/:plate/:chassis', (req, res, next) =>
 {
+    console.log("PArams: " + req.params);
     if(req.user){
-        Vehicle.getVehicleByPlate(req.params.id).then(foundVehicle => {
-            const vehicleDelete = {plate: foundVehicle.plate, chassis: foundVehicle.chassis}
-            Vehicle.deleteVehicleByPlateAndChassis(vehicleDelete).then(() => 
-        {
-            req.flash('success_msg', "Vehicle with Plate #: " + req.params.id + " deleted successfully.");
+        const vehicleDelete = {plate: req.params.plate, chassis: req.params.chassis};
+        Vehicle.deleteVehicleByPlateAndChassis(vehicleDelete).then(output => {
+            req.flash('success_msg', output);
             res.redirect(`/vehicles`);
-        }).catch(err =>
-        {
-            req.flash('error_msg', "Something happened while deleting the vehicle (Error: " + err +").");
+        
+        }).catch(err => {
+            req.flash('error_msg', err);
             res.redirect(`/vehicles/display-vehicle/${req.params.id}`);
+
         });
-        })
+
     }
     
 });

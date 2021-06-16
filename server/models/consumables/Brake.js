@@ -2,6 +2,7 @@ import _ from 'lodash';
 import Sequelize from 'sequelize';
 import Consumable from '../Consumables';
 import sequelize from '../../mySQLDB';
+import Bluebird from 'bluebird';
 
 const mappings = {
     id: {
@@ -124,110 +125,165 @@ const Brake = sequelize.define('brake_stocks', mappings, {
   ],
 });
 
-Brake.addBrake = (newBrake) => {
-    return new Promise((resolve, reject) => {
+Brake.updateBrake = (newBrake) => {
+    return new Bluebird((resolve, reject) => {
         const newConsumable = {
             category: "Brake",
             quantity: newBrake.quantity
         };
-        if(newBrake.id){
-            Brake.findOne({
-                where: {id: newBrake.id}
-            }).then(foundBrake => {
-                var quant = parseInt(newBrake.quantity) + foundBrake.quantity;
-                Brake.update({quantity:quant}, {
-                    where: {
-                        id: newBrake.id
-                    }
-                }).then(() => {
-                    Consumable.addConsumable(newConsumable).then(() => {
-                        resolve("New Brake was Added to Stock")
-                    }).catch(err => {
-                        reject("Something happened (Error: " + err + ")");
-                    });
+        Brake.findOne({
+            where: {id: newBrake.id}
+
+        }).then(foundBrake => {
+            var quant = parseInt(newBrake.quantity) + foundBrake.quantity;
+            Brake.update({quantity:quant}, {
+                where: {
+                    id: newBrake.id
+                }
+
+            }).then(() => {
+                Consumable.addConsumable(newConsumable).then(() => {
+                    resolve(newBrake.quantity + " Brakes Sucessfully Added to Existing Stock!");
+
                 }).catch(err => {
-                    reject("Something happened (Error: " + err + ")");
+                    reject("An Error Occured Brakes Could not be Added");
+
                 });
             }).catch(err => {
-                reject("Something happened (Error: " + err + ")");
+                reject("An Error Occured Brakes Could not be Added");
+                    
             });
-        }else{
-            Brake.findOne({
-                where: {
-                    category: newBrake.category,
-                    carBrand: newBrake.carBrand,
-                    carYear: newBrake.carYear,
-                    bBrand: newBrake.bBrand,
-                    preferredBrand: newBrake.preferredBrand,
-                    chassis: newBrake.chassis,
-                }
-            }).then(foundBrake => {
-                if(foundBrake){
-                    reject("This Brake Already Exists in the Stock");
-                }else{
-                    newBrake.singleCost = parseFloat(newBrake.singleCost);
-                    newBrake.quantity = parseInt(newBrake.quantity);
-                    newBrake.minQuantity = parseInt(newBrake.minQuantity);
-                    newBrake.totalCost = newBrake.singleCost * newBrake.quantity;
-                    Brake.create(newBrake).then(() => {
-                        Consumable.addConsumable(newConsumable).then(() => {
-                            resolve("New Brake was Added to Stock")
-                        }).catch(err => {
-                            reject("Something happened (Error: " + err + ")");
-                        });
-                    }).catch(err => {
-                        reject("Something happened (Error: " + err + ")");
-                    });
-                }
-            }).catch(err => {
-                reject("Something happened (Error: " + err + ")");
-            });
-        }
-    });
-}
+        }).catch(err => {
+            reject("An Error Occured Brakes Could not be Added");
+                    
+        });
 
-Brake.getBrakeStock = async () =>{
-    var brakeC, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity;
-    await Consumable.getSpecific("brake").then(consumables => {
-        console.log(consumables);
-        brakeC = consumables
     });
     
-    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `category`'), 'category']],raw:true, nest:true}).then(category => {
-        brakeCategory = category 
-        console.log("B = " + JSON.stringify(brakeCategory));
+}
+Brake.addBrake = (newBrake) => {
+    return new Bluebird((resolve, reject) => {
+        const newConsumable = {
+            category: "Brake",
+            quantity: newBrake.quantity
+        };
+        Brake.findOne({
+            where: {
+                category: newBrake.category,
+                carBrand: newBrake.carBrand,
+                carYear: newBrake.carYear,
+                bBrand: newBrake.bBrand,
+                preferredBrand: newBrake.preferredBrand,
+                chassis: newBrake.chassis,
+            }
+
+        }).then(foundBrake => {
+            if(foundBrake){
+                reject("Brakes With these Details Already Registered, Please Add to Existing Stock");
+
+            }else{
+                newBrake.singleCost = parseFloat(newBrake.singleCost);
+                newBrake.quantity = parseInt(newBrake.quantity);
+                newBrake.minQuantity = parseInt(newBrake.minQuantity);
+                newBrake.totalCost = newBrake.singleCost * newBrake.quantity;
+                Brake.create(newBrake).then(() => {
+                    Consumable.addConsumable(newConsumable).then(() => {
+                        resolve(newBrake.quantity + " Brakes Sucessfully Added!");
+
+                    }).catch(err => {
+                        reject("An Error Occured Brakes Could not be Added");
+
+                    });
+                }).catch(err => {
+                    reject("An Error Occured Brakes Could not be Added");
+
+                });
+            }
+        }).catch(err => {
+            reject("An Error Occured Brakes Could not be Added");
+
+        });
+    
     });
 
-    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']]}).then(spec => {
-        brakeCBrand = spec
+}
+
+Brake.getBrakeStock = () =>{
+    return new Bluebird(async (resolve,reject) => {
+        var brakeC, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity;
+        await Consumable.getSpecific("brake").then(consumables => {
+            console.log(consumables);
+            brakeC = consumables
+
+        }).catch(() => {
+            reject("Error Connecting to the Server");
         
-    });
-    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']]}).then(spec => {
-        brakeCYear = spec
-    });
-
-    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `chassis`'), 'chassis']]}).then(spec => {
-        brakeCChassis = spec
+        });
+    
+        await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `category`'), 'category']],raw:true, nest:true}).then(category => {
+            brakeCategory = category 
+            console.log("B = " + JSON.stringify(brakeCategory));
+    
+        }).catch(() => {
+            reject("Error Connecting to the Server");
         
-    });
-    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `bBrand`'), 'bBrand']]}).then(spec => {
-        brakeBrand = spec
-    });
+        });
 
-    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `preferredBrand`'), 'preferredBrand']]}).then(spec => {
-        brakePBrand = spec
+        await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']]}).then(spec => {
+            brakeCBrand = spec
         
-    });
-    await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `quantity`'), 'quantity']]}).then(spec => {
-        brakeQuantity = spec
-    });
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
 
-    var values = {
-        consumable: brakeC.rows, brakeCategory: brakeCategory, brakeCBrand: brakeCBrand, brakeCYear: brakeCYear,
-        brakeCChassis: brakeCChassis, brakeBrand: brakeBrand, brakePBrand: brakePBrand, brakeQuantity: brakeQuantity
-    };
+        await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']]}).then(spec => {
+            brakeCYear = spec
+    
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+        
+        });
 
-    return values;
+        await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `chassis`'), 'chassis']]}).then(spec => {
+            brakeCChassis = spec
+        
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+
+        await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `bBrand`'), 'bBrand']]}).then(spec => {
+            brakeBrand = spec
+
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+
+        await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `preferredBrand`'), 'preferredBrand']]}).then(spec => {
+            brakePBrand = spec
+        
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+
+        await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `quantity`'), 'quantity']]}).then(spec => {
+            brakeQuantity = spec
+
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+
+        });
+
+        var values = {
+            consumable: brakeC.rows, brakeCategory: brakeCategory, brakeCBrand: brakeCBrand, brakeCYear: brakeCYear,
+            brakeCChassis: brakeCChassis, brakeBrand: brakeBrand, brakePBrand: brakePBrand, brakeQuantity: brakeQuantity
+        };
+        resolve(values);
+    
+    });
 
 }
 

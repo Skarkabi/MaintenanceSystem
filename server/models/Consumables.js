@@ -69,66 +69,96 @@ Consumable.addConsumable = (createConsumable) => {
       category: createConsumable.category,
       quantity: parseFloat(createConsumable.quantity)
     }
-    console.log(newConsumable);
-    return new Promise ((resolve, reject) => {
+
+    return new Bluebird((resolve, reject) => {
       Consumable.getConsumableByCategory(newConsumable.category).then(isCategory => {
         if (isCategory){
-            var quant = newConsumable.quantity + isCategory.quantity;
-            console.log("adding " + quant);
-          resolve(Consumable.update({ quantity: quant}, {
+          var quant = newConsumable.quantity + isCategory.quantity;
+    
+          Consumable.update({quantity: quant}, {
             where: {
               category: newConsumable.category
             }
-        }))
-        console.log("Updated");
+
+          }).then(() => {
+            resolve("Consumable updated");
+
+          }).catch(err => {
+            reject(err);
+
+          });
+
         }else{
-          resolve( Consumable.create(newConsumable));
+          Consumable.create(newConsumable).then(() => {
+            resolve("New Consumable Created");
+
+          }).catch(err => {
+            reject (err);
+
+          });
+
         }
       }).catch(err =>{
           reject(err);
+
       });  
+
     });
+
   }
 
-  Consumable.getConsumableByCategory = category => Consumable.findOne({
-    where:{category}
-  });
+Consumable.getConsumableByCategory = category => Consumable.findOne({
+  where:{category}
+
+});
 
 Consumable.getSpecific = (consumable) => {
-   
-    return new Promise((resolve, reject) => {
+    return new Bluebird((resolve, reject) => {
         if(consumable == "battery"){
             Battery.findAndCountAll().then(batteries => {
                 resolve (batteries);
+
             }).catch(err => {
                 reject(err);
+
             });
     
         }else if(consumable == "brake"){   
             Brake.findAndCountAll().then(brakes => {
                 resolve (brakes);
+
             }).catch(err => {
                 reject(err);
+
             });
+
         }else if(consumable == "filter"){
             Filter.findAndCountAll().then(filters => {
                 resolve(filters);
+
             }).catch(err =>{
                 reject(err);
+
             });
+            
         }else if(consumable == "grease"){
             Grease.findAndCountAll().then(grease => {
                 resolve(grease);
+
             }).catch(err =>{
                 reject(err);
+
             });
+
         }else if(consumable == "oil"){
             Oil.findAndCountAll().then(oil => {
                 resolve(oil);
+
             }).catch(err =>{
                 reject(err);
+
             });
-        }
+        };
     });
 };
 

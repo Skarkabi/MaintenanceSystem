@@ -1,3 +1,4 @@
+import Bluebird from 'bluebird';
 import _ from 'lodash';
 import Sequelize from 'sequelize';
 
@@ -89,91 +90,136 @@ const Oil = sequelize.define('oil_stocks', mappings, {
   ],
 });
 
-Oil.getOilStock = async () => {
-  var oilC, oilSpecs, typeOfOils, preferredBrands
-  await Consumable.getSpecific("oil").then(consumables => {
-    oilC = consumables;
+Oil.getOilStock = () => {
+  return new Bluebird(async(resolve, reject) => {
+    var oilC, oilSpecs, typeOfOils, preferredBrands
+    await Consumable.getSpecific("oil").then(consumables => {
+      oilC = consumables;
+  
+    }).catch(() => {
+      reject("Error Connecting to the Server");
+
+    });
+
+    await Oil.findAll({attributes: [[Sequelize.literal('DISTINCT `oilSpec`'), 'oilSpec']],raw:true, nest:true}).then(spec => {
+      oilSpecs = spec
+  
+    }).catch(() => {
+      reject("Error Connecting to the Server");
+
+    });
+
+    await Oil.findAll({attributes: [[Sequelize.literal('DISTINCT `typeOfOil`'), 'typeOfOil']],raw:true, nest:true}).then(spec => {
+      typeOfOils = spec
+  
+    }).catch(() => {
+      reject("Error Connecting to the Server");
+
+    });
+
+    await Oil.findAll({attributes: [[Sequelize.literal('DISTINCT `preferredBrand`'), 'preferredBrand']],raw:true, nest:true}).then(spec => {
+      preferredBrands = spec
+  
+    }).catch(() => {
+      reject("Error Connecting to the Server");
+
+    });
+
+    var values = {
+      consumables: oilC.rows, specs: oilSpecs, typeOfOils: typeOfOils, preferredBrands: preferredBrands
+  
+    };
+    resolve(values);
+
   });
-
-  await Oil.findAll({attributes: [[Sequelize.literal('DISTINCT `oilSpec`'), 'oilSpec']],raw:true, nest:true}).then(spec => {
-    oilSpecs = spec
-  });
-
-  await Oil.findAll({attributes: [[Sequelize.literal('DISTINCT `typeOfOil`'), 'typeOfOil']],raw:true, nest:true}).then(spec => {
-    typeOfOils = spec
-  });
-
-  await Oil.findAll({attributes: [[Sequelize.literal('DISTINCT `preferredBrand`'), 'preferredBrand']],raw:true, nest:true}).then(spec => {
-    preferredBrands = spec
-  });
-
-  var values = {
-    consumables: oilC.rows, specs: oilSpecs, typeOfOils: typeOfOils, preferredBrands: preferredBrands
-  };
-
-  return values;
+  
 }
 
-Oil.addOil = (newOil) => {
-  return new Promise((resolve, reject) => {
+Oil.updateOil = (newOil) => {
+  return new Bluebird((resolve, reject) => {
     const newConsumable = {
       category: "Oil",
       quantity: newOil.volume
-  };
+    };
 
-  if(newOil.id){
-    console.log("Existing OIL: " + JSON.stringify(newOil));
     Oil.findOne({
       where: {
         id: newOil.id
       }
+
     }).then(foundOil => {
       var quant = parseFloat(newOil.volume) + foundOil.volume;
       Oil.update({volume: quant}, {
         where: {
           id: newOil.id
         }
+
       }).then(() => {
         Consumable.addConsumable(newConsumable).then(() => {
-          resolve("New Oil was Added to Stock");
+          resolve(newOil.volume + " Liters of Oil Sucessfully Added to Existing Stock!");
+    
         }).catch(err => {
-          reject("Something happend (Error: " + err + ")");
+            reject("An Error Occured Oil Could not be Added");
+
         });
+
       }).catch(err => {
-        reject("Something happend (Error: " + err + ")");
+        reject("An Error Occured Oil Could not be Added");
+
       });
+
     }).catch(err => {
-      reject("Something happend (Error: " + err + ")");
+      reject("An Error Occured Oil Could not be Added");
+
     });
-  }else{
+
+  });
+
+}
+
+Oil.addOil = (newOil) => {
+  return new Bluebird((resolve, reject) => {
+    const newConsumable = {
+      category: "Oil",
+      quantity: newOil.volume
+    };
+
     Oil.findOne({
       where: {
         oilSpec: newOil.oilSpec,
         typeOfOil: newOil.typeOfOil,
         preferredBrand: newOil.preferredBrand
+
       }
+
     }).then(foundOil => {
       if(foundOil){
-        console.log("FOUNd OIL: " + JSON.stringify(foundOil));
-        reject("This Oil Already Exists in the Stock");
+        reject("Oil With these Details Already Registered, Please Add to Existing Stock");
+
       }else{
         newOil.volume = parseFloat(newOil.volume);
         newOil.minVolume = parseFloat(newOil.minVolume);
-        console.log("NEW OIL: " + JSON.stringify(newOil));
         Oil.create(newOil).then(() => {
           Consumable.addConsumable(newConsumable).then(() => {
-            resolve("New Oil was Added to Stock");
+            resolve(newOil.volume + " Liters of Oil Sucessfully Added!");
+
           }).catch(err => {
-            reject("Something happened (Error: " + err + ")");
+            reject("An Error Occured Oil Could not be Added");
+
           });
+
         }).catch(err => {
-          reject("Something happened (Error: " + err + ")");
+          reject("An Error Occured Oil Could not be Added");
+
         });
+
       }
+
     }).catch(err => {
-      reject("Something happened (Error: " + err + ")");
+      reject("An Error Occured Oil Could not be Added");
+
     });
-  }
+
   });
 
 }

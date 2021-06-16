@@ -19,6 +19,8 @@ var _Consumables = _interopRequireDefault(require("../Consumables"));
 
 var _mySQLDB = _interopRequireDefault(require("../../mySQLDB"));
 
+var _bluebird = _interopRequireDefault(require("bluebird"));
+
 var mappings = {
   id: {
     type: _sequelize["default"].INTEGER,
@@ -127,163 +129,193 @@ var Brake = _mySQLDB["default"].define('brake_stocks', mappings, {
   }]
 });
 
-Brake.addBrake = function (newBrake) {
-  return new Promise(function (resolve, reject) {
+Brake.updateBrake = function (newBrake) {
+  return new _bluebird["default"](function (resolve, reject) {
     var newConsumable = {
       category: "Brake",
       quantity: newBrake.quantity
     };
-
-    if (newBrake.id) {
-      Brake.findOne({
+    Brake.findOne({
+      where: {
+        id: newBrake.id
+      }
+    }).then(function (foundBrake) {
+      var quant = parseInt(newBrake.quantity) + foundBrake.quantity;
+      Brake.update({
+        quantity: quant
+      }, {
         where: {
           id: newBrake.id
         }
-      }).then(function (foundBrake) {
-        var quant = parseInt(newBrake.quantity) + foundBrake.quantity;
-        Brake.update({
-          quantity: quant
-        }, {
-          where: {
-            id: newBrake.id
-          }
-        }).then(function () {
-          _Consumables["default"].addConsumable(newConsumable).then(function () {
-            resolve("New Brake was Added to Stock");
-          })["catch"](function (err) {
-            reject("Something happened (Error: " + err + ")");
-          });
+      }).then(function () {
+        _Consumables["default"].addConsumable(newConsumable).then(function () {
+          resolve(newBrake.quantity + " Brakes Sucessfully Added to Existing Stock!");
         })["catch"](function (err) {
-          reject("Something happened (Error: " + err + ")");
+          reject("An Error Occured Brakes Could not be Added");
         });
       })["catch"](function (err) {
-        reject("Something happened (Error: " + err + ")");
+        reject("An Error Occured Brakes Could not be Added");
       });
-    } else {
-      Brake.findOne({
-        where: {
-          category: newBrake.category,
-          carBrand: newBrake.carBrand,
-          carYear: newBrake.carYear,
-          bBrand: newBrake.bBrand,
-          preferredBrand: newBrake.preferredBrand,
-          chassis: newBrake.chassis
-        }
-      }).then(function (foundBrake) {
-        if (foundBrake) {
-          reject("This Brake Already Exists in the Stock");
-        } else {
-          newBrake.singleCost = parseFloat(newBrake.singleCost);
-          newBrake.quantity = parseInt(newBrake.quantity);
-          newBrake.minQuantity = parseInt(newBrake.minQuantity);
-          newBrake.totalCost = newBrake.singleCost * newBrake.quantity;
-          Brake.create(newBrake).then(function () {
-            _Consumables["default"].addConsumable(newConsumable).then(function () {
-              resolve("New Brake was Added to Stock");
-            })["catch"](function (err) {
-              reject("Something happened (Error: " + err + ")");
-            });
-          })["catch"](function (err) {
-            reject("Something happened (Error: " + err + ")");
-          });
-        }
-      })["catch"](function (err) {
-        reject("Something happened (Error: " + err + ")");
-      });
-    }
+    })["catch"](function (err) {
+      reject("An Error Occured Brakes Could not be Added");
+    });
   });
 };
 
-Brake.getBrakeStock = /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
-  var brakeC, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity, values;
-  return _regenerator["default"].wrap(function _callee$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          _context.next = 2;
-          return _Consumables["default"].getSpecific("brake").then(function (consumables) {
-            console.log(consumables);
-            brakeC = consumables;
-          });
-
-        case 2:
-          _context.next = 4;
-          return Brake.findAll({
-            attributes: [[_sequelize["default"].literal('DISTINCT `category`'), 'category']],
-            raw: true,
-            nest: true
-          }).then(function (category) {
-            brakeCategory = category;
-            console.log("B = " + JSON.stringify(brakeCategory));
-          });
-
-        case 4:
-          _context.next = 6;
-          return Brake.findAll({
-            attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
-          }).then(function (spec) {
-            brakeCBrand = spec;
-          });
-
-        case 6:
-          _context.next = 8;
-          return Brake.findAll({
-            attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
-          }).then(function (spec) {
-            brakeCYear = spec;
-          });
-
-        case 8:
-          _context.next = 10;
-          return Brake.findAll({
-            attributes: [[_sequelize["default"].literal('DISTINCT `chassis`'), 'chassis']]
-          }).then(function (spec) {
-            brakeCChassis = spec;
-          });
-
-        case 10:
-          _context.next = 12;
-          return Brake.findAll({
-            attributes: [[_sequelize["default"].literal('DISTINCT `bBrand`'), 'bBrand']]
-          }).then(function (spec) {
-            brakeBrand = spec;
-          });
-
-        case 12:
-          _context.next = 14;
-          return Brake.findAll({
-            attributes: [[_sequelize["default"].literal('DISTINCT `preferredBrand`'), 'preferredBrand']]
-          }).then(function (spec) {
-            brakePBrand = spec;
-          });
-
-        case 14:
-          _context.next = 16;
-          return Brake.findAll({
-            attributes: [[_sequelize["default"].literal('DISTINCT `quantity`'), 'quantity']]
-          }).then(function (spec) {
-            brakeQuantity = spec;
-          });
-
-        case 16:
-          values = {
-            consumable: brakeC.rows,
-            brakeCategory: brakeCategory,
-            brakeCBrand: brakeCBrand,
-            brakeCYear: brakeCYear,
-            brakeCChassis: brakeCChassis,
-            brakeBrand: brakeBrand,
-            brakePBrand: brakePBrand,
-            brakeQuantity: brakeQuantity
-          };
-          return _context.abrupt("return", values);
-
-        case 18:
-        case "end":
-          return _context.stop();
+Brake.addBrake = function (newBrake) {
+  return new _bluebird["default"](function (resolve, reject) {
+    var newConsumable = {
+      category: "Brake",
+      quantity: newBrake.quantity
+    };
+    Brake.findOne({
+      where: {
+        category: newBrake.category,
+        carBrand: newBrake.carBrand,
+        carYear: newBrake.carYear,
+        bBrand: newBrake.bBrand,
+        preferredBrand: newBrake.preferredBrand,
+        chassis: newBrake.chassis
       }
-    }
-  }, _callee);
-}));
+    }).then(function (foundBrake) {
+      if (foundBrake) {
+        reject("Brakes With these Details Already Registered, Please Add to Existing Stock");
+      } else {
+        newBrake.singleCost = parseFloat(newBrake.singleCost);
+        newBrake.quantity = parseInt(newBrake.quantity);
+        newBrake.minQuantity = parseInt(newBrake.minQuantity);
+        newBrake.totalCost = newBrake.singleCost * newBrake.quantity;
+        Brake.create(newBrake).then(function () {
+          _Consumables["default"].addConsumable(newConsumable).then(function () {
+            resolve(newBrake.quantity + " Brakes Sucessfully Added!");
+          })["catch"](function (err) {
+            reject("An Error Occured Brakes Could not be Added");
+          });
+        })["catch"](function (err) {
+          reject("An Error Occured Brakes Could not be Added");
+        });
+      }
+    })["catch"](function (err) {
+      reject("An Error Occured Brakes Could not be Added");
+    });
+  });
+};
+
+Brake.getBrakeStock = function () {
+  return new _bluebird["default"]( /*#__PURE__*/function () {
+    var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
+      var brakeC, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity, values;
+      return _regenerator["default"].wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return _Consumables["default"].getSpecific("brake").then(function (consumables) {
+                console.log(consumables);
+                brakeC = consumables;
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 2:
+              _context.next = 4;
+              return Brake.findAll({
+                attributes: [[_sequelize["default"].literal('DISTINCT `category`'), 'category']],
+                raw: true,
+                nest: true
+              }).then(function (category) {
+                brakeCategory = category;
+                console.log("B = " + JSON.stringify(brakeCategory));
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 4:
+              _context.next = 6;
+              return Brake.findAll({
+                attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
+              }).then(function (spec) {
+                brakeCBrand = spec;
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 6:
+              _context.next = 8;
+              return Brake.findAll({
+                attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
+              }).then(function (spec) {
+                brakeCYear = spec;
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 8:
+              _context.next = 10;
+              return Brake.findAll({
+                attributes: [[_sequelize["default"].literal('DISTINCT `chassis`'), 'chassis']]
+              }).then(function (spec) {
+                brakeCChassis = spec;
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 10:
+              _context.next = 12;
+              return Brake.findAll({
+                attributes: [[_sequelize["default"].literal('DISTINCT `bBrand`'), 'bBrand']]
+              }).then(function (spec) {
+                brakeBrand = spec;
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 12:
+              _context.next = 14;
+              return Brake.findAll({
+                attributes: [[_sequelize["default"].literal('DISTINCT `preferredBrand`'), 'preferredBrand']]
+              }).then(function (spec) {
+                brakePBrand = spec;
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 14:
+              _context.next = 16;
+              return Brake.findAll({
+                attributes: [[_sequelize["default"].literal('DISTINCT `quantity`'), 'quantity']]
+              }).then(function (spec) {
+                brakeQuantity = spec;
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 16:
+              values = {
+                consumable: brakeC.rows,
+                brakeCategory: brakeCategory,
+                brakeCBrand: brakeCBrand,
+                brakeCYear: brakeCYear,
+                brakeCChassis: brakeCChassis,
+                brakeBrand: brakeBrand,
+                brakePBrand: brakePBrand,
+                brakeQuantity: brakeQuantity
+              };
+              resolve(values);
+
+            case 18:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function (_x, _x2) {
+      return _ref.apply(this, arguments);
+    };
+  }());
+};
+
 var _default = Brake;
 exports["default"] = _default;

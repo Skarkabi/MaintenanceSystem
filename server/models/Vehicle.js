@@ -137,16 +137,30 @@ Vehicle.addVehicle = (createVehicled) => {
     kmForOilChange: createVehicled.kmTillOilChange,
     oilType: createVehicled.oilType
   }
-  console.log(newVehicle);
-  return new Promise ((resolve, reject) => {
+
+  return new Bluebird ((resolve, reject) => {
     Vehicle.getVehicleByPlate(newVehicle.plate).then(isVehicle => {
       if (isVehicle){
-        reject("Vehicle With Plate # " + newVehicle.plate + " Already Exists");
+        reject("Vehicle With Plate# " + newVehicle.plate + " Already Exists");
+
       }else{
-        resolve( Vehicle.create(newVehicle));
+        Vehicle.create(newVehicle).then(() => {
+          resolve("Vehicle With Plate# " + newVehicle.plate + " Was Sucessfully Added!");
+
+        }).catch(err => {
+          reject("Vehicle With Plate# " + newVehicle.plate + " Could Not Be Added");
+
+        });
+
       }
+
+    }).catch(() => {
+      reject("Could not Connect to the Server");
+    
     });  
+
   });
+
 }
 
 Vehicle.getVehicleByPlate = plate => Vehicle.findOne({

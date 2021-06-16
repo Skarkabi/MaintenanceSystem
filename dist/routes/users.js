@@ -150,11 +150,11 @@ router.get('/delete/:id', function (req, res, next) {
 router.post('/create', [(0, _expressValidator.body)('eID', "Employee ID field is mandatory").not().isEmpty(), (0, _expressValidator.body)('firstName', "First name field is mandatory").not().isEmpty(), (0, _expressValidator.body)('lastName', "Last name field is mandatory").not().isEmpty(), (0, _expressValidator.body)('username', "Username field is mandatory").not().isEmpty(), (0, _expressValidator.body)('password', "Password lenght should be at least 6 chars long").isLength({
   min: 5
 })], function (req, res, next) {
-  _User["default"].createUser(req.body).then(function () {
-    req.flash('success_msg', "User " + req.body.username + " created successfully.");
+  _User["default"].createUser(req.body).then(function (output) {
+    req.flash('success_msg', output);
     res.redirect('/users/create');
   })["catch"](function (err) {
-    req.flash('error_msg', "User could not be created (Error: " + err + ") ");
+    req.flash('error_msg', err);
     res.redirect('/users/create');
   });
 });

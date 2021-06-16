@@ -80,22 +80,27 @@ Consumable.addConsumable = function (createConsumable) {
     category: createConsumable.category,
     quantity: parseFloat(createConsumable.quantity)
   };
-  console.log(newConsumable);
-  return new Promise(function (resolve, reject) {
+  return new _bluebird["default"](function (resolve, reject) {
     Consumable.getConsumableByCategory(newConsumable.category).then(function (isCategory) {
       if (isCategory) {
         var quant = newConsumable.quantity + isCategory.quantity;
-        console.log("adding " + quant);
-        resolve(Consumable.update({
+        Consumable.update({
           quantity: quant
         }, {
           where: {
             category: newConsumable.category
           }
-        }));
-        console.log("Updated");
+        }).then(function () {
+          resolve("Consumable updated");
+        })["catch"](function (err) {
+          reject(err);
+        });
       } else {
-        resolve(Consumable.create(newConsumable));
+        Consumable.create(newConsumable).then(function () {
+          resolve("New Consumable Created");
+        })["catch"](function (err) {
+          reject(err);
+        });
       }
     })["catch"](function (err) {
       reject(err);
@@ -112,7 +117,7 @@ Consumable.getConsumableByCategory = function (category) {
 };
 
 Consumable.getSpecific = function (consumable) {
-  return new Promise(function (resolve, reject) {
+  return new _bluebird["default"](function (resolve, reject) {
     if (consumable == "battery") {
       _Battery["default"].findAndCountAll().then(function (batteries) {
         resolve(batteries);
@@ -144,6 +149,8 @@ Consumable.getSpecific = function (consumable) {
         reject(err);
       });
     }
+
+    ;
   });
 };
 

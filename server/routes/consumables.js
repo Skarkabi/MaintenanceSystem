@@ -79,7 +79,7 @@ router.post('/update-battery/:id', (req,res,next) =>{
         quantity: req.body.newQuantity
     }
 
-    Battery.addBattery(newBattery).then(output =>{
+    Battery.updateBattery(newBattery).then(output =>{
         req.flash('success_msg', output);
         res.redirect("/consumables/add");
 
@@ -116,7 +116,7 @@ router.post('/add/battery',
             res.redirect("/consumables/add");
 
         }).catch(err =>{
-            req.flash('error_msg', " could not be added to");
+            req.flash('error_msg', err);
             res.redirect("/consumables/add");
         })
         
@@ -160,7 +160,7 @@ body('brakePrice').not().isEmpty()
             res.redirect("/consumables/add");
 
         }).catch(err =>{
-            req.flash('error_msg', category + " could not be added to");
+            req.flash('error_msg', err);
             res.redirect("/consumables/add");
 
         });
@@ -173,7 +173,7 @@ router.post('/update-brake/:id', (req,res,next) => {
         quantity: req.body.newQuantity
     };
 
-    Brake.addBrake(newBrake).then(output => {
+    Brake.updateBrake(newBrake).then(output => {
             req.flash('success_msg', output);
             res.redirect("/consumables/add");
     }).catch(err => {
@@ -258,12 +258,14 @@ router.post('/update-filter/:id', (req,res,next) => {
         quantity: req.body.newQuantity
     };
 
-    Filter.addFilter(newFilter).then(output => {
+    Filter.updateFilter(newFilter).then(output => {
         req.flash('success_msg', output);
         res.redirect("/consumables/add");
+
     }).catch(err => {
-        req.flash('error_msg', "Error " + err);
+        req.flash('error_msg', err);
         res.redirect("/consumables/add");
+
     });
 
 })
@@ -282,12 +284,8 @@ body('quantityMinGrease').not().isEmpty()
         console.log(req.body);
         req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
         res.redirect("/consumables/add");
-    }else{
-        const newConsumable = {
-            category: "Grease",
-            quantity: req.body.quantityGrease
-        };
 
+    }else{
         const newGrease = {
             greaseSpec: req.body.greaseSpec,
             typeOfGrease: req.body.greaseType,
@@ -295,21 +293,21 @@ body('quantityMinGrease').not().isEmpty()
             carYear: req.body.greaseCarYear,
             volume: req.body.quantityGrease,
             minVolume: req.body.quantityMinGrease
+
         };
-        Grease.addGrease(newGrease).then(() => {
-            Consumable.addConsumable(newConsumable).then(()=>{
-                req.flash('success_msg',  "Grease was added to stock");
-                res.redirect("/consumables/add");
-            
-            }).catch(err =>{
-                req.flash('error_msg', "Consumable could not be added");
-                res.redirect("/consumables/add");
-            });
-        }).catch(err =>{
-            req.flash('error_msg', category + " could not be added to");
+
+        Grease.addGrease(newGrease).then(output => {
+            req.flash('success_msg', output);
             res.redirect("/consumables/add");
+            
+        }).catch(err =>{
+            req.flash('error_msg', err);
+            res.redirect("/consumables/add");
+
         });
+
     }
+
 });
 
 router.post('/update-grease/:id', (req,res,next) =>{
@@ -318,21 +316,14 @@ router.post('/update-grease/:id', (req,res,next) =>{
         volume: req.body.newQuantity
     };
 
-    Grease.addGrease(newGrease).then(() => {
-        const newConsumable = {
-            category: "Grease",
-            quantity: req.body.newQuantity
-        };
-        Consumable.addConsumable(newConsumable).then(() =>{
-            req.flash('success_msg', "Grease was added to stock");
-            res.redirect("/consumables/add");
-        }).catch(err =>{
-            req.flash('error_msg', "Brake could not be added");
-            res.redirect("/consumables/add");
-        });
-    }).catch(err => {
-        req.flash('error_msg', err +  "Grease could not be added to");
+    Grease.updateGrease(newGrease).then(output => {
+        req.flash('success_msg', output);
         res.redirect("/consumables/add");
+        
+    }).catch(err =>{
+        req.flash('error_msg', err);
+        res.redirect("/consumables/add");
+
     });
 
 })
@@ -348,9 +339,9 @@ body('quantityMinOil').not().isEmpty()
 , (req, res, next) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-        console.log(req.body);
         req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
         res.redirect("/consumables/add");
+
     }else{
         const newOil = { 
             oilSpec: req.body.oilSpec,
@@ -361,17 +352,18 @@ body('quantityMinOil').not().isEmpty()
             oilPrice: req.body.oilPrice
         }
 
-        console.log("OIL : " + JSON.stringify(newOil));
         Oil.addOil(newOil).then(output => {
             req.flash('success_msg', output);
             res.redirect("/consumables/add");
+
         }).catch(err =>{
-            console.log(err);
-            req.flash('error_msg', JSON.stringify(err));
+            req.flash('error_msg', err);
             res.redirect("/consumables/add");
 
         });
+
     }
+
 });
 
 router.post('/update-oil/:id', (req,res,next) => {
@@ -380,14 +372,16 @@ router.post('/update-oil/:id', (req,res,next) => {
         volume: req.body.newQuantity
     };
 
-    Oil.addOil(newOil).then(output => {
+    Oil.updateOil(newOil).then(output => {
         req.flash('success_msg', output);
         res.redirect("/consumables/add");
 
     }).catch(err =>{
         req.flash('error_msg', err +  " could not be added to");
         res.redirect("/consumables/add");
+
     });
+    
 })
 
 router.get('/delete/:id', (req, res, next) =>

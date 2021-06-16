@@ -146,7 +146,7 @@ router.post('/update-battery/:id', function (req, res, next) {
     quantity: req.body.newQuantity
   };
 
-  _Battery["default"].addBattery(newBattery).then(function (output) {
+  _Battery["default"].updateBattery(newBattery).then(function (output) {
     req.flash('success_msg', output);
     res.redirect("/consumables/add");
   })["catch"](function (err) {
@@ -174,7 +174,7 @@ router.post('/add/battery', [(0, _expressValidator.body)('batSpec').not().isEmpt
       req.flash('success_msg', output);
       res.redirect("/consumables/add");
     })["catch"](function (err) {
-      req.flash('error_msg', " could not be added to");
+      req.flash('error_msg', err);
       res.redirect("/consumables/add");
     });
   }
@@ -204,7 +204,7 @@ router.post('/add/brake', [(0, _expressValidator.body)('brakeCategory').not().is
       req.flash('success_msg', output);
       res.redirect("/consumables/add");
     })["catch"](function (err) {
-      req.flash('error_msg', category + " could not be added to");
+      req.flash('error_msg', err);
       res.redirect("/consumables/add");
     });
   }
@@ -215,7 +215,7 @@ router.post('/update-brake/:id', function (req, res, next) {
     quantity: req.body.newQuantity
   };
 
-  _Brake["default"].addBrake(newBrake).then(function (output) {
+  _Brake["default"].updateBrake(newBrake).then(function (output) {
     req.flash('success_msg', output);
     res.redirect("/consumables/add");
   })["catch"](function (err) {
@@ -300,11 +300,11 @@ router.post('/update-filter/:id', function (req, res, next) {
     quantity: req.body.newQuantity
   };
 
-  _Filter["default"].addFilter(newFilter).then(function (output) {
+  _Filter["default"].updateFilter(newFilter).then(function (output) {
     req.flash('success_msg', output);
     res.redirect("/consumables/add");
   })["catch"](function (err) {
-    req.flash('error_msg', "Error " + err);
+    req.flash('error_msg', err);
     res.redirect("/consumables/add");
   });
 });
@@ -316,10 +316,6 @@ router.post('/add/grease', [(0, _expressValidator.body)('greaseSpec').not().isEm
     req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
     res.redirect("/consumables/add");
   } else {
-    var newConsumable = {
-      category: "Grease",
-      quantity: req.body.quantityGrease
-    };
     var newGrease = {
       greaseSpec: req.body.greaseSpec,
       typeOfGrease: req.body.greaseType,
@@ -329,16 +325,11 @@ router.post('/add/grease', [(0, _expressValidator.body)('greaseSpec').not().isEm
       minVolume: req.body.quantityMinGrease
     };
 
-    _Grease["default"].addGrease(newGrease).then(function () {
-      _Consumables["default"].addConsumable(newConsumable).then(function () {
-        req.flash('success_msg', "Grease was added to stock");
-        res.redirect("/consumables/add");
-      })["catch"](function (err) {
-        req.flash('error_msg', "Consumable could not be added");
-        res.redirect("/consumables/add");
-      });
+    _Grease["default"].addGrease(newGrease).then(function (output) {
+      req.flash('success_msg', output);
+      res.redirect("/consumables/add");
     })["catch"](function (err) {
-      req.flash('error_msg', category + " could not be added to");
+      req.flash('error_msg', err);
       res.redirect("/consumables/add");
     });
   }
@@ -349,21 +340,11 @@ router.post('/update-grease/:id', function (req, res, next) {
     volume: req.body.newQuantity
   };
 
-  _Grease["default"].addGrease(newGrease).then(function () {
-    var newConsumable = {
-      category: "Grease",
-      quantity: req.body.newQuantity
-    };
-
-    _Consumables["default"].addConsumable(newConsumable).then(function () {
-      req.flash('success_msg', "Grease was added to stock");
-      res.redirect("/consumables/add");
-    })["catch"](function (err) {
-      req.flash('error_msg', "Brake could not be added");
-      res.redirect("/consumables/add");
-    });
+  _Grease["default"].updateGrease(newGrease).then(function (output) {
+    req.flash('success_msg', output);
+    res.redirect("/consumables/add");
   })["catch"](function (err) {
-    req.flash('error_msg', err + "Grease could not be added to");
+    req.flash('error_msg', err);
     res.redirect("/consumables/add");
   });
 });
@@ -371,7 +352,6 @@ router.post('/add/oil', [(0, _expressValidator.body)('oilSpec').not().isEmpty(),
   var errors = (0, _expressValidator.validationResult)(req);
 
   if (!errors.isEmpty()) {
-    console.log(req.body);
     req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
     res.redirect("/consumables/add");
   } else {
@@ -383,14 +363,12 @@ router.post('/add/oil', [(0, _expressValidator.body)('oilSpec').not().isEmpty(),
       minVolume: req.body.quantityMinOil,
       oilPrice: req.body.oilPrice
     };
-    console.log("OIL : " + JSON.stringify(newOil));
 
     _Oil["default"].addOil(newOil).then(function (output) {
       req.flash('success_msg', output);
       res.redirect("/consumables/add");
     })["catch"](function (err) {
-      console.log(err);
-      req.flash('error_msg', JSON.stringify(err));
+      req.flash('error_msg', err);
       res.redirect("/consumables/add");
     });
   }
@@ -401,7 +379,7 @@ router.post('/update-oil/:id', function (req, res, next) {
     volume: req.body.newQuantity
   };
 
-  _Oil["default"].addOil(newOil).then(function (output) {
+  _Oil["default"].updateOil(newOil).then(function (output) {
     req.flash('success_msg', output);
     res.redirect("/consumables/add");
   })["catch"](function (err) {

@@ -87,107 +87,133 @@ const Battery = sequelize.define('battery_stocks', mappings, {
   ],
 });
 
-Battery.addBattery = (newBattery) =>{
-    console.log(newBattery);
-    return new Promise((resolve, reject) => {
+Battery.updateBattery = (newBattery) => {
+    return new Bluebird((resolve, reject) => {
         const newConsumable = {
             category: "Battery",
             quantity: newBattery.quantity
         };
-        if(newBattery.id){
-            Battery.findOne({
-                where: {id: newBattery.id} 
-            }).then(foundBattery =>{
-                var quant = parseInt(newBattery.quantity) + foundBattery.quantity;
-                Battery.update({quantity: quant}, {
-                    where: {
-                        id: newBattery.id
-                    }
-                }).then(() =>{
-                    Consumable.addConsumable(newConsumable).then(() =>{
-                        resolve("New Battery Added");
-                    }).catch(err =>{
-                        reject("Something happened (Error: " + err + ")");
-                    });
-                }).catch(err => {
-                    reject("Something happened (Error: " + err + ")");
-                });
-            }).catch(err=>{
-                reject("Something happened (Error: " + err + ")");
-            });
-        }else{
-            Battery.findOne({
+
+        Battery.findOne({
+            where: {id: newBattery.id} 
+
+        }).then(foundBattery =>{
+            var quant = parseInt(newBattery.quantity) + foundBattery.quantity;
+            Battery.update({quantity: quant}, {
                 where: {
-                    batSpec: newBattery.batSpec,
-                    carBrand: newBattery.carBrand,
-                    carYear: newBattery.carYear
+                    id: newBattery.id
                 }
-            }).then(foundBattery => {
-                console.log(JSON.stringify(foundBattery));
-                if(foundBattery){
-                    var quant = parseInt(newBattery.quantity) + foundBattery.quantity;
-                    console.log("adding " + quant);
-                    Battery.update({quantity: quant}, {
-                        where: {
-                            batSpec: newBattery.batSpec,
-                            carBrand: newBattery.carBrand,
-                            carYear: newBattery.carYear
-                        }
-                    }).then(() => {
-                        Consumable.addConsumable(newConsumable).then(() => {
-                            resolve("New Battery Added");
-                        }).catch(err => {
-                            reject("Something happened (Error: " + err + ")");
-                        });
-                    }).catch(err => {
-                        reject("Something happened (Error: " + err + ")");
-                    });
-                }else{
-                    console.log("Adding this " + JSON.stringify(newBattery));
-                    Battery.create(newBattery).then(()=> {
-                        Consumable.addConsumable(newConsumable).then(() => {
-                            resolve("New Battery Added");
-                        }).catch(err => {
-                            reject("Something happened (Error: " + err + ")");
-                        });
-                    }).catch(err =>{
-                        reject("Something happened (Error: " + err + ")");
-                    });
-                }
-            }).catch(err =>{
-                reject("Something happened (Error: " + err + ")");
+
+            }).then(() =>{
+                Consumable.addConsumable(newConsumable).then(() =>{
+                    resolve(newBattery.quantity + " Batteries Sucessfully Added to Existing Stock!");
+
+                }).catch(err =>{
+                    reject("An Error Occured Batteries Could not be Added");
+
+                });
+
+            }).catch(err => {
+                reject("An Error Occured Batteries Could not be Added");
+
             });
-        }
-        
+
+        }).catch(err=>{
+            reject("An Error Occured Batteries Could not be Added");
+
+        });
+
     });
+
 }
 
-Battery.getBatteryStocks = async () =>{
-    var batteriesC, batSpecs, carBrands, carYears, batteryQuantity;
-    await Consumable.getSpecific("battery").then(consumables => {
-        console.log(consumables);
-        batteriesC = consumables
+Battery.addBattery = (newBattery) =>{
+    console.log(newBattery);
+    return new Bluebird((resolve, reject) => {
+        const newConsumable = {
+            category: "Battery",
+            quantity: newBattery.quantity
+        };
+        Battery.findOne({
+            where: {
+                batSpec: newBattery.batSpec,
+                carBrand: newBattery.carBrand,
+                carYear: newBattery.carYear
+            }
+        }).then(foundBattery => {
+            if(foundBattery){
+                reject("Batteries With these Details Already Registered, Please Add to Existing Stock");
+
+            }else{
+                console.log("Adding this " + JSON.stringify(newBattery));
+                Battery.create(newBattery).then(()=> {
+                    Consumable.addConsumable(newConsumable).then(() => {
+                        resolve(newBattery.quantity + " Batteries Sucessfully Added!");
+
+                    }).catch(err => {
+                        reject("An Error Occured Batteries Could not be Added");
+
+                    });
+
+                }).catch(err =>{
+                    reject("An Error Occured Batteries Could not be Added");
+
+                });
+
+            }
+
+        }).catch(err =>{
+            reject("An Error Occured Batteries Could not be Added");
+
+        });
+
+    });
+
+}
+
+Battery.getBatteryStocks = () => {
+    return new Bluebird(async (resolve, reject) => {
+        var batteriesC, batSpecs, carBrands, carYears, batteryQuantity;
+        await Consumable.getSpecific("battery").then(consumables => {
+            console.log(consumables);
+            batteriesC = consumables
+
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+        });
+    
+        await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `batSpec`'), 'batSpec']],raw:true, nest:true}).then(spec => {
+            batSpecs = spec
+            console.log(batSpecs);
+        
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+    
+        await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']]}).then(spec => {
+            carBrands = spec
+            console.log(carBrands);
+        
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+        
+        });
+    
+        await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']]}).then(spec => {
+            carYears = spec
+            console.log(carYears);
+        
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+    
+        var values = {consumable: batteriesC.rows, specs: batSpecs, brands: carBrands, years:carYears}
+        resolve(values);
+        
     });
     
-    await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `batSpec`'), 'batSpec']],raw:true, nest:true}).then(spec => {
-        batSpecs = spec
-        console.log(batSpecs);
-        
-    });
-    await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']]}).then(spec => {
-        carBrands = spec
-        console.log(carBrands);
-        
-    });
-    await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']]}).then(spec => {
-        carYears = spec
-        console.log(carYears);
-        
-    });
-    var values = {
-        consumable: batteriesC.rows, specs: batSpecs, brands: carBrands, years:carYears
-    }
-    return values;
 }
 
 export default Battery;

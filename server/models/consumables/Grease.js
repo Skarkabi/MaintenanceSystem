@@ -2,6 +2,7 @@ import _ from 'lodash';
 import Sequelize from 'sequelize';
 import Consumable from '../Consumables';
 import sequelize from '../../mySQLDB';
+import Bluebird from 'bluebird';
 
 const mappings = {
     id: {
@@ -93,79 +94,144 @@ const Grease = sequelize.define('grease_stocks', mappings, {
   ],
 });
 
-Grease.addGrease = (newGrease) => {
-    return new Promise((resolve, reject) => {
-        if(newGrease.id){
-            Grease.findOne({
-                where: {id: newGrease.id}
-            }).then(foundGrease =>{
-                var quant = parseInt(newGrease.volume) + foundGrease.volume
-                Grease.update({volume: quant}, {
-                    where: {
-                        id: newGrease.id
-                    }
-                }).then(() => {
-                    resolve ("Grease was updated");
-                }).catch(err =>{
-                    reject("Grease could not be update (Error: " + err + ")");
-                });
-            }).catch(err => {
-                reject("Grease could not be found");
-            });
-        }else{
-            Grease.findOne({
+Grease.updateGrease = (newGrease) => {
+    return new Bluebird((resolve, reject) => {
+        const newConsumable = {
+            category: "Grease",
+            quantity: newGrease.volume
+    
+        };
+    
+        Grease.findOne({
+            where: {id: newGrease.id}
+        }).then(foundGrease =>{
+            var quant = parseFloat(newGrease.volume) + foundGrease.volume
+            Grease.update({volume: quant}, {
                 where: {
-                    greaseSpec: newGrease.greaseSpec,
-                    typeOfGrease: newGrease.typeOfGrease,
-                    carBrand: newGrease.carBrand,
-                    carYear: newGrease.carYear
+                    id: newGrease.id
                 }
-            }).then(foundGrease => {
-                if(foundGrease){
-                    reject("This Grease Already Exists in the Stock");
-                }else{
-                    newGrease.volume = parseFloat(newGrease.volume);
-                    newGrease.minVolume = parseFloat(newGrease.minVolume);
-                    Grease.create(newGrease).then(() =>{
-                        resolve("New Grease was added into stock");
-                    }).catch(err => {
-                        reject("Grease could not be added into stock (Error: " + err + ")");
-                    });
-                }
+    
+            }).then(() => {
+                Consumable.addConsumable(newConsumable).then(() => {
+                    resolve(newGrease.volume + " Liters of Grease Sucessfully Added to Existing Stock!");
+    
+                }).catch(err => {
+                    reject("An Error Occured Grease Could not be Added");
+    
+                });
+    
             }).catch(err =>{
-                reject("Error connecting to the database");
+                reject("An Error Occured Grease Could not be Added");
+    
             });
-        }
+    
+        }).catch(err => {
+             reject("An Error Occured Grease Could not be Added");
+    
+        });
+
     });
+
 }
 
-Grease.getGreaseStock = async () => {
-    var greaseC, greaseSpec, typeOfGrease, carBrand, carYear;
-    await Consumable.getSpecific("grease").then(consumables => {
-        greaseC = consumables;
+Grease.addGrease = (newGrease) => {
+    return new Bluebird((resolve, reject) => {
+        const newConsumable = {
+            category: "Grease",
+            quantity: newGrease.volume
+    
+        };
+        Grease.findOne({
+            where: {
+                greaseSpec: newGrease.greaseSpec,
+                typeOfGrease: newGrease.typeOfGrease,
+                carBrand: newGrease.carBrand,
+                carYear: newGrease.carYear
+            }
+
+        }).then(foundGrease => {
+            if(foundGrease){
+                reject("Grease With these Details Already Registered, Please Add to Existing Stock");
+
+            }else{
+                newGrease.volume = parseFloat(newGrease.volume);
+                newGrease.minVolume = parseFloat(newGrease.minVolume);
+                Grease.create(newGrease).then(() =>{
+                    Consumable.addConsumable(newConsumable).then(() => {
+                        resolve(newGrease.volume + " Liters of Greace Sucessfully Added!");
+        
+                    }).catch(err => {
+                        reject("An Error Occured Grease Could not be Added");
+        
+                    });
+
+                }).catch(err => {
+                    reject("An Error Occured Grease Could not be Added");
+
+                });
+
+            }
+
+        }).catch(err =>{
+            reject("An Error Occured Grease Could not be Added");
+
+        });       
+        
     });
 
-    await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `greaseSpec`'), 'greaseSpec']],raw:true, nest:true}).then(spec => {
-        greaseSpec = spec
-    });
+}
 
-    await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `typeOfGrease`'), 'typeOfGrease']],raw:true, nest:true}).then(spec => {
-        typeOfGrease = spec
-    });
+Grease.getGreaseStock = () => {
+    return new Bluebird(async (resolve, reject) => {
+        var greaseC, greaseSpec, typeOfGrease, carBrand, carYear;
+        await Consumable.getSpecific("grease").then(consumables => {
+            greaseC = consumables;
 
-    await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']],raw:true, nest:true}).then(spec => {
-        carBrand = spec
-    });
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
 
-    await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']],raw:true, nest:true}).then(spec => {
-        carYear = spec
-    });
-    var values = {
-        consumables: greaseC.rows, specs: greaseSpec, typeOfGrease: typeOfGrease, 
-        carBrand: carBrand, carYear: carYear
-    };
+        await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `greaseSpec`'), 'greaseSpec']],raw:true, nest:true}).then(spec => {
+            greaseSpec = spec
+        
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
 
-    return values;
+        await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `typeOfGrease`'), 'typeOfGrease']],raw:true, nest:true}).then(spec => {
+            typeOfGrease = spec
+        
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+
+        await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']],raw:true, nest:true}).then(spec => {
+            carBrand = spec
+    
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+
+        await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']],raw:true, nest:true}).then(spec => {
+            carYear = spec
+    
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+    
+        var values = {
+            consumables: greaseC.rows, specs: greaseSpec, typeOfGrease: typeOfGrease, 
+            carBrand: carBrand, carYear: carYear
+        };
+        resolve(values);
+
+    });
+    
 };
 
 export default Grease;

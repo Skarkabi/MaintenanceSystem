@@ -118,12 +118,12 @@ router.get('/', async (req, res, next) =>
      body('username', "Username field is mandatory").not().isEmpty(),
      body('password', "Password lenght should be at least 6 chars long").isLength({ min: 5 })
  ], (req, res, next) =>{   
-        User.createUser(req.body).then(() => {
-            req.flash('success_msg', "User " + req.body.username + " created successfully.");
+        User.createUser(req.body).then(output => {
+            req.flash('success_msg', output);
             res.redirect('/users/create')
 
         }).catch(err => {
-            req.flash('error_msg', "User could not be created (Error: " + err+ ") ");
+            req.flash('error_msg', err);
             res.redirect('/users/create')
             
         });

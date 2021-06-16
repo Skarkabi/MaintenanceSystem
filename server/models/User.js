@@ -106,7 +106,7 @@ User.createUser = (createdUser) => {
   };
   
 
-  return new Promise((resolve, reject) => {
+  return new Bluebird((resolve, reject) => {
      bcrypt.genSalt(10, function (err, salt)
      {
       bcrypt.hash(newUser.password, salt, function (e, hash)
@@ -115,16 +115,21 @@ User.createUser = (createdUser) => {
         User.getUserById(newUser.id).then(isUserRegestered => 
           {
           if(isUserRegestered){
-            reject ("Employee ID " + newUser.id+ " already registered");
+            reject ("Employee with ID# " + newUser.id+ " Already Registered");
 
           }else{
             User.getUserByUserName(newUser.username).then(isUser =>
               {
               if(isUser){
-                reject ("Username " + newUser.username + " already taken")
+                reject ("Username " + newUser.username + " Already Taken");
+
               }else{
                 newUser.password = hash;
-                resolve(User.create(newUser));
+                User.create(newUser).then(() => {
+                  resolve("Emplyee With ID# " + newUser.id + " Was Sucessfully Added!");
+
+                });
+
               }
 
             });
@@ -166,8 +171,11 @@ User.prototype.comparePassword = function (password) {
     bcrypt.compare(password, this.password)).catch(
       (err) => {
         return false;
+
       }
+
     );
+    
 };
 
 export default User;

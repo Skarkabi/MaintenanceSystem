@@ -135,14 +135,19 @@ Vehicle.addVehicle = function (createVehicled) {
     kmForOilChange: createVehicled.kmTillOilChange,
     oilType: createVehicled.oilType
   };
-  console.log(newVehicle);
-  return new Promise(function (resolve, reject) {
+  return new _bluebird["default"](function (resolve, reject) {
     Vehicle.getVehicleByPlate(newVehicle.plate).then(function (isVehicle) {
       if (isVehicle) {
-        reject("Vehicle With Plate # " + newVehicle.plate + " Already Exists");
+        reject("Vehicle With Plate# " + newVehicle.plate + " Already Exists");
       } else {
-        resolve(Vehicle.create(newVehicle));
+        Vehicle.create(newVehicle).then(function () {
+          resolve("Vehicle With Plate# " + newVehicle.plate + " Was Sucessfully Added!");
+        })["catch"](function (err) {
+          reject("Vehicle With Plate# " + newVehicle.plate + " Could Not Be Added");
+        });
       }
+    })["catch"](function () {
+      reject("Could not Connect to the Server");
     });
   });
 };

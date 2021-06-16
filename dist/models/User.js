@@ -104,20 +104,22 @@ User.createUser = function (createdUser) {
     password: createdUser.password,
     userType: createdUser.userType
   };
-  return new Promise(function (resolve, reject) {
+  return new _bluebird["default"](function (resolve, reject) {
     _bcrypt["default"].genSalt(10, function (err, salt) {
       _bcrypt["default"].hash(newUser.password, salt, function (e, hash) {
         if (e) reject(e);
         User.getUserById(newUser.id).then(function (isUserRegestered) {
           if (isUserRegestered) {
-            reject("Employee ID " + newUser.id + " already registered");
+            reject("Employee with ID# " + newUser.id + " Already Registered");
           } else {
             User.getUserByUserName(newUser.username).then(function (isUser) {
               if (isUser) {
-                reject("Username " + newUser.username + " already taken");
+                reject("Username " + newUser.username + " Already Taken");
               } else {
                 newUser.password = hash;
-                resolve(User.create(newUser));
+                User.create(newUser).then(function () {
+                  resolve("Emplyee With ID# " + newUser.id + " Was Sucessfully Added!");
+                });
               }
             });
           }

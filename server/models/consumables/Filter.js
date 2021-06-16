@@ -2,6 +2,7 @@ import _ from 'lodash';
 import Sequelize from 'sequelize';
 import Consumable from '../Consumables';
 import sequelize from '../../mySQLDB';
+import Bluebird from 'bluebird';
 
 const mappings = {
     id: {
@@ -147,120 +148,183 @@ const Filter = sequelize.define('filter_stocks', mappings, {
   ],
 });
 
-Filter.addFilter = (newFilter) => {
-    return new Promise((resolve, reject) => {
+Filter.updateFilter = (newFilter) => {
+    return new Bluebird((resolve, reject) => {
         const newConsumable = {
             category: "Filter",
             quantity: newFilter.quantity
         };
-        if(newFilter.id){
-            Filter.findOne({
-                where: {id: newFilter.id}
-            }).then(foundFilter => {
-                var quant = parseInt(newFilter.quantity) + foundFilter.quantity;
-                Filter.update({quantity:quant}, {
-                    where: {
-                        id: newFilter.id
-                    }
-                }).then(() => {
-                    Consumable.addConsumable(newConsumable).then(() => {
-                        resolve("New Filter was Added to Stock");
-                    }).catch(err => {
-                        reject("Something happend (Error: " + err + ")");
-                    });
-                }).catch(err => {
-                    reject("Something happend (Error: " + err + ")");
-                });
-            }).catch(err => {
-                reject("Something happend (Error: " + err + ")");
-            });
-        }else{
-            Filter.findOne({
+
+        Filter.findOne({
+            where: {id: newFilter.id}
+
+        }).then(foundFilter => {
+            var quant = parseInt(newFilter.quantity) + foundFilter.quantity;
+            Filter.update({quantity:quant}, {
                 where: {
-                    carBrand: newFilter.carBrand,
-                    carModel: newFilter.carModel,
-                    category: newFilter.category,
-                    fType: newFilter.fType,
-                    preferredBrand: newFilter.preferredBrand,
-                    actualBrand: newFilter.actualBrand,
-                    singleCost: newFilter.singleCost
+                    id: newFilter.id
                 }
-            }).then(foundFilter => {
-                if(foundFilter){
-                    reject("This Filter Already Exists in the Stock");
-                }else{
-                    newFilter.quantity = parseInt(newFilter.quantity);
-                    newFilter.minQuantity = parseInt(newFilter.minQuantity);
-                    newFilter.singleCost = parseFloat(newFilter.singleCost);
-                    newFilter.totalCost = newFilter.singleCost * newFilter.quantity;
-                    newFilter.totalCost = parseFloat(newFilter.totalCost);
-                    Filter.create(newFilter).then(() => {
-                        Consumable.addConsumable(newConsumable).then(() => {
-                            resolve("New Filter was Added to Stock");
-                        }).catch(err => {
-                            reject("Something happened (Error: " + err + ")");
-                        });
-                    }).catch(err => {
-                        reject("Something happened (Error: " + err + ")");
-                    });
-                }
+
+            }).then(() => {
+                Consumable.addConsumable(newConsumable).then(() => {
+                    resolve(newFilter.quantity + " Fitlers Sucessfully Added to Existing Stock!");
+
+                }).catch(err => {
+                    reject("An Error Occured Filters Could not be Added");
+
+                });
+
             }).catch(err => {
-                reject("Something happened (Error: " + err + ")");
+                reject("An Error Occured Filters Could not be Added");
+
             });
-        }
+
+        }).catch(err => {
+            reject("An Error Occured Filters Could not be Added");
+
+        });
+
     });
+
 }
 
-Filter.getFilterStock = async () => {
-    var filterC, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand;
+Filter.addFilter = (newFilter) => {
+    return new Bluebird((resolve, reject) => {
+        const newConsumable = {
+            category: "Filter",
+            quantity: newFilter.quantity
+        };
+        Filter.findOne({
+            where: {
+                carBrand: newFilter.carBrand,
+                carModel: newFilter.carModel,
+                category: newFilter.category,
+                fType: newFilter.fType,
+                preferredBrand: newFilter.preferredBrand,
+                actualBrand: newFilter.actualBrand,
+                singleCost: newFilter.singleCost
+            }
 
-    await Consumable.getSpecific("filter").then(consumables => {
-        console.log(consumables);
-        filterC = consumables
+        }).then(foundFilter => {
+            if(foundFilter){
+                reject("Filters With these Details Already Registered, Please Add to Existing Stock");
+
+            }else{
+                newFilter.quantity = parseInt(newFilter.quantity);
+                newFilter.minQuantity = parseInt(newFilter.minQuantity);
+                newFilter.singleCost = parseFloat(newFilter.singleCost);
+                newFilter.totalCost = newFilter.singleCost * newFilter.quantity;
+                newFilter.totalCost = parseFloat(newFilter.totalCost);
+                Filter.create(newFilter).then(() => {
+                    Consumable.addConsumable(newConsumable).then(() => {
+                        resolve(newFilter.quantity + " Filters Sucessfully Added!");
+
+                    }).catch(err => {
+                        reject("An Error Occured Filters Could not be Added");
+
+                    });
+
+                }).catch(err => {
+                   reject("An Error Occured Filters Could not be Added");
+
+                });
+
+            }
+        }).catch(err => {
+            reject("An Error Occured Filters Could not be Added");
+
+        });
+        
     });
+
+}
+
+Filter.getFilterStock = () => {
+    return new Bluebird(async (resolve, reject) => {
+        var filterC, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand;
+
+        await Consumable.getSpecific("filter").then(consumables => {
+            console.log(consumables);
+            filterC = consumables
+        
+        }).catch(() => {
+            reject("Error Connecting to the Server");
     
-    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `category`'), 'category']],raw:true, nest:true}).then(category => {
-        carCategory = category ;
-    });
-
-    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `fType`'), 'fType']],raw:true, nest:true}).then(filterType => {
-        typeF = filterType; 
-        
-    });
-
-    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']]}).then(spec => {
-        carBrand = spec
-        
-    });
-    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']]}).then(spec => {
-        carYear = spec
-    });
-
-    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `carModel`'), 'carModel']],raw:true, nest:true}).then(filterType => {
-        carModel = filterType; 
-        
-    });
-
-    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `preferredBrand`'), 'preferredBrand']]}).then(spec => {
-        preferredBrand = spec
-        
-    });
-    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `actualBrand`'), 'actualBrand']]}).then(spec => {
-        actualBrand = spec
-    });
-
-    await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `singleCost`'), 'singleCost']]}).then(spec => {
-        singleCost = spec
+        });
     
+        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `category`'), 'category']],raw:true, nest:true}).then(category => {
+            carCategory = category ;
+        
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+
+        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `fType`'), 'fType']],raw:true, nest:true}).then(filterType => {
+            typeF = filterType; 
+        
+    
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+
+        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']]}).then(spec => {
+            carBrand = spec
+        
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+
+        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']]}).then(spec => {
+            carYear = spec
+    
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+
+        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `carModel`'), 'carModel']],raw:true, nest:true}).then(filterType => {
+            carModel = filterType; 
+        
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+
+        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `preferredBrand`'), 'preferredBrand']]}).then(spec => {
+            preferredBrand = spec
+        
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `actualBrand`'), 'actualBrand']]}).then(spec => {
+            actualBrand = spec
+    
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+
+        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `singleCost`'), 'singleCost']]}).then(spec => {
+            singleCost = spec
+    
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+    
+        });
+
+        var values = {
+            consumable: filterC.rows, filterType: typeF, carBrand: carBrand, carModel: carModel,
+            carYear: carYear, preferredBrand: preferredBrand, carCategory: carCategory,
+            singleCost: singleCost, actualBrand: actualBrand
+    
+        };
+        resolve(values);
+
     });
-
-    var values = {
-        consumable: filterC.rows, filterType: typeF, carBrand: carBrand, carModel: carModel,
-        carYear: carYear, preferredBrand: preferredBrand, carCategory: carCategory,
-        singleCost: singleCost, actualBrand: actualBrand
-    };
-
-    return values;
 
 }
 

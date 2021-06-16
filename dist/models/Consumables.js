@@ -75,7 +75,7 @@ var Consumable = _mySQLDB["default"].define('consumable_stocks', mappings, {
   }]
 });
 
-Consumable.addConsumable = function (createConsumable) {
+Consumable.updateConsumable = function (createConsumable, action) {
   var newConsumable = {
     category: createConsumable.category,
     quantity: parseFloat(createConsumable.quantity)
@@ -83,7 +83,12 @@ Consumable.addConsumable = function (createConsumable) {
   return new _bluebird["default"](function (resolve, reject) {
     Consumable.getConsumableByCategory(newConsumable.category).then(function (isCategory) {
       if (isCategory) {
-        var quant = newConsumable.quantity + isCategory.quantity;
+        if (action === "add") {
+          var quant = newConsumable.quantity + isCategory.quantity;
+        } else if (action === "delete") {
+          var quant = isCategory.quantity - newConsumable.quantity;
+        }
+
         Consumable.update({
           quantity: quant
         }, {

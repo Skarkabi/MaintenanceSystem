@@ -4,7 +4,7 @@ import Bluebird from 'bluebird';
 import Sequelize from 'sequelize';
 import Consumable from '../Consumables'
 import sequelize from '../../mySQLDB';
-import { response } from 'express';
+import e, { response } from 'express';
 
 const mappings = {
     id: {
@@ -87,7 +87,7 @@ const Battery = sequelize.define('battery_stocks', mappings, {
   ],
 });
 
-Battery.updateBattery = (newBattery) => {
+Battery.updateBattery = (newBattery, action) => {
     return new Bluebird((resolve, reject) => {
         const newConsumable = {
             category: "Battery",
@@ -98,28 +98,47 @@ Battery.updateBattery = (newBattery) => {
             where: {id: newBattery.id} 
 
         }).then(foundBattery =>{
-            var quant = parseInt(newBattery.quantity) + foundBattery.quantity;
+            var quant;
+            if(action === "add"){
+                quant = parseInt(newBattery.quantity) + foundBattery.quantity;
+
+            } else if(action === "delet"){
+                quant = foundBattery.quantity - parseInt(newBattery.quantity);
+
+            }
+            
             Battery.update({quantity: quant}, {
                 where: {
                     id: newBattery.id
                 }
 
             }).then(() =>{
-                Consumable.addConsumable(newConsumable).then(() =>{
-                    resolve(newBattery.quantity + " Batteries Sucessfully Added to Existing Stock!");
+                Consumable.updateConsumable(newConsumable, action).then(() =>{
+                    if(quant === 0){
+                        Battery.destory(foundBattery).catch(err => {
+                            reject ("An Error Occured Stock could not be deleted");
+                        });
+                        
+                    }
+                    if(action === "delet"){
+                        resolve(newBattery.quantity + " Batteries Sucessfully Deleted from Existing Stock!");
+                    }else if(action === "add"){
+                        resolve(newBattery.quantity + " Batteries Sucessfully Added to Existing Stock!");
+                    }
+                    
 
                 }).catch(err =>{
-                    reject("An Error Occured Batteries Could not be Added");
+                    reject("An Error Occured Batteries Could not be " + action + "ed");
 
                 });
 
             }).catch(err => {
-                reject("An Error Occured Batteries Could not be Added");
+                reject("An Error Occured Batteries Could not be " + action + "ed");
 
             });
 
         }).catch(err=>{
-            reject("An Error Occured Batteries Could not be Added");
+            reject("An Error Occured Batteries Could not be " + action + "ed");
 
         });
 
@@ -147,7 +166,7 @@ Battery.addBattery = (newBattery) =>{
             }else{
                 console.log("Adding this " + JSON.stringify(newBattery));
                 Battery.create(newBattery).then(()=> {
-                    Consumable.addConsumable(newConsumable).then(() => {
+                    Consumable.updateConsumable(newConsumable, "add").then(() => {
                         resolve(newBattery.quantity + " Batteries Sucessfully Added!");
 
                     }).catch(err => {

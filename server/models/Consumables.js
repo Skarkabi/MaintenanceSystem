@@ -63,7 +63,7 @@ const Consumable = sequelize.define('consumable_stocks', mappings, {
   ],
 });
 
-Consumable.addConsumable = (createConsumable) => {
+Consumable.updateConsumable = (createConsumable, action) => {
     const newConsumable = 
     {
       category: createConsumable.category,
@@ -73,7 +73,13 @@ Consumable.addConsumable = (createConsumable) => {
     return new Bluebird((resolve, reject) => {
       Consumable.getConsumableByCategory(newConsumable.category).then(isCategory => {
         if (isCategory){
-          var quant = newConsumable.quantity + isCategory.quantity;
+          if(action === "add"){
+            var quant = newConsumable.quantity + isCategory.quantity;
+          
+          }else if(action === "delete"){
+            var quant = isCategory.quantity - newConsumable.quantity;
+          }
+          
     
           Consumable.update({quantity: quant}, {
             where: {

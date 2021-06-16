@@ -2,6 +2,8 @@
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
+var _typeof = require("@babel/runtime/helpers/typeof");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -23,7 +25,11 @@ var _Consumables = _interopRequireDefault(require("../Consumables"));
 
 var _mySQLDB = _interopRequireDefault(require("../../mySQLDB"));
 
-var _express = require("express");
+var _express = _interopRequireWildcard(require("express"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 var mappings = {
   id: {
@@ -97,7 +103,7 @@ var Battery = _mySQLDB["default"].define('battery_stocks', mappings, {
   }]
 });
 
-Battery.updateBattery = function (newBattery) {
+Battery.updateBattery = function (newBattery, action) {
   return new _bluebird["default"](function (resolve, reject) {
     var newConsumable = {
       category: "Battery",
@@ -108,7 +114,14 @@ Battery.updateBattery = function (newBattery) {
         id: newBattery.id
       }
     }).then(function (foundBattery) {
-      var quant = parseInt(newBattery.quantity) + foundBattery.quantity;
+      var quant;
+
+      if (action === "add") {
+        quant = parseInt(newBattery.quantity) + foundBattery.quantity;
+      } else if (action === "delet") {
+        quant = foundBattery.quantity - parseInt(newBattery.quantity);
+      }
+
       Battery.update({
         quantity: quant
       }, {
@@ -116,16 +129,26 @@ Battery.updateBattery = function (newBattery) {
           id: newBattery.id
         }
       }).then(function () {
-        _Consumables["default"].addConsumable(newConsumable).then(function () {
-          resolve(newBattery.quantity + " Batteries Sucessfully Added to Existing Stock!");
+        _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
+          if (quant === 0) {
+            Battery.destory(foundBattery)["catch"](function (err) {
+              reject("An Error Occured Stock could not be deleted");
+            });
+          }
+
+          if (action === "delet") {
+            resolve(newBattery.quantity + " Batteries Sucessfully Deleted from Existing Stock!");
+          } else if (action === "add") {
+            resolve(newBattery.quantity + " Batteries Sucessfully Added to Existing Stock!");
+          }
         })["catch"](function (err) {
-          reject("An Error Occured Batteries Could not be Added");
+          reject("An Error Occured Batteries Could not be " + action + "ed");
         });
       })["catch"](function (err) {
-        reject("An Error Occured Batteries Could not be Added");
+        reject("An Error Occured Batteries Could not be " + action + "ed");
       });
     })["catch"](function (err) {
-      reject("An Error Occured Batteries Could not be Added");
+      reject("An Error Occured Batteries Could not be " + action + "ed");
     });
   });
 };
@@ -149,7 +172,7 @@ Battery.addBattery = function (newBattery) {
       } else {
         console.log("Adding this " + JSON.stringify(newBattery));
         Battery.create(newBattery).then(function () {
-          _Consumables["default"].addConsumable(newConsumable).then(function () {
+          _Consumables["default"].updateConsumable(newConsumable, "add").then(function () {
             resolve(newBattery.quantity + " Batteries Sucessfully Added!");
           })["catch"](function (err) {
             reject("An Error Occured Batteries Could not be Added");

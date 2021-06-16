@@ -113,6 +113,8 @@ router.get('/add', /*#__PURE__*/function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
+            console.log("I am in here Add");
+
             if (req.user) {
               getStocks().then(function (values) {
                 console.log(JSON.stringify(values));
@@ -128,7 +130,7 @@ router.get('/add', /*#__PURE__*/function () {
               });
             }
 
-          case 1:
+          case 2:
           case "end":
             return _context.stop();
         }
@@ -140,13 +142,13 @@ router.get('/add', /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }());
-router.post('/update-battery/:id', function (req, res, next) {
+router.post('/update-battery/:action/:id', function (req, res, next) {
   var newBattery = {
     id: req.params.id,
     quantity: req.body.newQuantity
   };
 
-  _Battery["default"].updateBattery(newBattery).then(function (output) {
+  _Battery["default"].updateBattery(newBattery, req.params.action).then(function (output) {
     req.flash('success_msg', output);
     res.redirect("/consumables/add");
   })["catch"](function (err) {
@@ -155,6 +157,7 @@ router.post('/update-battery/:id', function (req, res, next) {
   });
 });
 router.post('/add/battery', [(0, _expressValidator.body)('batSpec').not().isEmpty(), (0, _expressValidator.body)('carBrand').not().isEmpty(), (0, _expressValidator.body)('carYear').not().isEmpty(), (0, _expressValidator.body)('quantityBatteries').not().isEmpty(), (0, _expressValidator.body)('quantityMinBatteries').not().isEmpty()], function (req, res, next) {
+  console.log("I am in here Battery Add");
   var errors = (0, _expressValidator.validationResult)(req);
 
   if (!errors.isEmpty()) {

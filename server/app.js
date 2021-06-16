@@ -29,6 +29,12 @@ handlebars.registerHelper("counter", function (index){
     return index + 1;
 });
 
+handlebars.registerHelper("makeObject", function (id, action){
+    var value = {id: id, action: action};
+    console.log("Returning " + JSON.stringify(value));
+    return value;
+})
+
 handlebars.registerHelper('isdefined', function (value, compare) {
     console.log("I am in this function " + value + " " + compare);
     return value === compare;

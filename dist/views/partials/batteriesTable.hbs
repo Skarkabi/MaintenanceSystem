@@ -7,10 +7,8 @@
                 <th scope="col">Car Brand</th>
                 <th scope="col">Car Year</th>
                 <th scope="col">Quantity (Boxes)</th>
-                 {{#if (isdefined page "add")}}
                 <th scope="col">Action</th>
-                 {{/if}}
-                
+
             </tr>
         </thead>
         <tbody>
@@ -23,6 +21,16 @@
                     <td>{{this.carBrand}}</td>
                     <td>{{this.carYear}}</td>
                     <td>{{this.quantity}}</td>
+                    <td class = "table-actions">
+                        <div class="input-group">
+                            <input type="number" id="tableBatteryQuantity-{{this.id}}" name="tableBatteryQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button type="submit" id="updateBattery-{{this.id}}" name="updateBatter-{{this.id}}" class="btn btn-success" onclick="updateBatteryPost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
+                                <button type="submit" id="updateBattery-{{this.id}}" name="updateBatter-{{this.id}}" class="btn btn-danger" onclick="updateBatteryPost({{this.id}})"><i class="fas fa-minus-circle"></i></button>
+                            </div>
+                        </div>
+                    </td>  
+
                 </tr>
                 {{/each}}
             {{/if}}
@@ -39,7 +47,8 @@
                         <div class="input-group">
                             <input type="number" id="tableBatteryQuantity-{{this.id}}" name="tableBatteryQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
                             <div class="input-group-append">
-                                <button type="submit" id="updateBattery-{{this.id}}" name="updateBatter-{{this.id}}" class="btn btn-primary" onclick="updateBatteryPost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
+                                <button type="submit" id="updateBattery-{{this.id}}" name="updateBatter-{{this.id}}" class="btn btn-success" onclick="addBatteryPost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
+                                <button type="submit" id="updateBattery-{{this.id}}" name="updateBatter-{{this.id}}" class="btn btn-danger" onclick="deleteBatteryPost({{this.id}})"><i class="fas fa-minus-circle"></i></button>
                             </div>
                         </div>
                     </td>  
@@ -52,9 +61,16 @@
 </div>
 
 <script>
-    function updateBatteryPost(id){
+    function addBatteryPost(id){
         console.log("In the battery");
         document.getElementById("tableBatteryQuantity-" + id).name = "newQuantity";
-        document.getElementById("mainForm").action = "update-battery/" + id;
+        document.getElementById("mainForm").action = "update-battery/add/" + id;
     }
+
+     function deleteBatteryPost(id){
+        console.log("In the battery");
+        document.getElementById("tableBatteryQuantity-" + id).name = "newQuantity";
+        document.getElementById("mainForm").action = "update-battery/delet/" + id;
+    }
+    
 </script>

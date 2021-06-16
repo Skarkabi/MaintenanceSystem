@@ -55,6 +55,7 @@ async function getStocks(){
 
 router.get('/add', async (req, res, next) =>
 {
+    console.log("I am in here Add");
     if(req.user){
         getStocks().then(values =>{
             console.log(JSON.stringify(values));
@@ -73,13 +74,13 @@ router.get('/add', async (req, res, next) =>
 });
 
 
-router.post('/update-battery/:id', (req,res,next) =>{
+router.post('/update-battery/:action/:id', (req,res,next) =>{
     const newBattery = {
         id: req.params.id,
         quantity: req.body.newQuantity
     }
-
-    Battery.updateBattery(newBattery).then(output =>{
+    
+    Battery.updateBattery(newBattery, req.params.action).then(output =>{
         req.flash('success_msg', output);
         res.redirect("/consumables/add");
 
@@ -98,6 +99,7 @@ router.post('/add/battery',
     body('quantityMinBatteries').not().isEmpty()
 ]
 , (req, res, next) =>{   
+    console.log("I am in here Battery Add");
     const errors = validationResult(req);
     if(!errors.isEmpty()){
         console.log(req.body);

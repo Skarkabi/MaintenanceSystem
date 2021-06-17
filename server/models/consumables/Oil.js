@@ -135,7 +135,7 @@ Oil.getOilStock = () => {
   
 }
 
-Oil.updateOil = (newOil) => {
+Oil.updateOil = (newOil,action) => {
   return new Bluebird((resolve, reject) => {
     const newConsumable = {
       category: "Oil",
@@ -148,25 +148,53 @@ Oil.updateOil = (newOil) => {
       }
 
     }).then(foundOil => {
-      var quant = parseFloat(newOil.volume) + foundOil.volume;
-      Oil.update({volume: quant}, {
-        where: {
-          id: newOil.id
-        }
+      var quant;
+      if(action === "add"){
+          quant = parseFloat(newOil.volume) + foundOil.volume;
+      
+      }else if(action === "delet"){
+          quant = foundOil.volume - parseFloat(newOil.volume);
+      
+      }
 
-      }).then(() => {
-        Consumable.addConsumable(newConsumable).then(() => {
-          resolve(newOil.volume + " Liters of Oil Sucessfully Added to Existing Stock!");
-    
+      if(quant === 0){
+        foundOil.destroy().then(() => {
+          Consumable.updateConsumable(newConsumable, action).then(() => {
+            resolve(newOil.voulme + " liters Of Oil Successfully Deleted from Existing Stock!");
+          
+          }).catch(err => {
+            reject("An Error Occured Oil Could not be Deleted");
+          
+          });
+        
         }).catch(err => {
-            reject("An Error Occured Oil Could not be Added");
+          reject("An Error Occured Oil Could not be Deleted");
 
         });
+      }else if(quant < 0){
+        reject("Can not Delete more than exists in stock");
+        
+      }else{
+        Oil.update({volume: quant}, {
+          where: {
+            id: newOil.id
+          }
+  
+        }).then(() => {
+          Consumable.updateConsumable(newConsumable, action).then(() => {
+            resolve(newOil.volume + " Liters of Oil Sucessfully Added to Existing Stock!");
+      
+          }).catch(err => {
+              reject("An Error Occured Oil Could not be Added");
+  
+          });
+  
+        }).catch(err => {
+          reject("An Error Occured Oil Could not be Added");
+  
+        });
 
-      }).catch(err => {
-        reject("An Error Occured Oil Could not be Added");
-
-      });
+      }
 
     }).catch(err => {
       reject("An Error Occured Oil Could not be Added");

@@ -379,18 +379,18 @@ router.post('/add/oil', [(0, _expressValidator.body)('oilSpec').not().isEmpty(),
     });
   }
 });
-router.post('/update-oil/:id', function (req, res, next) {
+router.post('/update-oil/:action/:id', function (req, res, next) {
   var newOil = {
     id: req.params.id,
     volume: req.body.newQuantity
   };
 
-  _Oil["default"].updateOil(newOil).then(function (output) {
+  _Oil["default"].updateOil(newOil, req.params.action).then(function (output) {
     req.flash('success_msg', output);
-    res.redirect("/consumables/add");
+    res.redirect("back");
   })["catch"](function (err) {
     req.flash('error_msg', err + " could not be added to");
-    res.redirect("/consumables/add");
+    res.redirect("back");
   });
 });
 router.get('/delete/:id', function (req, res, next) {

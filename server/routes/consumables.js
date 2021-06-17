@@ -256,19 +256,19 @@ body('filterPrice').not().isEmpty(),
 
 });
 
-router.post('/update-filter/:id', (req,res,next) => {
+router.post('/update-filter/:action/:id', (req,res,next) => {
     const newFilter = {
         id: req.params.id,
         quantity: req.body.newQuantity
     };
 
-    Filter.updateFilter(newFilter).then(output => {
+    Filter.updateFilter(newFilter, req.params.action).then(output => {
         req.flash('success_msg', output);
-        res.redirect("/consumables/add");
+        res.redirect("back");
 
     }).catch(err => {
         req.flash('error_msg', err);
-        res.redirect("/consumables/add");
+        res.redirect("back");
 
     });
 

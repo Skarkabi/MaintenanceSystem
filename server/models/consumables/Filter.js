@@ -148,7 +148,7 @@ const Filter = sequelize.define('filter_stocks', mappings, {
   ],
 });
 
-Filter.updateFilter = (newFilter) => {
+Filter.updateFilter = (newFilter, action) => {
     return new Bluebird((resolve, reject) => {
         const newConsumable = {
             category: "Filter",
@@ -159,28 +159,58 @@ Filter.updateFilter = (newFilter) => {
             where: {id: newFilter.id}
 
         }).then(foundFilter => {
-            var quant = parseInt(newFilter.quantity) + foundFilter.quantity;
-            Filter.update({quantity:quant}, {
-                where: {
-                    id: newFilter.id
-                }
+            var quant;
+            if(action === "add"){
+               quant = parseInt(newFilter.quantity) + foundFilter.quantity;
 
-            }).then(() => {
-                Consumable.addConsumable(newConsumable).then(() => {
-                    resolve(newFilter.quantity + " Fitlers Sucessfully Added to Existing Stock!");
+            }else if(action === "delet"){
+                quant = foundFilter.quantity - parseInt(newFilter.quantity);
+
+            }
+
+            if(quant === 0){
+                foundFilter.destroy().then(() => {
+                    resolve("Filter Completly Removed From Stock!");
 
                 }).catch(err => {
-                    reject("An Error Occured Filters Could not be Added");
+                    reject("An Error Occured Filters Could not be Deleted");
 
                 });
 
-            }).catch(err => {
-                reject("An Error Occured Filters Could not be Added");
+            }else if(quant < 0){
+                reject("Can Not Delete More Than Exists in Stock!");
+    
+            }else{
+                Filter.update({quantity:quant}, {
+                    where: {
+                        id: newFilter.id
+                    }
+    
+                }).then(() => {
+                    Consumable.updateConsumable(newConsumable, action).then(() => {
+                        if(action === "add"){
+                            resolve(newFilter.quantity + " Fitlers Sucessfully Added to Existing Stock!");
 
-            });
+                        }else if(action === "delet"){
+                            resolve(newFilter.quantity + " Fitlers Sucessfully Deleted from Existing Stock!");
 
+                        }
+                        
+    
+                    }).catch(err => {
+                        reject("An Error Occured Filters Stock Could not be Updated");
+    
+                    });
+    
+                }).catch(err => {
+                    reject("An Error Occured Filters Stock Could not be Updated");
+    
+                });
+
+            }
+            
         }).catch(err => {
-            reject("An Error Occured Filters Could not be Added");
+            reject("An Error Occured Filters Stock Could not be Updated");
 
         });
 
@@ -216,7 +246,7 @@ Filter.addFilter = (newFilter) => {
                 newFilter.totalCost = newFilter.singleCost * newFilter.quantity;
                 newFilter.totalCost = parseFloat(newFilter.totalCost);
                 Filter.create(newFilter).then(() => {
-                    Consumable.addConsumable(newConsumable).then(() => {
+                    Consumable.updateConsumable(newConsumable, "add").then(() => {
                         resolve(newFilter.quantity + " Filters Sucessfully Added!");
 
                     }).catch(err => {

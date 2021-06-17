@@ -10,13 +10,11 @@
                 <th scope="col">Car Model</th>
                 <th scope="col">Car Year</th>
                 <th scope="col">Quantity (Boxes)</th>
-                 {{#if (isdefined page "add")}}
-                <th scope="col">Action</th>
-                 {{/if}}
                  {{#if (isdefined page "view")}}
                 <th scope="col">Single Cost</th>
                 <th scope="col">Total Cost</th>
                 {{/if}}
+                <th scope="col">Action</th>
                 
             </tr>
         </thead>
@@ -33,7 +31,16 @@
                     <td>{{this.carYear}}</td>
                     <td>{{this.quantity}}</td>
                     <td>{{this.singleCost}}</td>
-                    <td>{{this.totalCost}}</td>
+                    <td>{{roundToTwo this.singleCost this.quantity}}</td>
+                    <td class = "table-actions">
+                        <div class="input-group">
+                            <input type="number" id="tableFilterQuantity-{{this.id}}" name="tableFilterQuantity-{{this.id}}" class="form-control" placeholder="0" aria-label="Quantity" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button type="submit" id="updateFilter-{{this.id}}" name="updateFilter-{{this.id}}" class="btn btn-success btn-xs" onclick="updateFilterPost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
+                                <button type="submit" id="deleteFilter-{{this.id}}" name="deleteFilter-{{this.id}}" class="btn btn-danger btn-xs" onclick="deleteFilterPost({{this.id}})"><i class="fas fa-minus-circle"></i></button>
+                            </div>
+                        </div>
+                    </td>  
                 </tr>
             {{/each}}
             {{/if}}
@@ -53,7 +60,7 @@
                         <div class="input-group">
                             <input type="number" id="tableFilterQuantity-{{this.id}}" name="tableFilterQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
                             <div class="input-group-append">
-                                <button type="submit" id="updateFilter-{{this.id}}" name="updateFilter-{{this.id}}" class="btn btn-primary" onclick="updateFilterPost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
+                                <button type="submit" id="updateFilter-{{this.id}}" name="updateFilter-{{this.id}}" class="btn btn-success btn-xs" onclick="updateFilterPost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
                             </div>
                         </div>
                     </td>  
@@ -67,6 +74,19 @@
 <script>
     function updateFilterPost(id){
         document.getElementById("tableFilterQuantity-" + id).name = "newQuantity";
-        document.getElementById("mainForm").action = "update-filter/" + id;
+        document.getElementById("mainForm").action = "update-filter/add/" + id;
     }
+
+    function deleteFilterPost(id){
+        if(confirm("Are you sure to delete this Filter?")){
+            document.getElementById("mainForm").method = "POST"
+            document.getElementById("tableFilterQuantity-" + id).name = "newQuantity";
+            document.getElementById("mainForm").action = "update-filter/delet/" + id;
+            
+        }else{
+            //document.getElementById("mainForm").method = "GET";
+            document.getElementById("category").value = "Filter";
+        }
+    }
+
 </script>

@@ -141,7 +141,7 @@ var Filter = _mySQLDB["default"].define('filter_stocks', mappings, {
   }]
 });
 
-Filter.updateFilter = function (newFilter) {
+Filter.updateFilter = function (newFilter, action) {
   return new _bluebird["default"](function (resolve, reject) {
     var newConsumable = {
       category: "Filter",
@@ -152,24 +152,45 @@ Filter.updateFilter = function (newFilter) {
         id: newFilter.id
       }
     }).then(function (foundFilter) {
-      var quant = parseInt(newFilter.quantity) + foundFilter.quantity;
-      Filter.update({
-        quantity: quant
-      }, {
-        where: {
-          id: newFilter.id
-        }
-      }).then(function () {
-        _Consumables["default"].addConsumable(newConsumable).then(function () {
-          resolve(newFilter.quantity + " Fitlers Sucessfully Added to Existing Stock!");
+      var quant;
+
+      if (action === "add") {
+        quant = parseInt(newFilter.quantity) + foundFilter.quantity;
+      } else if (action === "delet") {
+        quant = foundFilter.quantity - parseInt(newFilter.quantity);
+      }
+
+      if (quant === 0) {
+        foundFilter.destroy().then(function () {
+          resolve("Filter Completly Removed From Stock!");
         })["catch"](function (err) {
-          reject("An Error Occured Filters Could not be Added");
+          reject("An Error Occured Filters Could not be Deleted");
         });
-      })["catch"](function (err) {
-        reject("An Error Occured Filters Could not be Added");
-      });
+      } else if (quant < 0) {
+        reject("Can Not Delete More Than Exists in Stock!");
+      } else {
+        Filter.update({
+          quantity: quant
+        }, {
+          where: {
+            id: newFilter.id
+          }
+        }).then(function () {
+          _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
+            if (action === "add") {
+              resolve(newFilter.quantity + " Fitlers Sucessfully Added to Existing Stock!");
+            } else if (action === "delet") {
+              resolve(newFilter.quantity + " Fitlers Sucessfully Deleted from Existing Stock!");
+            }
+          })["catch"](function (err) {
+            reject("An Error Occured Filters Stock Could not be Updated");
+          });
+        })["catch"](function (err) {
+          reject("An Error Occured Filters Stock Could not be Updated");
+        });
+      }
     })["catch"](function (err) {
-      reject("An Error Occured Filters Could not be Added");
+      reject("An Error Occured Filters Stock Could not be Updated");
     });
   });
 };
@@ -200,7 +221,7 @@ Filter.addFilter = function (newFilter) {
         newFilter.totalCost = newFilter.singleCost * newFilter.quantity;
         newFilter.totalCost = parseFloat(newFilter.totalCost);
         Filter.create(newFilter).then(function () {
-          _Consumables["default"].addConsumable(newConsumable).then(function () {
+          _Consumables["default"].updateConsumable(newConsumable, "add").then(function () {
             resolve(newFilter.quantity + " Filters Sucessfully Added!");
           })["catch"](function (err) {
             reject("An Error Occured Filters Could not be Added");

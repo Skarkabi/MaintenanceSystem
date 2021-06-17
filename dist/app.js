@@ -81,8 +81,8 @@ _handlebars["default"].registerHelper('changeValue', function (variable, value) 
   return variable = value;
 });
 
-_handlebars["default"].registerHelper('multiply', function (x, y) {
-  return x * y;
+_handlebars["default"].registerHelper('roundToTwo', function (x, y) {
+  return (x * y).toFixed(2);
 });
 
 _handlebars["default"].registerHelper('console', function (value) {

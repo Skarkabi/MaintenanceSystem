@@ -50,8 +50,8 @@ handlebars.registerHelper('changeValue', function(variable, value){
     return variable = value;
 })
 
-handlebars.registerHelper('multiply', function(x,y){
-    return x*y;
+handlebars.registerHelper('roundToTwo', function(x,y){
+    return (x*y).toFixed(2);
 });
 
 handlebars.registerHelper('console', function (value){

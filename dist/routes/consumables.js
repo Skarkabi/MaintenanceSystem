@@ -299,18 +299,18 @@ router.post('/add/filter', [(0, _expressValidator.body)('filterType').not().isEm
     });
   }
 });
-router.post('/update-filter/:id', function (req, res, next) {
+router.post('/update-filter/:action/:id', function (req, res, next) {
   var newFilter = {
     id: req.params.id,
     quantity: req.body.newQuantity
   };
 
-  _Filter["default"].updateFilter(newFilter).then(function (output) {
+  _Filter["default"].updateFilter(newFilter, req.params.action).then(function (output) {
     req.flash('success_msg', output);
-    res.redirect("/consumables/add");
+    res.redirect("back");
   })["catch"](function (err) {
     req.flash('error_msg', err);
-    res.redirect("/consumables/add");
+    res.redirect("back");
   });
 });
 router.post('/add/grease', [(0, _expressValidator.body)('greaseSpec').not().isEmpty(), (0, _expressValidator.body)('greaseType').not().isEmpty(), (0, _expressValidator.body)('greaseCarBrand').not().isEmpty(), (0, _expressValidator.body)('greaseCarYear').not().isEmpty(), (0, _expressValidator.body)('quantityGrease').not().isEmpty(), (0, _expressValidator.body)('quantityMinGrease').not().isEmpty()], function (req, res, next) {

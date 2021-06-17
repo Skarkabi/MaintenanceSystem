@@ -13,7 +13,7 @@
                 <th scope="col">First Name</th>
                 <th scope="col">Last Name</th>
                 <th scope="col">Username</th>
-                <th scope="col">Actions</th>
+                <th scope="col" style="width: 18%;">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -25,11 +25,19 @@
                     <td><a href="/users/display-user/{{this.id}}">{{this.lastName}}</a></td>
                     <td><a href="/users/display-user/{{this.id}}">{{this.username}}</a></td>
                     <td class = "table-actions">
-                        <a href="/users/update/{{this.id}}" id="updateUser-{{this.id}}"><i class="far fa-edit"></i> Update </a>
-                        <a href="/users/delete/{{this.id}}" id="deleteUserId-{{this.id}}" class="delete" data-confirm="Are you sure to delete Employee ID# {{this.id}}?"><i class="fas fa-trash"></i> Delete</a>
+                        <a href="/users/display-user/{{this.id}}" role="button"  id="view" class="button"><i class="fas fa-user-alt" aria-hidden="true"></i> View</a>
+                       <a href="/users/delete/{{this.id}}" role="button" id="delete" class="delete"data-confirm="Are you sure to delete Employee ID# {{this.id}}?"><i class="fas fa-trash" aria-hidden="true"></i> Delete</a>
                     </td>
                 </tr>
             {{/each}}
         </tbody>
     </table>
 </div>
+
+<script>
+    function deleteUser(id){
+        if(confirm("Are you sure you want to delete this user?")){
+            window.location.href = "users/delete/" + id;
+        }
+    }
+</script>

@@ -51,13 +51,21 @@ var mappings = {
     type: _sequelize["default"].DataTypes.DOUBLE,
     allowNull: false
   },
+  supplierId: {
+    type: _sequelize["default"].DataTypes.INTEGER,
+    allowNull: false
+  },
+  quotationNumber: {
+    type: _sequelize["default"].DataTypes.STRING,
+    allowNull: false
+  },
   createdAt: {
     type: _sequelize["default"].DataTypes.DATE,
-    allowNull: true
+    allowNull: false
   },
   updatedAt: {
     type: _sequelize["default"].DataTypes.DATE,
-    allowNull: true
+    allowNull: false
   }
 };
 
@@ -98,6 +106,14 @@ var Grease = _mySQLDB["default"].define('grease_stocks', mappings, {
     name: 'grease_updatedAt_index',
     method: 'BTREE',
     fields: ['updatedAt']
+  }, {
+    name: 'grease_supplierId_index',
+    method: 'BTREE',
+    fields: ['supplierId']
+  }, {
+    name: 'grease_quotationNumber_index',
+    method: 'BTREE',
+    fields: ['quotationNumber']
   }]
 });
 

@@ -71,13 +71,21 @@ var mappings = {
     type: _sequelize["default"].DataTypes.INTEGER,
     allowNull: true
   },
+  supplierId: {
+    type: _sequelize["default"].DataTypes.INTEGER,
+    allowNull: false
+  },
+  quotationNumber: {
+    type: _sequelize["default"].DataTypes.STRING,
+    allowNull: false
+  },
   createdAt: {
     type: _sequelize["default"].DataTypes.DATE,
-    allowNull: true
+    allowNull: false
   },
   updatedAt: {
     type: _sequelize["default"].DataTypes.DATE,
-    allowNull: true
+    allowNull: false
   }
 };
 
@@ -138,6 +146,14 @@ var Filter = _mySQLDB["default"].define('filter_stocks', mappings, {
     name: 'filter_updatedAt_index',
     method: 'BTREE',
     fields: ['updatedAt']
+  }, {
+    name: 'filter_supplierId_index',
+    method: 'BTREE',
+    fields: ['supplierId']
+  }, {
+    name: 'filter_quotationNumber_index',
+    method: 'BTREE',
+    fields: ['quotationNumber']
   }]
 });
 

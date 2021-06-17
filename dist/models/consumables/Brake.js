@@ -63,17 +63,25 @@ var mappings = {
     type: _sequelize["default"].DataTypes.INTEGER,
     allowNull: true
   },
+  supplierId: {
+    type: _sequelize["default"].DataTypes.INTEGER,
+    allowNull: false
+  },
+  quotationNumber: {
+    type: _sequelize["default"].DataTypes.STRING,
+    allowNull: false
+  },
   minQuantity: {
     type: _sequelize["default"].DataTypes.INTEGER,
     allowNull: true
   },
   createdAt: {
     type: _sequelize["default"].DataTypes.DATE,
-    allowNull: true
+    allowNull: false
   },
   updatedAt: {
     type: _sequelize["default"].DataTypes.DATE,
-    allowNull: true
+    allowNull: false
   }
 };
 
@@ -126,6 +134,14 @@ var Brake = _mySQLDB["default"].define('brake_stocks', mappings, {
     name: 'brake_updatedAt_index',
     method: 'BTREE',
     fields: ['updatedAt']
+  }, {
+    name: 'brake_supplierId_index',
+    method: 'BTREE',
+    fields: ['supplierId']
+  }, {
+    name: 'brake_quotationNumber_index',
+    method: 'BTREE',
+    fields: ['quotationNumber']
   }]
 });
 

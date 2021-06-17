@@ -35,13 +35,21 @@ const mappings = {
       type: Sequelize.DataTypes.DOUBLE,
       allowNull: false
     },
+    supplierId:{
+      type: Sequelize.DataTypes.INTEGER,
+      allowNull: false
+  },
+  quotationNumber:{
+      type: Sequelize.DataTypes.STRING,
+      allowNull: false
+  },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
-        allowNull: true,
+        allowNull: false,
     },
     updatedAt: {
         type: Sequelize.DataTypes.DATE,
-        allowNull: true,
+        allowNull: false,
     },
 }
 
@@ -87,6 +95,16 @@ const Oil = sequelize.define('oil_stocks', mappings, {
       method: 'BTREE',
       fields: ['updatedAt'],
     },
+    {
+      name: 'oil_supplierId_index',
+      method: 'BTREE',
+      fields: ['supplierId']
+  },
+  {
+      name: 'oil_quotationNumber_index',
+      method: 'BTREE',
+      fields: ['quotationNumber']
+  }
   ],
 });
 

@@ -32,13 +32,22 @@ const mappings = {
         type: Sequelize.DataTypes.INTEGER,
         allowNull: true
     },
+    supplierId:{
+        type: Sequelize.DataTypes.INTEGER,
+        allowNull: false
+    },
+    quotationNumber:{
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false
+    },
+
     createdAt: {
         type: Sequelize.DataTypes.DATE,
-        allowNull: true,
+        allowNull: false,
     },
     updatedAt: {
         type: Sequelize.DataTypes.DATE,
-        allowNull: true,
+        allowNull: false,
     },
 };
 
@@ -84,6 +93,16 @@ const Battery = sequelize.define('battery_stocks', mappings, {
       method: 'BTREE',
       fields: ['updatedAt'],
     },
+    {
+        name: 'battery_supplierId_index',
+        method: 'BTREE',
+        fields: ['supplierId']
+    },
+    {
+        name: 'battery_quotationNumber_index',
+        method: 'BTREE',
+        fields: ['quotationNumber']
+    }
   ],
 });
 

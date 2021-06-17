@@ -129,7 +129,7 @@ var Brake = _mySQLDB["default"].define('brake_stocks', mappings, {
   }]
 });
 
-Brake.updateBrake = function (newBrake) {
+Brake.updateBrake = function (newBrake, action) {
   return new _bluebird["default"](function (resolve, reject) {
     var newConsumable = {
       category: "Brake",
@@ -140,24 +140,45 @@ Brake.updateBrake = function (newBrake) {
         id: newBrake.id
       }
     }).then(function (foundBrake) {
-      var quant = parseInt(newBrake.quantity) + foundBrake.quantity;
-      Brake.update({
-        quantity: quant
-      }, {
-        where: {
-          id: newBrake.id
-        }
-      }).then(function () {
-        _Consumables["default"].addConsumable(newConsumable).then(function () {
-          resolve(newBrake.quantity + " Brakes Sucessfully Added to Existing Stock!");
+      var quant;
+
+      if (action === "add") {
+        quant = parseInt(newBrake.quantity) + foundBrake.quantity;
+      } else if (action === "delet") {
+        quant = foundBrake.quantity - parseInt(newBrake.quantity);
+      }
+
+      if (quant === 0) {
+        foundBrake.destroy().then(function () {
+          resolve("Brake Completly Removed From Stock!");
         })["catch"](function (err) {
-          reject("An Error Occured Brakes Could not be Added");
+          reject("An Error Occured Brakes Could not be Deleted");
         });
-      })["catch"](function (err) {
-        reject("An Error Occured Brakes Could not be Added");
-      });
+      } else if (quant < 0) {
+        reject("Can Not Delete More Than Exists in Stock");
+      } else {
+        Brake.update({
+          quantity: quant
+        }, {
+          where: {
+            id: newBrake.id
+          }
+        }).then(function () {
+          _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
+            if (action === "delet") {
+              resolve(newBrake.quantity + " Brakes Sucessfully Deleted from Existing Stock!");
+            } else if (action === "add") {
+              resolve(newBrake.quantity + " Brakes Sucessfully Added to Existing Stock!");
+            }
+          })["catch"](function (err) {
+            reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
+          });
+        })["catch"](function (err) {
+          reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
+        });
+      }
     })["catch"](function (err) {
-      reject("An Error Occured Brakes Could not be Added");
+      reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
     });
   });
 };

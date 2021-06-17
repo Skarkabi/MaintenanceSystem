@@ -213,18 +213,19 @@ router.post('/add/brake', [(0, _expressValidator.body)('brakeCategory').not().is
     });
   }
 });
-router.post('/update-brake/:id', function (req, res, next) {
+router.post('/update-brake/:action/:id', function (req, res, next) {
+  console.log("My action is " + req.params.action);
   var newBrake = {
     id: req.params.id,
     quantity: req.body.newQuantity
   };
 
-  _Brake["default"].updateBrake(newBrake).then(function (output) {
+  _Brake["default"].updateBrake(newBrake, req.params.action).then(function (output) {
     req.flash('success_msg', output);
-    res.redirect("/consumables/add");
+    res.redirect("back");
   })["catch"](function (err) {
     req.flash('error_msg', "Error " + err);
-    res.redirect("/consumables/add");
+    res.redirect("back");
   });
 });
 router.get('/display-vehicle/:id', /*#__PURE__*/function () {

@@ -170,18 +170,19 @@ body('brakePrice').not().isEmpty()
     }
  });
 
-router.post('/update-brake/:id', (req,res,next) => {
-    const newBrake = {
+router.post('/update-brake/:action/:id', (req,res,next) => {
+    console.log("My action is " + req.params.action);
+        const newBrake = {
         id: req.params.id,
         quantity: req.body.newQuantity
     };
 
-    Brake.updateBrake(newBrake).then(output => {
+    Brake.updateBrake(newBrake, req.params.action).then(output => {
             req.flash('success_msg', output);
-            res.redirect("/consumables/add");
+            res.redirect("back");
     }).catch(err => {
         req.flash('error_msg', "Error " + err);
-        res.redirect("/consumables/add");
+        res.redirect("back");
     });
 });
 

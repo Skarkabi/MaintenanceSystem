@@ -125,7 +125,7 @@ const Brake = sequelize.define('brake_stocks', mappings, {
   ],
 });
 
-Brake.updateBrake = (newBrake) => {
+Brake.updateBrake = (newBrake, action) => {
     return new Bluebird((resolve, reject) => {
         const newConsumable = {
             category: "Brake",
@@ -135,31 +135,58 @@ Brake.updateBrake = (newBrake) => {
             where: {id: newBrake.id}
 
         }).then(foundBrake => {
-            var quant = parseInt(newBrake.quantity) + foundBrake.quantity;
-            Brake.update({quantity:quant}, {
-                where: {
-                    id: newBrake.id
-                }
+            var quant;
+            if(action === "add"){
+               quant = parseInt(newBrake.quantity) + foundBrake.quantity;
+            
+            }else if(action ==="delet"){
+                quant = foundBrake.quantity - parseInt(newBrake.quantity);
 
-            }).then(() => {
-                Consumable.addConsumable(newConsumable).then(() => {
-                    resolve(newBrake.quantity + " Brakes Sucessfully Added to Existing Stock!");
+            } 
+
+            if(quant === 0){
+                foundBrake.destroy().then(() => {
+                    resolve("Brake Completly Removed From Stock!");
 
                 }).catch(err => {
-                    reject("An Error Occured Brakes Could not be Added");
+                    reject("An Error Occured Brakes Could not be Deleted");
 
                 });
-            }).catch(err => {
-                reject("An Error Occured Brakes Could not be Added");
-                    
-            });
-        }).catch(err => {
-            reject("An Error Occured Brakes Could not be Added");
-                    
-        });
 
-    });
+            }else if(quant < 0){
+                reject("Can Not Delete More Than Exists in Stock");
+
+            }else{
+                Brake.update({quantity:quant}, {
+                    where: {
+                        id: newBrake.id
+                    }
     
+                }).then(() => {
+                    Consumable.updateConsumable(newConsumable,action).then(() => {
+                        if(action === "delet"){
+                            resolve(newBrake.quantity + " Brakes Sucessfully Deleted from Existing Stock!");
+                        }else if(action === "add"){
+                            resolve(newBrake.quantity + " Brakes Sucessfully Added to Existing Stock!");
+                        }
+    
+                    }).catch(err => {
+                        reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
+    
+                    });
+                }).catch(err => {
+                    reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
+                        
+                });
+            }
+                        
+        }).catch(err => {
+            reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
+
+        }); 
+    
+    });
+
 }
 Brake.addBrake = (newBrake) => {
     return new Bluebird((resolve, reject) => {

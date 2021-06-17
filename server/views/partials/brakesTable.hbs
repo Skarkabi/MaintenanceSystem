@@ -13,10 +13,7 @@
                 <th scope="col">Single Cost</th>
                 <th scope="col">Total Cost</th>
                 {{/if}}
-                {{#if (isdefined page "add")}}
-                <th scope"col">Actoin</th>
-                {{/if}}
-                
+                <th scope="col"  style="width: 15%;">Actoin</th>
             </tr>
         </thead>
         <tbody>
@@ -31,7 +28,16 @@
                     <td>{{this.bBrand}}</td>
                     <td>{{this.quantity}}</td>
                     <td>{{this.singleCost}}</td>
-                    <td>{{this.totalCosr}}</td>
+                    <td>{{multiply this.singleCost this.quantity}}</td>
+                    <td class = "table-actions">
+                        <div class="input-group">
+                            <input type="number" id="tableBrakeQuantity-{{this.id}}" name="tableBrakeQuantity-{{this.id}}" class="form-control" placeholder="0" aria-label="Quantity" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button type="submit" id="updateBrake-{{this.id}}" name="updateBrake-{{this.id}}" class="btn btn-success btn-xs" onclick="updateBrakePost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
+                                <button type="submit" id="deleteBattery-{{this.id}}" name="deleteBrake-{{this.id}}" class="btn btn-danger btn-xs" onclick="deleteBrakePost({{this.id}})"><i class="fas fa-minus-circle"></i></button>
+                            </div>
+                        </div>
+                    </td>  
                 </tr>
             {{/each}}
             {{/if}}
@@ -50,7 +56,7 @@
                         <div class="input-group">
                             <input type="number" id="tableBrakeQuantity-{{this.id}}" name="tableBrakeQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
                             <div class="input-group-append">
-                                <button type="submit" id="updateBattery-{{this.id}}" name="updateBatter-{{this.id}}" class="btn btn-primary" onclick="updateBrakePost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
+                                <button type="submit" id="updateBrake-{{this.id}}" name="updateBrake-{{this.id}}" class="btn btn-success btn-xs" onclick="updateBrakePost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
                             </div>
                         </div>
                     </td>  
@@ -65,6 +71,18 @@
      function updateBrakePost(id){
         console.log("In the battery");
         document.getElementById("tableBrakeQuantity-" + id).name = "newQuantity";
-        document.getElementById("mainForm").action = "update-brake/" + id;
+        document.getElementById("mainForm").action = "update-brake/add/" + id;
+    }
+
+    function deleteBrakePost(id){
+        if(confirm("Are you sure to delete this Brake?")){
+            document.getElementById("mainForm").method = "POST"
+            document.getElementById("tableBrakeQuantity-" + id).name = "newQuantity";
+            document.getElementById("mainForm").action = "update-brake/delet/" + id;
+            
+        }else{
+            //document.getElementById("mainForm").method = "GET";
+            document.getElementById("category").value = "Brake";
+        }
     }
 </script>

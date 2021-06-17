@@ -50,6 +50,10 @@ handlebars.registerHelper('changeValue', function(variable, value){
     return variable = value;
 })
 
+handlebars.registerHelper('multiply', function(x,y){
+    return x*y;
+});
+
 handlebars.registerHelper('console', function (value){
     return console.log("Outputting " + JSON.stringify(value));
 })

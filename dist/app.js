@@ -81,6 +81,10 @@ _handlebars["default"].registerHelper('changeValue', function (variable, value) 
   return variable = value;
 });
 
+_handlebars["default"].registerHelper('multiply', function (x, y) {
+  return x * y;
+});
+
 _handlebars["default"].registerHelper('console', function (value) {
   return console.log("Outputting " + JSON.stringify(value));
 });

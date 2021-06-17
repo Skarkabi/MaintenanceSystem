@@ -101,7 +101,7 @@ var Grease = _mySQLDB["default"].define('grease_stocks', mappings, {
   }]
 });
 
-Grease.updateGrease = function (newGrease) {
+Grease.updateGrease = function (newGrease, action) {
   return new _bluebird["default"](function (resolve, reject) {
     var newConsumable = {
       category: "Grease",
@@ -112,24 +112,45 @@ Grease.updateGrease = function (newGrease) {
         id: newGrease.id
       }
     }).then(function (foundGrease) {
-      var quant = parseFloat(newGrease.volume) + foundGrease.volume;
-      Grease.update({
-        volume: quant
-      }, {
-        where: {
-          id: newGrease.id
-        }
-      }).then(function () {
-        _Consumables["default"].addConsumable(newConsumable).then(function () {
-          resolve(newGrease.volume + " Liters of Grease Sucessfully Added to Existing Stock!");
+      var quant;
+
+      if (action === "add") {
+        quant = parseFloat(newGrease.volume) + foundGrease.volume;
+      } else if (action === "delet") {
+        quant = foundGrease.volume - parseFloat(newGrease.volume);
+      }
+
+      if (quant === 0) {
+        foundGrease.destroy().then(function () {
+          _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
+            resolve(newGrease.volume + " Liters Of Grease Sucessfully Deleted from Existing Stock!");
+          })["catch"](function (err) {
+            reject("An Error Occured Grease Could not be Deleted");
+          });
         })["catch"](function (err) {
-          reject("An Error Occured Grease Could not be Added");
+          reject("An Error Occured Grease Could not be Deleted");
         });
-      })["catch"](function (err) {
-        reject("An Error Occured Grease Could not be Added");
-      });
+      } else if (quant < 0) {
+        reject("Can Not Delete More Than Exists in Stock!");
+      } else {
+        Grease.update({
+          volume: quant
+        }, {
+          where: {
+            id: newGrease.id
+          }
+        }).then(function () {
+          _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
+            resolve(newGrease.volume + " Liters of Grease Sucessfully Added to Existing Stock!");
+          })["catch"](function (err) {
+            reject("An Error Occured Grease Could not be Added " + err);
+          });
+        })["catch"](function (err) {
+          reject("An Error Occured Grease Could not be Added " + err);
+        });
+      }
     })["catch"](function (err) {
-      reject("An Error Occured Grease Could not be Added");
+      reject("An Error Occured Grease Could not be Added " + err);
     });
   });
 };

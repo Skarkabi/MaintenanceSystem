@@ -94,7 +94,7 @@ const Grease = sequelize.define('grease_stocks', mappings, {
   ],
 });
 
-Grease.updateGrease = (newGrease) => {
+Grease.updateGrease = (newGrease,action) => {
     return new Bluebird((resolve, reject) => {
         const newConsumable = {
             category: "Grease",
@@ -105,28 +105,60 @@ Grease.updateGrease = (newGrease) => {
         Grease.findOne({
             where: {id: newGrease.id}
         }).then(foundGrease =>{
-            var quant = parseFloat(newGrease.volume) + foundGrease.volume
-            Grease.update({volume: quant}, {
-                where: {
-                    id: newGrease.id
-                }
-    
-            }).then(() => {
-                Consumable.addConsumable(newConsumable).then(() => {
-                    resolve(newGrease.volume + " Liters of Grease Sucessfully Added to Existing Stock!");
-    
+            var quant;
+            if(action === "add"){
+                quant = parseFloat(newGrease.volume) + foundGrease.volume;
+            
+            }else if(action === "delet"){
+                quant = foundGrease.volume - parseFloat(newGrease.volume);
+            
+            }
+          
+            if(quant === 0){
+                foundGrease.destroy().then(() => {
+                    Consumable.updateConsumable(newConsumable, action).then(() => {
+                        resolve(newGrease.volume + " Liters Of Grease Sucessfully Deleted from Existing Stock!");
+
+                    }).catch(err => {
+                        reject("An Error Occured Grease Could not be Deleted");
+
+                    });
+
                 }).catch(err => {
-                    reject("An Error Occured Grease Could not be Added");
-    
+                    reject("An Error Occured Grease Could not be Deleted");
+                
                 });
-    
-            }).catch(err =>{
-                reject("An Error Occured Grease Could not be Added");
-    
-            });
+
+            }
+
+            else if(quant < 0){
+                reject("Can Not Delete More Than Exists in Stock!");
+            
+            }else{
+                Grease.update({volume: quant}, {
+                    where: {
+                        id: newGrease.id
+                    }
+        
+                }).then(() => {
+                    Consumable.updateConsumable(newConsumable,action).then(() => {
+                        resolve(newGrease.volume + " Liters of Grease Sucessfully Added to Existing Stock!");
+        
+                    }).catch(err => {
+                        reject("An Error Occured Grease Could not be Added " + err);
+        
+                    });
+        
+                }).catch(err =>{
+                    reject("An Error Occured Grease Could not be Added " + err);
+        
+                });
+
+            }
+            
     
         }).catch(err => {
-             reject("An Error Occured Grease Could not be Added");
+             reject("An Error Occured Grease Could not be Added " + err);
     
         });
 

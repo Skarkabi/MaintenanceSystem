@@ -314,19 +314,20 @@ body('quantityMinGrease').not().isEmpty()
 
 });
 
-router.post('/update-grease/:id', (req,res,next) =>{
+router.post('/update-grease/:action/:id', (req,res,next) =>{
+    console.log("My Id is " + req.params.id);
     const newGrease = {
         id: req.params.id,
         volume: req.body.newQuantity
     };
 
-    Grease.updateGrease(newGrease).then(output => {
+    Grease.updateGrease(newGrease, req.params.action).then(output => {
         req.flash('success_msg', output);
-        res.redirect("/consumables/add");
+        res.redirect("back");
         
     }).catch(err =>{
         req.flash('error_msg', err);
-        res.redirect("/consumables/add");
+        res.redirect("back");
 
     });
 

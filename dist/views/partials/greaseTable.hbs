@@ -8,10 +8,7 @@
                 <th scope="col">Car Brand</th>
                 <th scope="col">Car Year</th>
                 <th scope="col">Volume</th>
-                {{#if (isdefined page "add")}}
-                    <th scope="col">Action</th>
-                {{/if}}
-                
+                <th scope="col">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -24,6 +21,16 @@
                     <td>{{this.carBrand}}</td>
                     <td>{{this.carYear}}</td>
                     <td>{{this.volume}}</td>
+                    <td class = "table-actions">
+                        <div class="input-group">
+                            <input type="number" id="tableGreaseQuantity-{{this.id}}" name="tableGreaseQuantity-{{this.id}}" class="form-control" placeholder="0" aria-label="Quantity" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button type="submit" id="updateGrease-{{this.id}}" name="updateGrease-{{this.id}}" class="btn btn-success btn-xs" onclick="updateGreasePost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
+                                <button type="submit" id="deleteGrease-{{this.id}}" name="deleteGrease-{{this.id}}" class="btn btn-danger btn-xs" onclick="deleteGreasePost({{this.id}})"><i class="fas fa-minus-circle"></i></button>
+                            </div>
+                        </div>
+                        
+                    </td>  
                 </tr>
             {{/each}}
             {{/if}}
@@ -41,7 +48,7 @@
                         <div class="input-group">
                             <input type="number" id="tableGreaseQuantity-{{this.id}}" name="tableGreaseQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
                             <div class="input-group-append">
-                                <button type="submit" id="update-{{this.id}}" name="update-{{this.id}}" class="btn btn-primary" onclick="updatePost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
+                                <button type="submit" id="updateGrease-{{this.id}}" name="updateGrease-{{this.id}}" class="btn btn-success btn-xs" onclick="updateGreasePost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
                             </div>
                         </div>
                     </td>  
@@ -53,9 +60,22 @@
 </div>
 
 <script>
-    function updatePost(id){
-        
+    function updateGreasePost(id){
+
         document.getElementById("tableGreaseQuantity-" + id).name = "newQuantity";
-        document.getElementById("mainForm").action = "update-grease/" + id;
+        document.getElementById("mainForm").action = "update-grease/add/" + id;
+    }
+
+    function deleteGreasePost(id){
+        console.log("My id is " + id);
+        if(confirm("Are you sure to delete this Grease?")){
+            document.getElementById("mainForm").method = "POST"
+            document.getElementById("tableGreaseQuantity-" + id).name = "newQuantity";
+            document.getElementById("mainForm").action = "update-grease/delet/" + id;
+            
+        }else{
+            //document.getElementById("mainForm").method = "GET";
+            document.getElementById("category").value = "Grease";
+        }
     }
 </script>

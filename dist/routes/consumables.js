@@ -339,18 +339,19 @@ router.post('/add/grease', [(0, _expressValidator.body)('greaseSpec').not().isEm
     });
   }
 });
-router.post('/update-grease/:id', function (req, res, next) {
+router.post('/update-grease/:action/:id', function (req, res, next) {
+  console.log("My Id is " + req.params.id);
   var newGrease = {
     id: req.params.id,
     volume: req.body.newQuantity
   };
 
-  _Grease["default"].updateGrease(newGrease).then(function (output) {
+  _Grease["default"].updateGrease(newGrease, req.params.action).then(function (output) {
     req.flash('success_msg', output);
-    res.redirect("/consumables/add");
+    res.redirect("back");
   })["catch"](function (err) {
     req.flash('error_msg', err);
-    res.redirect("/consumables/add");
+    res.redirect("back");
   });
 });
 router.post('/add/oil', [(0, _expressValidator.body)('oilSpec').not().isEmpty(), (0, _expressValidator.body)('oilType').not().isEmpty(), (0, _expressValidator.body)('preferredOilBrand').not().isEmpty(), (0, _expressValidator.body)('oilPrice').not().isEmpty(), (0, _expressValidator.body)('quantityOil').not().isEmpty(), (0, _expressValidator.body)('quantityMinOil').not().isEmpty()], function (req, res, next) {

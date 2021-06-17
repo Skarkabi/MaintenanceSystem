@@ -122,31 +122,38 @@ Battery.updateBattery = function (newBattery, action) {
         quant = foundBattery.quantity - parseInt(newBattery.quantity);
       }
 
-      Battery.update({
-        quantity: quant
-      }, {
-        where: {
-          id: newBattery.id
-        }
-      }).then(function () {
-        _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
-          if (quant === 0) {
-            Battery.destory(foundBattery)["catch"](function (err) {
-              reject("An Error Occured Stock could not be deleted");
-            });
+      if (quant === 0) {
+        console.log("About to destroy " + foundBattery);
+        foundBattery.destroy().then(function () {
+          resolve("Battery Completly removed from stock!");
+        })["catch"](function (err) {
+          console.log("About to destroy Failed");
+          reject("An Error Occured Batteries Could not be deleted " + err + " ");
+        });
+      } else if (quant < 0) {
+        reject("Can not Delete More Than Exists in Stock");
+      } else {
+        console.log("Hanging in here");
+        Battery.update({
+          quantity: quant
+        }, {
+          where: {
+            id: newBattery.id
           }
-
-          if (action === "delet") {
-            resolve(newBattery.quantity + " Batteries Sucessfully Deleted from Existing Stock!");
-          } else if (action === "add") {
-            resolve(newBattery.quantity + " Batteries Sucessfully Added to Existing Stock!");
-          }
+        }).then(function () {
+          _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
+            if (action === "delet") {
+              resolve(newBattery.quantity + " Batteries Sucessfully Deleted from Existing Stock!");
+            } else if (action === "add") {
+              resolve(newBattery.quantity + " Batteries Sucessfully Added to Existing Stock!");
+            }
+          })["catch"](function (err) {
+            reject("An Error Occured Batteries Could not be " + action + "ed");
+          });
         })["catch"](function (err) {
           reject("An Error Occured Batteries Could not be " + action + "ed");
         });
-      })["catch"](function (err) {
-        reject("An Error Occured Batteries Could not be " + action + "ed");
-      });
+      }
     })["catch"](function (err) {
       reject("An Error Occured Batteries Could not be " + action + "ed");
     });

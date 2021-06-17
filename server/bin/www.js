@@ -27,7 +27,7 @@ const server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
- var serv = app.listen(port, "localhost");
+ var serv = app.listen(port, "192.168.6.101");
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -90,3 +90,12 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+const dns = require('dns');
+dns.resolve('mysql.tmi.local', (err, value) => { 
+    if(err) { 
+        console.log(err); 
+        return; 
+    } 
+    console.log(value); 
+}) 

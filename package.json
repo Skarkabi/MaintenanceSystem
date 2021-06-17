@@ -99,5 +99,18 @@
   },
   "mdSeed": {
     "seedersFolder": "./seeders"
-  }
+  },
+  "description": "This is my first attempt at connecting a SQL database into javascript",
+  "main": "protractorConfig.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Skarkabi/ConnectSQL.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Skarkabi/ConnectSQL/issues"
+  },
+  "homepage": "https://github.com/Skarkabi/ConnectSQL#readme"
 }

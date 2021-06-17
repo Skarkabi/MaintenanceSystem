@@ -149,11 +149,12 @@ router.post('/update-battery/:action/:id', function (req, res, next) {
   };
 
   _Battery["default"].updateBattery(newBattery, req.params.action).then(function (output) {
+    console.log("Maded it in here");
     req.flash('success_msg', output);
-    res.redirect("/consumables/add");
+    res.redirect('back');
   })["catch"](function (err) {
     req.flash('error_msg', err + " could not be added to");
-    res.redirect("/consumables/add");
+    res.redirect('back');
   });
 });
 router.post('/add/battery', [(0, _expressValidator.body)('batSpec').not().isEmpty(), (0, _expressValidator.body)('carBrand').not().isEmpty(), (0, _expressValidator.body)('carYear').not().isEmpty(), (0, _expressValidator.body)('quantityBatteries').not().isEmpty(), (0, _expressValidator.body)('quantityMinBatteries').not().isEmpty()], function (req, res, next) {

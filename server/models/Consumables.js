@@ -76,7 +76,7 @@ Consumable.updateConsumable = (createConsumable, action) => {
           if(action === "add"){
             var quant = newConsumable.quantity + isCategory.quantity;
           
-          }else if(action === "delete"){
+          }else if(action === "delet"){
             var quant = isCategory.quantity - newConsumable.quantity;
           }
           

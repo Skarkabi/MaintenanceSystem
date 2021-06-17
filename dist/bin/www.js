@@ -32,7 +32,7 @@ var server = _http["default"].createServer(_app["default"]);
  */
 
 
-var serv = _app["default"].listen(port, "localhost");
+var serv = _app["default"].listen(port, "192.168.6.101");
 
 server.on('error', onError);
 server.on('listening', onListening);
@@ -92,3 +92,14 @@ function onListening() {
   var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+var dns = require('dns');
+
+dns.resolve('mysql.tmi.local', function (err, value) {
+  if (err) {
+    console.log(err);
+    return;
+  }
+
+  console.log(value);
+});

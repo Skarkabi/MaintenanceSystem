@@ -81,12 +81,13 @@ router.post('/update-battery/:action/:id', (req,res,next) =>{
     }
     
     Battery.updateBattery(newBattery, req.params.action).then(output =>{
+        console.log("Maded it in here");
         req.flash('success_msg', output);
-        res.redirect("/consumables/add");
+        res.redirect('back');
 
     }).catch(err =>{
         req.flash('error_msg', err +  " could not be added to");
-        res.redirect("/consumables/add");
+        res.redirect('back');
     });
 })
 

@@ -106,36 +106,47 @@ Battery.updateBattery = (newBattery, action) => {
                 quant = foundBattery.quantity - parseInt(newBattery.quantity);
 
             }
-            
-            Battery.update({quantity: quant}, {
-                where: {
-                    id: newBattery.id
-                }
 
-            }).then(() =>{
-                Consumable.updateConsumable(newConsumable, action).then(() =>{
-                    if(quant === 0){
-                        Battery.destory(foundBattery).catch(err => {
-                            reject ("An Error Occured Stock could not be deleted");
-                        });
-                        
-                    }
-                    if(action === "delet"){
-                        resolve(newBattery.quantity + " Batteries Sucessfully Deleted from Existing Stock!");
-                    }else if(action === "add"){
-                        resolve(newBattery.quantity + " Batteries Sucessfully Added to Existing Stock!");
-                    }
+            if(quant === 0){
+                console.log("About to destroy " + (foundBattery));
+                foundBattery.destroy().then(() => {
                     
-
-                }).catch(err =>{
-                    reject("An Error Occured Batteries Could not be " + action + "ed");
-
+                    resolve("Battery Completly removed from stock!");
+                }).catch(err => {
+                    console.log("About to destroy Failed");
+                    reject("An Error Occured Batteries Could not be deleted " + err + " ");
                 });
 
-            }).catch(err => {
-                reject("An Error Occured Batteries Could not be " + action + "ed");
+            }else if(quant < 0){
+                reject ("Can not Delete More Than Exists in Stock");
 
-            });
+            }else{
+                console.log("Hanging in here");
+                Battery.update({quantity: quant}, {
+                    where: {
+                        id: newBattery.id
+                    }
+    
+                }).then(() =>{
+                    Consumable.updateConsumable(newConsumable, action).then(() =>{
+                        if(action === "delet"){
+                            resolve(newBattery.quantity + " Batteries Sucessfully Deleted from Existing Stock!");
+                        }else if(action === "add"){
+                            resolve(newBattery.quantity + " Batteries Sucessfully Added to Existing Stock!");
+                        }
+                        
+    
+                    }).catch(err =>{
+                        reject("An Error Occured Batteries Could not be " + action + "ed");
+    
+                    });
+    
+                }).catch(err => {
+                    reject("An Error Occured Batteries Could not be " + action + "ed");
+    
+                });
+
+            }
 
         }).catch(err=>{
             reject("An Error Occured Batteries Could not be " + action + "ed");

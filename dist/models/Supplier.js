@@ -41,14 +41,6 @@ var mappings = {
     type: _sequelize["default"].STRING,
     allowNull: false
   },
-  model: {
-    type: _sequelize["default"].STRING,
-    allowNull: false
-  },
-  notification: {
-    type: _sequelize["default"].BOOLEAN,
-    allowNull: false
-  },
   createdAt: {
     type: _sequelize["default"].DataTypes.DATE,
     allowNull: false
@@ -85,14 +77,6 @@ var Supplier = _mySQLDB["default"].define('Suppliers', mappings, {
     method: 'BTREE',
     fields: ['brand']
   }, {
-    name: 'supplier_model_index',
-    method: 'BTREE',
-    fields: ['model']
-  }, {
-    name: 'supplier_notification_index',
-    method: 'BTREE',
-    fields: ['notification']
-  }, {
     name: 'supplier_createdAt_index',
     method: 'BTREE',
     fields: ['createdAt']
@@ -102,6 +86,57 @@ var Supplier = _mySQLDB["default"].define('Suppliers', mappings, {
     fields: ['updatedAt']
   }]
 });
+
+Supplier.addSupplier = function (newSupplier) {
+  return new _bluebird["default"](function (resolve, reject) {
+    var supplierInfo = {
+      name: newSupplier.name,
+      category: newSupplier.category
+    };
+    Supplier.getByNameAndCategory(supplierInfo).then(function (isSupplier) {
+      if (isSupplier) {
+        reject("This Supplier Already Exists");
+      } else {
+        Supplier.create(newSupplier).then(function () {
+          resolve("New Supplier " + newSupplier.name + " Was Sucessfully Added to the System!");
+        })["catch"](function (err) {
+          reject("An Error has Occured, Supplier " + newSupplier.name + " Could not be Added to the System (" + err + ")");
+        });
+      }
+    })["catch"](function (err) {
+      reject("Could not Connect to the Server (" + err + ")");
+    });
+  });
+};
+
+Supplier.getByNameAndCategory = function (info) {
+  return new _bluebird["default"](function (resolve, reject) {
+    Supplier.findOne({
+      where: {
+        name: info.name,
+        category: info.category
+      }
+    }).then(function (foundSupplier) {
+      resolve(foundSupplier);
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
+};
+
+Supplier.getById = function (id) {
+  return new _bluebird["default"](function (resolve, reject) {
+    Supplier.findOne({
+      where: {
+        id: id
+      }
+    }).then(function (foundSupplier) {
+      resolve(foundSupplier);
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
+};
 
 var _default = Supplier;
 exports["default"] = _default;

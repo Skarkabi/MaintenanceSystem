@@ -29,6 +29,7 @@ async function getStocks(){
     await Battery.getBatteryStocks().then(values =>{
         batteries = values;
     });
+    console.log("Suppliers: " + JSON.stringify(batteries));
 
     await Brake.getBrakeStock().then(values =>{
         brakes = values;

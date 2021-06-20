@@ -35,16 +35,6 @@ const mappings = {
         type: Sequelize.STRING,
         allowNull: false
     },
-
-    model: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-
-    notification: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false
-    },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
         allowNull: false,
@@ -89,16 +79,6 @@ const Supplier = sequelize.define('Suppliers', mappings, {
             fields: ['brand'],
         },
         {
-            name: 'supplier_model_index',
-            method: 'BTREE',
-            fields: ['model'],
-        },
-        {
-            name: 'supplier_notification_index',
-            method: 'BTREE',
-            fields: ['notification'],
-        },
-        {
             name: 'supplier_createdAt_index',
             method: 'BTREE',
             fields: ['createdAt'],
@@ -110,5 +90,65 @@ const Supplier = sequelize.define('Suppliers', mappings, {
           },
     ]
 });
+
+Supplier.addSupplier = (newSupplier) => {
+    return new Bluebird((resolve, reject) => {
+        var supplierInfo = {name: newSupplier.name, category: newSupplier.category};
+        Supplier.getByNameAndCategory(supplierInfo).then(isSupplier => {
+            if(isSupplier){
+                reject("This Supplier Already Exists");
+
+            }else{
+                Supplier.create(newSupplier).then(() => {
+                    resolve("New Supplier " + newSupplier.name + " Was Sucessfully Added to the System!");
+
+                }).catch(err => {
+                    reject("An Error has Occured, Supplier " + newSupplier.name + " Could not be Added to the System (" + err + ")");
+
+                })
+            }
+
+        }).catch(err => {
+            reject("Could not Connect to the Server (" + err + ")");
+
+        });
+    })
+}
+
+Supplier.getByNameAndCategory = info => {
+    return new Bluebird((resolve, reject) => {
+        Supplier.findOne({
+            where: {
+                name: info.name,
+                category: info.category,
+            }
+
+        }).then(foundSupplier => {
+            resolve(foundSupplier);
+
+        }).catch(err => {
+            reject(err);
+
+        });
+
+    });
+
+}
+
+Supplier.getById = id => {
+    return new Bluebird((resolve, reject) => {
+        Supplier.findOne({
+            where: {
+                id: id
+            }
+        }).then(foundSupplier => {
+            resolve(foundSupplier);
+
+        }).catch(err => {
+            reject(err);
+
+        })
+    })
+}
 
 export default Supplier;

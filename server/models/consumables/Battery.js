@@ -5,6 +5,7 @@ import Sequelize from 'sequelize';
 import Consumable from '../Consumables'
 import sequelize from '../../mySQLDB';
 import e, { response } from 'express';
+import Supplier from '../Supplier';
 
 const mappings = {
     id: {
@@ -222,7 +223,7 @@ Battery.addBattery = (newBattery) =>{
 
 Battery.getBatteryStocks = () => {
     return new Bluebird(async (resolve, reject) => {
-        var batteriesC, batSpecs, carBrands, carYears, batteryQuantity;
+        var batteriesC, batteriesS, batSpecs, carBrands, carYears, batteryQuantity;
         await Consumable.getSpecific("battery").then(consumables => {
             console.log(consumables);
             batteriesC = consumables
@@ -231,6 +232,13 @@ Battery.getBatteryStocks = () => {
             reject("Error Connecting to the Server");
         });
     
+        await Supplier.findAll().then(suppliers => {
+            batteriesS = suppliers
+            console.log(batteriesS);
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+        });
+
         await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `batSpec`'), 'batSpec']],raw:true, nest:true}).then(spec => {
             batSpecs = spec
             console.log(batSpecs);
@@ -258,7 +266,7 @@ Battery.getBatteryStocks = () => {
     
         });
     
-        var values = {consumable: batteriesC.rows, specs: batSpecs, brands: carBrands, years:carYears}
+        var values = {consumable: batteriesC.rows, suppliers: batteriesS, specs: batSpecs, brands: carBrands, years:carYears}
         resolve(values);
         
     });

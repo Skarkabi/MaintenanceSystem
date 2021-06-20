@@ -16,7 +16,7 @@ import sequelize from './mySQLDB';
 
 import breadcrumbs from 'express-breadcrumbs';
 import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access';
-
+import Suppleir from './models/Supplier';
 require('./models/Session');
 import signInRouter from './routes/sign-in';
 import usersRouter from './routes/users';
@@ -25,6 +25,7 @@ import signOutRouter from './routes/sign-out';
 import vehicleRouter from './routes/vehicles';
 import consumableRouter from './routes/consumables';
 import supplierRouter from './routes/supplier';
+import Supplier from './models/Supplier';
 
 handlebars.registerHelper("counter", function (index){
     return index + 1;
@@ -161,6 +162,7 @@ const newVehicle = {
     oilType: "Disel"
 
 };
+
 
 /*
 Oil.findAndCountAll().then(foundBatteries =>{

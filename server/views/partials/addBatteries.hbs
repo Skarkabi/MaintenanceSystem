@@ -23,9 +23,9 @@
         <label for="carBrand">Car Year</label>
          <input list="carYear" name="carYear" class="form-control">
          <datalist id="carYear">
-             {{#each values.batteries.years}}
-                <option value="{{this.carYear}}">{{this.spec}}</option>
-            {{/each}}
+        
+                <option value="5">{{this.spec}}</option>
+
         </datalist>
     </div>
     <div class="for-group col ">
@@ -36,4 +36,23 @@
         <label for="quantityMinBatteries">Minimum Quantity</label>
         <input type="number" placeholder = "0" id="quantityMinBatteries" name="quantityMinBatteries" class="form-control">
     </div>
-</div>    
+</div>
+<div class="form-row ">
+   <div class="form-group col ">
+        <label for="supplierName">Supplier Name</label>
+         <input list="supplierName" name="supplierName" class="form-control">
+         <datalist id="supplierName">
+             {{#each values.batteries.suppliers}}
+                <option value="{{this.name}}">{{this.spec}}</option>
+             {{/each}}       
+        </datalist>
+    </div>
+    <div class="for-group col ">
+        <label for="batteryPrice">Price</label>
+        <input type="number" placeholder = "0" id="batteryPrice" name="batteryPrice" class="form-control">
+    </div>
+    <div class="for-group col ">
+        <label for="batteryQuotation">Quotation Number</label>
+        <input type="text" placeholder = "0" id="batteryQuotation" name="batteryQuotation" class="form-control">
+    </div>
+</div>        

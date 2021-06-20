@@ -27,6 +27,8 @@ var _mySQLDB = _interopRequireDefault(require("../../mySQLDB"));
 
 var _express = _interopRequireWildcard(require("express"));
 
+var _Supplier = _interopRequireDefault(require("../Supplier"));
+
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
@@ -213,7 +215,7 @@ Battery.addBattery = function (newBattery) {
 Battery.getBatteryStocks = function () {
   return new _bluebird["default"]( /*#__PURE__*/function () {
     var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
-      var batteriesC, batSpecs, carBrands, carYears, batteryQuantity, values;
+      var batteriesC, batteriesS, batSpecs, carBrands, carYears, batteryQuantity, values;
       return _regenerator["default"].wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -228,6 +230,15 @@ Battery.getBatteryStocks = function () {
 
             case 2:
               _context.next = 4;
+              return _Supplier["default"].findAll().then(function (suppliers) {
+                batteriesS = suppliers;
+                console.log(batteriesS);
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 4:
+              _context.next = 6;
               return Battery.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `batSpec`'), 'batSpec']],
                 raw: true,
@@ -239,8 +250,8 @@ Battery.getBatteryStocks = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 4:
-              _context.next = 6;
+            case 6:
+              _context.next = 8;
               return Battery.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
               }).then(function (spec) {
@@ -250,8 +261,8 @@ Battery.getBatteryStocks = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 6:
-              _context.next = 8;
+            case 8:
+              _context.next = 10;
               return Battery.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
               }).then(function (spec) {
@@ -261,16 +272,17 @@ Battery.getBatteryStocks = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 8:
+            case 10:
               values = {
                 consumable: batteriesC.rows,
+                suppliers: batteriesS,
                 specs: batSpecs,
                 brands: carBrands,
                 years: carYears
               };
               resolve(values);
 
-            case 10:
+            case 12:
             case "end":
               return _context.stop();
           }

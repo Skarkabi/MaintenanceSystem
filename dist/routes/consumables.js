@@ -64,30 +64,31 @@ function _getStocks() {
             });
 
           case 2:
-            _context5.next = 4;
+            console.log("Suppliers: " + JSON.stringify(batteries));
+            _context5.next = 5;
             return _Brake["default"].getBrakeStock().then(function (values) {
               brakes = values;
             });
 
-          case 4:
-            _context5.next = 6;
+          case 5:
+            _context5.next = 7;
             return _Filter["default"].getFilterStock().then(function (values) {
               filters = values;
             });
 
-          case 6:
-            _context5.next = 8;
+          case 7:
+            _context5.next = 9;
             return _Grease["default"].getGreaseStock().then(function (values) {
               grease = values;
             });
 
-          case 8:
-            _context5.next = 10;
+          case 9:
+            _context5.next = 11;
             return _Oil["default"].getOilStock().then(function (values) {
               oil = values;
             });
 
-          case 10:
+          case 11:
             values = {
               batteries: batteries,
               brakes: brakes,
@@ -97,7 +98,7 @@ function _getStocks() {
             };
             return _context5.abrupt("return", values);
 
-          case 12:
+          case 13:
           case "end":
             return _context5.stop();
         }

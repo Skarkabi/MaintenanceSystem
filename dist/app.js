@@ -39,6 +39,8 @@ var _expressBreadcrumbs = _interopRequireDefault(require("express-breadcrumbs"))
 
 var _allowPrototypeAccess = require("@handlebars/allow-prototype-access");
 
+var _Supplier = _interopRequireDefault(require("./models/Supplier"));
+
 var _signIn = _interopRequireDefault(require("./routes/sign-in"));
 
 var _users = _interopRequireDefault(require("./routes/users"));

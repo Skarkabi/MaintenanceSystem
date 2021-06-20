@@ -36,4 +36,16 @@ router.get('/display-supplier/:id', async (req,res,next) => {
     });
 });
 
+router.get('/register', async (req,res,next) => {
+    Supplier.findAll().then(suppliers => {
+        res.render('addUpdateSupplier', {
+            title: 'Register Supplier',
+            jumbotronDesciption: 'Register a new Supplier in the system',
+            submitButtonText: 'Register',
+            supplier: suppliers,
+            msgType: req.flash()
+        })
+    })
+})
+
 export default router;

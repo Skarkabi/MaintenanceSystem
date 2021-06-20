@@ -1,0 +1,71 @@
+<div class="col-md-12">
+    <form action="{{action}}" method="POST">
+        <div class="section-wrapper">
+            <div class="section-title">
+                <h4>Supplier Information</h4>
+                <hr class="my-3">
+            </div>
+            <div class="section-content">
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="name">Supplier Name</label>
+                        <input list="name" name="name" class="form-control" required>
+                        <datalist id="name">
+                            {{#each supplier}}
+                                <option value="{{this.name}}"></option>
+                            {{/each}}
+                        </datalist>
+                    </div>
+                     <div class="form-group col required">
+                        <label for="phone">Supplier Phone #</label>
+                        <input type="tel" id="phone" name="phone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" onkeyup="addHyphen(phone)" placeholder="xxx-xxx-xxxx" class="form-control" required>
+                    </div>
+                      <div class="form-group col required">
+                        <label for="email">Supplier Email</label>
+                        <input list="email" type="email" name="email" class="form-control" required>
+                        <datalist id="email">
+                            {{#each supplier}}
+                                <option value="{{this.email}}"></option>
+                            {{/each}}
+                        </datalist>
+                    </div>
+                </div>
+                 <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="category">Vehicle Category</label>
+                        <input list="category" name="category" class="form-control" required>
+                        <datalist id="category">
+                            {{#each supplier}}
+                                <option value="{{this.category}}"></option>
+                            {{/each}}
+                        </datalist>
+                    </div>
+                      <div class="form-group col required">
+                        <label for="brand">Vehicle Brand</label>
+                        <input list="brand" name="brand" class="form-control" required>
+                        <datalist id="brand">
+                            {{#each supplier}}
+                                <option value="{{this.brand}}"></option>
+                            {{/each}}
+                        </datalist>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="submit" id="submit" name="submit" class="btn btn-primary justfiy-content-end"><i class="far fa-save"></i> {{submitButtonText}}</button>
+    </form>
+</div>
+
+<script>
+	function addHyphen (id) {
+    	let ele = document.getElementById("phone");
+        ele = ele.value.split('-').join('');    // Remove dash (-) if mistakenly entered.
+
+        if(ele.length < 8){
+            let finalVal = ele.match(/.{1,3}/g).join('-');
+            document.getElementById("phone").value = finalVal;
+        }
+        
+    }
+
+</script>

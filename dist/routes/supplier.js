@@ -69,5 +69,33 @@ router.get('/display-supplier/:id', /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }());
+router.get('/register', /*#__PURE__*/function () {
+  var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(req, res, next) {
+    return _regenerator["default"].wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _Supplier["default"].findAll().then(function (suppliers) {
+              res.render('addUpdateSupplier', {
+                title: 'Register Supplier',
+                jumbotronDesciption: 'Register a new Supplier in the system',
+                submitButtonText: 'Register',
+                supplier: suppliers,
+                msgType: req.flash()
+              });
+            });
+
+          case 1:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+
+  return function (_x4, _x5, _x6) {
+    return _ref2.apply(this, arguments);
+  };
+}());
 var _default = router;
 exports["default"] = _default;

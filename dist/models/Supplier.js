@@ -7,6 +7,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
 var _bluebird = _interopRequireDefault(require("bluebird"));
 
 var _lodash = _interopRequireDefault(require("lodash"));
@@ -136,6 +140,87 @@ Supplier.getById = function (id) {
       reject(err);
     });
   });
+};
+
+Supplier.getStock = function () {
+  return new _bluebird["default"]( /*#__PURE__*/function () {
+    var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
+      var name, phone, email, category, brand, suppliers;
+      return _regenerator["default"].wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return Supplier.findAll({
+                attributes: [[_sequelize["default"].literal('DISTINCT `name`'), 'name']]
+              }).then(function (values) {
+                name = values;
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 2:
+              _context.next = 4;
+              return Supplier.findAll({
+                attributes: [[_sequelize["default"].literal('DISTINCT `phone`'), 'phone']]
+              }).then(function (values) {
+                phone = values;
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 4:
+              _context.next = 6;
+              return Supplier.findAll({
+                attributes: [[_sequelize["default"].literal('DISTINCT `email`'), 'email']]
+              }).then(function (values) {
+                email = values;
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 6:
+              _context.next = 8;
+              return Supplier.findAll({
+                attributes: [[_sequelize["default"].literal('DISTINCT `category`'), 'category']]
+              }).then(function (values) {
+                category = values;
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 8:
+              _context.next = 10;
+              return Supplier.findAll({
+                attributes: [[_sequelize["default"].literal('DISTINCT `brand`'), 'brand']]
+              }).then(function (values) {
+                brand = values;
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 10:
+              suppliers = {
+                names: name,
+                phones: phone,
+                emails: email,
+                categories: category,
+                brands: brand
+              };
+              resolve(suppliers);
+
+            case 12:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function (_x, _x2) {
+      return _ref.apply(this, arguments);
+    };
+  }());
 };
 
 var _default = Supplier;

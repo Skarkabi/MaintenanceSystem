@@ -11,7 +11,7 @@
                         <label for="name">Supplier Name</label>
                         <input list="name" name="name" class="form-control" required>
                         <datalist id="name">
-                            {{#each supplier}}
+                            {{#each supplier.names}}
                                 <option value="{{this.name}}"></option>
                             {{/each}}
                         </datalist>
@@ -24,7 +24,7 @@
                         <label for="email">Supplier Email</label>
                         <input list="email" type="email" name="email" class="form-control" required>
                         <datalist id="email">
-                            {{#each supplier}}
+                            {{#each supplier.emails}}
                                 <option value="{{this.email}}"></option>
                             {{/each}}
                         </datalist>
@@ -35,7 +35,7 @@
                         <label for="category">Vehicle Category</label>
                         <input list="category" name="category" class="form-control" required>
                         <datalist id="category">
-                            {{#each supplier}}
+                            {{#each supplier.categories}}
                                 <option value="{{this.category}}"></option>
                             {{/each}}
                         </datalist>
@@ -44,7 +44,7 @@
                         <label for="brand">Vehicle Brand</label>
                         <input list="brand" name="brand" class="form-control" required>
                         <datalist id="brand">
-                            {{#each supplier}}
+                            {{#each supplier.brands}}
                                 <option value="{{this.brand}}"></option>
                             {{/each}}
                         </datalist>

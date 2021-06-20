@@ -151,4 +151,52 @@ Supplier.getById = id => {
     })
 }
 
+Supplier.getStock = () => {
+    return new Bluebird(async (resolve, reject) => {
+        var name, phone, email, category, brand;
+        await Supplier.findAll({attributes: [[Sequelize.literal('DISTINCT `name`'), 'name']]}).then(values => {
+            name = values;
+
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+
+        });
+
+        await Supplier.findAll({attributes: [[Sequelize.literal('DISTINCT `phone`'), 'phone']]}).then(values => {
+            phone = values;
+
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+
+        });
+
+        await Supplier.findAll({attributes: [[Sequelize.literal('DISTINCT `email`'), 'email']]}).then(values => {
+            email = values;
+
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+
+        });
+
+        await Supplier.findAll({attributes: [[Sequelize.literal('DISTINCT `category`'), 'category']]}).then(values => {
+            category = values;
+
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+
+        });
+
+        await Supplier.findAll({attributes: [[Sequelize.literal('DISTINCT `brand`'), 'brand']]}).then(values => {
+            brand = values;
+
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+
+        });
+
+        var suppliers = {names: name, phones: phone, emails: email, categories: category, brands: brand};
+        resolve(suppliers);
+    })
+}
+
 export default Supplier;

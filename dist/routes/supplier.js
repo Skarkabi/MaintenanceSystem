@@ -25,8 +25,6 @@ var _Supplier = _interopRequireDefault(require("../models/Supplier"));
 var router = _express["default"].Router();
 
 router.get('/', function (req, res, next) {
-  var msf = req.flash();
-
   _Supplier["default"].findAndCountAll().then(function (suppliers) {
     res.render("displaySuppliers", {
       tite: "Suppliers",
@@ -75,7 +73,7 @@ router.get('/register', /*#__PURE__*/function () {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            _Supplier["default"].findAll().then(function (suppliers) {
+            _Supplier["default"].getStock().then(function (suppliers) {
               res.render('addUpdateSupplier', {
                 title: 'Register Supplier',
                 jumbotronDesciption: 'Register a new Supplier in the system',
@@ -95,6 +93,41 @@ router.get('/register', /*#__PURE__*/function () {
 
   return function (_x4, _x5, _x6) {
     return _ref2.apply(this, arguments);
+  };
+}());
+router.post('/register', [(0, _expressValidator.body)('name').not().isEmpty(), (0, _expressValidator.body)('phone').not().isEmpty(), (0, _expressValidator.body)('email').not().isEmpty(), (0, _expressValidator.body)('category').not().isEmpty(), (0, _expressValidator.body)('brand').not().isEmpty()], /*#__PURE__*/function () {
+  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(req, res, next) {
+    var newSupplier;
+    return _regenerator["default"].wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            newSupplier = {
+              name: req.body.name,
+              phone: req.body.phone,
+              email: req.body.email,
+              category: req.body.category,
+              brand: req.body.brand
+            };
+
+            _Supplier["default"].addSupplier(newSupplier).then(function (output) {
+              req.flash('success_msg', output);
+              res.redirect('/suppliers');
+            })["catch"](function (err) {
+              req.flash('error_msg', err);
+              res.redirect('/register');
+            });
+
+          case 2:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3);
+  }));
+
+  return function (_x7, _x8, _x9) {
+    return _ref3.apply(this, arguments);
   };
 }());
 var _default = router;

@@ -8,7 +8,6 @@ import Supplier from '../models/Supplier';
 const router = express.Router();
 
 router.get('/', (req,res,next) => {
-    let msf = req.flash();
     Supplier.findAndCountAll().then(suppliers => {
         res.render("displaySuppliers", {
             tite: "Suppliers",
@@ -37,7 +36,7 @@ router.get('/display-supplier/:id', async (req,res,next) => {
 });
 
 router.get('/register', async (req,res,next) => {
-    Supplier.findAll().then(suppliers => {
+    Supplier.getStock().then(suppliers => {
         res.render('addUpdateSupplier', {
             title: 'Register Supplier',
             jumbotronDesciption: 'Register a new Supplier in the system',
@@ -45,6 +44,30 @@ router.get('/register', async (req,res,next) => {
             supplier: suppliers,
             msgType: req.flash()
         })
+    })
+})
+
+router.post('/register', 
+[body('name').not().isEmpty(),
+body('phone').not().isEmpty(),
+body('email').not().isEmpty(),
+body('category').not().isEmpty(),
+body('brand').not().isEmpty(),],
+async (req,res,next) => {
+    const newSupplier = {
+        name: req.body.name,
+        phone: req.body.phone,
+        email: req.body.email,
+        category: req.body.category,
+        brand: req.body.brand
+    }
+
+    Supplier.addSupplier(newSupplier).then(output => {
+        req.flash('success_msg', output);
+        res.redirect('/suppliers');
+    }).catch(err => {
+        req.flash('error_msg', err);
+        res.redirect('/register');
     })
 })
 

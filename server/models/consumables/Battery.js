@@ -37,6 +37,10 @@ const mappings = {
         type: Sequelize.DataTypes.INTEGER,
         allowNull: false
     },
+    supplierName:{
+        type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.STRING, ['supplierName']),
+       
+    },
     quotationNumber:{
         type: Sequelize.DataTypes.STRING,
         allowNull: false
@@ -271,6 +275,15 @@ Battery.getBatteryStocks = () => {
         
     });
     
+}
+
+Battery.getSupplierNames = (batteries) => {
+    return new Bluebird.resolve().then(async () => {
+        for(var i = 0; i < batteries.count; i++){
+            console.log("This one");
+            batteries.rows[i].setDataValue('supplierName', await Supplier.getById(batteries.rows[i].supplierId));
+        }
+    });
 }
 
 export default Battery;

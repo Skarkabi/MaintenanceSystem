@@ -7,6 +7,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
 var _lodash = _interopRequireDefault(require("lodash"));
 
 var _bcrypt = _interopRequireDefault(require("bcrypt"));
@@ -122,41 +126,84 @@ Consumable.getConsumableByCategory = function (category) {
 };
 
 Consumable.getSpecific = function (consumable) {
-  return new _bluebird["default"](function (resolve, reject) {
-    if (consumable == "battery") {
-      _Battery["default"].findAndCountAll().then(function (batteries) {
-        resolve(batteries);
-      })["catch"](function (err) {
-        reject(err);
-      });
-    } else if (consumable == "brake") {
-      _Brake["default"].findAndCountAll().then(function (brakes) {
-        resolve(brakes);
-      })["catch"](function (err) {
-        reject(err);
-      });
-    } else if (consumable == "filter") {
-      _Filter["default"].findAndCountAll().then(function (filters) {
-        resolve(filters);
-      })["catch"](function (err) {
-        reject(err);
-      });
-    } else if (consumable == "grease") {
-      _Grease["default"].findAndCountAll().then(function (grease) {
-        resolve(grease);
-      })["catch"](function (err) {
-        reject(err);
-      });
-    } else if (consumable == "oil") {
-      _Oil["default"].findAndCountAll().then(function (oil) {
-        resolve(oil);
-      })["catch"](function (err) {
-        reject(err);
-      });
-    }
+  return new _bluebird["default"]( /*#__PURE__*/function () {
+    var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(resolve, reject) {
+      return _regenerator["default"].wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              if (consumable == "battery") {
+                _Battery["default"].findAndCountAll({
+                  raw: false
+                }).then( /*#__PURE__*/function () {
+                  var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(batteries) {
+                    return _regenerator["default"].wrap(function _callee$(_context) {
+                      while (1) {
+                        switch (_context.prev = _context.next) {
+                          case 0:
+                            console.log("BATTERIES");
+                            console.log(batteries);
+                            _context.next = 4;
+                            return _Battery["default"].getSupplierNames(batteries);
 
-    ;
-  });
+                          case 4:
+                            console.log(batteries.rows[0].supplierName);
+                            resolve(batteries);
+
+                          case 6:
+                          case "end":
+                            return _context.stop();
+                        }
+                      }
+                    }, _callee);
+                  }));
+
+                  return function (_x3) {
+                    return _ref2.apply(this, arguments);
+                  };
+                }())["catch"](function (err) {
+                  reject(err);
+                });
+              } else if (consumable == "brake") {
+                _Brake["default"].findAndCountAll().then(function (brakes) {
+                  resolve(brakes);
+                })["catch"](function (err) {
+                  reject(err);
+                });
+              } else if (consumable == "filter") {
+                _Filter["default"].findAndCountAll().then(function (filters) {
+                  resolve(filters);
+                })["catch"](function (err) {
+                  reject(err);
+                });
+              } else if (consumable == "grease") {
+                _Grease["default"].findAndCountAll().then(function (grease) {
+                  resolve(grease);
+                })["catch"](function (err) {
+                  reject(err);
+                });
+              } else if (consumable == "oil") {
+                _Oil["default"].findAndCountAll().then(function (oil) {
+                  resolve(oil);
+                })["catch"](function (err) {
+                  reject(err);
+                });
+              }
+
+              ;
+
+            case 2:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2);
+    }));
+
+    return function (_x, _x2) {
+      return _ref.apply(this, arguments);
+    };
+  }());
 };
 
 var _default = Consumable;

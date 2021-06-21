@@ -7,6 +7,7 @@
                 <th scope="col">Car Brand</th>
                 <th scope="col">Car Year</th>
                 <th scope="col">Quantity (Boxes)</th>
+                <th scope="col">Supplier</th>
                 <th scope="col">Action</th>
 
             </tr>
@@ -21,6 +22,7 @@
                     <td>{{this.carBrand}}</td>
                     <td>{{this.carYear}}</td>
                     <td>{{this.quantity}}</td>
+                    <td>{{this.supplierName}}</td>
                     <td class = "table-actions">
                         <div class="input-group">
                             <input type="number" id="tableBatteryQuantity-{{this.id}}" name="tableBatteryQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">

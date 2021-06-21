@@ -119,11 +119,15 @@ Consumable.getConsumableByCategory = category => Consumable.findOne({
 });
 
 Consumable.getSpecific = (consumable) => {
-    return new Bluebird((resolve, reject) => {
+    return new Bluebird(async (resolve, reject) => {
         if(consumable == "battery"){
-            Battery.findAndCountAll().then(batteries => {
-                resolve (batteries);
-
+            Battery.findAndCountAll({raw:false}).then(async batteries => {
+              console.log("BATTERIES");
+              console.log(batteries);
+              await Battery.getSupplierNames(batteries);
+              console.log(batteries.rows[0].supplierName);
+              resolve(batteries);
+              
             }).catch(err => {
                 reject(err);
 

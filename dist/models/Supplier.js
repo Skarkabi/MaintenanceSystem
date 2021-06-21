@@ -135,7 +135,7 @@ Supplier.getById = function (id) {
         id: id
       }
     }).then(function (foundSupplier) {
-      resolve(foundSupplier);
+      resolve(foundSupplier.name);
     })["catch"](function (err) {
       reject(err);
     });

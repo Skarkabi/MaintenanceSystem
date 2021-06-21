@@ -142,7 +142,7 @@ Supplier.getById = id => {
                 id: id
             }
         }).then(foundSupplier => {
-            resolve(foundSupplier);
+            resolve(foundSupplier.name);
 
         }).catch(err => {
             reject(err);

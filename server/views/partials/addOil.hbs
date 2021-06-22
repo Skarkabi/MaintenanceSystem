@@ -1,16 +1,16 @@
 <div class="form-row">
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="oilSpec">Oil Specs</label>
-         <input list="oilSpec"  name="oilSpec" class="form-control">
+         <input list="oilSpec"  name="oilSpec" class="form-control" required>
          <datalist id="oilSpec">
             {{#each values.oil.specs}}
                 <option value="{{this.oilSpec}}"></option>
             {{/each}}
         </datalist>
     </div>
-    <div class="form-group col ">
+    <div class="form-group col required">
         <label for="oilType">Oil Type</label>
-         <input list="oilType" name="oilType" class="form-control" >
+         <input list="oilType" name="oilType" class="form-control"  required>
          <datalist id="oilType">
              {{#each values.oil.typeOfOils}}
                 <option value="{{this.typeOfOil}}"></option>
@@ -19,28 +19,28 @@
     </div>
 </div>
 <div class="form-row ">
-    <div class="form-group col ">
+    <div class="form-group col required">
         <label for="preferredOilBrand">Preferred Brand</label>
-         <input list="preferredOilBrand" name="preferredOilBrand" class="form-control">
+         <input list="preferredOilBrand" name="preferredOilBrand" class="form-control" required>
          <datalist id="preferredOilBrand">
              {{#each values.oil.preferredBrands}}
                 <option value="{{this.preferredBrand}}"></option>
             {{/each}}
         </datalist>
     </div>
-    <div class="for-group col ">
+    <div class="for-group col required">
         <label for="oilPrice">Price</label>
-        <input type="number" placeholder = "0" id="oilPrice" name="oilPrice" class="form-control">
+        <input type="number" placeholder = "0" id="oilPrice" name="oilPrice" class="form-control" required>
     </div>
 </div>
 <div class="form-row">
-    <div class="for-group col ">
+    <div class="for-group col required">
         <label for="quantityOil">Quantity</label>
-        <input type="number" placeholder = "0" id="quantityOil" name="quantityOil" class="form-control">
+        <input type="number" placeholder = "0" id="quantityOil" name="quantityOil" class="form-control" required>
     </div>
-    <div class="for-group col ">
+    <div class="for-group col required">
         <label for="quantityMinOil">Minimum Quantity</label>
-        <input type="number" placeholder = "0" id="quantityMinOil" name="quantityMinOil" class="form-control">
+        <input type="number" placeholder = "0" id="quantityMinOil" name="quantityMinOil" class="form-control" required>
     </div>
 </div>
     

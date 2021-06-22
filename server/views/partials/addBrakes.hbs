@@ -1,17 +1,19 @@
+<form>
 <div class="form-row">
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="brakeCategory">Brake Category</label>
-         <input list="brakeCategory"  name="brakeCategory" class="form-control">
+         <input list="brakeCategory"  name="brakeCategory" class="form-control" required="required">
          <datalist id="brakeCategory">
             {{#each values.brakes.brakeCategory}}
                 <option value="{{this.category}}">{{this.brakeCategory}}</option>
             {{/each}}
         </datalist>
     </div>
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="brakeCBrand">Car Brand</label>
-         <input list="brakeCBrand"  name="brakeCBrand" class="form-control">
+         <input list="brakeCBrand"  name="brakeCBrand" class="form-control" required="required">
          <datalist id="brakeCBrand">
+              <option value="\0">{{this.carBrand}}</option>
             {{#each values.brakes.brakeCBrand}}
                 <option value="{{this.carBrand}}">{{this.carBrand}}</option>
             {{/each}}
@@ -19,9 +21,9 @@
     </div>
 </div>
 <div class="form-row">
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="brakeCYear">Car Year</label>
-         <input list="brakeCYear"  name="brakeCYear" class="form-control">
+         <input list="brakeCYear"  name="brakeCYear" class="form-control" required="required">
          <datalist id="brakeCYear">
             {{#each values.brakes.brakeCYear}}
                 <option value="{{this.carYear}}">{{this.carYear}}</option>
@@ -29,9 +31,9 @@
         </datalist>
         </datalist>
     </div>
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="brakeChassis">Car Chassis</label>
-         <input list="brakeChassis"  name="brakeChassis" class="form-control">
+         <input list="brakeChassis"  name="brakeChassis" class="form-control" required="required">
          <datalist id="brakeChassis">
             {{#each values.brakes.brakeCChassis}}
                 <option value="{{this.chassis}}">{{this.chassis}}</option>
@@ -40,18 +42,18 @@
     </div>
 </div>
 <div class="form-row">
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="brakeBrand">Brake Brand</label>
-         <input list="brakeBrand"  name="brakeBrand" class="form-control">
+         <input list="brakeBrand"  name="brakeBrand" class="form-control" required="required">
          <datalist id="brakeBrand">
             {{#each values.brakes.brakeBrand}}
                 <option value="{{this.bBrand}}">{{this.bBrand}}</option>
             {{/each}}
         </datalist>
     </div>
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="brakePBrand">Preferred Brand</label>
-         <input list="brakePBrand"  name="brakePBrand" class="form-control">
+         <input list="brakePBrand"  name="brakePBrand" class="form-control" required="required">
          <datalist id="brakePBrand">
             {{#each values.brakes.brakePBrand}}
                 <option value="{{this.preferredBrand}}">{{this.preferredBrand}}</option>
@@ -60,21 +62,44 @@
     </div>
 </div>
 <div class="form-row">
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="quantityBrakes">Quantity</label>
-         <input type="number" id="quantityBrakes" name="quantityBrakes" class="form-control">
+         <input type="number" id="quantityBrakes" name="quantityBrakes" class="form-control" required="required">
          
     </div>
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="minQuantityBrakes">Minimum Quantity</label>
-         <input type="number" id="minQuantityBrakes" name="minQuantityBrakes" class="form-control">
-         
-    </div>
-    <div class="form-group col">
-        <label for="brakePrice">Price Per Box</label>
-         <input type="number" id="brakePrice" name="brakePrice" class="form-control">
+         <input type="number" id="minQuantityBrakes" name="minQuantityBrakes" class="form-control" required="required">
          
     </div>
 </div>
+<div class="form-row ">
+   <div class="form-group col required">
+        <label for="brakeSupplierName">Supplier Name</label>
+         <select type="text" id="brakeSupplierName" name="brakeSupplierName" class="form-control" required="required">
+             <option value="" disabled selected hidden>Choose One</option>
+             {{#each values.supplier}}
+                <option value="{{this.id}}">{{this.name}}</option>
+             {{/each}}       
+        </select>
+    </div>
+    <div class="form-group col required">
+        <label for="brakePrice">Price Per Box</label>
+         <input type="number" placeholder = "0" id="brakePrice" name="brakePrice" class="form-control" required="required">
          
+    </div>
+</div> 
+
+<div class="form-row">
+    <div class="for-group col">
+        <label for="quotation">Quotation Number</label>
+        <input type="text" placeholder = "0" id="quotation" name="quotation" class="form-control">
+    </div>
+    <div class="form-group col">
+            <div class="custom-file">
+                <input type="file" id="upload" name="upload" accept="application/pdf, application/pdf">
+            </div>
+    </div>
+</div>
+</form>
                     

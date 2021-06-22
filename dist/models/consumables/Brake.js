@@ -21,6 +21,12 @@ var _mySQLDB = _interopRequireDefault(require("../../mySQLDB"));
 
 var _bluebird = _interopRequireDefault(require("bluebird"));
 
+var _Supplier = _interopRequireDefault(require("../Supplier"));
+
+var _Quotation = _interopRequireDefault(require("../Quotation"));
+
+var _this = void 0;
+
 var mappings = {
   id: {
     type: _sequelize["default"].INTEGER,
@@ -66,6 +72,9 @@ var mappings = {
   supplierId: {
     type: _sequelize["default"].DataTypes.INTEGER,
     allowNull: false
+  },
+  supplierName: {
+    type: _sequelize["default"].DataTypes.VIRTUAL(_sequelize["default"].DataTypes.STRING, ['supplierName'])
   },
   quotationNumber: {
     type: _sequelize["default"].DataTypes.STRING,
@@ -212,7 +221,9 @@ Brake.addBrake = function (newBrake) {
         carYear: newBrake.carYear,
         bBrand: newBrake.bBrand,
         preferredBrand: newBrake.preferredBrand,
-        chassis: newBrake.chassis
+        chassis: newBrake.chassis,
+        supplierId: newBrake.supplierId,
+        quotationNumber: newBrake.quotationNumber
       }
     }).then(function (foundBrake) {
       if (foundBrake) {
@@ -223,17 +234,17 @@ Brake.addBrake = function (newBrake) {
         newBrake.minQuantity = parseInt(newBrake.minQuantity);
         newBrake.totalCost = newBrake.singleCost * newBrake.quantity;
         Brake.create(newBrake).then(function () {
-          _Consumables["default"].addConsumable(newConsumable).then(function () {
+          _Consumables["default"].updateConsumable(newConsumable, "add").then(function () {
             resolve(newBrake.quantity + " Brakes Sucessfully Added!");
           })["catch"](function (err) {
-            reject("An Error Occured Brakes Could not be Added");
+            reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
           });
         })["catch"](function (err) {
-          reject("An Error Occured Brakes Could not be Added");
+          reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
         });
       }
     })["catch"](function (err) {
-      reject("An Error Occured Brakes Could not be Added");
+      reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
     });
   });
 };
@@ -241,7 +252,7 @@ Brake.addBrake = function (newBrake) {
 Brake.getBrakeStock = function () {
   return new _bluebird["default"]( /*#__PURE__*/function () {
     var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
-      var brakeC, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity, values;
+      var brakeC, brakeS, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity, values;
       return _regenerator["default"].wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -256,6 +267,14 @@ Brake.getBrakeStock = function () {
 
             case 2:
               _context.next = 4;
+              return _Supplier["default"].findAll().then(function (suppliers) {
+                brakeS = suppliers;
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 4:
+              _context.next = 6;
               return Brake.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `category`'), 'category']],
                 raw: true,
@@ -267,8 +286,8 @@ Brake.getBrakeStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 4:
-              _context.next = 6;
+            case 6:
+              _context.next = 8;
               return Brake.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
               }).then(function (spec) {
@@ -277,8 +296,8 @@ Brake.getBrakeStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 6:
-              _context.next = 8;
+            case 8:
+              _context.next = 10;
               return Brake.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
               }).then(function (spec) {
@@ -287,8 +306,8 @@ Brake.getBrakeStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 8:
-              _context.next = 10;
+            case 10:
+              _context.next = 12;
               return Brake.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `chassis`'), 'chassis']]
               }).then(function (spec) {
@@ -297,8 +316,8 @@ Brake.getBrakeStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 10:
-              _context.next = 12;
+            case 12:
+              _context.next = 14;
               return Brake.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `bBrand`'), 'bBrand']]
               }).then(function (spec) {
@@ -307,8 +326,8 @@ Brake.getBrakeStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 12:
-              _context.next = 14;
+            case 14:
+              _context.next = 16;
               return Brake.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `preferredBrand`'), 'preferredBrand']]
               }).then(function (spec) {
@@ -317,8 +336,8 @@ Brake.getBrakeStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 14:
-              _context.next = 16;
+            case 16:
+              _context.next = 18;
               return Brake.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `quantity`'), 'quantity']]
               }).then(function (spec) {
@@ -327,9 +346,10 @@ Brake.getBrakeStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 16:
+            case 18:
               values = {
                 consumable: brakeC.rows,
+                suppliers: brakeS,
                 brakeCategory: brakeCategory,
                 brakeCBrand: brakeCBrand,
                 brakeCYear: brakeCYear,
@@ -340,7 +360,7 @@ Brake.getBrakeStock = function () {
               };
               resolve(values);
 
-            case 18:
+            case 20:
             case "end":
               return _context.stop();
           }
@@ -352,6 +372,51 @@ Brake.getBrakeStock = function () {
       return _ref.apply(this, arguments);
     };
   }());
+};
+
+Brake.getQuotation = function () {
+  return new _bluebird["default"](function (resolve, reject) {
+    _Quotation["default"].getQuotation(_this.quotationNumber).then(function (foundQuotation) {
+      resolve(foundQuotation);
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
+};
+
+Brake.getWithSupplier = function (supplierId) {
+  return new _bluebird["default"](function (resolve, reject) {
+    Brake.findAndCountAll({
+      where: {
+        supplierId: supplierId
+      }
+    }).then( /*#__PURE__*/function () {
+      var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(foundBrakes) {
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return _Supplier["default"].getSupplierNames(foundBrakes);
+
+              case 2:
+                resolve(foundBrakes.rows);
+
+              case 3:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }));
+
+      return function (_x3) {
+        return _ref2.apply(this, arguments);
+      };
+    }())["catch"](function (err) {
+      reject(err);
+    });
+  });
 };
 
 var _default = Brake;

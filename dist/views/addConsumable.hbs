@@ -1,5 +1,5 @@
 <div class="col-md-12" onload="showAddPage()">
-    <form action="{{action}}" method="POST" id="mainForm" novalidate>
+    <form action="{{action}}" method="POST" id="mainForm" enctype="multipart/form-data">
         {{!-- User Information --}}
         <div class="section-wrapper">
             <div class="section-title">
@@ -10,7 +10,7 @@
                 <div class="form-row">
                     <div class="form-group col">
                         <label for="type">Category</label>
-                        <select type="text" placeholder = "Consumable Category" id="category" name="category" class="form-control" onChange="showAddPage()">
+                        <select type="text" placeholder = "Consumable Category" id="category" name="category" class="form-control" onChange="setPage()">
                             <option value="" disabled selected>Choose One</option>
                             <option value="battery">Battery</option>
                             <option value="brake">Brake</option>
@@ -21,7 +21,7 @@
                     </div>
                     <div class="form-group col">
                         <label for="existing">New Or Existing Item</label>
-                        <select type="text" placeholder="Existing Or New" id="existing" name="existing" class="form-control" onChange="showAddPage()">
+                        <select type="text" placeholder="Existing Or New" id="existing" name="existing" class="form-control" onChange="setPage()">
                             <option value="" disabled selected>Choose One</option>
                             <option value="new">New Item</option>
                             <option value="existing">Existing Item</option>
@@ -29,47 +29,41 @@
                     </div>
                 </div>
             </div>
-            <div  class="section-content" id="batterynew">
-               {{>addBatteries}}
+            <div class="section-content" id="addSection">
+                Please Select consumable Category
             </div>
-            <div  class="section-content" id="batteryexisting">
-               {{>batteriesTable}}
-            </div>
-             <div  class="section-content" id="brakenew">
-               {{>addBrakes}}
-            </div>
-            <div  class="section-content" id="brakeexisting">
-               {{>brakesTable}}
-            </div>
-            <div  class="section-content" id="filternew">
-               {{>addFilters}}
-            </div>
-             <div  class="section-content" id="filterexisting">
-               {{>filtersTable}}
-            </div>
-            <div  class="section-content" id="greasenew">
-               {{>addGrease}}
-            </div>
-            <div  class="section-content" id="greaseexisting">
-               {{>greaseTable}}
-            </div>
-            <div  class="section-content" id="oilnew">
-               {{>addOil}}
-            </div>
-             <div  class="section-content" id="oilexisting">
-               {{>oilTable}}
-            </div>
-        </div>
-        <button type="submit" id="submit" name="submit" class="btn btn-primary justfiy-content-end" onclick="addType()"><i class="far fa-save"></i> {{submitButtonText}}</button>
+             <button type="submit" id="submit" name="submit" class="btn btn-primary justfiy-content-end" onclick="addType()"><i class="far fa-save"></i> {{submitButtonText}}</button>
     </form>
 </div>
 
 <script>
-    document.onload=hideAddPage();
-
+    //document.onload=hideAddPage();
+  
     function addType(){
         document.getElementById("mainForm").action = "/consumables/add/" + document.getElementById("category").value;
    
+    }
+    function setPage(){
+        var category = document.getElementById("category");
+        document.getElementById("addSection").innerHTML = "";
+        console.log(category);
+        if(category.value === "battery"){
+            console.log("This");
+            document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>addBatteries}}`);
+
+        }else if(category.value === "brake"){
+             document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>addBrakes}}`);
+
+        }else if(category.value === "filter"){
+             document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>addFilters}}`);
+             
+        }else if(category.value === "grease"){
+             document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>addGrease}}`);
+             
+        }else if(category.value === "oil"){
+             document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>addOil}}`);
+             
+        }
     }
     function hideAddPage(){
         document.getElementById("brakenew").style.display ="none";

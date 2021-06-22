@@ -199,4 +199,13 @@ Supplier.getStock = () => {
     })
 }
 
+Supplier.getSupplierNames = (brakes) => {
+    return new Bluebird.resolve().then(async () => {
+        for(var i = 0; i < brakes.count; i++){
+            console.log("This one");
+            brakes.rows[i].setDataValue('supplierName', await Supplier.getById(brakes.rows[i].supplierId));
+        }
+    });
+}
+
 export default Supplier;

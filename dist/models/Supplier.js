@@ -223,5 +223,44 @@ Supplier.getStock = function () {
   }());
 };
 
+Supplier.getSupplierNames = function (brakes) {
+  return new _bluebird["default"].resolve().then( /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
+    var i;
+    return _regenerator["default"].wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            i = 0;
+
+          case 1:
+            if (!(i < brakes.count)) {
+              _context2.next = 11;
+              break;
+            }
+
+            console.log("This one");
+            _context2.t0 = brakes.rows[i];
+            _context2.next = 6;
+            return Supplier.getById(brakes.rows[i].supplierId);
+
+          case 6:
+            _context2.t1 = _context2.sent;
+
+            _context2.t0.setDataValue.call(_context2.t0, 'supplierName', _context2.t1);
+
+          case 8:
+            i++;
+            _context2.next = 1;
+            break;
+
+          case 11:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  })));
+};
+
 var _default = Supplier;
 exports["default"] = _default;

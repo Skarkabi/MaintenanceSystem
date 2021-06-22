@@ -41,6 +41,8 @@ var _allowPrototypeAccess = require("@handlebars/allow-prototype-access");
 
 var _Supplier = _interopRequireDefault(require("./models/Supplier"));
 
+var _Quotation = _interopRequireDefault(require("./models/Quotation"));
+
 var _signIn = _interopRequireDefault(require("./routes/sign-in"));
 
 var _users = _interopRequireDefault(require("./routes/users"));
@@ -56,6 +58,8 @@ var _consumables = _interopRequireDefault(require("./routes/consumables"));
 var _supplier = _interopRequireDefault(require("./routes/supplier"));
 
 require('./models/Session');
+
+var multer = require("multer");
 
 _handlebars["default"].registerHelper("counter", function (index) {
   return index + 1;
@@ -95,6 +99,10 @@ _handlebars["default"].registerHelper('console', function (value) {
 
 _handlebars["default"].registerHelper('convertToString', function (value) {
   return JSON.stringify(value);
+});
+
+_handlebars["default"].registerDecorator('checkOption', function () {
+  return console.log(document.getElementById("category").value);
 });
 
 var app = (0, _express["default"])();
@@ -139,10 +147,13 @@ app.use(function (req, res, next) {
 (0, _passport2["default"])(_passport["default"]);
 app.use(_passport["default"].initialize());
 app.use(_passport["default"].session());
-app.get('*', function (req, res, next) {
-  res.locals.user = req.user || null;
-  next();
-});
+/**app.get('*', (req, res, next) =>
+{
+    res.locals.user = req.user || null;
+    next();
+})
+*/
+
 app.use('/login', _signIn["default"]);
 app.use('/users', _users["default"]);
 app.use('/', _homePage["default"]);

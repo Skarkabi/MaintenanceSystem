@@ -11,6 +11,11 @@ import Sequelize from 'sequelize';
 import Grease from '../models/consumables/Grease';
 import Oil from '../models/consumables/Oil';
 import { errors } from 'puppeteer';
+import Supplier from '../models/Supplier';
+import Quotation from '../models/Quotation';
+import multer from 'multer';
+import fs from 'fs';
+import puppeteer from 'puppeteer'
 
 const router = express.Router();
 
@@ -25,7 +30,7 @@ function onlyUnique(value, index, self) {
   console.log(unique); // ['a', 1, 2, '1']
 
 async function getStocks(){
-    var batteries, brakes, filters, grease, oil;
+    var batteries, brakes, filters, grease, oil, suppliers;
     await Battery.getBatteryStocks().then(values =>{
         batteries = values;
     });
@@ -47,9 +52,13 @@ async function getStocks(){
         oil = values;
     })
 
+    await Supplier.findAll().then(values => {
+        suppliers = values;
+    })
+
     var values = {
         batteries: batteries, brakes: brakes, filters: filters,
-        grease: grease, oil: oil
+        grease: grease, oil: oil, supplier: suppliers
     };
     return values
 }
@@ -64,7 +73,7 @@ router.get('/add', async (req, res, next) =>
                 title: 'Add New Consumable',
                 jumbotronDescription: `Add a new user Consumable.`,
                 submitButtonText: 'Create',
-                action: "/consumables/add",
+                action: "/upload/single",
                 values: values,
                 page: "add",
                 msgType: req.flash()
@@ -128,24 +137,9 @@ router.post('/add/battery',
    
 });
 
-router.post('/add/brake', 
-[body('brakeCategory').not().isEmpty(), 
-body('brakeCBrand').not().isEmpty(),
-body('brakeCYear').not().isEmpty(),
-body('brakeChassis').not().isEmpty(),
-body('brakeBrand').not().isEmpty(),
-body('brakePBrand').not().isEmpty(),
-body('quantityBrakes').not().isEmpty(),
-body('minQuantityBrakes').not().isEmpty(),
-body('brakePrice').not().isEmpty()
-],
+router.post('/add/brake', Quotation.uploadFile().single('upload'),
  (req,res,next) => {
-     const errors = validationResult(req);
-     if(!errors.isEmpty()){
-        console.log(req.body);
-        req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
-        res.redirect("/consumables/add");
-    }else{
+     console.log(req.file, req.body);
         const newBrake = {
             category: req.body.brakeCategory,
             carBrand: req.body.brakeCBrand,
@@ -155,11 +149,19 @@ body('brakePrice').not().isEmpty()
             chassis: req.body.brakeChassis,
             singleCost: req.body.brakePrice,
             quantity: req.body.quantityBrakes,
-            minQuantity: req.body.minQuantityBrakes
+            minQuantity: req.body.minQuantityBrakes,
+            supplierId: req.body.brakeSupplierName,
+            quotationNumber: req.body.quotation
         }
 
-        console.log(newBrake);
+        const newQuotation = {
+            quotationNumber: req.body.quotation,
+            quotationPath: req.file.path
+        }
+        
+        console.log(req.body);
         Brake.addBrake(newBrake).then(output =>{
+           Quotation.addQuotation(newQuotation);
             req.flash('success_msg', output);
             res.redirect("/consumables/add");
 
@@ -168,7 +170,8 @@ body('brakePrice').not().isEmpty()
             res.redirect("/consumables/add");
 
         });
-    }
+        
+            
  });
 
 router.post('/update-brake/:action/:id', (req,res,next) => {
@@ -450,5 +453,57 @@ router.get('/:category', async (req, res, next) =>{
         })
     }
 })
+
+router.get('/:category/:supplier', async (req, res, next) =>{
+    if(req.user){
+        var title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1);
+        const model = getConsumableModel(req.params.category);
+        console.log(model);
+        model.getWithSupplier(req.params.supplier).then(foundModel => {
+            console.log(foundModel);
+            res.render("displaySpecificConsumables", {
+                title: title,
+                typeOf: req.params.category,
+                jumbotronDescription: "View all " + title + " from " + foundModel[0].supplierName + " in the system.",
+                consumables: foundModel,
+                page: "add",
+                specfic: true,
+                msgType: req.flash()
+            });
+        })
+        
+    }
+})
+
+router.get('/:category/download/:quotationNumber',async (req,res,next) => {
+    const path = `${__dirname}`;
+    console.log("PATH");
+    console.log(path);
+    var tempFile = path.replace('/dist/routes', `/server/uploads/${req.params.quotationNumber}.pdf`);
+    console.log(tempFile);
+    res.download(tempFile);
+    
+})
+
+router.get('/:category/view/:quotationNumber',async (req,res,next) => {
+    console.log("DIR");
+    const path = `${__dirname}`;
+    console.log(path.replace('/dist/routes', `/server/uploads/${req.params.quotationNumber}.pdf`));
+        var tempFile=path.replace('/dist/routes', `/server/uploads/${req.params.quotationNumber}.pdf`);
+        fs.readFile(tempFile, function (err,data){
+           res.contentType("application/pdf");
+           res.send(data);
+        });
+    
+})
+
+function getConsumableModel(consumableModel) {
+    console.log("My Model Will be " +consumableModel);
+    if (consumableModel === "brake"){
+        console.log("My Model Will return " +consumableModel);
+        return Brake;
+    }
+
+};
 
 export default router;

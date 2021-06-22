@@ -1,16 +1,16 @@
 <div class="form-row">
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="filterType">Filter Type</label>
-         <input list="filterType"  name="filterType" class="form-control">
+         <input list="filterType"  name="filterType" class="form-control" required>
          <datalist id="filterType">
              {{#each values.filters.filterType}}
                  <option value="{{this.fType}}"></option>
              {{/each}}
         </datalist>
     </div>
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="category">Vehicle Category</label>
-        <input list="vehicleCategory" name="vehicleCategory" class="form-control">
+        <input list="vehicleCategory" name="vehicleCategory" class="form-control" required>
         <datalist id="vehicleCategory">
             {{#each values.filters.carCategory}}
                 <option value="{{this.category}}"></option>
@@ -19,18 +19,18 @@
     </div>
 </div>
 <div class="form-row">
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="filterABrand">Actual Filter Brand</label>
-         <input list="filterABrand"  name="filterABrand" class="form-control">
+         <input list="filterABrand"  name="filterABrand" class="form-control" required>
          <datalist id="filterABrand">
              {{#each values.filters.actualBrand}}
                  <option value="{{this.actualBrand}}"></option>
              {{/each}}
         </datalist>
     </div>
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="filterPBrand">Preferred Filter Brand</label>
-        <input list="filterPBrand" name="filterPBrand" class="form-control">
+        <input list="filterPBrand" name="filterPBrand" class="form-control" required>
         <datalist id="filterPBrand">
             {{#each values.filters.preferredBrand}}
                 <option value="{{this.preferredBrand}}"></option>
@@ -39,27 +39,27 @@
     </div>
 </div>
 <div class="form-row">
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="filterCarBrand">Vehicle Brand</label>
-        <input list="filterCarBrand" name="filterCarBrand" class="form-control">
+        <input list="filterCarBrand" name="filterCarBrand" class="form-control" required>
         <datalist id="filterCarBrand">
             {{#each values.filters.carBrand}}
                 <option value="{{this.carBrand}}"></option>
             {{/each}}
         </datalist>
     </div>
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="filterCarModel">Vehicle Model</label>
-        <input list="filterCarModel" name="filterCarModel" class="form-control">
+        <input list="filterCarModel" name="filterCarModel" class="form-control" required>
         <datalist id="filterCarModel">
             {{#each values.filters.carModel}}
                 <option value="{{this.carModel}}"></option>
             {{/each}}
         </datalist>
     </div>
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="filterCarYear">Vehicle Year</label>
-        <input list="filterCarYear" name="filterCarYear" class="form-control">
+        <input list="filterCarYear" name="filterCarYear" class="form-control" required>
         <datalist id="filterCarYear">
             {{#each values.filters.carYear}}
                 <option value="{{this.carYear}}"></option>
@@ -68,17 +68,17 @@
     </div>
 </div>
 <div class="form-row">
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="quantityFilters">Filter Quantity</label>
-        <input type="number" id="quantityFilters" name="quantityFilters" class="form-control">
+        <input type="number" id="quantityFilters" name="quantityFilters" class="form-control" required>
     </div>
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="minFilterQuantity">Filter Minimum Quantity</label>
-        <input type="number" id="minFilterQuantity" name="minFilterQuantity" class="form-control">
+        <input type="number" id="minFilterQuantity" name="minFilterQuantity" class="form-control" required>
     </div>
-    <div class="form-group col">
+    <div class="form-group col required">
         <label for="filterPrice">Filter Price Per Item</label>
-        <input type="number" id="filterPrice" name="filterPrice" class="form-control">
+        <input type="number" id="filterPrice" name="filterPrice" class="form-control" required>
     </div>
 </div>
                     

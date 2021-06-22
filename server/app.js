@@ -17,7 +17,9 @@ import sequelize from './mySQLDB';
 import breadcrumbs from 'express-breadcrumbs';
 import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access';
 import Suppleir from './models/Supplier';
+import Quotation from './models/Quotation';
 require('./models/Session');
+const multer = require("multer");
 import signInRouter from './routes/sign-in';
 import usersRouter from './routes/users';
 import homePageRouter from './routes/homePage';
@@ -64,6 +66,10 @@ handlebars.registerHelper('convertToString', function (value){
     return JSON.stringify(value);
 })
 
+handlebars.registerDecorator('checkOption', function(){
+    return console.log(document.getElementById("category").value)
+})
+
 const app = express();
 
 const multiHelpers = hbshelpers()
@@ -102,11 +108,12 @@ passportConfig(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('*', (req, res, next) =>
+/**app.get('*', (req, res, next) =>
 {
     res.locals.user = req.user || null;
     next();
 })
+*/
 
 app.use('/login', signInRouter);
 app.use('/users', usersRouter);

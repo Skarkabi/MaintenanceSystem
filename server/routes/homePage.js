@@ -10,6 +10,7 @@ const router = express.Router();
 /** 
  * Displays login page.
  */
+
 router.get('/', async (req, res, next) => 
 {
     if (req.user)

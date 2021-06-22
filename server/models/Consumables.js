@@ -8,6 +8,7 @@ import Brake from './consumables/Brake';
 import Filter from './consumables/Filter';
 import Grease from './consumables/Grease';
 import Oil from './consumables/Oil';
+import Supplier from './Supplier';
 
 const mappings = {
     id: {
@@ -122,10 +123,7 @@ Consumable.getSpecific = (consumable) => {
     return new Bluebird(async (resolve, reject) => {
         if(consumable == "battery"){
             Battery.findAndCountAll({raw:false}).then(async batteries => {
-              console.log("BATTERIES");
-              console.log(batteries);
-              await Battery.getSupplierNames(batteries);
-              console.log(batteries.rows[0].supplierName);
+              await Supplier.getSupplierNames(batteries);
               resolve(batteries);
               
             }).catch(err => {
@@ -134,7 +132,8 @@ Consumable.getSpecific = (consumable) => {
             });
     
         }else if(consumable == "brake"){   
-            Brake.findAndCountAll().then(brakes => {
+            Brake.findAndCountAll().then(async brakes => {
+                await Supplier.getSupplierNames(brakes);
                 resolve (brakes);
 
             }).catch(err => {

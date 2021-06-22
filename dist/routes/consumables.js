@@ -2,6 +2,8 @@
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
+var _typeof = require("@babel/runtime/helpers/typeof");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -33,7 +35,19 @@ var _Grease = _interopRequireDefault(require("../models/consumables/Grease"));
 
 var _Oil = _interopRequireDefault(require("../models/consumables/Oil"));
 
-var _puppeteer = require("puppeteer");
+var _puppeteer = _interopRequireWildcard(require("puppeteer"));
+
+var _Supplier = _interopRequireDefault(require("../models/Supplier"));
+
+var _Quotation = _interopRequireDefault(require("../models/Quotation"));
+
+var _multer = _interopRequireDefault(require("multer"));
+
+var _fs = _interopRequireDefault(require("fs"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
 var router = _express["default"].Router();
@@ -52,58 +66,65 @@ function getStocks() {
 }
 
 function _getStocks() {
-  _getStocks = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
-    var batteries, brakes, filters, grease, oil, values;
-    return _regenerator["default"].wrap(function _callee5$(_context5) {
+  _getStocks = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8() {
+    var batteries, brakes, filters, grease, oil, suppliers, values;
+    return _regenerator["default"].wrap(function _callee8$(_context8) {
       while (1) {
-        switch (_context5.prev = _context5.next) {
+        switch (_context8.prev = _context8.next) {
           case 0:
-            _context5.next = 2;
+            _context8.next = 2;
             return _Battery["default"].getBatteryStocks().then(function (values) {
               batteries = values;
             });
 
           case 2:
             console.log("Suppliers: " + JSON.stringify(batteries));
-            _context5.next = 5;
+            _context8.next = 5;
             return _Brake["default"].getBrakeStock().then(function (values) {
               brakes = values;
             });
 
           case 5:
-            _context5.next = 7;
+            _context8.next = 7;
             return _Filter["default"].getFilterStock().then(function (values) {
               filters = values;
             });
 
           case 7:
-            _context5.next = 9;
+            _context8.next = 9;
             return _Grease["default"].getGreaseStock().then(function (values) {
               grease = values;
             });
 
           case 9:
-            _context5.next = 11;
+            _context8.next = 11;
             return _Oil["default"].getOilStock().then(function (values) {
               oil = values;
             });
 
           case 11:
+            _context8.next = 13;
+            return _Supplier["default"].findAll().then(function (values) {
+              suppliers = values;
+            });
+
+          case 13:
             values = {
               batteries: batteries,
               brakes: brakes,
               filters: filters,
               grease: grease,
-              oil: oil
+              oil: oil,
+              supplier: suppliers
             };
-            return _context5.abrupt("return", values);
+            return _context8.abrupt("return", values);
 
-          case 13:
+          case 15:
           case "end":
-            return _context5.stop();
+            return _context8.stop();
         }
       }
-    }, _callee5);
+    }, _callee8);
   }));
   return _getStocks.apply(this, arguments);
 }
@@ -123,7 +144,7 @@ router.get('/add', /*#__PURE__*/function () {
                   title: 'Add New Consumable',
                   jumbotronDescription: "Add a new user Consumable.",
                   submitButtonText: 'Create',
-                  action: "/consumables/add",
+                  action: "/upload/single",
                   values: values,
                   page: "add",
                   msgType: req.flash()
@@ -184,35 +205,36 @@ router.post('/add/battery', [(0, _expressValidator.body)('batSpec').not().isEmpt
     });
   }
 });
-router.post('/add/brake', [(0, _expressValidator.body)('brakeCategory').not().isEmpty(), (0, _expressValidator.body)('brakeCBrand').not().isEmpty(), (0, _expressValidator.body)('brakeCYear').not().isEmpty(), (0, _expressValidator.body)('brakeChassis').not().isEmpty(), (0, _expressValidator.body)('brakeBrand').not().isEmpty(), (0, _expressValidator.body)('brakePBrand').not().isEmpty(), (0, _expressValidator.body)('quantityBrakes').not().isEmpty(), (0, _expressValidator.body)('minQuantityBrakes').not().isEmpty(), (0, _expressValidator.body)('brakePrice').not().isEmpty()], function (req, res, next) {
-  var errors = (0, _expressValidator.validationResult)(req);
+router.post('/add/brake', _Quotation["default"].uploadFile().single('upload'), function (req, res, next) {
+  console.log(req.file, req.body);
+  var newBrake = {
+    category: req.body.brakeCategory,
+    carBrand: req.body.brakeCBrand,
+    carYear: req.body.brakeCYear,
+    bBrand: req.body.brakeBrand,
+    preferredBrand: req.body.brakePBrand,
+    chassis: req.body.brakeChassis,
+    singleCost: req.body.brakePrice,
+    quantity: req.body.quantityBrakes,
+    minQuantity: req.body.minQuantityBrakes,
+    supplierId: req.body.brakeSupplierName,
+    quotationNumber: req.body.quotation
+  };
+  var newQuotation = {
+    quotationNumber: req.body.quotation,
+    quotationPath: req.file.path
+  };
+  console.log(req.body);
 
-  if (!errors.isEmpty()) {
-    console.log(req.body);
-    req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
+  _Brake["default"].addBrake(newBrake).then(function (output) {
+    _Quotation["default"].addQuotation(newQuotation);
+
+    req.flash('success_msg', output);
     res.redirect("/consumables/add");
-  } else {
-    var newBrake = {
-      category: req.body.brakeCategory,
-      carBrand: req.body.brakeCBrand,
-      carYear: req.body.brakeCYear,
-      bBrand: req.body.brakeBrand,
-      preferredBrand: req.body.brakePBrand,
-      chassis: req.body.brakeChassis,
-      singleCost: req.body.brakePrice,
-      quantity: req.body.quantityBrakes,
-      minQuantity: req.body.minQuantityBrakes
-    };
-    console.log(newBrake);
-
-    _Brake["default"].addBrake(newBrake).then(function (output) {
-      req.flash('success_msg', output);
-      res.redirect("/consumables/add");
-    })["catch"](function (err) {
-      req.flash('error_msg', err);
-      res.redirect("/consumables/add");
-    });
-  }
+  })["catch"](function (err) {
+    req.flash('error_msg', err);
+    res.redirect("/consumables/add");
+  });
 });
 router.post('/update-brake/:action/:id', function (req, res, next) {
   console.log("My action is " + req.params.action);
@@ -484,5 +506,108 @@ router.get('/:category', /*#__PURE__*/function () {
     return _ref4.apply(this, arguments);
   };
 }());
+router.get('/:category/:supplier', /*#__PURE__*/function () {
+  var _ref5 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(req, res, next) {
+    var title, model;
+    return _regenerator["default"].wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            if (req.user) {
+              title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1);
+              model = getConsumableModel(req.params.category);
+              console.log(model);
+              model.getWithSupplier(req.params.supplier).then(function (foundModel) {
+                console.log(foundModel);
+                res.render("displaySpecificConsumables", {
+                  title: title,
+                  typeOf: req.params.category,
+                  jumbotronDescription: "View all " + title + " from " + foundModel[0].supplierName + " in the system.",
+                  consumables: foundModel,
+                  page: "add",
+                  specfic: true,
+                  msgType: req.flash()
+                });
+              });
+            }
+
+          case 1:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5);
+  }));
+
+  return function (_x13, _x14, _x15) {
+    return _ref5.apply(this, arguments);
+  };
+}());
+router.get('/:category/download/:quotationNumber', /*#__PURE__*/function () {
+  var _ref6 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6(req, res, next) {
+    var path, tempFile;
+    return _regenerator["default"].wrap(function _callee6$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            path = "".concat(__dirname);
+            console.log("PATH");
+            console.log(path);
+            tempFile = path.replace('/dist/routes', "/server/uploads/".concat(req.params.quotationNumber, ".pdf"));
+            console.log(tempFile);
+            res.download(tempFile);
+
+          case 6:
+          case "end":
+            return _context6.stop();
+        }
+      }
+    }, _callee6);
+  }));
+
+  return function (_x16, _x17, _x18) {
+    return _ref6.apply(this, arguments);
+  };
+}());
+router.get('/:category/view/:quotationNumber', /*#__PURE__*/function () {
+  var _ref7 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(req, res, next) {
+    var path, tempFile;
+    return _regenerator["default"].wrap(function _callee7$(_context7) {
+      while (1) {
+        switch (_context7.prev = _context7.next) {
+          case 0:
+            console.log("DIR");
+            path = "".concat(__dirname);
+            console.log(path.replace('/dist/routes', "/server/uploads/".concat(req.params.quotationNumber, ".pdf")));
+            tempFile = path.replace('/dist/routes', "/server/uploads/".concat(req.params.quotationNumber, ".pdf"));
+
+            _fs["default"].readFile(tempFile, function (err, data) {
+              res.contentType("application/pdf");
+              res.send(data);
+            });
+
+          case 5:
+          case "end":
+            return _context7.stop();
+        }
+      }
+    }, _callee7);
+  }));
+
+  return function (_x19, _x20, _x21) {
+    return _ref7.apply(this, arguments);
+  };
+}());
+
+function getConsumableModel(consumableModel) {
+  console.log("My Model Will be " + consumableModel);
+
+  if (consumableModel === "brake") {
+    console.log("My Model Will return " + consumableModel);
+    return _Brake["default"];
+  }
+}
+
+;
 var _default = router;
 exports["default"] = _default;

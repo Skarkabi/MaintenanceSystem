@@ -3,6 +3,8 @@ import Sequelize from 'sequelize';
 import Consumable from '../Consumables';
 import sequelize from '../../mySQLDB';
 import Bluebird from 'bluebird';
+import Supplier from '../Supplier';
+import Quotation from '../Quotation';
 
 const mappings = {
     id: {
@@ -49,6 +51,10 @@ const mappings = {
     supplierId:{
         type: Sequelize.DataTypes.INTEGER,
         allowNull: false
+    },
+    supplierName:{
+        type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.STRING, ['supplierName']),
+       
     },
     quotationNumber:{
         type: Sequelize.DataTypes.STRING,
@@ -220,6 +226,8 @@ Brake.addBrake = (newBrake) => {
                 bBrand: newBrake.bBrand,
                 preferredBrand: newBrake.preferredBrand,
                 chassis: newBrake.chassis,
+                supplierId: newBrake.supplierId,
+                quotationNumber: newBrake.quotationNumber,
             }
 
         }).then(foundBrake => {
@@ -232,20 +240,20 @@ Brake.addBrake = (newBrake) => {
                 newBrake.minQuantity = parseInt(newBrake.minQuantity);
                 newBrake.totalCost = newBrake.singleCost * newBrake.quantity;
                 Brake.create(newBrake).then(() => {
-                    Consumable.addConsumable(newConsumable).then(() => {
+                    Consumable.updateConsumable(newConsumable, "add").then(() => {
                         resolve(newBrake.quantity + " Brakes Sucessfully Added!");
 
                     }).catch(err => {
-                        reject("An Error Occured Brakes Could not be Added");
+                        reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
 
                     });
                 }).catch(err => {
-                    reject("An Error Occured Brakes Could not be Added");
+                    reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
 
                 });
             }
         }).catch(err => {
-            reject("An Error Occured Brakes Could not be Added");
+            reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
 
         });
     
@@ -255,7 +263,7 @@ Brake.addBrake = (newBrake) => {
 
 Brake.getBrakeStock = () =>{
     return new Bluebird(async (resolve,reject) => {
-        var brakeC, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity;
+        var brakeC, brakeS, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity;
         await Consumable.getSpecific("brake").then(consumables => {
             console.log(consumables);
             brakeC = consumables
@@ -263,6 +271,13 @@ Brake.getBrakeStock = () =>{
         }).catch(() => {
             reject("Error Connecting to the Server");
         
+        });
+
+        await Supplier.findAll().then(suppliers => {
+            brakeS = suppliers
+           
+        }).catch(() => {
+            reject("Error Connecting to the Server");
         });
     
         await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `category`'), 'category']],raw:true, nest:true}).then(category => {
@@ -323,7 +338,7 @@ Brake.getBrakeStock = () =>{
         });
 
         var values = {
-            consumable: brakeC.rows, brakeCategory: brakeCategory, brakeCBrand: brakeCBrand, brakeCYear: brakeCYear,
+            consumable: brakeC.rows, suppliers: brakeS, brakeCategory: brakeCategory, brakeCBrand: brakeCBrand, brakeCYear: brakeCYear,
             brakeCChassis: brakeCChassis, brakeBrand: brakeBrand, brakePBrand: brakePBrand, brakeQuantity: brakeQuantity
         };
         resolve(values);
@@ -331,6 +346,32 @@ Brake.getBrakeStock = () =>{
     });
 
 }
+
+Brake.getQuotation = () => {
+    return new Bluebird((resolve, reject) => {
+        Quotation.getQuotation(this.quotationNumber).then(foundQuotation => {
+            resolve(foundQuotation);
+        }).catch(err =>{
+            reject (err);
+        })
+    })
+}
+
+Brake.getWithSupplier = supplierId => {
+    return new Bluebird((resolve, reject) => {
+        Brake.findAndCountAll({
+            where: {
+                supplierId: supplierId
+            }
+        }).then(async foundBrakes => {
+            await Supplier.getSupplierNames(foundBrakes);
+            resolve(foundBrakes.rows);
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
 
 
 export default Brake;

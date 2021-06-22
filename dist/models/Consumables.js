@@ -31,6 +31,8 @@ var _Grease = _interopRequireDefault(require("./consumables/Grease"));
 
 var _Oil = _interopRequireDefault(require("./consumables/Oil"));
 
+var _Supplier = _interopRequireDefault(require("./Supplier"));
+
 var mappings = {
   id: {
     type: _sequelize["default"].INTEGER,
@@ -127,10 +129,10 @@ Consumable.getConsumableByCategory = function (category) {
 
 Consumable.getSpecific = function (consumable) {
   return new _bluebird["default"]( /*#__PURE__*/function () {
-    var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(resolve, reject) {
-      return _regenerator["default"].wrap(function _callee2$(_context2) {
+    var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(resolve, reject) {
+      return _regenerator["default"].wrap(function _callee3$(_context3) {
         while (1) {
-          switch (_context2.prev = _context2.next) {
+          switch (_context3.prev = _context3.next) {
             case 0:
               if (consumable == "battery") {
                 _Battery["default"].findAndCountAll({
@@ -141,16 +143,13 @@ Consumable.getSpecific = function (consumable) {
                       while (1) {
                         switch (_context.prev = _context.next) {
                           case 0:
-                            console.log("BATTERIES");
-                            console.log(batteries);
-                            _context.next = 4;
-                            return _Battery["default"].getSupplierNames(batteries);
+                            _context.next = 2;
+                            return _Supplier["default"].getSupplierNames(batteries);
 
-                          case 4:
-                            console.log(batteries.rows[0].supplierName);
+                          case 2:
                             resolve(batteries);
 
-                          case 6:
+                          case 3:
                           case "end":
                             return _context.stop();
                         }
@@ -165,9 +164,30 @@ Consumable.getSpecific = function (consumable) {
                   reject(err);
                 });
               } else if (consumable == "brake") {
-                _Brake["default"].findAndCountAll().then(function (brakes) {
-                  resolve(brakes);
-                })["catch"](function (err) {
+                _Brake["default"].findAndCountAll().then( /*#__PURE__*/function () {
+                  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(brakes) {
+                    return _regenerator["default"].wrap(function _callee2$(_context2) {
+                      while (1) {
+                        switch (_context2.prev = _context2.next) {
+                          case 0:
+                            _context2.next = 2;
+                            return _Supplier["default"].getSupplierNames(brakes);
+
+                          case 2:
+                            resolve(brakes);
+
+                          case 3:
+                          case "end":
+                            return _context2.stop();
+                        }
+                      }
+                    }, _callee2);
+                  }));
+
+                  return function (_x4) {
+                    return _ref3.apply(this, arguments);
+                  };
+                }())["catch"](function (err) {
                   reject(err);
                 });
               } else if (consumable == "filter") {
@@ -194,10 +214,10 @@ Consumable.getSpecific = function (consumable) {
 
             case 2:
             case "end":
-              return _context2.stop();
+              return _context3.stop();
           }
         }
-      }, _callee2);
+      }, _callee3);
     }));
 
     return function (_x, _x2) {

@@ -271,33 +271,27 @@ router.post('/update-filter/:action/:id', (req,res,next) => {
 
 })
 
-router.post('/add/grease',
-[body('greaseSpec').not().isEmpty(), 
-body('greaseType').not().isEmpty(),
-body('greaseCarBrand').not().isEmpty(),
-body('greaseCarYear').not().isEmpty(),
-body('quantityGrease').not().isEmpty(),
-body('quantityMinGrease').not().isEmpty()
-]
+router.post('/add/grease',Quotation.uploadFile().single('upload')
 , (req, res, next) => {
-    const errors = validationResult(req);
-    if(!errors.isEmpty()){
-        console.log(req.body);
-        req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
-        res.redirect("/consumables/add");
-
-    }else{
         const newGrease = {
             greaseSpec: req.body.greaseSpec,
             typeOfGrease: req.body.greaseType,
             carBrand: req.body.greaseCarBrand,
             carYear: req.body.greaseCarYear,
             volume: req.body.quantityGrease,
-            minVolume: req.body.quantityMinGrease
+            minVolume: req.body.quantityMinGrease,
+            supplierId: req.body.greaseSupplierName,
+            quotationNumber: req.body.quotation
 
         };
 
+        const newQuotation = {
+            quotationNumber: req.body.quotation,
+            quotationPath: req.file.path
+        }
+
         Grease.addGrease(newGrease).then(output => {
+            Quotation.addQuotation(newQuotation);
             req.flash('success_msg', output);
             res.redirect("/consumables/add");
             
@@ -306,8 +300,6 @@ body('quantityMinGrease').not().isEmpty()
             res.redirect("/consumables/add");
 
         });
-
-    }
 
 });
 
@@ -508,6 +500,8 @@ function getConsumableModel(consumableModel) {
         return Brake;
     }else if(consumableModel === "filter"){
         return Filter;
+    }else if(consumableModel === "grease"){
+        return Grease;
     }
 
 };

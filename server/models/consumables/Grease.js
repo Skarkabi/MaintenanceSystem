@@ -3,6 +3,7 @@ import Sequelize from 'sequelize';
 import Consumable from '../Consumables';
 import sequelize from '../../mySQLDB';
 import Bluebird from 'bluebird';
+import Supplier from '../Supplier';
 
 const mappings = {
     id: {
@@ -37,6 +38,10 @@ const mappings = {
     supplierId:{
         type: Sequelize.DataTypes.INTEGER,
         allowNull: false
+    },
+    supplierName:{
+        type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.STRING, ['supplierName']),
+       
     },
     quotationNumber:{
         type: Sequelize.DataTypes.STRING,
@@ -196,7 +201,9 @@ Grease.addGrease = (newGrease) => {
                 greaseSpec: newGrease.greaseSpec,
                 typeOfGrease: newGrease.typeOfGrease,
                 carBrand: newGrease.carBrand,
-                carYear: newGrease.carYear
+                carYear: newGrease.carYear,
+                supplierId: newGrease.supplierId,
+                quotationNumber: newGrease.quotationNumber,
             }
 
         }).then(foundGrease => {
@@ -207,7 +214,7 @@ Grease.addGrease = (newGrease) => {
                 newGrease.volume = parseFloat(newGrease.volume);
                 newGrease.minVolume = parseFloat(newGrease.minVolume);
                 Grease.create(newGrease).then(() =>{
-                    Consumable.addConsumable(newConsumable).then(() => {
+                    Consumable.updateConsumable(newConsumable, "add").then(() => {
                         resolve(newGrease.volume + " Liters of Greace Sucessfully Added!");
         
                     }).catch(err => {
@@ -233,13 +240,20 @@ Grease.addGrease = (newGrease) => {
 
 Grease.getGreaseStock = () => {
     return new Bluebird(async (resolve, reject) => {
-        var greaseC, greaseSpec, typeOfGrease, carBrand, carYear;
+        var greaseC, greaseS, greaseSpec, typeOfGrease, carBrand, carYear;
         await Consumable.getSpecific("grease").then(consumables => {
             greaseC = consumables;
 
         }).catch(() => {
             reject("Error Connecting to the Server");
     
+        });
+
+        await Supplier.findAll().then(suppliers => {
+            greaseS = suppliers
+           
+        }).catch(() => {
+            reject("Error Connecting to the Server");
         });
 
         await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `greaseSpec`'), 'greaseSpec']],raw:true, nest:true}).then(spec => {
@@ -275,13 +289,29 @@ Grease.getGreaseStock = () => {
         });
     
         var values = {
-            consumables: greaseC.rows, specs: greaseSpec, typeOfGrease: typeOfGrease, 
-            carBrand: carBrand, carYear: carYear
+            consumables: greaseC.rows, suppliers: greaseS, specs: greaseSpec, 
+            typeOfGrease: typeOfGrease, carBrand: carBrand, carYear: carYear
         };
         resolve(values);
 
     });
     
 };
+
+Grease.getWithSupplier = supplierId => {
+    return new Bluebird((resolve, reject) => {
+        Grease.findAndCountAll({
+            where: {
+                supplierId: supplierId
+            }
+        }).then(async foundGreases => {
+            await Supplier.getSupplierNames(foundGreases);
+            resolve(foundGreases.rows);
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
 
 export default Grease;

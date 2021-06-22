@@ -152,7 +152,8 @@ Consumable.getSpecific = (consumable) => {
             });
             
         }else if(consumable == "grease"){
-            Grease.findAndCountAll().then(grease => {
+            Grease.findAndCountAll().then(async grease => {
+              await Supplier.getSupplierNames(grease);
                 resolve(grease);
 
             }).catch(err =>{

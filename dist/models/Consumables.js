@@ -129,10 +129,10 @@ Consumable.getConsumableByCategory = function (category) {
 
 Consumable.getSpecific = function (consumable) {
   return new _bluebird["default"]( /*#__PURE__*/function () {
-    var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(resolve, reject) {
-      return _regenerator["default"].wrap(function _callee4$(_context4) {
+    var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(resolve, reject) {
+      return _regenerator["default"].wrap(function _callee5$(_context5) {
         while (1) {
-          switch (_context4.prev = _context4.next) {
+          switch (_context5.prev = _context5.next) {
             case 0:
               if (consumable == "battery") {
                 _Battery["default"].findAndCountAll({
@@ -218,9 +218,30 @@ Consumable.getSpecific = function (consumable) {
                   reject(err);
                 });
               } else if (consumable == "grease") {
-                _Grease["default"].findAndCountAll().then(function (grease) {
-                  resolve(grease);
-                })["catch"](function (err) {
+                _Grease["default"].findAndCountAll().then( /*#__PURE__*/function () {
+                  var _ref5 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(grease) {
+                    return _regenerator["default"].wrap(function _callee4$(_context4) {
+                      while (1) {
+                        switch (_context4.prev = _context4.next) {
+                          case 0:
+                            _context4.next = 2;
+                            return _Supplier["default"].getSupplierNames(grease);
+
+                          case 2:
+                            resolve(grease);
+
+                          case 3:
+                          case "end":
+                            return _context4.stop();
+                        }
+                      }
+                    }, _callee4);
+                  }));
+
+                  return function (_x6) {
+                    return _ref5.apply(this, arguments);
+                  };
+                }())["catch"](function (err) {
                   reject(err);
                 });
               } else if (consumable == "oil") {
@@ -235,10 +256,10 @@ Consumable.getSpecific = function (consumable) {
 
             case 2:
             case "end":
-              return _context4.stop();
+              return _context5.stop();
           }
         }
-      }, _callee4);
+      }, _callee5);
     }));
 
     return function (_x, _x2) {

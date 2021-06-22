@@ -21,6 +21,8 @@ var _mySQLDB = _interopRequireDefault(require("../../mySQLDB"));
 
 var _bluebird = _interopRequireDefault(require("bluebird"));
 
+var _Supplier = _interopRequireDefault(require("../Supplier"));
+
 var mappings = {
   id: {
     type: _sequelize["default"].INTEGER,
@@ -54,6 +56,9 @@ var mappings = {
   supplierId: {
     type: _sequelize["default"].DataTypes.INTEGER,
     allowNull: false
+  },
+  supplierName: {
+    type: _sequelize["default"].DataTypes.VIRTUAL(_sequelize["default"].DataTypes.STRING, ['supplierName'])
   },
   quotationNumber: {
     type: _sequelize["default"].DataTypes.STRING,
@@ -182,7 +187,9 @@ Grease.addGrease = function (newGrease) {
         greaseSpec: newGrease.greaseSpec,
         typeOfGrease: newGrease.typeOfGrease,
         carBrand: newGrease.carBrand,
-        carYear: newGrease.carYear
+        carYear: newGrease.carYear,
+        supplierId: newGrease.supplierId,
+        quotationNumber: newGrease.quotationNumber
       }
     }).then(function (foundGrease) {
       if (foundGrease) {
@@ -191,7 +198,7 @@ Grease.addGrease = function (newGrease) {
         newGrease.volume = parseFloat(newGrease.volume);
         newGrease.minVolume = parseFloat(newGrease.minVolume);
         Grease.create(newGrease).then(function () {
-          _Consumables["default"].addConsumable(newConsumable).then(function () {
+          _Consumables["default"].updateConsumable(newConsumable, "add").then(function () {
             resolve(newGrease.volume + " Liters of Greace Sucessfully Added!");
           })["catch"](function (err) {
             reject("An Error Occured Grease Could not be Added");
@@ -209,7 +216,7 @@ Grease.addGrease = function (newGrease) {
 Grease.getGreaseStock = function () {
   return new _bluebird["default"]( /*#__PURE__*/function () {
     var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
-      var greaseC, greaseSpec, typeOfGrease, carBrand, carYear, values;
+      var greaseC, greaseS, greaseSpec, typeOfGrease, carBrand, carYear, values;
       return _regenerator["default"].wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -223,6 +230,14 @@ Grease.getGreaseStock = function () {
 
             case 2:
               _context.next = 4;
+              return _Supplier["default"].findAll().then(function (suppliers) {
+                greaseS = suppliers;
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 4:
+              _context.next = 6;
               return Grease.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `greaseSpec`'), 'greaseSpec']],
                 raw: true,
@@ -233,8 +248,8 @@ Grease.getGreaseStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 4:
-              _context.next = 6;
+            case 6:
+              _context.next = 8;
               return Grease.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `typeOfGrease`'), 'typeOfGrease']],
                 raw: true,
@@ -245,8 +260,8 @@ Grease.getGreaseStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 6:
-              _context.next = 8;
+            case 8:
+              _context.next = 10;
               return Grease.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']],
                 raw: true,
@@ -257,8 +272,8 @@ Grease.getGreaseStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 8:
-              _context.next = 10;
+            case 10:
+              _context.next = 12;
               return Grease.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']],
                 raw: true,
@@ -269,9 +284,10 @@ Grease.getGreaseStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 10:
+            case 12:
               values = {
                 consumables: greaseC.rows,
+                suppliers: greaseS,
                 specs: greaseSpec,
                 typeOfGrease: typeOfGrease,
                 carBrand: carBrand,
@@ -279,7 +295,7 @@ Grease.getGreaseStock = function () {
               };
               resolve(values);
 
-            case 12:
+            case 14:
             case "end":
               return _context.stop();
           }
@@ -291,6 +307,41 @@ Grease.getGreaseStock = function () {
       return _ref.apply(this, arguments);
     };
   }());
+};
+
+Grease.getWithSupplier = function (supplierId) {
+  return new _bluebird["default"](function (resolve, reject) {
+    Grease.findAndCountAll({
+      where: {
+        supplierId: supplierId
+      }
+    }).then( /*#__PURE__*/function () {
+      var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(foundGreases) {
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return _Supplier["default"].getSupplierNames(foundGreases);
+
+              case 2:
+                resolve(foundGreases.rows);
+
+              case 3:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }));
+
+      return function (_x3) {
+        return _ref2.apply(this, arguments);
+      };
+    }())["catch"](function (err) {
+      reject(err);
+    });
+  });
 };
 
 var _default = Grease;

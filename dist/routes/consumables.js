@@ -337,31 +337,31 @@ router.post('/update-filter/:action/:id', function (req, res, next) {
     res.redirect("back");
   });
 });
-router.post('/add/grease', [(0, _expressValidator.body)('greaseSpec').not().isEmpty(), (0, _expressValidator.body)('greaseType').not().isEmpty(), (0, _expressValidator.body)('greaseCarBrand').not().isEmpty(), (0, _expressValidator.body)('greaseCarYear').not().isEmpty(), (0, _expressValidator.body)('quantityGrease').not().isEmpty(), (0, _expressValidator.body)('quantityMinGrease').not().isEmpty()], function (req, res, next) {
-  var errors = (0, _expressValidator.validationResult)(req);
+router.post('/add/grease', _Quotation["default"].uploadFile().single('upload'), function (req, res, next) {
+  var newGrease = {
+    greaseSpec: req.body.greaseSpec,
+    typeOfGrease: req.body.greaseType,
+    carBrand: req.body.greaseCarBrand,
+    carYear: req.body.greaseCarYear,
+    volume: req.body.quantityGrease,
+    minVolume: req.body.quantityMinGrease,
+    supplierId: req.body.greaseSupplierName,
+    quotationNumber: req.body.quotation
+  };
+  var newQuotation = {
+    quotationNumber: req.body.quotation,
+    quotationPath: req.file.path
+  };
 
-  if (!errors.isEmpty()) {
-    console.log(req.body);
-    req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
+  _Grease["default"].addGrease(newGrease).then(function (output) {
+    _Quotation["default"].addQuotation(newQuotation);
+
+    req.flash('success_msg', output);
     res.redirect("/consumables/add");
-  } else {
-    var newGrease = {
-      greaseSpec: req.body.greaseSpec,
-      typeOfGrease: req.body.greaseType,
-      carBrand: req.body.greaseCarBrand,
-      carYear: req.body.greaseCarYear,
-      volume: req.body.quantityGrease,
-      minVolume: req.body.quantityMinGrease
-    };
-
-    _Grease["default"].addGrease(newGrease).then(function (output) {
-      req.flash('success_msg', output);
-      res.redirect("/consumables/add");
-    })["catch"](function (err) {
-      req.flash('error_msg', err);
-      res.redirect("/consumables/add");
-    });
-  }
+  })["catch"](function (err) {
+    req.flash('error_msg', err);
+    res.redirect("/consumables/add");
+  });
 });
 router.post('/update-grease/:action/:id', function (req, res, next) {
   console.log("My Id is " + req.params.id);
@@ -634,6 +634,8 @@ function getConsumableModel(consumableModel) {
     return _Brake["default"];
   } else if (consumableModel === "filter") {
     return _Filter["default"];
+  } else if (consumableModel === "grease") {
+    return _Grease["default"];
   }
 }
 

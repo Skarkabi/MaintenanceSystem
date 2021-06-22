@@ -13,6 +13,9 @@
                  {{#if (isdefined page "view")}}
                 <th scope="col">Single Cost</th>
                 <th scope="col">Total Cost</th>
+                <th scope="brake">Supplier</th>
+                {{else}}
+                <th scope="col">Quotation #</th>
                 {{/if}}
                 <th scope="col">Action</th>
                 
@@ -32,21 +35,15 @@
                     <td>{{this.quantity}}</td>
                     <td>{{this.singleCost}}</td>
                     <td>{{roundToTwo this.singleCost this.quantity}}</td>
-                    <td class = "table-actions">
-                        <div class="input-group">
-                            <input type="number" id="tableFilterQuantity-{{this.id}}" name="tableFilterQuantity-{{this.id}}" class="form-control" placeholder="0" aria-label="Quantity" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button type="submit" id="updateFilter-{{this.id}}" name="updateFilter-{{this.id}}" class="btn btn-success btn-xs" onclick="updateFilterPost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
-                                <button type="submit" id="deleteFilter-{{this.id}}" name="deleteFilter-{{this.id}}" class="btn btn-danger btn-xs" onclick="deleteFilterPost({{this.id}})"><i class="fas fa-minus-circle"></i></button>
-                            </div>
-                        </div>
-                    </td>  
+                     <td><a href="/consumables/filter/{{this.supplierId}}">{{this.supplierName}}</a></td>
+                    <td><a href="/consumables/filter/{{this.supplierId}}" style="padding-right: 25px;">View <i class="fas fa-external-link-alt"></i></a></td>
+
                 </tr>
             {{/each}}
             {{/if}}
 
             {{#if (isdefined page "add")}}
-            {{#each values.filters.consumable}}
+            {{#each consumables}}
                 <tr>
                     <th>{{counter @index}}</th>
                     <td>{{this.category}}</td>
@@ -56,14 +53,13 @@
                     <td>{{this.carModel}}</td>
                     <td>{{this.carYear}}</td>
                     <td>{{this.quantity}}</td>
-                    <td class = "table-actions">
-                        <div class="input-group">
-                            <input type="number" id="tableFilterQuantity-{{this.id}}" name="tableFilterQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button type="submit" id="updateFilter-{{this.id}}" name="updateFilter-{{this.id}}" class="btn btn-success btn-xs" onclick="updateFilterPost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
-                            </div>
+                    <td>{{this.quotationNumber}}</td>
+                     <td>
+                        <div class="input-group-append">
+                            <a href="download/{{this.quotationNumber}}" style="padding-right: 25px;"><i class="fas fa-download"></i></a>
+                            <a href="" onclick="openPdf({{this.quotationNumber}})"><i class="fas fa-external-link-alt"></i></a>
                         </div>
-                    </td>  
+                    </td>
                 </tr>
             {{/each}}
             {{/if}}
@@ -72,6 +68,9 @@
 </div>
 
 <script>
+     function openPdf(fileNumber){
+        window.open('view/'+ fileNumber);
+    }
     function updateFilterPost(id){
         document.getElementById("tableFilterQuantity-" + id).name = "newQuantity";
         document.getElementById("mainForm").action = "update-filter/add/" + id;

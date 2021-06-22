@@ -3,6 +3,7 @@ import Sequelize from 'sequelize';
 import Consumable from '../Consumables';
 import sequelize from '../../mySQLDB';
 import Bluebird from 'bluebird';
+import Supplier from '../Supplier';
 
 const mappings = {
     id: {
@@ -57,6 +58,10 @@ const mappings = {
     supplierId:{
         type: Sequelize.DataTypes.INTEGER,
         allowNull: false
+    },
+    supplierName:{
+        type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.STRING, ['supplierName']),
+       
     },
     quotationNumber:{
         type: Sequelize.DataTypes.STRING,
@@ -268,18 +273,18 @@ Filter.addFilter = (newFilter) => {
                         resolve(newFilter.quantity + " Filters Sucessfully Added!");
 
                     }).catch(err => {
-                        reject("An Error Occured Filters Could not be Added");
+                        reject("An Error Occured Filters Could not be Added " + err);
 
                     });
 
                 }).catch(err => {
-                   reject("An Error Occured Filters Could not be Added");
+                   reject("An Error Occured Filters Could not be Added " + err);
 
                 });
 
             }
         }).catch(err => {
-            reject("An Error Occured Filters Could not be Added");
+            reject("An Error Occured Filters Could not be Added " + err );
 
         });
         
@@ -289,7 +294,7 @@ Filter.addFilter = (newFilter) => {
 
 Filter.getFilterStock = () => {
     return new Bluebird(async (resolve, reject) => {
-        var filterC, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand;
+        var filterC, filterS, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand;
 
         await Consumable.getSpecific("filter").then(consumables => {
             console.log(consumables);
@@ -298,6 +303,13 @@ Filter.getFilterStock = () => {
         }).catch(() => {
             reject("Error Connecting to the Server");
     
+        });
+
+        await Supplier.findAll().then(suppliers => {
+            filterS = suppliers
+           
+        }).catch(() => {
+            reject("Error Connecting to the Server");
         });
     
         await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `category`'), 'category']],raw:true, nest:true}).then(category => {
@@ -365,8 +377,8 @@ Filter.getFilterStock = () => {
         });
 
         var values = {
-            consumable: filterC.rows, filterType: typeF, carBrand: carBrand, carModel: carModel,
-            carYear: carYear, preferredBrand: preferredBrand, carCategory: carCategory,
+            consumable: filterC.rows, suppliers: filterS,filterType: typeF, carBrand: carBrand, 
+            carModel: carModel, carYear: carYear, preferredBrand: preferredBrand, carCategory: carCategory,
             singleCost: singleCost, actualBrand: actualBrand
     
         };
@@ -376,5 +388,19 @@ Filter.getFilterStock = () => {
 
 }
 
+Filter.getWithSupplier = supplierId => {
+    return new Bluebird((resolve, reject) => {
+        Filter.findAndCountAll({
+            where: {
+                supplierId: supplierId
+            }
+        }).then(async foundFilter => {
+            await Supplier.getSupplierNames(foundFilter);
+            resolve(foundFilter.rows);
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
 
 export default Filter;

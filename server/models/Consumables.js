@@ -142,7 +142,8 @@ Consumable.getSpecific = (consumable) => {
             });
 
         }else if(consumable == "filter"){
-            Filter.findAndCountAll().then(filters => {
+            Filter.findAndCountAll().then(async filters => {
+                await Supplier.getSupplierNames(filters);
                 resolve(filters);
 
             }).catch(err =>{

@@ -21,6 +21,8 @@ var _mySQLDB = _interopRequireDefault(require("../../mySQLDB"));
 
 var _bluebird = _interopRequireDefault(require("bluebird"));
 
+var _Supplier = _interopRequireDefault(require("../Supplier"));
+
 var mappings = {
   id: {
     type: _sequelize["default"].INTEGER,
@@ -74,6 +76,9 @@ var mappings = {
   supplierId: {
     type: _sequelize["default"].DataTypes.INTEGER,
     allowNull: false
+  },
+  supplierName: {
+    type: _sequelize["default"].DataTypes.VIRTUAL(_sequelize["default"].DataTypes.STRING, ['supplierName'])
   },
   quotationNumber: {
     type: _sequelize["default"].DataTypes.STRING,
@@ -240,14 +245,14 @@ Filter.addFilter = function (newFilter) {
           _Consumables["default"].updateConsumable(newConsumable, "add").then(function () {
             resolve(newFilter.quantity + " Filters Sucessfully Added!");
           })["catch"](function (err) {
-            reject("An Error Occured Filters Could not be Added");
+            reject("An Error Occured Filters Could not be Added " + err);
           });
         })["catch"](function (err) {
-          reject("An Error Occured Filters Could not be Added");
+          reject("An Error Occured Filters Could not be Added " + err);
         });
       }
     })["catch"](function (err) {
-      reject("An Error Occured Filters Could not be Added");
+      reject("An Error Occured Filters Could not be Added " + err);
     });
   });
 };
@@ -255,7 +260,7 @@ Filter.addFilter = function (newFilter) {
 Filter.getFilterStock = function () {
   return new _bluebird["default"]( /*#__PURE__*/function () {
     var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
-      var filterC, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand, values;
+      var filterC, filterS, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand, values;
       return _regenerator["default"].wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -270,6 +275,14 @@ Filter.getFilterStock = function () {
 
             case 2:
               _context.next = 4;
+              return _Supplier["default"].findAll().then(function (suppliers) {
+                filterS = suppliers;
+              })["catch"](function () {
+                reject("Error Connecting to the Server");
+              });
+
+            case 4:
+              _context.next = 6;
               return Filter.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `category`'), 'category']],
                 raw: true,
@@ -280,8 +293,8 @@ Filter.getFilterStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 4:
-              _context.next = 6;
+            case 6:
+              _context.next = 8;
               return Filter.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `fType`'), 'fType']],
                 raw: true,
@@ -292,8 +305,8 @@ Filter.getFilterStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 6:
-              _context.next = 8;
+            case 8:
+              _context.next = 10;
               return Filter.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
               }).then(function (spec) {
@@ -302,8 +315,8 @@ Filter.getFilterStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 8:
-              _context.next = 10;
+            case 10:
+              _context.next = 12;
               return Filter.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
               }).then(function (spec) {
@@ -312,8 +325,8 @@ Filter.getFilterStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 10:
-              _context.next = 12;
+            case 12:
+              _context.next = 14;
               return Filter.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `carModel`'), 'carModel']],
                 raw: true,
@@ -324,8 +337,8 @@ Filter.getFilterStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 12:
-              _context.next = 14;
+            case 14:
+              _context.next = 16;
               return Filter.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `preferredBrand`'), 'preferredBrand']]
               }).then(function (spec) {
@@ -334,8 +347,8 @@ Filter.getFilterStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 14:
-              _context.next = 16;
+            case 16:
+              _context.next = 18;
               return Filter.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `actualBrand`'), 'actualBrand']]
               }).then(function (spec) {
@@ -344,8 +357,8 @@ Filter.getFilterStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 16:
-              _context.next = 18;
+            case 18:
+              _context.next = 20;
               return Filter.findAll({
                 attributes: [[_sequelize["default"].literal('DISTINCT `singleCost`'), 'singleCost']]
               }).then(function (spec) {
@@ -354,9 +367,10 @@ Filter.getFilterStock = function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 18:
+            case 20:
               values = {
                 consumable: filterC.rows,
+                suppliers: filterS,
                 filterType: typeF,
                 carBrand: carBrand,
                 carModel: carModel,
@@ -368,7 +382,7 @@ Filter.getFilterStock = function () {
               };
               resolve(values);
 
-            case 20:
+            case 22:
             case "end":
               return _context.stop();
           }
@@ -380,6 +394,41 @@ Filter.getFilterStock = function () {
       return _ref.apply(this, arguments);
     };
   }());
+};
+
+Filter.getWithSupplier = function (supplierId) {
+  return new _bluebird["default"](function (resolve, reject) {
+    Filter.findAndCountAll({
+      where: {
+        supplierId: supplierId
+      }
+    }).then( /*#__PURE__*/function () {
+      var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(foundFilter) {
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return _Supplier["default"].getSupplierNames(foundFilter);
+
+              case 2:
+                resolve(foundFilter.rows);
+
+              case 3:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }));
+
+      return function (_x3) {
+        return _ref2.apply(this, arguments);
+      };
+    }())["catch"](function (err) {
+      reject(err);
+    });
+  });
 };
 
 var _default = Filter;

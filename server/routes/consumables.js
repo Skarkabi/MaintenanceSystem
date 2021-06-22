@@ -218,22 +218,7 @@ router.get('/display-vehicle/:id', async (req, res, next) =>
 });
 
 router.post('/add/filter', 
-[body('filterType').not().isEmpty(),
-body('vehicleCategory').not().isEmpty(),
-body('filterABrand').not().isEmpty(),
-body('filterPBrand').not().isEmpty(),
-body('filterCarBrand').not().isEmpty(),
-body('filterCarModel').not().isEmpty(),
-body('filterCarYear').not().isEmpty(),
-body('quantityFilters').not().isEmpty(),
-body('minFilterQuantity').not().isEmpty(),
-body('filterPrice').not().isEmpty(),
-], (req, res, next) => { 
-    const errors = validationResult(req);
-    if(!errors.isEmpty()){
-        req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
-        res.redirect("/consumables/add");
-    }else{
+Quotation.uploadFile().single('upload'), (req, res, next) => { 
         const newFilter = {
             carBrand: req.body.filterCarBrand,
             carModel: req.body.filterCarModel,
@@ -244,10 +229,19 @@ body('filterPrice').not().isEmpty(),
             actualBrand: req.body.filterABrand,
             singleCost: req.body.filterPrice,
             quantity: req.body.quantityFilters,
-            minQuantity: req.body.minFilterQuantity
+            minQuantity: req.body.minFilterQuantity,
+            supplierId: req.body.filterSupplierName,
+            quotationNumber: req.body.quotation
 
         };
+
+        const newQuotation = {
+            quotationNumber: req.body.quotation,
+            quotationPath: req.file.path
+        }
+    
         Filter.addFilter(newFilter).then(output => {    
+            Quotation.addQuotation(newQuotation);
             req.flash('success_msg', output);
             res.redirect("/consumables/add");
 
@@ -256,7 +250,6 @@ body('filterPrice').not().isEmpty(),
             res.redirect("/consumables/add");
 
         });
-    }
 
 });
 
@@ -481,7 +474,12 @@ router.get('/:category/download/:quotationNumber',async (req,res,next) => {
     console.log(path);
     var tempFile = path.replace('/dist/routes', `/server/uploads/${req.params.quotationNumber}.pdf`);
     console.log(tempFile);
-    res.download(tempFile);
+    res.download(tempFile, function(err){
+        if(err) {
+            req.flash("error_msg", "File Does Not Exist!");
+            res.redirect("back");
+        }
+    })
     
 })
 
@@ -489,12 +487,18 @@ router.get('/:category/view/:quotationNumber',async (req,res,next) => {
     console.log("DIR");
     const path = `${__dirname}`;
     console.log(path.replace('/dist/routes', `/server/uploads/${req.params.quotationNumber}.pdf`));
-        var tempFile=path.replace('/dist/routes', `/server/uploads/${req.params.quotationNumber}.pdf`);
-        fs.readFile(tempFile, function (err,data){
-           res.contentType("application/pdf");
-           res.send(data);
-        });
+    var tempFile=path.replace('/dist/routes', `/server/uploads/${req.params.quotationNumber}.pdf`);
+    fs.readFile(tempFile, function (err,data){
+        res.contentType("application/pdf");
+        res.send(data);
+    });
     
+})
+
+router.get('/close', async(req,res,next)=>{
+    console.log("Got this far");
+    res.render("closeWindow");
+
 })
 
 function getConsumableModel(consumableModel) {
@@ -502,6 +506,8 @@ function getConsumableModel(consumableModel) {
     if (consumableModel === "brake"){
         console.log("My Model Will return " +consumableModel);
         return Brake;
+    }else if(consumableModel === "filter"){
+        return Filter;
     }
 
 };

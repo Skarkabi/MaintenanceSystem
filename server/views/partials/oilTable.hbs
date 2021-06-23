@@ -6,6 +6,11 @@
                 <th scope="col">Oil Spec</th>
                 <th scope="col">Oil Type</th>
                 <th scope="col">Volume</th>
+                {{#if (isdefined page "view")}}
+                <th scope="brake">Supplier</th>
+                {{else}}
+                <th scope="col">Quotation #</th>
+                {{/if}}
                 <th scope="col">Action</th>
             </tr>
         </thead>
@@ -17,34 +22,27 @@
                     <td>{{this.oilSpec}}</td>
                     <td>{{this.typeOfOil}}</td>
                     <td>{{this.volume}}</td>
-                    <td class="table-actions">
-                        <div class="input-group">
-                            <input type="number" id="tableOilQuantity-{{this.id}}" name="tableOilQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button type="submit" id="updateOil-{{this.id}}" name="updateOil-{{this.id}}" class="btn btn-success btn-xs" onclick="updateOilPost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
-                                <button type="submit" id="deleteOil-{{this.id}}" name="deleteOil-{{this.id}}" class="btn btn-danger btn-xs" onclick="deleteOilPost({{this.id}})"><i class="fas fa-minus-circle"></i></button>
-                            </div>
-                        </div>
-                    </td>
+                    <td><a href="/consumables/oil/{{this.supplierId}}">{{this.supplierName}}</a></td>
+                    <td><a href="/consumables/oil/{{this.supplierId}}" style="padding-right: 25px;">View <i class="fas fa-external-link-alt"></i></a></td>
+                    
                 </tr>
             {{/each}}
             {{/if}}
 
             {{#if (isdefined page "add")}}
-            {{#each values.oil.consumables}}
+            {{#each consumables}}
                  <tr>
                     <th>{{counter @index}}</th>
                     <td>{{this.oilSpec}}</td>
                     <td>{{this.typeOfOil}}</td>
                     <td>{{this.volume}}</td>
-                    <td class = "table-actions">
-                        <div class="input-group">
-                            <input type="number" id="tableOilQuantity-{{this.id}}" name="tableOilQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button type="submit" id="updateOil-{{this.id}}" name="updateOil-{{this.id}}" class="btn btn-success" onclick="updateOilPost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
-                            </div>
+                    <td>{{this.quotationNumber}}</td>
+                     <td>
+                        <div class="input-group-append">
+                            <a href="download/{{this.quotationNumber}}" style="padding-right: 25px;"><i class="fas fa-download"></i></a>
+                            <a href="" onclick="openPdf({{this.quotationNumber}})"><i class="fas fa-external-link-alt"></i></a>
                         </div>
-                    </td>  
+                    </td>
                 </tr>
             {{/each}}
             {{/if}}
@@ -53,6 +51,9 @@
 </div>
 
 <script>
+    function openPdf(fileNumber){
+        window.open('view/'+ fileNumber);
+    }
     function updateOilPost(id){
         document.getElementById("tableOilQuantity-" + id).name = "newQuantity";
         document.getElementById("mainForm").action = "update-oil/add/" + id;

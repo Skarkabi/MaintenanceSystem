@@ -19,6 +19,8 @@ var _sequelize = _interopRequireDefault(require("sequelize"));
 
 var _mySQLDB = _interopRequireDefault(require("../mySQLDB"));
 
+var _Brake = _interopRequireDefault(require("./consumables/Brake"));
+
 var mappings = {
   id: {
     type: _sequelize["default"].INTEGER,
@@ -130,12 +132,19 @@ Supplier.getByNameAndCategory = function (info) {
 
 Supplier.getById = function (id) {
   return new _bluebird["default"](function (resolve, reject) {
-    Supplier.findOne({
+    Supplier.findAll({
       where: {
         id: id
-      }
+      },
+      attributes: ['id', 'name']
     }).then(function (foundSupplier) {
-      resolve(foundSupplier.name);
+      console.log(foundSupplier); //var supplierMap = foundSupplier.map(values => {return new Map(values.id,values.name)});
+
+      var supplierMap = new Map();
+      foundSupplier.map(function (values) {
+        return supplierMap.set(values.id, values.name);
+      });
+      resolve(supplierMap);
     })["catch"](function (err) {
       reject(err);
     });
@@ -224,42 +233,21 @@ Supplier.getStock = function () {
 };
 
 Supplier.getSupplierNames = function (brakes) {
-  return new _bluebird["default"].resolve().then( /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
-    var i;
-    return _regenerator["default"].wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            i = 0;
-
-          case 1:
-            if (!(i < brakes.count)) {
-              _context2.next = 11;
-              break;
-            }
-
-            console.log("This one");
-            _context2.t0 = brakes.rows[i];
-            _context2.next = 6;
-            return Supplier.getById(brakes.rows[i].supplierId);
-
-          case 6:
-            _context2.t1 = _context2.sent;
-
-            _context2.t0.setDataValue.call(_context2.t0, 'supplierName', _context2.t1);
-
-          case 8:
-            i++;
-            _context2.next = 1;
-            break;
-
-          case 11:
-          case "end":
-            return _context2.stop();
-        }
-      }
-    }, _callee2);
-  })));
+  return new _bluebird["default"](function (resolve, reject) {
+    console.log("This one");
+    console.log(brakes.rows);
+    var values = brakes.rows.map(function (a) {
+      return a.supplierId;
+    });
+    console.log(values);
+    Supplier.getById(values).then(function (supplierNames) {
+      console.log(supplierNames);
+      brakes.rows.map(function (value) {
+        return value.setDataValue('supplierName', supplierNames.get(value.supplierId));
+      });
+      resolve("completed");
+    });
+  });
 };
 
 var _default = Supplier;

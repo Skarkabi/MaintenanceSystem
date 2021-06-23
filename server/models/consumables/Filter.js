@@ -403,4 +403,23 @@ Filter.getWithSupplier = supplierId => {
     });
 }
 
+Filter.groupSupplier = () => {
+    return new Bluebird((resolve, reject) => {
+        Filter.findAll({
+            attributes:
+              ['category', 'fType', 'actualBrand', 'carModel', 'carBrand', 'carYear', 'singleCost', 'supplierId',
+              [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
+            ],
+
+            group: ['category', 'fType', 'actualBrand', 'carModel', 'carBrand', 'carYear', 'singleCost', 'supplierId']
+            
+        }).then(async (values) => { 
+            var result = {count: values.length, rows: values}
+            await Supplier.getSupplierNames(result);
+           resolve(result);
+        });
+    })
+}
+
+
 export default Filter;

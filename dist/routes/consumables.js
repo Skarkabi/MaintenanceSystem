@@ -378,30 +378,31 @@ router.post('/update-grease/:action/:id', function (req, res, next) {
     res.redirect("back");
   });
 });
-router.post('/add/oil', [(0, _expressValidator.body)('oilSpec').not().isEmpty(), (0, _expressValidator.body)('oilType').not().isEmpty(), (0, _expressValidator.body)('preferredOilBrand').not().isEmpty(), (0, _expressValidator.body)('oilPrice').not().isEmpty(), (0, _expressValidator.body)('quantityOil').not().isEmpty(), (0, _expressValidator.body)('quantityMinOil').not().isEmpty()], function (req, res, next) {
-  var errors = (0, _expressValidator.validationResult)(req);
+router.post('/add/oil', _Quotation["default"].uploadFile().single('upload'), function (req, res, next) {
+  var newOil = {
+    oilSpec: req.body.oilSpec,
+    typeOfOil: req.body.oilType,
+    preferredBrand: req.body.preferredOilBrand,
+    volume: req.body.quantityOil,
+    minVolume: req.body.quantityMinOil,
+    oilPrice: req.body.oilPrice,
+    supplierId: req.body.oilSupplierName,
+    quotationNumber: req.body.quotation
+  };
+  var newQuotation = {
+    quotationNumber: req.body.quotation,
+    quotationPath: req.file.path
+  };
 
-  if (!errors.isEmpty()) {
-    req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
-    res.redirect("/consumables/add");
-  } else {
-    var newOil = {
-      oilSpec: req.body.oilSpec,
-      typeOfOil: req.body.oilType,
-      preferredBrand: req.body.preferredOilBrand,
-      volume: req.body.quantityOil,
-      minVolume: req.body.quantityMinOil,
-      oilPrice: req.body.oilPrice
-    };
-
-    _Oil["default"].addOil(newOil).then(function (output) {
+  _Oil["default"].addOil(newOil).then(function (output) {
+    _Quotation["default"].addQuotation(newQuotation).then(function () {
       req.flash('success_msg', output);
       res.redirect("/consumables/add");
-    })["catch"](function (err) {
-      req.flash('error_msg', err);
-      res.redirect("/consumables/add");
     });
-  }
+  })["catch"](function (err) {
+    req.flash('error_msg', err);
+    res.redirect("/consumables/add");
+  });
 });
 router.post('/update-oil/:action/:id', function (req, res, next) {
   var newOil = {
@@ -474,28 +475,39 @@ router.get('/', /*#__PURE__*/function () {
 }());
 router.get('/:category', /*#__PURE__*/function () {
   var _ref4 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(req, res, next) {
-    var title;
+    var title, model, valuesChecl;
     return _regenerator["default"].wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            if (req.user) {
-              title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1);
-
-              _Consumables["default"].getSpecific(req.params.category).then(function (consumables) {
-                console.log(consumables);
-                res.render("displaySpecificConsumables", {
-                  title: title,
-                  typeOf: req.params.category,
-                  jumbotronDescription: "View all " + req.params.category + " in the system.",
-                  consumables: consumables.rows,
-                  page: "view",
-                  msgType: req.flash()
-                });
-              });
+            if (!req.user) {
+              _context4.next = 10;
+              break;
             }
 
-          case 1:
+            title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1);
+            model = getConsumableModel(req.params.category);
+            console.log("LOOK HERE: ");
+            _context4.next = 6;
+            return model.groupSupplier();
+
+          case 6:
+            valuesChecl = _context4.sent;
+            console.log(valuesChecl.rows[0]);
+            console.log(valuesChecl.length);
+
+            _Consumables["default"].getSpecific(req.params.category).then(function (consumables) {
+              res.render("displaySpecificConsumables", {
+                title: title,
+                typeOf: req.params.category,
+                jumbotronDescription: "View all " + req.params.category + " in the system.",
+                consumables: valuesChecl.rows,
+                page: "view",
+                msgType: req.flash()
+              });
+            });
+
+          case 10:
           case "end":
             return _context4.stop();
         }
@@ -636,6 +648,8 @@ function getConsumableModel(consumableModel) {
     return _Filter["default"];
   } else if (consumableModel === "grease") {
     return _Grease["default"];
+  } else if (consumableModel === "oil") {
+    return _Oil["default"];
   }
 }
 

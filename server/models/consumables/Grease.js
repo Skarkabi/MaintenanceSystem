@@ -313,5 +313,22 @@ Grease.getWithSupplier = supplierId => {
     });
 }
 
+Grease.groupSupplier = () => {
+    return new Bluebird((resolve, reject) => {
+        Grease.findAll({
+            attributes:
+              ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'supplierId',
+              [sequelize.fn('sum', sequelize.col('volume')), 'volume'],
+            ],
+
+            group: ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'supplierId']
+            
+        }).then(async (values) => { 
+            var result = {count: values.length, rows: values}
+            await Supplier.getSupplierNames(result);
+           resolve(result);
+        });
+    })
+}
 
 export default Grease;

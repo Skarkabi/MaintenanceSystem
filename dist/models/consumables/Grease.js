@@ -344,5 +344,42 @@ Grease.getWithSupplier = function (supplierId) {
   });
 };
 
+Grease.groupSupplier = function () {
+  return new _bluebird["default"](function (resolve, reject) {
+    Grease.findAll({
+      attributes: ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'supplierId', [_mySQLDB["default"].fn('sum', _mySQLDB["default"].col('volume')), 'volume']],
+      group: ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'supplierId']
+    }).then( /*#__PURE__*/function () {
+      var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(values) {
+        var result;
+        return _regenerator["default"].wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                result = {
+                  count: values.length,
+                  rows: values
+                };
+                _context3.next = 3;
+                return _Supplier["default"].getSupplierNames(result);
+
+              case 3:
+                resolve(result);
+
+              case 4:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }));
+
+      return function (_x4) {
+        return _ref3.apply(this, arguments);
+      };
+    }());
+  });
+};
+
 var _default = Grease;
 exports["default"] = _default;

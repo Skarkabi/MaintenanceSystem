@@ -1,7 +1,7 @@
 import Bluebird from 'bluebird';
 import _ from 'lodash';
 import Sequelize from 'sequelize';
-
+import Supplier from '../Supplier';
 import sequelize from '../../mySQLDB';
 import Consumable from '../Consumables';
 
@@ -39,6 +39,10 @@ const mappings = {
       type: Sequelize.DataTypes.INTEGER,
       allowNull: false
   },
+  supplierName:{
+    type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.STRING, ['supplierName']),
+   
+},
   quotationNumber:{
       type: Sequelize.DataTypes.STRING,
       allowNull: false
@@ -110,13 +114,20 @@ const Oil = sequelize.define('oil_stocks', mappings, {
 
 Oil.getOilStock = () => {
   return new Bluebird(async(resolve, reject) => {
-    var oilC, oilSpecs, typeOfOils, preferredBrands
+    var oilC, oilS, oilSpecs, typeOfOils, preferredBrands
     await Consumable.getSpecific("oil").then(consumables => {
       oilC = consumables;
   
     }).catch(() => {
       reject("Error Connecting to the Server");
 
+    });
+
+    await Supplier.findAll().then(suppliers => {
+      oilS = suppliers
+     
+    }).catch(() => {
+      reject("Error Connecting to the Server");
     });
 
     await Oil.findAll({attributes: [[Sequelize.literal('DISTINCT `oilSpec`'), 'oilSpec']],raw:true, nest:true}).then(spec => {
@@ -144,7 +155,8 @@ Oil.getOilStock = () => {
     });
 
     var values = {
-      consumables: oilC.rows, specs: oilSpecs, typeOfOils: typeOfOils, preferredBrands: preferredBrands
+      consumables: oilC.rows, suppliers: oilS, specs: oilSpecs, 
+      typeOfOils: typeOfOils, preferredBrands: preferredBrands
   
     };
     resolve(values);
@@ -234,7 +246,9 @@ Oil.addOil = (newOil) => {
       where: {
         oilSpec: newOil.oilSpec,
         typeOfOil: newOil.typeOfOil,
-        preferredBrand: newOil.preferredBrand
+        preferredBrand: newOil.preferredBrand,
+        supplierId: newOil.supplierId,
+        quotationNumber: newOil.quotationNumber,
 
       }
 
@@ -246,7 +260,7 @@ Oil.addOil = (newOil) => {
         newOil.volume = parseFloat(newOil.volume);
         newOil.minVolume = parseFloat(newOil.minVolume);
         Oil.create(newOil).then(() => {
-          Consumable.addConsumable(newConsumable).then(() => {
+          Consumable.updateConsumable(newConsumable, "add").then(() => {
             resolve(newOil.volume + " Liters of Oil Sucessfully Added!");
 
           }).catch(err => {
@@ -268,6 +282,39 @@ Oil.addOil = (newOil) => {
 
   });
 
+}
+
+Oil.groupSupplier = () => {
+  return new Bluebird((resolve, reject) => {
+      Oil.findAll({
+          attributes:
+            ['oilSpec', 'typeOfOil', 'supplierId',
+            [sequelize.fn('sum', sequelize.col('volume')), 'volume'],
+          ],
+
+          group: ['oilSpec', 'typeOfOil', 'supplierId']
+          
+      }).then(async (values) => { 
+          var result = {count: values.length, rows: values}
+          await Supplier.getSupplierNames(result);
+         resolve(result);
+      });
+  })
+}
+
+Oil.getWithSupplier = supplierId => {
+  return new Bluebird((resolve, reject) => {
+      Oil.findAndCountAll({
+          where: {
+              supplierId: supplierId
+          }
+      }).then(async foundGreases => {
+          await Supplier.getSupplierNames(foundGreases);
+          resolve(foundGreases.rows);
+      }).catch(err => {
+          reject(err);
+      });
+  });
 }
 
 export default Oil;

@@ -322,41 +322,37 @@ router.post('/update-grease/:action/:id', (req,res,next) =>{
 
 })
 
-router.post('/add/oil',
-[body('oilSpec').not().isEmpty(), 
-body('oilType').not().isEmpty(),
-body('preferredOilBrand').not().isEmpty(),
-body('oilPrice').not().isEmpty(),
-body('quantityOil').not().isEmpty(),
-body('quantityMinOil').not().isEmpty()
-]
+router.post('/add/oil', Quotation.uploadFile().single('upload')
 , (req, res, next) => {
-    const errors = validationResult(req);
-    if(!errors.isEmpty()){
-        req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
-        res.redirect("/consumables/add");
-
-    }else{
         const newOil = { 
             oilSpec: req.body.oilSpec,
             typeOfOil: req.body.oilType,
             preferredBrand: req.body.preferredOilBrand,
             volume: req.body.quantityOil,
             minVolume: req.body.quantityMinOil,
-            oilPrice: req.body.oilPrice
+            oilPrice: req.body.oilPrice,
+            supplierId: req.body.oilSupplierName,
+            quotationNumber: req.body.quotation
+        };
+
+        const newQuotation = {
+            quotationNumber: req.body.quotation,
+            quotationPath: req.file.path
+
         }
 
         Oil.addOil(newOil).then(output => {
-            req.flash('success_msg', output);
-            res.redirect("/consumables/add");
+            Quotation.addQuotation(newQuotation).then(() => {
+                req.flash('success_msg', output);
+                res.redirect("/consumables/add");
 
+            });
+            
         }).catch(err =>{
             req.flash('error_msg', err);
             res.redirect("/consumables/add");
 
         });
-
-    }
 
 });
 
@@ -425,13 +421,17 @@ router.get('/', async (req, res, next) =>
 router.get('/:category', async (req, res, next) =>{
     if(req.user){
         var title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1);
+        const model = getConsumableModel(req.params.category);
+        console.log("LOOK HERE: ");
+        const valuesChecl = await model.groupSupplier();
+        console.log(valuesChecl.rows[0]);
+        console.log(valuesChecl.length);
         Consumable.getSpecific(req.params.category).then(consumables => {
-            console.log(consumables);
             res.render("displaySpecificConsumables", {
                 title: title,
                 typeOf: req.params.category,
                 jumbotronDescription: "View all " + req.params.category + " in the system.",
-                consumables: consumables.rows,
+                consumables: valuesChecl.rows,
                 page: "view",
                 msgType: req.flash()
             });
@@ -502,6 +502,8 @@ function getConsumableModel(consumableModel) {
         return Filter;
     }else if(consumableModel === "grease"){
         return Grease;
+    }else if(consumableModel === "oil"){
+        return Oil;
     }
 
 };

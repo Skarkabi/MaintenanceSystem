@@ -9,9 +9,9 @@
                 <th scope="col">Chassis #</th>
                 <th scope="col">Battery Brand</th>
                 <th scope="col">Quantity (Boxes)</th>
-                {{#if (isdefined page "view")}}
                 <th scope="col">Single Cost</th>
                 <th scope="col">Total Cost</th>
+                 {{#if (isdefined page "view")}}
                 <th scope="brake">Supplier</th>
                 <th scope="col"  style="width: 15%;">Actoin</th>
                 {{else}}
@@ -22,6 +22,7 @@
         </thead>
         <tbody>
             {{#if (isdefined page "view")}}
+             {{console "Broke in here"}}
             {{#each consumables}}
                 <tr>
                     <th>{{counter @index}}</th>
@@ -35,7 +36,7 @@
                     <td>{{multiply this.singleCost this.quantity}}</td>
                     <td><a href="/consumables/brake/{{this.supplierId}}">{{this.supplierName}}</a></td>
                     <td><a href="/consumables/brake/{{this.supplierId}}" style="padding-right: 25px;">View <i class="fas fa-external-link-alt"></i></a></td>
-                    
+                   
                 </tr>
             {{/each}}
             {{/if}}
@@ -50,6 +51,8 @@
                     <td>{{this.chassis}}</td>
                     <td>{{this.bBrand}}</td>
                     <td>{{this.quantity}}</td>
+                    <td>{{this.singleCost}}</td>
+                    <td>{{multiply this.singleCost this.quantity}}</td>
                     <td>{{this.quotationNumber}}</td>
                      <td>
                         <div class="input-group-append">

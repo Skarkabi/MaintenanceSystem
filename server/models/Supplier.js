@@ -3,6 +3,7 @@ import _ from 'lodash';
 import Sequelize from 'sequelize';
 
 import sequelize from '../mySQLDB';
+import Brake from './consumables/Brake';
 
 const mappings = {
     id: {
@@ -137,12 +138,21 @@ Supplier.getByNameAndCategory = info => {
 
 Supplier.getById = id => {
     return new Bluebird((resolve, reject) => {
-        Supplier.findOne({
+        Supplier.findAll({
             where: {
                 id: id
-            }
+            },
+            attributes:['id', 'name']
         }).then(foundSupplier => {
-            resolve(foundSupplier.name);
+            console.log(foundSupplier);
+            
+            //var supplierMap = foundSupplier.map(values => {return new Map(values.id,values.name)});
+            var supplierMap = new Map();
+            foundSupplier.map(values => {
+                return supplierMap.set(values.id, values.name)
+            });
+            
+            resolve(supplierMap);
 
         }).catch(err => {
             reject(err);
@@ -200,12 +210,22 @@ Supplier.getStock = () => {
 }
 
 Supplier.getSupplierNames = (brakes) => {
-    return new Bluebird.resolve().then(async () => {
-        for(var i = 0; i < brakes.count; i++){
+    return new Bluebird((resolve, reject) => {
             console.log("This one");
-            brakes.rows[i].setDataValue('supplierName', await Supplier.getById(brakes.rows[i].supplierId));
-        }
-    });
+            console.log(brakes.rows);
+            let values = brakes.rows.map(a => a.supplierId);
+            console.log(values);
+            Supplier.getById(values).then(supplierNames => {
+                console.log(supplierNames);
+                brakes.rows.map(value => {
+                    return value.setDataValue('supplierName', supplierNames.get(value.supplierId));
+
+                });
+                resolve("completed");
+            });
+            
+        
+    }); 
 }
 
 export default Supplier;

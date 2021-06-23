@@ -372,6 +372,24 @@ Brake.getWithSupplier = supplierId => {
     });
 }
 
+Brake.groupSupplier = () => {
+    return new Bluebird((resolve, reject) => {
+        Brake.findAll({
+            attributes:
+              ['category', 'carBrand', 'carYear', 'chassis', 'bBrand', 'singleCost', 'supplierId',
+              [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
+            ],
+
+            group: ["category", "carBrand", "carYear", "chassis", "bBrand", "singleCost", "supplierId",   "preferredBrand",]
+            
+        }).then(async (values) => { 
+            var result = {count: values.length, rows: values}
+            await Supplier.getSupplierNames(result);
+           resolve(result);
+        });
+    })
+}
+
 
 
 export default Brake;

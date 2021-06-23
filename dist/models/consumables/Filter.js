@@ -431,5 +431,42 @@ Filter.getWithSupplier = function (supplierId) {
   });
 };
 
+Filter.groupSupplier = function () {
+  return new _bluebird["default"](function (resolve, reject) {
+    Filter.findAll({
+      attributes: ['category', 'fType', 'actualBrand', 'carModel', 'carBrand', 'carYear', 'singleCost', 'supplierId', [_mySQLDB["default"].fn('sum', _mySQLDB["default"].col('quantity')), 'quantity']],
+      group: ['category', 'fType', 'actualBrand', 'carModel', 'carBrand', 'carYear', 'singleCost', 'supplierId']
+    }).then( /*#__PURE__*/function () {
+      var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(values) {
+        var result;
+        return _regenerator["default"].wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                result = {
+                  count: values.length,
+                  rows: values
+                };
+                _context3.next = 3;
+                return _Supplier["default"].getSupplierNames(result);
+
+              case 3:
+                resolve(result);
+
+              case 4:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }));
+
+      return function (_x4) {
+        return _ref3.apply(this, arguments);
+      };
+    }());
+  });
+};
+
 var _default = Filter;
 exports["default"] = _default;

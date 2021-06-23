@@ -179,31 +179,30 @@ router.post('/update-battery/:action/:id', function (req, res, next) {
     res.redirect('back');
   });
 });
-router.post('/add/battery', [(0, _expressValidator.body)('batSpec').not().isEmpty(), (0, _expressValidator.body)('carBrand').not().isEmpty(), (0, _expressValidator.body)('carYear').not().isEmpty(), (0, _expressValidator.body)('quantityBatteries').not().isEmpty(), (0, _expressValidator.body)('quantityMinBatteries').not().isEmpty()], function (req, res, next) {
-  console.log("I am in here Battery Add");
-  var errors = (0, _expressValidator.validationResult)(req);
+router.post('/add/battery', _Quotation["default"].uploadFile().single('upload'), function (req, res, next) {
+  var newBattery = {
+    batSpec: req.body.batSpec,
+    carBrand: req.body.carBrand,
+    carYear: req.body.carYear,
+    quantity: req.body.quantityBatteries,
+    minQuantity: req.body.quantityMinBatteries,
+    supplierId: req.body.batteriesSupplierName,
+    quotationNumber: req.body.quotation
+  };
+  var newQuotation = {
+    quotationNumber: req.body.quotation,
+    quotationPath: req.file.path
+  };
 
-  if (!errors.isEmpty()) {
-    console.log(req.body);
-    req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
+  _Battery["default"].addBattery(newBattery).then(function (output) {
+    _Quotation["default"].addQuotation(newQuotation);
+
+    req.flash('success_msg', output);
     res.redirect("/consumables/add");
-  } else {
-    var newBattery = {
-      batSpec: req.body.batSpec,
-      carBrand: req.body.carBrand,
-      carYear: req.body.carYear,
-      quantity: req.body.quantityBatteries,
-      minQuantity: req.body.quantityMinBatteries
-    };
-
-    _Battery["default"].addBattery(newBattery).then(function (output) {
-      req.flash('success_msg', output);
-      res.redirect("/consumables/add");
-    })["catch"](function (err) {
-      req.flash('error_msg', err);
-      res.redirect("/consumables/add");
-    });
-  }
+  })["catch"](function (err) {
+    req.flash('error_msg', JSON.stringify(err));
+    res.redirect("/consumables/add");
+  });
 });
 router.post('/add/brake', _Quotation["default"].uploadFile().single('upload'), function (req, res, next) {
   console.log(req.file, req.body);
@@ -650,6 +649,8 @@ function getConsumableModel(consumableModel) {
     return _Grease["default"];
   } else if (consumableModel === "oil") {
     return _Oil["default"];
+  } else if (consumableModel === "battery") {
+    return _Battery["default"];
   }
 }
 

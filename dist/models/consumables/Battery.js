@@ -192,7 +192,9 @@ Battery.addBattery = function (newBattery) {
       where: {
         batSpec: newBattery.batSpec,
         carBrand: newBattery.carBrand,
-        carYear: newBattery.carYear
+        carYear: newBattery.carYear,
+        supplierId: newBattery.supplierId,
+        quotationNumber: newBattery.quotationNumber
       }
     }).then(function (foundBattery) {
       if (foundBattery) {
@@ -299,43 +301,76 @@ Battery.getBatteryStocks = function () {
   }());
 };
 
-Battery.getSupplierNames = function (batteries) {
-  return new _bluebird["default"].resolve().then( /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
-    var i;
-    return _regenerator["default"].wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            i = 0;
-
-          case 1:
-            if (!(i < batteries.count)) {
-              _context2.next = 11;
-              break;
-            }
-
-            console.log("This one");
-            _context2.t0 = batteries.rows[i];
-            _context2.next = 6;
-            return _Supplier["default"].getById(batteries.rows[i].supplierId);
-
-          case 6:
-            _context2.t1 = _context2.sent;
-
-            _context2.t0.setDataValue.call(_context2.t0, 'supplierName', _context2.t1);
-
-          case 8:
-            i++;
-            _context2.next = 1;
-            break;
-
-          case 11:
-          case "end":
-            return _context2.stop();
-        }
+Battery.getWithSupplier = function (supplierId) {
+  return new _bluebird["default"](function (resolve, reject) {
+    Battery.findAndCountAll({
+      where: {
+        supplierId: supplierId
       }
-    }, _callee2);
-  })));
+    }).then( /*#__PURE__*/function () {
+      var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(foundBrakes) {
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return _Supplier["default"].getSupplierNames(foundBrakes);
+
+              case 2:
+                resolve(foundBrakes.rows);
+
+              case 3:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }));
+
+      return function (_x3) {
+        return _ref2.apply(this, arguments);
+      };
+    }())["catch"](function (err) {
+      reject(err);
+    });
+  });
+};
+
+Battery.groupSupplier = function () {
+  return new _bluebird["default"](function (resolve, reject) {
+    Battery.findAll({
+      attributes: ['batSpec', 'carBrand', 'carYear', 'supplierId', [_mySQLDB["default"].fn('sum', _mySQLDB["default"].col('quantity')), 'quantity']],
+      group: ["batSpec", "carBrand", "carYear", "supplierId"]
+    }).then( /*#__PURE__*/function () {
+      var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(values) {
+        var result;
+        return _regenerator["default"].wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                result = {
+                  count: values.length,
+                  rows: values
+                };
+                _context3.next = 3;
+                return _Supplier["default"].getSupplierNames(result);
+
+              case 3:
+                resolve(result);
+
+              case 4:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }));
+
+      return function (_x4) {
+        return _ref3.apply(this, arguments);
+      };
+    }());
+  });
 };
 
 var _default = Battery;

@@ -102,38 +102,33 @@ router.post('/update-battery/:action/:id', (req,res,next) =>{
 })
 
 
-router.post('/add/battery', 
-    [body('batSpec').not().isEmpty(), 
-    body('carBrand').not().isEmpty(),
-    body('carYear').not().isEmpty(),
-    body('quantityBatteries').not().isEmpty(),
-    body('quantityMinBatteries').not().isEmpty()
-]
+router.post('/add/battery', Quotation.uploadFile().single('upload')
 , (req, res, next) =>{   
-    console.log("I am in here Battery Add");
-    const errors = validationResult(req);
-    if(!errors.isEmpty()){
-        console.log(req.body);
-        req.flash('error_msg', "Could not add consumable please make sure all fields are fild");
-        res.redirect("/consumables/add");
-    }else{
         const newBattery = {
             batSpec: req.body.batSpec,
             carBrand: req.body.carBrand,
             carYear: req.body.carYear,
             quantity: req.body.quantityBatteries,
-            minQuantity: req.body.quantityMinBatteries
-        }
-        Battery.addBattery(newBattery).then(output =>{
-            req.flash('success_msg',  output);
-            res.redirect("/consumables/add");
+            minQuantity: req.body.quantityMinBatteries,
+            supplierId: req.body.batteriesSupplierName,
+            quotationNumber: req.body.quotation
 
+        }
+
+        const newQuotation = {
+            quotationNumber: req.body.quotation,
+            quotationPath: req.file.path
+        }
+
+        Battery.addBattery(newBattery).then(output =>{
+                Quotation.addQuotation(newQuotation);
+                req.flash('success_msg',  output);
+                res.redirect("/consumables/add");
+           
         }).catch(err =>{
-            req.flash('error_msg', err);
+            req.flash('error_msg', JSON.stringify(err));
             res.redirect("/consumables/add");
         })
-        
-    }
    
 });
 
@@ -347,7 +342,7 @@ router.post('/add/oil', Quotation.uploadFile().single('upload')
                 res.redirect("/consumables/add");
 
             });
-            
+
         }).catch(err =>{
             req.flash('error_msg', err);
             res.redirect("/consumables/add");
@@ -504,6 +499,8 @@ function getConsumableModel(consumableModel) {
         return Grease;
     }else if(consumableModel === "oil"){
         return Oil;
+    }else if(consumableModel === "battery"){
+        return Battery;
     }
 
 };

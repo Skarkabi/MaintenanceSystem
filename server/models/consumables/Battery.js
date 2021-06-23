@@ -192,8 +192,12 @@ Battery.addBattery = (newBattery) =>{
             where: {
                 batSpec: newBattery.batSpec,
                 carBrand: newBattery.carBrand,
-                carYear: newBattery.carYear
+                carYear: newBattery.carYear,
+                supplierId: newBattery.supplierId,
+                quotationNumber: newBattery.quotationNumber
+
             }
+            
         }).then(foundBattery => {
             if(foundBattery){
                 reject("Batteries With these Details Already Registered, Please Add to Existing Stock");
@@ -270,20 +274,46 @@ Battery.getBatteryStocks = () => {
     
         });
     
-        var values = {consumable: batteriesC.rows, suppliers: batteriesS, specs: batSpecs, brands: carBrands, years:carYears}
+        var values = {consumable: batteriesC.rows, suppliers: batteriesS, 
+            specs: batSpecs, brands: carBrands, years:carYears}
         resolve(values);
         
     });
     
 }
 
-Battery.getSupplierNames = (batteries) => {
-    return new Bluebird.resolve().then(async () => {
-        for(var i = 0; i < batteries.count; i++){
-            console.log("This one");
-            batteries.rows[i].setDataValue('supplierName', await Supplier.getById(batteries.rows[i].supplierId));
-        }
+Battery.getWithSupplier = supplierId => {
+    return new Bluebird((resolve, reject) => {
+        Battery.findAndCountAll({
+            where: {
+                supplierId: supplierId
+            }
+        }).then(async foundBrakes => {
+            await Supplier.getSupplierNames(foundBrakes);
+            resolve(foundBrakes.rows);
+        }).catch(err => {
+            reject(err);
+        });
     });
+}
+
+
+Battery.groupSupplier = () => {
+    return new Bluebird((resolve, reject) => {
+        Battery.findAll({
+            attributes:
+              ['batSpec', 'carBrand', 'carYear', 'supplierId',
+              [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
+            ],
+
+            group: ["batSpec", "carBrand", "carYear", "supplierId"]
+            
+        }).then(async (values) => { 
+            var result = {count: values.length, rows: values}
+            await Supplier.getSupplierNames(result);
+           resolve(result);
+        });
+    })
 }
 
 export default Battery;

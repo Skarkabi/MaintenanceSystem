@@ -7,7 +7,11 @@
                 <th scope="col">Car Brand</th>
                 <th scope="col">Car Year</th>
                 <th scope="col">Quantity (Boxes)</th>
+                 {{#if (isdefined page "view")}}
                 <th scope="col">Supplier</th>
+                 {{else}}
+                <th scope="col">Quotation #</th>
+                {{/if}}
                 <th scope="col">Action</th>
 
             </tr>
@@ -22,37 +26,28 @@
                     <td>{{this.carBrand}}</td>
                     <td>{{this.carYear}}</td>
                     <td>{{this.quantity}}</td>
-                    <td>{{this.supplierName}}</td>
-                    <td class = "table-actions">
-                        <div class="input-group">
-                            <input type="number" id="tableBatteryQuantity-{{this.id}}" name="tableBatteryQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button type="submit" id="updateBattery-{{this.id}}" name="updateBatter-{{this.id}}" class="btn btn-success" onclick="addBatteryPost({{this.id}})" data-confirm="Are you sure to delete this Battery?" ><i class="fas fa-plus-circle"></i></button>
-                                <button type="submit" id="updateBattery-{{this.id}}" name="updateBatter-{{this.id}}" class="btn btn-danger" onclick="deleteBatteryPost({{this.id}})"><i class="fas fa-minus-circle"></i></button>
-                            </div>
-                        </div>
-                    </td>  
+                    <td><a href="/consumables/battery/{{this.supplierId}}">{{this.supplierName}}</a></td>
+                    <td><a href="/consumables/battery/{{this.supplierId}}" style="padding-right: 25px;">View <i class="fas fa-external-link-alt"></i></a></td>
 
                 </tr>
                 {{/each}}
             {{/if}}
 
             {{#if (isdefined page "add")}}
-                {{#each values.batteries.consumable}}
+                {{#each consumables}}
                 <tr>
                     <th>{{counter @index}}</th>
                     <td>{{this.batSpec}}</th>
                     <td>{{this.carBrand}}</td>
                     <td>{{this.carYear}}</td>
                     <td>{{this.quantity}}</td>
-                    <td class = "table-actions">
-                        <div class="input-group">
-                            <input type="number" id="tableBatteryQuantity-{{this.id}}" name="tableBatteryQuantity-{{this.id}}" class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button type="submit" id="updateBattery-{{this.id}}" name="updateBatter-{{this.id}}" class="btn btn-success" onclick="addBatteryPost({{this.id}})"><i class="fas fa-plus-circle"></i></button>
-                            </div>
+                     <td>{{this.quotationNumber}}</td>
+                     <td>
+                        <div class="input-group-append">
+                            <a href="download/{{this.quotationNumber}}" style="padding-right: 25px;"><i class="fas fa-download"></i></a>
+                            <a href="" onclick="openPdf({{this.quotationNumber}})"><i class="fas fa-external-link-alt"></i></a>
                         </div>
-                    </td>  
+                    </td>
                 </tr>
                 {{/each}}
             {{/if}}
@@ -62,6 +57,9 @@
 </div>
 
 <script>
+     function openPdf(fileNumber){
+        window.open('view/'+ fileNumber);
+    }
     function addBatteryPost(id){
         console.log("In the battery");
         document.getElementById("tableBatteryQuantity-" + id).name = "newQuantity";

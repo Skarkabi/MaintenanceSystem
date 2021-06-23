@@ -74,41 +74,41 @@ function _getStocks() {
           case 0:
             _context9.next = 2;
             return _Battery["default"].getBatteryStocks().then(function (values) {
+              console.log("I am in here");
               batteries = values;
             });
 
           case 2:
-            console.log("Suppliers: " + JSON.stringify(batteries));
-            _context9.next = 5;
+            _context9.next = 4;
             return _Brake["default"].getBrakeStock().then(function (values) {
               brakes = values;
             });
 
-          case 5:
-            _context9.next = 7;
+          case 4:
+            _context9.next = 6;
             return _Filter["default"].getFilterStock().then(function (values) {
               filters = values;
             });
 
-          case 7:
-            _context9.next = 9;
+          case 6:
+            _context9.next = 8;
             return _Grease["default"].getGreaseStock().then(function (values) {
               grease = values;
             });
 
-          case 9:
-            _context9.next = 11;
+          case 8:
+            _context9.next = 10;
             return _Oil["default"].getOilStock().then(function (values) {
               oil = values;
             });
 
-          case 11:
-            _context9.next = 13;
+          case 10:
+            _context9.next = 12;
             return _Supplier["default"].findAll().then(function (values) {
               suppliers = values;
             });
 
-          case 13:
+          case 12:
             values = {
               batteries: batteries,
               brakes: brakes,
@@ -119,7 +119,7 @@ function _getStocks() {
             };
             return _context9.abrupt("return", values);
 
-          case 15:
+          case 14:
           case "end":
             return _context9.stop();
         }
@@ -139,7 +139,6 @@ router.get('/add', /*#__PURE__*/function () {
 
             if (req.user) {
               getStocks().then(function (values) {
-                console.log(JSON.stringify(values));
                 res.render('addConsumable', {
                   title: 'Add New Consumable',
                   jumbotronDescription: "Add a new user Consumable.",
@@ -205,7 +204,6 @@ router.post('/add/battery', _Quotation["default"].uploadFile().single('upload'),
   });
 });
 router.post('/add/brake', _Quotation["default"].uploadFile().single('upload'), function (req, res, next) {
-  console.log(req.file, req.body);
   var newBrake = {
     category: req.body.brakeCategory,
     carBrand: req.body.brakeCBrand,
@@ -223,7 +221,6 @@ router.post('/add/brake', _Quotation["default"].uploadFile().single('upload'), f
     quotationNumber: req.body.quotation,
     quotationPath: req.file.path
   };
-  console.log(req.body);
 
   _Brake["default"].addBrake(newBrake).then(function (output) {
     _Quotation["default"].addQuotation(newQuotation);
@@ -236,7 +233,6 @@ router.post('/add/brake', _Quotation["default"].uploadFile().single('upload'), f
   });
 });
 router.post('/update-brake/:action/:id', function (req, res, next) {
-  console.log("My action is " + req.params.action);
   var newBrake = {
     id: req.params.id,
     quantity: req.body.newQuantity
@@ -257,7 +253,6 @@ router.get('/display-vehicle/:id', /*#__PURE__*/function () {
         switch (_context2.prev = _context2.next) {
           case 0:
             if (req.user) {
-              console.log(req.params);
               Vehicle.getVehicleByPlate(req.params.id).then(function (foundVehicle) {
                 var iconType;
 
@@ -363,7 +358,6 @@ router.post('/add/grease', _Quotation["default"].uploadFile().single('upload'), 
   });
 });
 router.post('/update-grease/:action/:id', function (req, res, next) {
-  console.log("My Id is " + req.params.id);
   var newGrease = {
     id: req.params.id,
     volume: req.body.newQuantity
@@ -442,7 +436,6 @@ router.get('/', /*#__PURE__*/function () {
           case 0:
             if (req.user) {
               _Consumables["default"].findAndCountAll().then(function (consumables) {
-                console.log(consumables.rows);
                 var entriesNum = [];
 
                 for (var i = 0; i < consumables.count; i++) {
@@ -474,39 +467,28 @@ router.get('/', /*#__PURE__*/function () {
 }());
 router.get('/:category', /*#__PURE__*/function () {
   var _ref4 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(req, res, next) {
-    var title, model, valuesChecl;
+    var title, model;
     return _regenerator["default"].wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            if (!req.user) {
-              _context4.next = 10;
-              break;
+            if (req.user) {
+              title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1);
+              model = getConsumableModel(req.params.category);
+              console.log("LOOK HERE: ");
+              model.groupSupplier().then(function (consumables) {
+                res.render("displaySpecificConsumables", {
+                  title: title,
+                  typeOf: req.params.category,
+                  jumbotronDescription: "View all " + req.params.category + " in the system.",
+                  consumables: consumables.rows,
+                  page: "view",
+                  msgType: req.flash()
+                });
+              });
             }
 
-            title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1);
-            model = getConsumableModel(req.params.category);
-            console.log("LOOK HERE: ");
-            _context4.next = 6;
-            return model.groupSupplier();
-
-          case 6:
-            valuesChecl = _context4.sent;
-            console.log(valuesChecl.rows[0]);
-            console.log(valuesChecl.length);
-
-            _Consumables["default"].getSpecific(req.params.category).then(function (consumables) {
-              res.render("displaySpecificConsumables", {
-                title: title,
-                typeOf: req.params.category,
-                jumbotronDescription: "View all " + req.params.category + " in the system.",
-                consumables: valuesChecl.rows,
-                page: "view",
-                msgType: req.flash()
-              });
-            });
-
-          case 10:
+          case 1:
           case "end":
             return _context4.stop();
         }
@@ -528,9 +510,7 @@ router.get('/:category/:supplier', /*#__PURE__*/function () {
             if (req.user) {
               title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1);
               model = getConsumableModel(req.params.category);
-              console.log(model);
               model.getWithSupplier(req.params.supplier).then(function (foundModel) {
-                console.log(foundModel);
                 res.render("displaySpecificConsumables", {
                   title: title,
                   typeOf: req.params.category,
@@ -563,10 +543,7 @@ router.get('/:category/download/:quotationNumber', /*#__PURE__*/function () {
         switch (_context6.prev = _context6.next) {
           case 0:
             path = "".concat(__dirname);
-            console.log("PATH");
-            console.log(path);
             tempFile = path.replace('/dist/routes', "/server/uploads/".concat(req.params.quotationNumber, ".pdf"));
-            console.log(tempFile);
             res.download(tempFile, function (err) {
               if (err) {
                 req.flash("error_msg", "File Does Not Exist!");
@@ -574,7 +551,7 @@ router.get('/:category/download/:quotationNumber', /*#__PURE__*/function () {
               }
             });
 
-          case 6:
+          case 3:
           case "end":
             return _context6.stop();
         }
@@ -593,9 +570,7 @@ router.get('/:category/view/:quotationNumber', /*#__PURE__*/function () {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
-            console.log("DIR");
             path = "".concat(__dirname);
-            console.log(path.replace('/dist/routes', "/server/uploads/".concat(req.params.quotationNumber, ".pdf")));
             tempFile = path.replace('/dist/routes', "/server/uploads/".concat(req.params.quotationNumber, ".pdf"));
 
             _fs["default"].readFile(tempFile, function (err, data) {
@@ -603,7 +578,7 @@ router.get('/:category/view/:quotationNumber', /*#__PURE__*/function () {
               res.send(data);
             });
 
-          case 5:
+          case 3:
           case "end":
             return _context7.stop();
         }
@@ -621,10 +596,9 @@ router.get('/close', /*#__PURE__*/function () {
       while (1) {
         switch (_context8.prev = _context8.next) {
           case 0:
-            console.log("Got this far");
             res.render("closeWindow");
 
-          case 2:
+          case 1:
           case "end":
             return _context8.stop();
         }

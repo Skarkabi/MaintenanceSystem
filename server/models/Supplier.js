@@ -144,7 +144,6 @@ Supplier.getById = id => {
             },
             attributes:['id', 'name']
         }).then(foundSupplier => {
-            console.log(foundSupplier);
             
             //var supplierMap = foundSupplier.map(values => {return new Map(values.id,values.name)});
             var supplierMap = new Map();
@@ -211,12 +210,8 @@ Supplier.getStock = () => {
 
 Supplier.getSupplierNames = (brakes) => {
     return new Bluebird((resolve, reject) => {
-            console.log("This one");
-            console.log(brakes.rows);
             let values = brakes.rows.map(a => a.supplierId);
-            console.log(values);
             Supplier.getById(values).then(supplierNames => {
-                console.log(supplierNames);
                 brakes.rows.map(value => {
                     return value.setDataValue('supplierName', supplierNames.get(value.supplierId));
 

@@ -217,77 +217,63 @@ Battery.addBattery = function (newBattery) {
   });
 };
 
+Battery.getStock = function () {
+  return new _bluebird["default"](function (resolve, reject) {
+    Battery.findAndCountAll().then(function (batteries) {
+      _Supplier["default"].getSupplierNames(batteries).then(function () {
+        resolve(batteries);
+      })["catch"](function (err) {
+        reject(err);
+      });
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
+};
+
 Battery.getBatteryStocks = function () {
   return new _bluebird["default"]( /*#__PURE__*/function () {
     var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
-      var batteriesC, batteriesS, batSpecs, carBrands, carYears, batteryQuantity, values;
+      var batteriesC, batteriesS, batSpecs, carBrands, carYears, batteryQuantity, test, sTest;
       return _regenerator["default"].wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _context.next = 2;
-              return _Consumables["default"].getSpecific("battery").then(function (consumables) {
-                console.log(consumables);
-                batteriesC = consumables;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 2:
-              _context.next = 4;
-              return _Supplier["default"].findAll().then(function (suppliers) {
+              _Supplier["default"].findAll().then(function (suppliers) {
                 batteriesS = suppliers;
-                console.log(batteriesS);
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
+                Battery.getStock().then(function (consumables) {
+                  batteriesC = consumables;
+                  batSpecs = batteriesC.rows.map(function (val) {
+                    return val.batSpec;
+                  }).filter(function (value, index, self) {
+                    return self.indexOf(value) === index;
+                  });
+                  carBrands = batteriesC.rows.map(function (val) {
+                    return val.carBrand;
+                  }).filter(function (value, index, self) {
+                    return self.indexOf(value) === index;
+                  });
+                  carYears = batteriesC.rows.map(function (val) {
+                    return val.carYear;
+                  }).filter(function (value, index, self) {
+                    return self.indexOf(value) === index;
+                  });
+                  var values = {
+                    consumable: batteriesC.rows,
+                    suppliers: batteriesS,
+                    specs: batSpecs,
+                    brands: carBrands,
+                    years: carYears
+                  };
+                  console.log("See if it works 5s");
+                  console.log(values.years);
+                  resolve(values);
+                })["catch"](function () {
+                  reject(err);
+                });
               });
 
-            case 4:
-              _context.next = 6;
-              return Battery.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `batSpec`'), 'batSpec']],
-                raw: true,
-                nest: true
-              }).then(function (spec) {
-                batSpecs = spec;
-                console.log(batSpecs);
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 6:
-              _context.next = 8;
-              return Battery.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
-              }).then(function (spec) {
-                carBrands = spec;
-                console.log(carBrands);
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 8:
-              _context.next = 10;
-              return Battery.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
-              }).then(function (spec) {
-                carYears = spec;
-                console.log(carYears);
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 10:
-              values = {
-                consumable: batteriesC.rows,
-                suppliers: batteriesS,
-                specs: batSpecs,
-                brands: carBrands,
-                years: carYears
-              };
-              resolve(values);
-
-            case 12:
+            case 1:
             case "end":
               return _context.stop();
           }

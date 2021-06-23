@@ -297,7 +297,6 @@ Filter.getFilterStock = () => {
         var filterC, filterS, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand;
 
         await Consumable.getSpecific("filter").then(consumables => {
-            console.log(consumables);
             filterC = consumables
         
         }).catch(() => {

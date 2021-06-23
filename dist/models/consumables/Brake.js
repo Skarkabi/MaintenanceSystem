@@ -249,118 +249,79 @@ Brake.addBrake = function (newBrake) {
   });
 };
 
+Brake.getStock = function () {
+  return new _bluebird["default"](function (resolve, reject) {
+    Brake.findAndCountAll().then(function (breakes) {
+      _Supplier["default"].getSupplierNames(breakes).then(function () {
+        resolve(breakes);
+      })["catch"](function (err) {
+        reject(err);
+      });
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
+};
+
+function getDistinct(values) {
+  return values.filter(function (value, index, self) {
+    return self.indexOf(value) === index;
+  });
+}
+
 Brake.getBrakeStock = function () {
   return new _bluebird["default"]( /*#__PURE__*/function () {
     var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
-      var brakeC, brakeS, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity, values;
+      var brakeC, brakeS, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity;
       return _regenerator["default"].wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _context.next = 2;
-              return _Consumables["default"].getSpecific("brake").then(function (consumables) {
-                console.log(consumables);
-                brakeC = consumables;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 2:
-              _context.next = 4;
-              return _Supplier["default"].findAll().then(function (suppliers) {
+              _Supplier["default"].findAll().then(function (suppliers) {
                 brakeS = suppliers;
+                Brake.getStock().then(function (consumables) {
+                  brakeC = consumables;
+                  brakeCategory = getDistinct(brakeC.rows.map(function (val) {
+                    return val.category;
+                  }));
+                  brakeCBrand = getDistinct(brakeC.rows.map(function (val) {
+                    return val.carBrand;
+                  }));
+                  brakeCYear = getDistinct(brakeC.rows.map(function (val) {
+                    return val.carYear;
+                  }));
+                  brakeCChassis = getDistinct(brakeC.rows.map(function (val) {
+                    return val.chassis;
+                  }));
+                  brakePBrand = getDistinct(brakeC.rows.map(function (val) {
+                    return val.preferredBrand;
+                  }));
+                  brakeQuantity = getDistinct(brakeC.rows.map(function (val) {
+                    return val.quantity;
+                  }));
+                  brakeBrand = getDistinct(brakeC.rows.map(function (val) {
+                    return val.bBrand;
+                  }));
+                  var values = {
+                    consumable: brakeC.rows,
+                    suppliers: brakeS,
+                    brakeCategory: brakeCategory,
+                    brakeCBrand: brakeCBrand,
+                    brakeCYear: brakeCYear,
+                    brakeCChassis: brakeCChassis,
+                    brakeBrand: brakeBrand,
+                    brakePBrand: brakePBrand,
+                    brakeQuantity: brakeQuantity
+                  };
+                  resolve(values);
+                })["catch"](function () {
+                  reject("Error Connecting to the Server");
+                });
               })["catch"](function () {
                 reject("Error Connecting to the Server");
               });
 
-            case 4:
-              _context.next = 6;
-              return Brake.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `category`'), 'category']],
-                raw: true,
-                nest: true
-              }).then(function (category) {
-                brakeCategory = category;
-                console.log("B = " + JSON.stringify(brakeCategory));
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 6:
-              _context.next = 8;
-              return Brake.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
-              }).then(function (spec) {
-                brakeCBrand = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 8:
-              _context.next = 10;
-              return Brake.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
-              }).then(function (spec) {
-                brakeCYear = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 10:
-              _context.next = 12;
-              return Brake.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `chassis`'), 'chassis']]
-              }).then(function (spec) {
-                brakeCChassis = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 12:
-              _context.next = 14;
-              return Brake.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `bBrand`'), 'bBrand']]
-              }).then(function (spec) {
-                brakeBrand = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 14:
-              _context.next = 16;
-              return Brake.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `preferredBrand`'), 'preferredBrand']]
-              }).then(function (spec) {
-                brakePBrand = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 16:
-              _context.next = 18;
-              return Brake.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `quantity`'), 'quantity']]
-              }).then(function (spec) {
-                brakeQuantity = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 18:
-              values = {
-                consumable: brakeC.rows,
-                suppliers: brakeS,
-                brakeCategory: brakeCategory,
-                brakeCBrand: brakeCBrand,
-                brakeCYear: brakeCYear,
-                brakeCChassis: brakeCChassis,
-                brakeBrand: brakeBrand,
-                brakePBrand: brakePBrand,
-                brakeQuantity: brakeQuantity
-              };
-              resolve(values);
-
-            case 20:
+            case 1:
             case "end":
               return _context.stop();
           }

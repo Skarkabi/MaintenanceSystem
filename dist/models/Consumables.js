@@ -33,6 +33,9 @@ var _Oil = _interopRequireDefault(require("./consumables/Oil"));
 
 var _Supplier = _interopRequireDefault(require("./Supplier"));
 
+/**
+ * Setting the Datatypes for the MySQL tables
+ */
 var mappings = {
   id: {
     type: _sequelize["default"].INTEGER,
@@ -56,6 +59,9 @@ var mappings = {
     allowNull: true
   }
 };
+/**
+ * Defining the Consumable MySQL Table
+ */
 
 var Consumable = _mySQLDB["default"].define('consumable_stocks', mappings, {
   indexes: [{

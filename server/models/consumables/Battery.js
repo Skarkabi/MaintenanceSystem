@@ -228,55 +228,49 @@ Battery.addBattery = (newBattery) =>{
     });
 
 }
+Battery.getStock = () => {
+    return new Bluebird ((resolve, reject) => {
+        Battery.findAndCountAll().then(batteries => {
+            Supplier.getSupplierNames(batteries).then(() => {
+                resolve(batteries);
+    
+            }).catch(err => {
+                reject(err);
+          
+            });
+            
+          }).catch(err => {
+              reject(err);
+        
+          });
+    })
+    
+}
 
 Battery.getBatteryStocks = () => {
     return new Bluebird(async (resolve, reject) => {
         var batteriesC, batteriesS, batSpecs, carBrands, carYears, batteryQuantity;
-        await Consumable.getSpecific("battery").then(consumables => {
-            console.log(consumables);
-            batteriesC = consumables
-
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-        });
-    
-        await Supplier.findAll().then(suppliers => {
+        var test, sTest
+        Supplier.findAll().then(suppliers => {
             batteriesS = suppliers
-            console.log(batteriesS);
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-        });
-
-        await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `batSpec`'), 'batSpec']],raw:true, nest:true}).then(spec => {
-            batSpecs = spec
-            console.log(batSpecs);
+            Battery.getStock().then(consumables => {
+                batteriesC = consumables
+                batSpecs =  batteriesC.rows.map(val => val.batSpec).filter((value, index, self) => self.indexOf(value) === index)
+                carBrands =  batteriesC.rows.map(val => val.carBrand).filter((value, index, self) => self.indexOf(value) === index)
+                carYears =  batteriesC.rows.map(val => val.carYear).filter((value, index, self) => self.indexOf(value) === index)
+                
+                var values = {consumable: batteriesC.rows, suppliers: batteriesS, 
+                    specs: batSpecs, brands: carBrands, years:carYears}
+                    console.log("See if it works 5s");
+                    console.log(values.years);
+    
+                resolve(values);
+    
+            }).catch(() => {
+               reject(err);
+            });
+        })
         
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
-    
-        await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']]}).then(spec => {
-            carBrands = spec
-            console.log(carBrands);
-        
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-        
-        });
-    
-        await Battery.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']]}).then(spec => {
-            carYears = spec
-            console.log(carYears);
-        
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
-    
-        var values = {consumable: batteriesC.rows, suppliers: batteriesS, 
-            specs: batSpecs, brands: carBrands, years:carYears}
-        resolve(values);
         
     });
     

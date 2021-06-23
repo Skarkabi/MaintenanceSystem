@@ -138,8 +138,7 @@ Supplier.getById = function (id) {
       },
       attributes: ['id', 'name']
     }).then(function (foundSupplier) {
-      console.log(foundSupplier); //var supplierMap = foundSupplier.map(values => {return new Map(values.id,values.name)});
-
+      //var supplierMap = foundSupplier.map(values => {return new Map(values.id,values.name)});
       var supplierMap = new Map();
       foundSupplier.map(function (values) {
         return supplierMap.set(values.id, values.name);
@@ -234,14 +233,10 @@ Supplier.getStock = function () {
 
 Supplier.getSupplierNames = function (brakes) {
   return new _bluebird["default"](function (resolve, reject) {
-    console.log("This one");
-    console.log(brakes.rows);
     var values = brakes.rows.map(function (a) {
       return a.supplierId;
     });
-    console.log(values);
     Supplier.getById(values).then(function (supplierNames) {
-      console.log(supplierNames);
       brakes.rows.map(function (value) {
         return value.setDataValue('supplierName', supplierNames.get(value.supplierId));
       });

@@ -267,7 +267,6 @@ Filter.getFilterStock = function () {
             case 0:
               _context.next = 2;
               return _Consumables["default"].getSpecific("filter").then(function (consumables) {
-                console.log(consumables);
                 filterC = consumables;
               })["catch"](function () {
                 reject("Error Connecting to the Server");

@@ -32,9 +32,9 @@ function onlyUnique(value, index, self) {
 async function getStocks(){
     var batteries, brakes, filters, grease, oil, suppliers;
     await Battery.getBatteryStocks().then(values =>{
+        console.log("I am in here")
         batteries = values;
     });
-    console.log("Suppliers: " + JSON.stringify(batteries));
 
     await Brake.getBrakeStock().then(values =>{
         brakes = values;
@@ -68,7 +68,6 @@ router.get('/add', async (req, res, next) =>
     console.log("I am in here Add");
     if(req.user){
         getStocks().then(values =>{
-            console.log(JSON.stringify(values));
             res.render('addConsumable', {
                 title: 'Add New Consumable',
                 jumbotronDescription: `Add a new user Consumable.`,
@@ -134,7 +133,6 @@ router.post('/add/battery', Quotation.uploadFile().single('upload')
 
 router.post('/add/brake', Quotation.uploadFile().single('upload'),
  (req,res,next) => {
-     console.log(req.file, req.body);
         const newBrake = {
             category: req.body.brakeCategory,
             carBrand: req.body.brakeCBrand,
@@ -154,7 +152,6 @@ router.post('/add/brake', Quotation.uploadFile().single('upload'),
             quotationPath: req.file.path
         }
         
-        console.log(req.body);
         Brake.addBrake(newBrake).then(output =>{
            Quotation.addQuotation(newQuotation);
             req.flash('success_msg', output);
@@ -170,7 +167,6 @@ router.post('/add/brake', Quotation.uploadFile().single('upload'),
  });
 
 router.post('/update-brake/:action/:id', (req,res,next) => {
-    console.log("My action is " + req.params.action);
         const newBrake = {
         id: req.params.id,
         quantity: req.body.newQuantity
@@ -188,7 +184,6 @@ router.post('/update-brake/:action/:id', (req,res,next) => {
 router.get('/display-vehicle/:id', async (req, res, next) =>
 {
     if(req.user){
-        console.log(req.params);
         Vehicle.getVehicleByPlate(req.params.id).then(foundVehicle => {
             var iconType;
             if(foundVehicle.category.includes("PICKUP") || foundVehicle.category === "4X4"){
@@ -299,7 +294,6 @@ router.post('/add/grease',Quotation.uploadFile().single('upload')
 });
 
 router.post('/update-grease/:action/:id', (req,res,next) =>{
-    console.log("My Id is " + req.params.id);
     const newGrease = {
         id: req.params.id,
         volume: req.body.newQuantity
@@ -393,7 +387,6 @@ router.get('/', async (req, res, next) =>
     if (req.user)
     {
         Consumable.findAndCountAll().then(consumables => {
-            console.log(consumables.rows);
             var entriesNum = []; 
             for(var i = 0; i < consumables.count; i++){
                 entriesNum[0] = i + 1;
@@ -418,15 +411,12 @@ router.get('/:category', async (req, res, next) =>{
         var title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1);
         const model = getConsumableModel(req.params.category);
         console.log("LOOK HERE: ");
-        const valuesChecl = await model.groupSupplier();
-        console.log(valuesChecl.rows[0]);
-        console.log(valuesChecl.length);
-        Consumable.getSpecific(req.params.category).then(consumables => {
+        model.groupSupplier().then(consumables => {
             res.render("displaySpecificConsumables", {
                 title: title,
                 typeOf: req.params.category,
                 jumbotronDescription: "View all " + req.params.category + " in the system.",
-                consumables: valuesChecl.rows,
+                consumables: consumables.rows,
                 page: "view",
                 msgType: req.flash()
             });
@@ -438,9 +428,7 @@ router.get('/:category/:supplier', async (req, res, next) =>{
     if(req.user){
         var title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1);
         const model = getConsumableModel(req.params.category);
-        console.log(model);
         model.getWithSupplier(req.params.supplier).then(foundModel => {
-            console.log(foundModel);
             res.render("displaySpecificConsumables", {
                 title: title,
                 typeOf: req.params.category,
@@ -457,10 +445,7 @@ router.get('/:category/:supplier', async (req, res, next) =>{
 
 router.get('/:category/download/:quotationNumber',async (req,res,next) => {
     const path = `${__dirname}`;
-    console.log("PATH");
-    console.log(path);
     var tempFile = path.replace('/dist/routes', `/server/uploads/${req.params.quotationNumber}.pdf`);
-    console.log(tempFile);
     res.download(tempFile, function(err){
         if(err) {
             req.flash("error_msg", "File Does Not Exist!");
@@ -471,9 +456,7 @@ router.get('/:category/download/:quotationNumber',async (req,res,next) => {
 })
 
 router.get('/:category/view/:quotationNumber',async (req,res,next) => {
-    console.log("DIR");
     const path = `${__dirname}`;
-    console.log(path.replace('/dist/routes', `/server/uploads/${req.params.quotationNumber}.pdf`));
     var tempFile=path.replace('/dist/routes', `/server/uploads/${req.params.quotationNumber}.pdf`);
     fs.readFile(tempFile, function (err,data){
         res.contentType("application/pdf");
@@ -483,7 +466,6 @@ router.get('/:category/view/:quotationNumber',async (req,res,next) => {
 })
 
 router.get('/close', async(req,res,next)=>{
-    console.log("Got this far");
     res.render("closeWindow");
 
 })

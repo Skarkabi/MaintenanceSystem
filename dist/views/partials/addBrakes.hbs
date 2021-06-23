@@ -5,7 +5,7 @@
          <input list="brakeCategory"  name="brakeCategory" class="form-control" required="required">
          <datalist id="brakeCategory">
             {{#each values.brakes.brakeCategory}}
-                <option value="{{this.category}}">{{this.brakeCategory}}</option>
+                <option value="{{this}}">{{this.brakeCategory}}</option>
             {{/each}}
         </datalist>
     </div>
@@ -24,7 +24,7 @@
          <input list="brakeBrand"  name="brakeBrand" class="form-control" required="required">
          <datalist id="brakeBrand">
             {{#each values.brakes.brakeBrand}}
-                <option value="{{this.bBrand}}">{{this.bBrand}}</option>
+                <option value="{{this}}">{{this.bBrand}}</option>
             {{/each}}
         </datalist>
     </div>
@@ -33,7 +33,7 @@
          <input list="brakePBrand"  name="brakePBrand" class="form-control" required="required">
          <datalist id="brakePBrand">
             {{#each values.brakes.brakePBrand}}
-                <option value="{{this.preferredBrand}}">{{this.preferredBrand}}</option>
+                <option value="{{this}}">{{this.preferredBrand}}</option>
             {{/each}}
         </datalist>
     </div>
@@ -45,7 +45,7 @@
          <datalist id="brakeCBrand">
               <option value="\0">{{this.carBrand}}</option>
             {{#each values.brakes.brakeCBrand}}
-                <option value="{{this.carBrand}}">{{this.carBrand}}</option>
+                <option value="{{this}}">{{this.carBrand}}</option>
             {{/each}}
         </datalist>
     </div>
@@ -54,7 +54,7 @@
          <input list="brakeCYear"  name="brakeCYear" class="form-control" required="required">
          <datalist id="brakeCYear">
             {{#each values.brakes.brakeCYear}}
-                <option value="{{this.carYear}}">{{this.carYear}}</option>
+                <option value="{{this}}">{{this.carYear}}</option>
             {{/each}}
         </datalist>
         </datalist>
@@ -64,7 +64,7 @@
          <input list="brakeChassis"  name="brakeChassis" class="form-control" required="required">
          <datalist id="brakeChassis">
             {{#each values.brakes.brakeCChassis}}
-                <option value="{{this.chassis}}">{{this.chassis}}</option>
+                <option value="{{this}}">{{this.chassis}}</option>
             {{/each}}
         </datalist>
     </div>

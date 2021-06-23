@@ -260,88 +260,57 @@ Brake.addBrake = (newBrake) => {
     });
 
 }
+Brake.getStock = () => {
+    return new Bluebird ((resolve, reject) => {
+        Brake.findAndCountAll().then(breakes => {
+            Supplier.getSupplierNames(breakes).then(() => {
+                resolve(breakes);
+    
+            }).catch(err => {
+                reject(err);
+          
+            });
+            
+          }).catch(err => {
+              reject(err);
+        
+          });
+    })
+}
+
+function getDistinct(values){
+    return values.filter((value, index, self) => self.indexOf(value) === index);
+}
 
 Brake.getBrakeStock = () =>{
     return new Bluebird(async (resolve,reject) => {
         var brakeC, brakeS, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity;
-        await Consumable.getSpecific("brake").then(consumables => {
-            console.log(consumables);
-            brakeC = consumables
-
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-        
-        });
-
-        await Supplier.findAll().then(suppliers => {
+        Supplier.findAll().then(suppliers => {
             brakeS = suppliers
-           
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-        });
-    
-        await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `category`'), 'category']],raw:true, nest:true}).then(category => {
-            brakeCategory = category 
-            console.log("B = " + JSON.stringify(brakeCategory));
-    
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-        
-        });
+            Brake.getStock().then(consumables => {
+                brakeC = consumables
+                brakeCategory = getDistinct(brakeC.rows.map(val => val.category))
+                brakeCBrand = getDistinct(brakeC.rows.map(val => val.carBrand))
+                brakeCYear = getDistinct(brakeC.rows.map(val => val.carYear))
+                brakeCChassis = getDistinct(brakeC.rows.map(val => val.chassis))
+                brakePBrand = getDistinct(brakeC.rows.map(val => val.preferredBrand))
+                brakeQuantity = getDistinct(brakeC.rows.map(val => val.quantity))
+                brakeBrand = getDistinct(brakeC.rows.map(val => val.bBrand))
 
-        await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']]}).then(spec => {
-            brakeCBrand = spec
-        
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
+                var values = {
+                    consumable: brakeC.rows, suppliers: brakeS, brakeCategory: brakeCategory, brakeCBrand: brakeCBrand, brakeCYear: brakeCYear,
+                    brakeCChassis: brakeCChassis, brakeBrand: brakeBrand, brakePBrand: brakePBrand, brakeQuantity: brakeQuantity
+                };
+                resolve(values);
 
-        await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']]}).then(spec => {
-            brakeCYear = spec
-    
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-        
-        });
-
-        await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `chassis`'), 'chassis']]}).then(spec => {
-            brakeCChassis = spec
-        
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
-
-        await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `bBrand`'), 'bBrand']]}).then(spec => {
-            brakeBrand = spec
+            }).catch(() => {
+                reject("Error Connecting to the Server");
+            
+            });
 
         }).catch(() => {
             reject("Error Connecting to the Server");
-    
         });
-
-        await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `preferredBrand`'), 'preferredBrand']]}).then(spec => {
-            brakePBrand = spec
-        
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
-
-        await Brake.findAll({attributes: [[Sequelize.literal('DISTINCT `quantity`'), 'quantity']]}).then(spec => {
-            brakeQuantity = spec
-
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-
-        });
-
-        var values = {
-            consumable: brakeC.rows, suppliers: brakeS, brakeCategory: brakeCategory, brakeCBrand: brakeCBrand, brakeCYear: brakeCYear,
-            brakeCChassis: brakeCChassis, brakeBrand: brakeBrand, brakePBrand: brakePBrand, brakeQuantity: brakeQuantity
-        };
-        resolve(values);
     
     });
 

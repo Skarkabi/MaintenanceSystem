@@ -4,7 +4,7 @@
          <input list="batSpec"  name="batSpec" class="form-control" required>
          <datalist id="batSpec">
             {{#each values.batteries.specs}}
-                <option value="{{this.batSpec}}"></option>
+                <option value="{{this}}"></option>
             {{/each}}
         </datalist>
     </div>
@@ -23,7 +23,7 @@
          <input list="carBrand" name="carBrand" class="form-control" required>
          <datalist id="carBrand">
              {{#each values.batteries.brands}}
-                <option value="{{this.carBrand}}">{{this.spec}}</option>
+                <option value="{{this}}">{{this.spec}}</option>
             {{/each}}
         </datalist>
     </div>
@@ -31,7 +31,9 @@
         <label for="carBrand">Car Year</label>
          <input list="carYear" name="carYear" class="form-control" required>
          <datalist id="carYear">
-            <option value={{this.carYear}}>{{this.spec}}</option>
+             {{#each values.batteries.years}}
+            <option value={{this}}>{{this.spec}}</option>
+            {{/each}}
         </datalist>
     </div>
 </div>

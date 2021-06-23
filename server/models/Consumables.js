@@ -10,6 +10,9 @@ import Grease from './consumables/Grease';
 import Oil from './consumables/Oil';
 import Supplier from './Supplier';
 
+/**
+ * Setting the Datatypes for the MySQL tables
+ */
 const mappings = {
     id: {
         type: Sequelize.INTEGER,
@@ -34,6 +37,9 @@ const mappings = {
     },
 };
 
+/**
+ * Defining the Consumable MySQL Table
+ */
 const Consumable = sequelize.define('consumable_stocks', mappings, {
   indexes: [
     {
@@ -42,9 +48,9 @@ const Consumable = sequelize.define('consumable_stocks', mappings, {
       fields: ['id'],
     },
     {
-        name: 'consumable_category_index',
-        method: 'BTREE',
-        fields: ['category']
+      name: 'consumable_category_index',
+      method: 'BTREE',
+      fields: ['category']
     },
     {
       name: 'consumable_quantity_index',
@@ -81,7 +87,6 @@ Consumable.updateConsumable = (createConsumable, action) => {
             var quant = isCategory.quantity - newConsumable.quantity;
           }
           
-    
           Consumable.update({quantity: quant}, {
             where: {
               category: newConsumable.category
@@ -105,14 +110,15 @@ Consumable.updateConsumable = (createConsumable, action) => {
           });
 
         }
+
       }).catch(err =>{
           reject(err);
 
       });  
 
-    });
+  });
 
-  }
+}
 
 Consumable.getConsumableByCategory = category => Consumable.findOne({
   where:{category}

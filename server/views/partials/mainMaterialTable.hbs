@@ -1,0 +1,30 @@
+ <div class="col-md-12">
+    <div class="table-buttons" id="table-buttons">
+        <a href="/maintanence/add" role="button" class="btn btn-outline-dark" id="create-new"><i class="fas fa-plus"></i>Add Material</a>
+    </div>
+    </div>
+
+    <div class="col-md-12">
+    <table id="material-filterable-table" class="table table-bordered table-striped">
+        <thead>
+             <th scope="col">S.N.</th>
+            <th scope="col">MR#</th>
+            <th scope="col">Material</th>
+            <th scope="col">Supplier</th>
+            <th scope="col">Quantatiy</th>
+            <th scope="col">Cost</th>
+        </thead>
+        <tbody>
+            <tr>
+                {{#each existingMain.consumables}}
+                    <td>1</td>
+                    <td>{{this.mr}}</td>
+                    <td>{{this.material}}</td>
+                    <td>{{this.supplier}}</td>
+                    <td>{{this.quantity}}</td>
+                    <td>{{this.cost}}</td>
+                {{/each}}
+            </tr>
+        </tbody>
+    </table>
+</div>

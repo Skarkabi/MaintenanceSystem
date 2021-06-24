@@ -57,6 +57,8 @@ var _consumables = _interopRequireDefault(require("./routes/consumables"));
 
 var _supplier = _interopRequireDefault(require("./routes/supplier"));
 
+var _main = _interopRequireDefault(require("./routes/main"));
+
 require('./models/Session');
 
 var multer = require("multer");
@@ -161,6 +163,7 @@ app.use('/logout', _signOut["default"]);
 app.use('/vehicles', _vehicles["default"]);
 app.use('/consumables', _consumables["default"]);
 app.use('/suppliers', _supplier["default"]);
+app.use('/maintanence', _main["default"]);
 app.use(function (req, res, next) {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');

@@ -28,6 +28,7 @@ import vehicleRouter from './routes/vehicles';
 import consumableRouter from './routes/consumables';
 import supplierRouter from './routes/supplier';
 import Supplier from './models/Supplier';
+import mainRouter from './routes/main';
 
 handlebars.registerHelper("counter", function (index){
     return index + 1;
@@ -122,6 +123,7 @@ app.use('/logout', signOutRouter);
 app.use('/vehicles', vehicleRouter);
 app.use('/consumables', consumableRouter);
 app.use('/suppliers', supplierRouter);
+app.use('/maintanence', mainRouter);
 
 app.use((req, res, next) =>
 {

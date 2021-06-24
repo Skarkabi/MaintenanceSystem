@@ -118,76 +118,63 @@ var Oil = _mySQLDB["default"].define('oil_stocks', mappings, {
   }]
 });
 
+Oil.getStock = function () {
+  return new _bluebird["default"](function (resolve, reject) {
+    Oil.findAndCountAll().then(function (oil) {
+      _Supplier["default"].getSupplierNames(oil).then(function () {
+        resolve(oil);
+      })["catch"](function (err) {
+        reject(err);
+      });
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
+};
+
+function getDistinct(values) {
+  return values.filter(function (value, index, self) {
+    return self.indexOf(value) === index;
+  });
+}
+
 Oil.getOilStock = function () {
   return new _bluebird["default"]( /*#__PURE__*/function () {
     var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
-      var oilC, oilS, oilSpecs, typeOfOils, preferredBrands, values;
+      var oilC, oilS, oilSpecs, typeOfOils, preferredBrands;
       return _regenerator["default"].wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _context.next = 2;
-              return _Consumables["default"].getSpecific("oil").then(function (consumables) {
-                oilC = consumables;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 2:
-              _context.next = 4;
-              return _Supplier["default"].findAll().then(function (suppliers) {
+              _Supplier["default"].findAll().then(function (suppliers) {
                 oilS = suppliers;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
+                Oil.getStock().then(function (consumables) {
+                  oilC = consumables;
+                  oilSpecs = getDistinct(oilC.rows.map(function (val) {
+                    return val.oilSpec;
+                  }));
+                  typeOfOils = getDistinct(oilC.rows.map(function (val) {
+                    return val.typeOfOil;
+                  }));
+                  preferredBrands = getDistinct(oilC.rows.map(function (val) {
+                    return val.preferredBrand;
+                  }));
+                  var values = {
+                    consumables: oilC.rows,
+                    suppliers: oilS,
+                    specs: oilSpecs,
+                    typeOfOils: typeOfOils,
+                    preferredBrands: preferredBrands
+                  };
+                  resolve(values);
+                })["catch"](function (err) {
+                  reject("Error Connecting to the Server (" + err + ")");
+                });
+              })["catch"](function (err) {
+                reject("Error Connecting to the Server (" + err + ")");
               });
 
-            case 4:
-              _context.next = 6;
-              return Oil.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `oilSpec`'), 'oilSpec']],
-                raw: true,
-                nest: true
-              }).then(function (spec) {
-                oilSpecs = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 6:
-              _context.next = 8;
-              return Oil.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `typeOfOil`'), 'typeOfOil']],
-                raw: true,
-                nest: true
-              }).then(function (spec) {
-                typeOfOils = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 8:
-              _context.next = 10;
-              return Oil.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `preferredBrand`'), 'preferredBrand']],
-                raw: true,
-                nest: true
-              }).then(function (spec) {
-                preferredBrands = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 10:
-              values = {
-                consumables: oilC.rows,
-                suppliers: oilS,
-                specs: oilSpecs,
-                typeOfOils: typeOfOils,
-                preferredBrands: preferredBrands
-              };
-              resolve(values);
-
-            case 12:
+            case 1:
             case "end":
               return _context.stop();
           }

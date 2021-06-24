@@ -12,7 +12,7 @@
          <input list="oilSpec"  name="oilSpec" class="form-control" required>
          <datalist id="oilSpec">
             {{#each values.oil.specs}}
-                <option value="{{this.oilSpec}}"></option>
+                <option value="{{this}}"></option>
             {{/each}}
         </datalist>
     </div>
@@ -21,7 +21,7 @@
          <input list="oilType" name="oilType" class="form-control"  required>
          <datalist id="oilType">
              {{#each values.oil.typeOfOils}}
-                <option value="{{this.typeOfOil}}"></option>
+                <option value="{{this}}"></option>
             {{/each}}
         </datalist>
     </div>
@@ -32,7 +32,7 @@
          <input list="preferredOilBrand" name="preferredOilBrand" class="form-control" required>
          <datalist id="preferredOilBrand">
              {{#each values.oil.preferredBrands}}
-                <option value="{{this.preferredBrand}}"></option>
+                <option value="{{this}}"></option>
             {{/each}}
         </datalist>
     </div>

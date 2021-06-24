@@ -112,57 +112,61 @@ const Oil = sequelize.define('oil_stocks', mappings, {
   ],
 });
 
-Oil.getOilStock = () => {
-  return new Bluebird(async(resolve, reject) => {
-    var oilC, oilS, oilSpecs, typeOfOils, preferredBrands
-    await Consumable.getSpecific("oil").then(consumables => {
-      oilC = consumables;
-  
-    }).catch(() => {
-      reject("Error Connecting to the Server");
+Oil.getStock = () => {
+  return new Bluebird((resolve, reject) => {
+    Oil.findAndCountAll().then(oil => {
+      Supplier.getSupplierNames(oil).then(() => {
+        resolve(oil);
+
+      }).catch(err => {
+        reject(err);
+
+      });
+
+    }).catch(err => {
+        reject(err);
 
     });
-
-    await Supplier.findAll().then(suppliers => {
-      oilS = suppliers
-     
-    }).catch(() => {
-      reject("Error Connecting to the Server");
-    });
-
-    await Oil.findAll({attributes: [[Sequelize.literal('DISTINCT `oilSpec`'), 'oilSpec']],raw:true, nest:true}).then(spec => {
-      oilSpecs = spec
-  
-    }).catch(() => {
-      reject("Error Connecting to the Server");
-
-    });
-
-    await Oil.findAll({attributes: [[Sequelize.literal('DISTINCT `typeOfOil`'), 'typeOfOil']],raw:true, nest:true}).then(spec => {
-      typeOfOils = spec
-  
-    }).catch(() => {
-      reject("Error Connecting to the Server");
-
-    });
-
-    await Oil.findAll({attributes: [[Sequelize.literal('DISTINCT `preferredBrand`'), 'preferredBrand']],raw:true, nest:true}).then(spec => {
-      preferredBrands = spec
-  
-    }).catch(() => {
-      reject("Error Connecting to the Server");
-
-    });
-
-    var values = {
-      consumables: oilC.rows, suppliers: oilS, specs: oilSpecs, 
-      typeOfOils: typeOfOils, preferredBrands: preferredBrands
-  
-    };
-    resolve(values);
 
   });
+
+}
+
+function getDistinct(values){
+  return values.filter((value, index, self) => self.indexOf(value) === index);
+}
+
+Oil.getOilStock = () => {
+    return new Bluebird(async(resolve, reject) => {
+        var oilC, oilS, oilSpecs, typeOfOils, preferredBrands
+        Supplier.findAll().then(suppliers => {
+            oilS = suppliers;
+            Oil.getStock().then(consumables => {
+                oilC = consumables;
+                oilSpecs = getDistinct(oilC.rows.map(val => val.oilSpec));
+                typeOfOils = getDistinct(oilC.rows.map(val => val.typeOfOil));
+                preferredBrands = getDistinct(oilC.rows.map(val => val.preferredBrand));
+
+                var values = {
+                    consumables: oilC.rows, suppliers: oilS, specs: oilSpecs, 
+                    typeOfOils: typeOfOils, preferredBrands: preferredBrands
   
+                };
+
+                resolve(values);
+
+            }).catch(err => {
+              reject("Error Connecting to the Server (" + err + ")");
+
+            });
+
+        }).catch(err => {
+          reject("Error Connecting to the Server (" + err + ")");
+          
+        });
+
+    });
+    
 }
 
 Oil.updateOil = (newOil,action) => {

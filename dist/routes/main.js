@@ -12,10 +12,16 @@ var _express = _interopRequireDefault(require("express"));
 var router = _express["default"].Router();
 
 router.get('/', function (req, res, next) {
-  res.render('displayMains');
+  res.render('displayMains', {
+    title: "Maintanence Requestds",
+    jumbotronDescription: "All Maintantence Requests"
+  });
 });
 router.get('/create', function (req, res, next) {
-  res.render('createUpdateMain');
+  res.render('createUpdateMain', {
+    title: "New Maintanence Request",
+    jumbotronDescription: "Create a New Maintanence Request"
+  });
 });
 router.get('/:req', function (req, res, next) {
   var consumables = [];

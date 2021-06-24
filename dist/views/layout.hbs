@@ -11,16 +11,18 @@
     <link rel='stylesheet' href='https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css' />
     <link rel='stylesheet' href='/stylesheets/style.css' />
 
-    <script src="https://kit.fontawesome.com/5575288f45.js" crossorigin="anonymous"></script>
+   <script src="https://kit.fontawesome.com/5575288f45.js" crossorigin="anonymous"></script>
+
 </head>
 
 <body>
     {{#if landingPage}}
         {{{body}}}
     {{else}}
-        {{>navbar}}
-        <div class="container">
-            <div class="row">
+    <div class="wrapper">
+       {{>navbar}}
+        <div class="container" id="content">
+            <div class="row">         
                 {{!-- Page Header --}}
                 {{>pageHeader}}
             
@@ -28,6 +30,8 @@
                 {{{body}}}
             </div>
         </div>
+    </div>
+ 
     {{/if}}
     {{!-- jQuery --}}
     <script src="https://code.jquery.com/jquery-3.5.1.js" crossorigin="anonymous"></script>

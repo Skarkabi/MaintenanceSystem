@@ -94,8 +94,8 @@
     <div class="section-wrapper">
         <div class="section-title">
             <div class="row">
-                 <h4 class="col" style="font-weight:bold" onclick="setTable('material')"><i class="fas fa-gas-pump"></i>Materials Used</h4>  
-                 <h4 class="col" style="font-weight:bold" onclick="setTable('employee')"><i class="fas fa-users"></i>Assigned Employees</h4>
+                 <h4 class="col" style="font-weight:bold" onclick="setTable('material')"><a onmouseover="style='cursor:pointer; color:#2779F6'" onmouseout="style='color:black'"><i class="fas fa-gas-pump"></i>Materials Used</a></h4>  
+                 <h4 class="col" style="font-weight:bold" onclick="setTable('employee')"><a onmouseover="style='cursor:pointer; color:#2779F6'" onmouseout="style='color:black'"><i class="fas fa-users"></i>Assigned Employees</a></h4>
             </div>
            
             <hr class="my-3">
@@ -118,5 +118,9 @@
             document.getElementById("tableSection").insertAdjacentHTML("afterbegin", `{{>mainEmployeeTable}}`);
 
         }
+    }
+
+    function changeColor(elementId){
+        document.getElementById(elementId).style = "color:blue";
     }
 </script>

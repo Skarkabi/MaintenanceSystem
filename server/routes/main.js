@@ -3,11 +3,17 @@ import express from 'express';
 const router = express.Router();
 
 router.get('/', (req, res,next) => {
-    res.render('displayMains');
+    res.render('displayMains', {
+    title: (`Maintanence Requestds`),
+    jumbotronDescription: `All Maintantence Requests`,
+});
 })
 
 router.get('/create', (req,res,next) => {
-    res.render('createUpdateMain');
+    res.render('createUpdateMain', {
+    title: (`New Maintanence Request`),
+    jumbotronDescription: `Create a New Maintanence Request`,
+});
 })
 
 router.get('/:req', (req, res, next) => {

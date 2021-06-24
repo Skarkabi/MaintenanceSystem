@@ -10,26 +10,41 @@
                 <div class="form-row">
                     <div class="form-group col required">
                         <label for="type">Category</label>
-                        <input type="text" placeholder = "Vehicle Category" id="category" name="category" class="form-control" required>
+                        <input list="category" name="category" class="form-control" required>
+                        <datalist id="category">
+                            {{#each values.category}}
+                                <option value="{{this}}">{{this}}</option>"
+                            {{/each}}
+                        </datalist>
                     </div>
                     <div class="form-group col required">
                         <label for="brand">Brand</label>
-                        <input type="text" placeholder="Vehicle Brand" id="brand" name="brand" class="form-control" value="{{existingVehicle.model}}" required>
+                        <input list="brand"  name="brand" class="form-control" value="{{existingVehicle.model}}" required>
+                        <datalist id="brand">
+                            {{#each values.brands}}
+                                <option value="{{this}}">{{this}}</option>
+                            {{/each}}
+                        </datalist>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col required">
-                        <label for="type">Model</label>
-                        <input type="text" placeholder = "Vehicle Model" id="model" name="model" class="form-control" required>
+                        <label for="model">Model</label>
+                        <input list="model" name="model" class="form-control" required>
+                        <datalist id="model">
+                            {{#each values.models}}
+                                <option value="{{this}}">{{this}}</option>
+                            {{/each}}
+                        </datalist>
                     </div>
                     <div class="form-group col required">
                         <label for="year">Year</label>
-                        <select type="text" id="year" name="year" class="form-control" value="{{existingVehicle.year}}" required>
-                             <option value="" disabled selected hidden>Select Year</option>
-                            {{#each years}}
+                        <input list="year" name="year" class="form-control" value="{{existingVehicle.year}}" required>
+                        <datalist id="year">
+                            {{#each values.years}}
                                 <option value="{{this}}">{{this}}</option>
                             {{/each}}
-                        </select>
+                        </datalist>
                     </div>
                 </div>
                 <div class="form-row">

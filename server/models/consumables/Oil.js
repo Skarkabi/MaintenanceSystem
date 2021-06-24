@@ -137,7 +137,7 @@ function getDistinct(values){
 }
 
 Oil.getOilStock = () => {
-    return new Bluebird(async(resolve, reject) => {
+    return new Bluebird((resolve, reject) => {
         var oilC, oilS, oilSpecs, typeOfOils, preferredBrands
         Supplier.findAll().then(suppliers => {
             oilS = suppliers;
@@ -166,7 +166,7 @@ Oil.getOilStock = () => {
         });
 
     });
-    
+
 }
 
 Oil.updateOil = (newOil,action) => {

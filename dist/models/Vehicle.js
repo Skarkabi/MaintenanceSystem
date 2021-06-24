@@ -171,6 +171,65 @@ Vehicle.deleteVehicleByPlateAndChassis = function (info) {
   });
 };
 
+Vehicle.getStock = function () {
+  return new _bluebird["default"](function (resolve, reject) {
+    Vehicle.findAndCountAll().then(function (vehicle) {
+      resolve(vehicle);
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
+};
+
+function getDistinct(values) {
+  return values.filter(function (value, index, self) {
+    return self.indexOf(value) === index;
+  });
+}
+
+Vehicle.getVehicleStock = function () {
+  return new _bluebird["default"](function (resolve, reject) {
+    var category, brand, model, year, plate, chassis, oilType;
+    Vehicle.getStock().then(function (vehicles) {
+      category = getDistinct(vehicles.rows.map(function (val) {
+        return val.category;
+      }));
+      brand = getDistinct(vehicles.rows.map(function (val) {
+        return val.brand;
+      }));
+      model = getDistinct(vehicles.rows.map(function (val) {
+        return val.model;
+      }));
+      year = getDistinct(vehicles.rows.map(function (val) {
+        return val.year;
+      }));
+      plate = getDistinct(vehicles.rows.map(function (val) {
+        return val.plate;
+      }));
+      chassis = getDistinct(vehicles.rows.map(function (val) {
+        return val.chassis;
+      }));
+      oilType = getDistinct(vehicles.rows.map(function (val) {
+        return val.oilType;
+      }));
+      var values = {
+        category: category,
+        brands: brand,
+        models: model,
+        years: year,
+        plates: plate,
+        chassis: chassis,
+        oilTypes: oilType
+      };
+      resolve(values);
+    })["catch"](function (err) {
+      reject("Error Connecting to the Server (" + err + ")");
+    });
+  })["catch"](function (err) {
+    reject("Error Connecting to the Server (" + err + ")");
+  });
+};
+
 function taskDate() {
   var today = new Date();
   var dd = today.getDate();

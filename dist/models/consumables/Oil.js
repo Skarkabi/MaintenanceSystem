@@ -139,53 +139,37 @@ function getDistinct(values) {
 }
 
 Oil.getOilStock = function () {
-  return new _bluebird["default"]( /*#__PURE__*/function () {
-    var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
-      var oilC, oilS, oilSpecs, typeOfOils, preferredBrands;
-      return _regenerator["default"].wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _Supplier["default"].findAll().then(function (suppliers) {
-                oilS = suppliers;
-                Oil.getStock().then(function (consumables) {
-                  oilC = consumables;
-                  oilSpecs = getDistinct(oilC.rows.map(function (val) {
-                    return val.oilSpec;
-                  }));
-                  typeOfOils = getDistinct(oilC.rows.map(function (val) {
-                    return val.typeOfOil;
-                  }));
-                  preferredBrands = getDistinct(oilC.rows.map(function (val) {
-                    return val.preferredBrand;
-                  }));
-                  var values = {
-                    consumables: oilC.rows,
-                    suppliers: oilS,
-                    specs: oilSpecs,
-                    typeOfOils: typeOfOils,
-                    preferredBrands: preferredBrands
-                  };
-                  resolve(values);
-                })["catch"](function (err) {
-                  reject("Error Connecting to the Server (" + err + ")");
-                });
-              })["catch"](function (err) {
-                reject("Error Connecting to the Server (" + err + ")");
-              });
+  return new _bluebird["default"](function (resolve, reject) {
+    var oilC, oilS, oilSpecs, typeOfOils, preferredBrands;
 
-            case 1:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee);
-    }));
-
-    return function (_x, _x2) {
-      return _ref.apply(this, arguments);
-    };
-  }());
+    _Supplier["default"].findAll().then(function (suppliers) {
+      oilS = suppliers;
+      Oil.getStock().then(function (consumables) {
+        oilC = consumables;
+        oilSpecs = getDistinct(oilC.rows.map(function (val) {
+          return val.oilSpec;
+        }));
+        typeOfOils = getDistinct(oilC.rows.map(function (val) {
+          return val.typeOfOil;
+        }));
+        preferredBrands = getDistinct(oilC.rows.map(function (val) {
+          return val.preferredBrand;
+        }));
+        var values = {
+          consumables: oilC.rows,
+          suppliers: oilS,
+          specs: oilSpecs,
+          typeOfOils: typeOfOils,
+          preferredBrands: preferredBrands
+        };
+        resolve(values);
+      })["catch"](function (err) {
+        reject("Error Connecting to the Server (" + err + ")");
+      });
+    })["catch"](function (err) {
+      reject("Error Connecting to the Server (" + err + ")");
+    });
+  });
 };
 
 Oil.updateOil = function (newOil, action) {
@@ -284,17 +268,17 @@ Oil.groupSupplier = function () {
       attributes: ['oilSpec', 'typeOfOil', 'supplierId', [_mySQLDB["default"].fn('sum', _mySQLDB["default"].col('volume')), 'volume']],
       group: ['oilSpec', 'typeOfOil', 'supplierId']
     }).then( /*#__PURE__*/function () {
-      var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(values) {
+      var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(values) {
         var result;
-        return _regenerator["default"].wrap(function _callee2$(_context2) {
+        return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context.prev = _context.next) {
               case 0:
                 result = {
                   count: values.length,
                   rows: values
                 };
-                _context2.next = 3;
+                _context.next = 3;
                 return _Supplier["default"].getSupplierNames(result);
 
               case 3:
@@ -302,14 +286,14 @@ Oil.groupSupplier = function () {
 
               case 4:
               case "end":
-                return _context2.stop();
+                return _context.stop();
             }
           }
-        }, _callee2);
+        }, _callee);
       }));
 
-      return function (_x3) {
-        return _ref2.apply(this, arguments);
+      return function (_x) {
+        return _ref.apply(this, arguments);
       };
     }());
   });
@@ -322,12 +306,12 @@ Oil.getWithSupplier = function (supplierId) {
         supplierId: supplierId
       }
     }).then( /*#__PURE__*/function () {
-      var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(foundGreases) {
-        return _regenerator["default"].wrap(function _callee3$(_context3) {
+      var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(foundGreases) {
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
-                _context3.next = 2;
+                _context2.next = 2;
                 return _Supplier["default"].getSupplierNames(foundGreases);
 
               case 2:
@@ -335,14 +319,14 @@ Oil.getWithSupplier = function (supplierId) {
 
               case 3:
               case "end":
-                return _context3.stop();
+                return _context2.stop();
             }
           }
-        }, _callee3);
+        }, _callee2);
       }));
 
-      return function (_x4) {
-        return _ref3.apply(this, arguments);
+      return function (_x2) {
+        return _ref2.apply(this, arguments);
       };
     }())["catch"](function (err) {
       reject(err);

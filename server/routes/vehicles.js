@@ -40,18 +40,21 @@ router.get('/add', async (req, res, next) =>
             console.log("In here" + span[i]);
         }
         console.log(span);
-       res.render('addUpdateVehicle', {
-           title: 'Add New Vehicle',
-           jumbotronDescription: `Register a new user account.`,
-           submitButtonText: 'Create',
-           action: "/vehicles/add",
-           years: span,
-           msgType: req.flash()
-           
-       });
+        Vehicle.getVehicleStock().then(values => {
+            res.render('addUpdateVehicle', {
+                title: 'Add New Vehicle',
+                jumbotronDescription: `Register a new user account.`,
+                submitButtonText: 'Create',
+                action: "/vehicles/add",
+                values: values,
+                msgType: req.flash()
+                
+            });
+
+        });
+      
     }
        
-   
 });
 
 router.post('/add', [

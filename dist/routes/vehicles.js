@@ -63,13 +63,16 @@ router.get('/add', /*#__PURE__*/function () {
               }
 
               console.log(span);
-              res.render('addUpdateVehicle', {
-                title: 'Add New Vehicle',
-                jumbotronDescription: "Register a new user account.",
-                submitButtonText: 'Create',
-                action: "/vehicles/add",
-                years: span,
-                msgType: req.flash()
+
+              _Vehicle["default"].getVehicleStock().then(function (values) {
+                res.render('addUpdateVehicle', {
+                  title: 'Add New Vehicle',
+                  jumbotronDescription: "Register a new user account.",
+                  submitButtonText: 'Create',
+                  action: "/vehicles/add",
+                  values: values,
+                  msgType: req.flash()
+                });
               });
             }
 

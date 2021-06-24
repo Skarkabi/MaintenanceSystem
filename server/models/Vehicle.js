@@ -183,6 +183,56 @@ Vehicle.deleteVehicleByPlateAndChassis = info => {
 
 }
 
+Vehicle.getStock =() => {
+  return new Bluebird((resolve, reject) => {
+    Vehicle.findAndCountAll().then(vehicle => {
+      resolve(vehicle);
+
+    }).catch(err => {
+      reject(err);
+
+    });
+
+  });
+
+}
+
+function getDistinct(values){
+  return values.filter((value, index, self) => self.indexOf(value) === index);
+}
+
+Vehicle.getVehicleStock = () => {
+  return new Bluebird((resolve, reject) => {
+    var category, brand, model, year, plate, chassis, oilType;
+    Vehicle.getStock().then(vehicles => {
+      category = getDistinct(vehicles.rows.map(val => val.category));
+      brand = getDistinct(vehicles.rows.map(val => val.brand));
+      model = getDistinct(vehicles.rows.map(val => val.model));
+      year = getDistinct(vehicles.rows.map(val => val.year));
+      plate = getDistinct(vehicles.rows.map(val => val.plate));
+      chassis = getDistinct(vehicles.rows.map(val => val.chassis));
+      oilType = getDistinct(vehicles.rows.map(val => val.oilType));
+
+      var values = {
+        category: category, brands: brand, models: model, years: year,
+        plates: plate, chassis: chassis, oilTypes: oilType
+
+      }
+
+      resolve(values);
+
+    }).catch(err => {
+      reject("Error Connecting to the Server (" + err + ")");
+
+    });
+
+  }).catch(err => {
+    reject("Error Connecting to the Server (" + err + ")");
+
+  });
+
+}
+
 function taskDate() {
   var today = new Date();
   var dd = today.getDate();

@@ -213,89 +213,67 @@ Grease.addGrease = function (newGrease) {
   });
 };
 
+Grease.getStock = function () {
+  return new _bluebird["default"](function (resolve, reject) {
+    Grease.findAndCountAll().then(function (grease) {
+      _Supplier["default"].getSupplierNames(grease).then(function () {
+        resolve(grease);
+      })["catch"](function (err) {
+        reject(err);
+      });
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
+};
+
+function getDistinct(values) {
+  return values.filter(function (value, index, self) {
+    return self.indexOf(value) === index;
+  });
+}
+
 Grease.getGreaseStock = function () {
   return new _bluebird["default"]( /*#__PURE__*/function () {
     var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
-      var greaseC, greaseS, greaseSpec, typeOfGrease, carBrand, carYear, values;
+      var greaseC, greaseS, greaseSpec, typeOfGrease, carBrand, carYear;
       return _regenerator["default"].wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _context.next = 2;
-              return _Consumables["default"].getSpecific("grease").then(function (consumables) {
-                greaseC = consumables;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 2:
-              _context.next = 4;
-              return _Supplier["default"].findAll().then(function (suppliers) {
+              _Supplier["default"].findAll().then(function (suppliers) {
                 greaseS = suppliers;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
+                Grease.getStock().then(function (consumables) {
+                  greaseC = consumables;
+                  greaseSpec = getDistinct(greaseC.rows.map(function (val) {
+                    return val.greaseSpec;
+                  }));
+                  typeOfGrease = getDistinct(greaseC.rows.map(function (val) {
+                    return val.typeOfGrease;
+                  }));
+                  carBrand = getDistinct(greaseC.rows.map(function (val) {
+                    return val.carBrand;
+                  }));
+                  carYear = getDistinct(greaseC.rows.map(function (val) {
+                    return val.carYear;
+                  }));
+                  var values = {
+                    consumables: greaseC.rows,
+                    suppliers: greaseS,
+                    specs: greaseSpec,
+                    typeOfGrease: typeOfGrease,
+                    carBrand: carBrand,
+                    carYear: carYear
+                  };
+                  resolve(values);
+                })["catch"](function (err) {
+                  reject("Error Connecting to the Server (" + err + ")");
+                });
+              })["catch"](function (err) {
+                reject("Error Connecting to the Server (" + err + ")");
               });
 
-            case 4:
-              _context.next = 6;
-              return Grease.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `greaseSpec`'), 'greaseSpec']],
-                raw: true,
-                nest: true
-              }).then(function (spec) {
-                greaseSpec = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 6:
-              _context.next = 8;
-              return Grease.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `typeOfGrease`'), 'typeOfGrease']],
-                raw: true,
-                nest: true
-              }).then(function (spec) {
-                typeOfGrease = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 8:
-              _context.next = 10;
-              return Grease.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']],
-                raw: true,
-                nest: true
-              }).then(function (spec) {
-                carBrand = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 10:
-              _context.next = 12;
-              return Grease.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']],
-                raw: true,
-                nest: true
-              }).then(function (spec) {
-                carYear = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 12:
-              values = {
-                consumables: greaseC.rows,
-                suppliers: greaseS,
-                specs: greaseSpec,
-                typeOfGrease: typeOfGrease,
-                carBrand: carBrand,
-                carYear: carYear
-              };
-              resolve(values);
-
-            case 14:
+            case 1:
             case "end":
               return _context.stop();
           }

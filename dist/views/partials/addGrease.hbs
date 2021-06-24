@@ -12,7 +12,7 @@
          <input list="greaseSpec"  name="greaseSpec" class="form-control" required>
          <datalist id="greaseSpec">
             {{#each values.grease.specs}}
-                <option value="{{this.greaseSpec}}"></option>
+                <option value="{{this}}"></option>
             {{/each}}
         </datalist>
     </div>
@@ -21,7 +21,7 @@
          <input list="greaseType" name="greaseType" class="form-control" required>
          <datalist id="greaseType">
              {{#each values.grease.typeOfGrease}}
-                <option value="{{this.typeOfGrease}}"></option>
+                <option value="{{this}}"></option>
             {{/each}}
         </datalist>
     </div>
@@ -32,7 +32,7 @@
          <input list="greaseCarBrand" name="greaseCarBrand" class="form-control" required>
          <datalist id="greaseCarBrand">
              {{#each values.grease.carBrand}}
-                <option value="{{this.carBrand}}"></option>
+                <option value="{{this}}"></option>
             {{/each}}
         </datalist>
     </div>
@@ -41,7 +41,7 @@
          <input list="greaseCarYear" name="greaseCarYear" class="form-control" required>
          <datalist id="greaseCarYear">
              {{#each values.grease.carYear}}
-                <option value="{{this.carYear}}"></option>
+                <option value="{{this}}"></option>
             {{/each}}
         </datalist>
     </div>

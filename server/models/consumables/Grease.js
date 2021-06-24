@@ -238,61 +238,58 @@ Grease.addGrease = (newGrease) => {
 
 }
 
+Grease.getStock = () => {
+    return new Bluebird ((resolve, reject) => {
+        Grease.findAndCountAll().then(grease => {
+            Supplier.getSupplierNames(grease).then(() => {
+                resolve(grease);
+
+            }).catch(err => {
+                reject(err);
+
+            });
+
+        }).catch(err => {
+            reject(err);
+
+        });
+
+    })
+
+}
+
+function getDistinct(values){
+    return values.filter((value, index, self) => self.indexOf(value) === index);
+}
+
 Grease.getGreaseStock = () => {
     return new Bluebird(async (resolve, reject) => {
         var greaseC, greaseS, greaseSpec, typeOfGrease, carBrand, carYear;
-        await Consumable.getSpecific("grease").then(consumables => {
-            greaseC = consumables;
+        Supplier.findAll().then(suppliers => {
+            greaseS = suppliers;
+            Grease.getStock().then(consumables => {
+                greaseC = consumables;
+                greaseSpec = getDistinct(greaseC.rows.map(val => val.greaseSpec));
+                typeOfGrease = getDistinct(greaseC.rows.map(val => val.typeOfGrease));
+                carBrand = getDistinct(greaseC.rows.map(val => val.carBrand));
+                carYear = getDistinct(greaseC.rows.map(val => val.carYear));
 
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
+                var values = {
+                    consumables: greaseC.rows, suppliers: greaseS, specs: greaseSpec, 
+                    typeOfGrease: typeOfGrease, carBrand: carBrand, carYear: carYear
+                };
 
-        await Supplier.findAll().then(suppliers => {
-            greaseS = suppliers
-           
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-        });
+                resolve(values);
 
-        await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `greaseSpec`'), 'greaseSpec']],raw:true, nest:true}).then(spec => {
-            greaseSpec = spec
-        
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
+            }).catch(err => {
+                reject("Error Connecting to the Server (" + err + ")");
 
-        await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `typeOfGrease`'), 'typeOfGrease']],raw:true, nest:true}).then(spec => {
-            typeOfGrease = spec
-        
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
+            });
 
-        await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']],raw:true, nest:true}).then(spec => {
-            carBrand = spec
-    
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
+        }).catch(err => {
+            reject("Error Connecting to the Server (" + err + ")");
 
-        await Grease.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']],raw:true, nest:true}).then(spec => {
-            carYear = spec
-    
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
         });
-    
-        var values = {
-            consumables: greaseC.rows, suppliers: greaseS, specs: greaseSpec, 
-            typeOfGrease: typeOfGrease, carBrand: carBrand, carYear: carYear
-        };
-        resolve(values);
 
     });
     

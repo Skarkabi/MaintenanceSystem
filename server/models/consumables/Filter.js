@@ -292,96 +292,64 @@ Filter.addFilter = (newFilter) => {
 
 }
 
+Filter.getStock = () => {
+    return new Bluebird ((resolve, reject) => {
+        Filter.findAndCountAll().then(filters => {
+            Supplier.getSupplierNames(filters).then(() => {
+                resolve(filters);
+
+            }).catch(err => {
+                reject(err);
+
+            });
+
+        }).catch(err => {
+            reject(err);
+
+        });
+
+    });
+
+}
+
+function getDistinct(values){
+    return values.filter((value, index, self) => self.indexOf(value) === index);
+}
+
 Filter.getFilterStock = () => {
     return new Bluebird(async (resolve, reject) => {
         var filterC, filterS, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand;
-
-        await Consumable.getSpecific("filter").then(consumables => {
-            filterC = consumables
-        
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
-
-        await Supplier.findAll().then(suppliers => {
+        Supplier.findAll().then(suppliers => {
             filterS = suppliers
-           
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-        });
-    
-        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `category`'), 'category']],raw:true, nest:true}).then(category => {
-            carCategory = category ;
-        
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
+            Filter.getStock().then(consumables => {
+                filterC = consumables;
+                carCategory = getDistinct(filterC.rows.map(val => val.category));
+                typeF = getDistinct(filterC.rows.map(val => val.fType));
+                carBrand = getDistinct(filterC.rows.map(val => val.carBrand));
+                carYear = getDistinct(filterC.rows.map(val => val.carYear));
+                carModel = getDistinct(filterC.rows.map(val => val.carModel));
+                preferredBrand = getDistinct(filterC.rows.map(val => val.preferredBrand));
+                actualBrand = getDistinct(filterC.rows.map(val => val.actualBrand));
+                singleCost = getDistinct(filterC.rows.map(val => val.singleCost));
 
-        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `fType`'), 'fType']],raw:true, nest:true}).then(filterType => {
-            typeF = filterType; 
-        
-    
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
+                var values = {
+                    consumable: filterC.rows, suppliers: filterS,filterType: typeF, carBrand: carBrand, 
+                    carModel: carModel, carYear: carYear, preferredBrand: preferredBrand, carCategory: carCategory,
+                    singleCost: singleCost, actualBrand: actualBrand
+            
+                };
 
-        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `carBrand`'), 'carBrand']]}).then(spec => {
-            carBrand = spec
-        
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
+                resolve(values);
 
-        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `carYear`'), 'carYear']]}).then(spec => {
-            carYear = spec
-    
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
+            }).catch(err => {
+                reject("Error Connectin to the Server (" + err + ")");
 
-        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `carModel`'), 'carModel']],raw:true, nest:true}).then(filterType => {
-            carModel = filterType; 
-        
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
+            });
 
-        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `preferredBrand`'), 'preferredBrand']]}).then(spec => {
-            preferredBrand = spec
-        
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
-        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `actualBrand`'), 'actualBrand']]}).then(spec => {
-            actualBrand = spec
-    
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
-        });
+        }).catch(err => {
+            reject("Error Connecting to the Server (" + err + ")");
 
-        await Filter.findAll({attributes: [[Sequelize.literal('DISTINCT `singleCost`'), 'singleCost']]}).then(spec => {
-            singleCost = spec
-    
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-    
         });
-
-        var values = {
-            consumable: filterC.rows, suppliers: filterS,filterType: typeF, carBrand: carBrand, 
-            carModel: carModel, carYear: carYear, preferredBrand: preferredBrand, carCategory: carCategory,
-            singleCost: singleCost, actualBrand: actualBrand
-    
-        };
-        resolve(values);
 
     });
 

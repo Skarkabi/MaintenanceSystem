@@ -12,7 +12,7 @@
          <input list="filterType"  name="filterType" class="form-control" required>
          <datalist id="filterType">
              {{#each values.filters.filterType}}
-                 <option value="{{this.fType}}"></option>
+                 <option value="{{this}}"></option>
              {{/each}}
         </datalist>
     </div>
@@ -21,7 +21,7 @@
         <input list="vehicleCategory" name="vehicleCategory" class="form-control" required>
         <datalist id="vehicleCategory">
             {{#each values.filters.carCategory}}
-                <option value="{{this.category}}"></option>
+                <option value="{{this}}"></option>
             {{/each}}
         </datalist>
     </div>
@@ -32,7 +32,7 @@
          <input list="filterABrand"  name="filterABrand" class="form-control" required>
          <datalist id="filterABrand">
              {{#each values.filters.actualBrand}}
-                 <option value="{{this.actualBrand}}"></option>
+                 <option value="{{this}}"></option>
              {{/each}}
         </datalist>
     </div>
@@ -41,7 +41,7 @@
         <input list="filterPBrand" name="filterPBrand" class="form-control" required>
         <datalist id="filterPBrand">
             {{#each values.filters.preferredBrand}}
-                <option value="{{this.preferredBrand}}"></option>
+                <option value="{{this}}"></option>
             {{/each}}
         </datalist>
     </div>
@@ -52,7 +52,7 @@
         <input list="filterCarBrand" name="filterCarBrand" class="form-control" required>
         <datalist id="filterCarBrand">
             {{#each values.filters.carBrand}}
-                <option value="{{this.carBrand}}"></option>
+                <option value="{{this}}"></option>
             {{/each}}
         </datalist>
     </div>
@@ -61,7 +61,7 @@
         <input list="filterCarModel" name="filterCarModel" class="form-control" required>
         <datalist id="filterCarModel">
             {{#each values.filters.carModel}}
-                <option value="{{this.carModel}}"></option>
+                <option value="{{this}}"></option>
             {{/each}}
         </datalist>
     </div>
@@ -70,7 +70,7 @@
         <input list="filterCarYear" name="filterCarYear" class="form-control" required>
         <datalist id="filterCarYear">
             {{#each values.filters.carYear}}
-                <option value="{{this.carYear}}"></option>
+                <option value="{{this}}"></option>
             {{/each}}
         </datalist>
     </div>

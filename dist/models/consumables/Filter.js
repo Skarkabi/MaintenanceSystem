@@ -257,131 +257,83 @@ Filter.addFilter = function (newFilter) {
   });
 };
 
+Filter.getStock = function () {
+  return new _bluebird["default"](function (resolve, reject) {
+    Filter.findAndCountAll().then(function (filters) {
+      _Supplier["default"].getSupplierNames(filters).then(function () {
+        resolve(filters);
+      })["catch"](function (err) {
+        reject(err);
+      });
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
+};
+
+function getDistinct(values) {
+  return values.filter(function (value, index, self) {
+    return self.indexOf(value) === index;
+  });
+}
+
 Filter.getFilterStock = function () {
   return new _bluebird["default"]( /*#__PURE__*/function () {
     var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
-      var filterC, filterS, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand, values;
+      var filterC, filterS, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand;
       return _regenerator["default"].wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _context.next = 2;
-              return _Consumables["default"].getSpecific("filter").then(function (consumables) {
-                filterC = consumables;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 2:
-              _context.next = 4;
-              return _Supplier["default"].findAll().then(function (suppliers) {
+              _Supplier["default"].findAll().then(function (suppliers) {
                 filterS = suppliers;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
+                Filter.getStock().then(function (consumables) {
+                  filterC = consumables;
+                  carCategory = getDistinct(filterC.rows.map(function (val) {
+                    return val.category;
+                  }));
+                  typeF = getDistinct(filterC.rows.map(function (val) {
+                    return val.fType;
+                  }));
+                  carBrand = getDistinct(filterC.rows.map(function (val) {
+                    return val.carBrand;
+                  }));
+                  carYear = getDistinct(filterC.rows.map(function (val) {
+                    return val.carYear;
+                  }));
+                  carModel = getDistinct(filterC.rows.map(function (val) {
+                    return val.carModel;
+                  }));
+                  preferredBrand = getDistinct(filterC.rows.map(function (val) {
+                    return val.preferredBrand;
+                  }));
+                  actualBrand = getDistinct(filterC.rows.map(function (val) {
+                    return val.actualBrand;
+                  }));
+                  singleCost = getDistinct(filterC.rows.map(function (val) {
+                    return val.singleCost;
+                  }));
+                  var values = {
+                    consumable: filterC.rows,
+                    suppliers: filterS,
+                    filterType: typeF,
+                    carBrand: carBrand,
+                    carModel: carModel,
+                    carYear: carYear,
+                    preferredBrand: preferredBrand,
+                    carCategory: carCategory,
+                    singleCost: singleCost,
+                    actualBrand: actualBrand
+                  };
+                  resolve(values);
+                })["catch"](function (err) {
+                  reject("Error Connectin to the Server (" + err + ")");
+                });
+              })["catch"](function (err) {
+                reject("Error Connecting to the Server (" + err + ")");
               });
 
-            case 4:
-              _context.next = 6;
-              return Filter.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `category`'), 'category']],
-                raw: true,
-                nest: true
-              }).then(function (category) {
-                carCategory = category;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 6:
-              _context.next = 8;
-              return Filter.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `fType`'), 'fType']],
-                raw: true,
-                nest: true
-              }).then(function (filterType) {
-                typeF = filterType;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 8:
-              _context.next = 10;
-              return Filter.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `carBrand`'), 'carBrand']]
-              }).then(function (spec) {
-                carBrand = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 10:
-              _context.next = 12;
-              return Filter.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `carYear`'), 'carYear']]
-              }).then(function (spec) {
-                carYear = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 12:
-              _context.next = 14;
-              return Filter.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `carModel`'), 'carModel']],
-                raw: true,
-                nest: true
-              }).then(function (filterType) {
-                carModel = filterType;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 14:
-              _context.next = 16;
-              return Filter.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `preferredBrand`'), 'preferredBrand']]
-              }).then(function (spec) {
-                preferredBrand = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 16:
-              _context.next = 18;
-              return Filter.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `actualBrand`'), 'actualBrand']]
-              }).then(function (spec) {
-                actualBrand = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 18:
-              _context.next = 20;
-              return Filter.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `singleCost`'), 'singleCost']]
-              }).then(function (spec) {
-                singleCost = spec;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 20:
-              values = {
-                consumable: filterC.rows,
-                suppliers: filterS,
-                filterType: typeF,
-                carBrand: carBrand,
-                carModel: carModel,
-                carYear: carYear,
-                preferredBrand: preferredBrand,
-                carCategory: carCategory,
-                singleCost: singleCost,
-                actualBrand: actualBrand
-              };
-              resolve(values);
-
-            case 22:
+            case 1:
             case "end":
               return _context.stop();
           }

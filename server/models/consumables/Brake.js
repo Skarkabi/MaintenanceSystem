@@ -300,6 +300,7 @@ Brake.getBrakeStock = () =>{
                 var values = {
                     consumable: brakeC.rows, suppliers: brakeS, brakeCategory: brakeCategory, brakeCBrand: brakeCBrand, brakeCYear: brakeCYear,
                     brakeCChassis: brakeCChassis, brakeBrand: brakeBrand, brakePBrand: brakePBrand, brakeQuantity: brakeQuantity
+                
                 };
                 resolve(values);
 

@@ -109,6 +109,13 @@ passportConfig(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
+
+app.use(function (req, res, next){
+    app.locals.user = req.user;
+    console.log(app.locals.user);
+    next();
+})
+
 /**app.get('*', (req, res, next) =>
 {
     res.locals.user = req.user || null;
@@ -215,5 +222,4 @@ app.use((err, req, res, next) =>
     res.status(err.status || 500);
     res.render('error');
 });
-
 export default app;

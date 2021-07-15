@@ -70,6 +70,9 @@ section#login {
 .navbar {
   margin-bottom: 2rem;
   border-bottom: 1px solid #eaeaea;
+  min-width: 10px;
+  max-width: 100%;
+  color: #fff;
 }
 
 .navbar-light .navbar-brand {
@@ -90,10 +93,11 @@ section#login {
   border-bottom: 1px solid #e9ecef;
   padding: 0.8rem 1.6rem;
   font-size: 0.9rem;
+  
 }
 
 .nav-link {
-  color: #000 !important;
+  color: #fff !important;
 }
 
 /* Filterable table */
@@ -189,8 +193,8 @@ td:empty:after {
 }
 
 #sidebar {
-  min-width: 200px;
-  max-width: 250px;
+  min-width: 150px;
+  max-width: 150px;
   min-height: 100vh;
 }
 
@@ -214,19 +218,22 @@ td:empty:after {
 
 #sidebar {
   /* don't forget to add all the previously mentioned styles here too */
-  background: #7386D5;
+  background: #666666;
   color: #fff;
   transition: all 0.3s;
 }
 
 #sidebar .sidebar-header {
-  padding: 20px;
-  background: #6d7fcc;
+  padding-top: 20px;
+  padding-left: 5px;
+  padding-bottom: 10px;
+  background: #333333;
+  text-align:center;
 }
 
 #sidebar ul.components {
   padding: 20px 0;
-  border-bottom: 1px solid #47748b;
+  border-bottom: 1px solid #666666;
 }
 
 #sidebar ul p {
@@ -238,16 +245,16 @@ td:empty:after {
   padding: 20px;
   font-size: 1.1em;
   display: block;
-  text-align:center;
+  text-align:left;
 }
 #sidebar ul li a:hover {
-  color: #7386D5;
+  color: #666666;
   background: #fff;
 }
 
 #sidebar ul li.active > a, a[aria-expanded="true"] {
   color: #fff;
-  background: #6d7fcc;
+  background: #666666;
 }
 
 p {
@@ -267,5 +274,51 @@ a, a:hover, a:focus {
 ul ul a {
   font-size: 0.9em !important;
   padding-left: 30px !important;
-  background: #6d7fcc;
+  background: #333333;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  animation-name: animatetop;
+  animation-duration: 0.4s
+}
+
+/* Add Animation */
+@keyframes animatetop {
+  from {transform: scale(0, 0); opacity: 0}
+  to {top: 0; opacity: 1}
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }

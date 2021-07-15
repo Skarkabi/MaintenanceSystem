@@ -37,6 +37,8 @@ exports.Login = function (req, user) {
         return reject(err);
       }
 
+      console.log("hete");
+      console.log(req.user);
       return resolve();
     });
   });

@@ -77,7 +77,7 @@ router.post('/', /*#__PURE__*/function () {
                       user = _context2.sent;
 
                       if (!user) {
-                        _context2.next = 15;
+                        _context2.next = 16;
                         break;
                       }
 
@@ -96,18 +96,19 @@ router.post('/', /*#__PURE__*/function () {
 
                     case 12:
                       // Make sure that we are not showing the user login page, if the user already logged in.
+                      console.log(user);
                       res.redirect('/');
-                      _context2.next = 16;
+                      _context2.next = 17;
                       break;
 
-                    case 15:
+                    case 16:
                       res.render('login', {
                         error_msg: "Invalid Username or password",
                         title: 'Login',
                         landingPage: true
                       });
 
-                    case 16:
+                    case 17:
                     case "end":
                       return _context2.stop();
                   }

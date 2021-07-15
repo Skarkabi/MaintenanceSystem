@@ -32,10 +32,11 @@ module.exports = function (passport) {
                 username: dbUser.username
               };
               user.id = dbUser.id;
+              user.profilePicture = dbUser.profilePicture;
               Object.assign(user, getUserType(dbUser));
               done(null, user);
 
-            case 7:
+            case 8:
             case "end":
               return _context.stop();
           }

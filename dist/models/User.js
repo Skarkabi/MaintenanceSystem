@@ -15,6 +15,8 @@ var _bluebird = _interopRequireDefault(require("bluebird"));
 
 var _sequelize = _interopRequireDefault(require("sequelize"));
 
+var _multer = _interopRequireDefault(require("multer"));
+
 var _mySQLDB = _interopRequireDefault(require("../mySQLDB"));
 
 var mappings = {
@@ -51,6 +53,10 @@ var mappings = {
   userType: {
     type: _sequelize["default"].DataTypes.STRING,
     allowNull: false
+  },
+  profilePicture: {
+    type: _sequelize["default"].DataTypes.STRING,
+    allowNull: true
   }
 };
 
@@ -87,6 +93,10 @@ var User = _mySQLDB["default"].define('User', mappings, {
     name: 'user_userType_index',
     method: 'BTREE',
     fields: ['userType']
+  }, {
+    name: 'user_profilePicture_index',
+    method: 'BTREE',
+    fields: ['profilePicture']
   }]
 });
 /**
@@ -172,6 +182,28 @@ User.prototype.comparePassword = function (password) {
   })["catch"](function (err) {
     return false;
   });
+};
+
+User.uploadProfilePhoto = function () {
+  var storage = _multer["default"].diskStorage({
+    destination: function destination(req, file, cb) {
+      cb(null, './public/profilePictures');
+    },
+    filename: function filename(req, file, cb) {
+      console.log("FILEP");
+      console.log(req.user);
+      cb(null, req.user.username + ".png");
+      User.getUserById(req.user.id).then(function (toUpdate) {
+        toUpdate.profilePicture = "".concat(req.user.username, ".png");
+        toUpdate.save();
+      });
+    }
+  });
+
+  var upload = (0, _multer["default"])({
+    storage: storage
+  });
+  return upload;
 };
 
 var _default = User;

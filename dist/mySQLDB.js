@@ -13,7 +13,7 @@ var _sequelize = _interopRequireDefault(require("sequelize"));
 
 var dbName = 'maintanence';
 var dbUserName = 'root';
-var dbPassword = 'mosjsfskmo1';
+var dbPassword = 'mosjsfskmo';
 var dbHost = 'localhost';
 var dbPort = '3306';
 var mySQLDB = new _sequelize["default"](dbName, dbUserName, dbPassword, {
@@ -23,6 +23,8 @@ var mySQLDB = new _sequelize["default"](dbName, dbUserName, dbPassword, {
 });
 mySQLDB.sync().then(function () {
   console.log("Database & tables created!");
+})["catch"](function (err) {
+  console.log("Could not connect to database ".concat(err));
 });
 var _default = mySQLDB;
 exports["default"] = _default;

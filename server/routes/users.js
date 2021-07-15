@@ -13,7 +13,32 @@ const router = express.Router();
 
 router.get('/display-user/:id', (req,res,next) =>
 {
-    console.log(req.user.id + " " + req.params.id);
+    console.log(req.user.id)
+    console.log(req.params);
+    if(req.user.id == req.params.id || req.user.admin)
+    {
+        let msg = req.flash();
+        User.getUserById(req.params.id).then(foundUser => {
+            res.render('displayUser', {
+                title: (`${foundUser.firstName} ${foundUser.lastName}'s Page`),
+                jumbotronDescription: `This is ${foundUser.firstName} ${foundUser.lastName}'s profile page.`,
+                existingUser: foundUser,
+                showPii: req.user.admin || req.user.id == req.params.id,
+                msgType: msg
+            });
+        });
+    }else{
+        req.flash('error_msg', "You do not have access to this page.");
+        res.render("accessDenied", {
+            title: "Access Denied",
+            msgType: req.flash()
+        });
+    }
+});
+
+router.get('/display-user/', (req,res,next) =>
+{
+    console.log(req.user.id)
     if(req.user.id == req.params.id || req.user.admin)
     {
         let msg = req.flash();
@@ -65,6 +90,18 @@ router.get('/', async (req, res, next) =>
     }
 });
 
+router.get('/edit/:id', async(req, res, next) => {
+    res.render('editProfilePicture', {
+        title: 'editUser',
+        jumbotronDescription: `Edit Profile Picture.`,
+        msgType: req.flash()
+
+    });
+})
+
+router.post('/edit/:id', User.uploadProfilePhoto().single('upload'), (req,res,next) =>{
+    res.redirect('back');
+})
 
 /**
  * Displays create user page.

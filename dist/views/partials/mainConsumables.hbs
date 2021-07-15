@@ -1,0 +1,24 @@
+<div class="section-content">
+    <div class="form-row">
+        <div class="form-group col">
+            <label for="type">Category</label>
+            <select type="text" placeholder = "Consumable Category" id="category" name="category" class="form-control" onChange="setPage()">
+                <option value="" disabled selected>Choose One</option>
+                <option value="battery">Battery</option>
+                <option value="brake">Brake</option>
+                <option value="filter">Filter</option>
+                <option value="grease">Grease</option>
+                <option value="oil">Oil</option>
+            </select>
+        </div>
+        <div class="form-group col">
+            <label for="existing">New/Existing</label>
+            <select type="text" id="stock" name="stock" class="form-control"  onChange="setPage()">
+                <option value="" disabled selected>Choose One</option>
+                <option value="new">New</option>
+                <option value="stock">Existing</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="section-content" id="addSection"></div>

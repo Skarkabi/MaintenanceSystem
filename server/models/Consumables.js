@@ -120,6 +120,46 @@ Consumable.updateConsumable = (createConsumable, action) => {
 
 }
 
+Consumable.getFullStock = () => {
+    return new Bluebird((resolve, reject) => {
+        Battery.getStock().then(batteries => {
+            Brake.getStock().then(brakes => {
+                Filter.getStock().then(filters => {
+                    Grease.getStock().then(grease => {
+                        Oil.getStock().then(oil => {
+                            var values = {batteries: batteries.rows, brakes: brakes.rows,
+                                          filters: filters.rows, grease: grease.rows, oil: oil.rows};
+
+                            resolve(values);
+
+                        }).catch(err => {
+                          reject("Error Connecting to the server");
+                        });
+
+                    }).catch(err => {
+                        reject("Error Connecting to the server");
+                    
+                    });
+  
+                }).catch(err => {
+                  reject("Error Connecting to the server");
+
+                });
+
+            }).catch(err => {
+              reject("Error Connecting to the server");
+
+            });
+        
+        }).catch(err => {
+          reject("Error Connecting to the server " + err);
+
+        });  
+    
+    });
+  
+}
+
 Consumable.getConsumableByCategory = category => Consumable.findOne({
   where:{category}
 

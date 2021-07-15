@@ -125,6 +125,39 @@ Consumable.updateConsumable = function (createConsumable, action) {
   });
 };
 
+Consumable.getFullStock = function () {
+  return new _bluebird["default"](function (resolve, reject) {
+    _Battery["default"].getStock().then(function (batteries) {
+      _Brake["default"].getStock().then(function (brakes) {
+        _Filter["default"].getStock().then(function (filters) {
+          _Grease["default"].getStock().then(function (grease) {
+            _Oil["default"].getStock().then(function (oil) {
+              var values = {
+                batteries: batteries.rows,
+                brakes: brakes.rows,
+                filters: filters.rows,
+                grease: grease.rows,
+                oil: oil.rows
+              };
+              resolve(values);
+            })["catch"](function (err) {
+              reject("Error Connecting to the server");
+            });
+          })["catch"](function (err) {
+            reject("Error Connecting to the server");
+          });
+        })["catch"](function (err) {
+          reject("Error Connecting to the server");
+        });
+      })["catch"](function (err) {
+        reject("Error Connecting to the server");
+      });
+    })["catch"](function (err) {
+      reject("Error Connecting to the server " + err);
+    });
+  });
+};
+
 Consumable.getConsumableByCategory = function (category) {
   return Consumable.findOne({
     where: {

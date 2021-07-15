@@ -232,6 +232,7 @@ Battery.getStock = () => {
     return new Bluebird ((resolve, reject) => {
         Battery.findAndCountAll().then(batteries => {
             Supplier.getSupplierNames(batteries).then(() => {
+                
                 resolve(batteries);
     
             }).catch(err => {

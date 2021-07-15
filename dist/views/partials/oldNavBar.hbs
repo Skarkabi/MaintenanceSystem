@@ -1,71 +1,12 @@
-<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
-	<a class="navbar-brand" href="/">Maintenance</a>
+<nav class="navbar navbar-expand-lg" style="background-color: #333333;">
+	<a class="navbar-brand" href="/"></a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
 		aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
 	</button>
 
 	<div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
-		<ul class="navbar-nav">
-			<li class="nav-item dropdown">
-				<a class="nav-link" href="/">Dashboard</a>
-			</li>
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="bootstrapDropDownNavbar" role="button" data-toggle="dropdown"
-						aria-haspopup="true" aria-expanded="false">
-						Users
-				</a>
-					<div class="dropdown-menu" aria-labelledby="bootstrapDropDownNavbar">
-						<a class="dropdown-item" href="/users/create" id="createUser"><i class="fas fa-plus"></i> Create New User</a>
-						<a class="dropdown-item" href="/users"><i class="fab fa-buffer"></i> View All Users</a>
-					</div>
-			</li>
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="bootstrapDropDownNavbar" role="button" data-toggle="dropdown"
-						aria-haspopup="true" aria-expanded="false">
-						Vehicles
-				</a>
-					<div class="dropdown-menu" aria-labelledby="bootstrapDropDownNavbar">
-						<a class="dropdown-item" href="/vehicles/add" id="addVehicle"><i class="fas fa-plus"></i> Add New Vehicle</a>
-						<a class="dropdown-item" href="/vehicles"><i class="fab fa-buffer"></i> View All Vehicles</a>
-					</div>
-			</li>
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="bootstrapDropDownNavbar" role="button" data-toggle="dropdown"
-						aria-haspopup="true" aria-expanded="false">
-						Consumables
-				</a>
-					<div class="dropdown-menu" aria-labelledby="bootstrapDropDownNavbar">
-						<a class="dropdown-item" href="/consumables/add" id="addConsumable"><i class="fas fa-plus"></i> Add New Consumable</a>
-						<a class="dropdown-item" href="/consumables"><i class="fab fa-buffer"></i>All Consumables</a>
-						<a class="dropdown-item" href="/consumables/battery"><i class="fab fa-buffer"></i>Batteries</a>
-						<a class="dropdown-item" href="/consumables/brake"><i class="fab fa-buffer"></i>Brakes</a>
-						<a class="dropdown-item" href="/consumables/filter"><i class="fab fa-buffer"></i>Fitlers</a>
-						<a class="dropdown-item" href="/consumables/grease"><i class="fab fa-buffer"></i>Grease</a>
-						<a class="dropdown-item" href="/consumables/oil"><i class="fab fa-buffer"></i>Oil</a>					
-					</div>
-			</li>
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="bootstrapDropDownNavbar" role="button" data-toggle="dropdown"
-						aria-haspopup="true" aria-expanded="false">
-						Suppliers
-				</a>
-					<div class="dropdown-menu" aria-labelledby="bootstrapDropDownNavbar">
-						<a class="dropdown-item" href="/suppliers/register" id="addSupplier"><i class="fas fa-plus"></i> Register New Supplier</a>
-						<a class="dropdown-item" href="/suppliers"><i class="fab fa-buffer"></i>View Suppliers</a>
-					</div>
-			</li>
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="bootstrapDropDownNavbar" role="button" data-toggle="dropdown"
-						aria-haspopup="true" aria-expanded="false">
-						Jobs
-				</a>
-					<div class="dropdown-menu" aria-labelledby="bootstrapDropDownNavbar">
-						<a class="dropdown-item" href="/maintanence/create" id="createJob"><i class="fas fa-plus"></i> Create New Job Request</a>
-						<a class="dropdown-item" href="/maintanence"><i class="fab fa-buffer"></i>View Job Requests</a>
-					</div>
-			</li>
-		</ul>
+		
 	</div>
 
 	<div class="navbar-nav">
@@ -76,7 +17,7 @@
 					{{user.id}}
 				</a>
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="userInfoNav">
-					<a class="dropdown-item" href="/users/display-user/{{user.id}}" id="viewAccount"><i class="far fa-user"></i> View Account</a>
+					<a class="dropdown-item" href="/users/display-user/{{user}}" id="viewAccount"><i class="far fa-user"></i> View Account</a>
 					<a class="dropdown-item" href="/users/update/{{user._id}}" id="updateAccount"><i class="fas fa-cog"></i> View Jobs</a>
 					<a class="dropdown-item" id="logout" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
 				</div>

@@ -2,6 +2,7 @@ import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import Bluebird from 'bluebird';
 import Sequelize from 'sequelize';
+import multer from 'multer';
 
 import sequelize from '../mySQLDB';
 
@@ -40,6 +41,10 @@ const mappings = {
     type: Sequelize.DataTypes.STRING,
     allowNull: false,
   },
+  profilePicture: {
+    type: Sequelize.DataTypes.STRING,
+    allowNull: true,
+  }
 };
 
 const User = sequelize.define('User', mappings, {
@@ -83,6 +88,11 @@ const User = sequelize.define('User', mappings, {
       name: 'user_userType_index',
       method: 'BTREE',
       fields: ['userType'],
+    },
+    {
+      name: 'user_profilePicture_index',
+      method: 'BTREE',
+      fields: ['profilePicture'],
     }
   ],
 });
@@ -188,5 +198,24 @@ User.prototype.comparePassword = function (password) {
     );
 
 };
+
+User.uploadProfilePhoto = () => {
+  var storage = multer.diskStorage({
+      destination: function (req, file, cb) {
+        cb(null, './public/profilePictures')
+      },
+      filename: function (req, file, cb) {
+        console.log("FILEP");
+        console.log(req.user)
+        cb(null, req.user.username+".png")
+        User.getUserById(req.user.id).then(toUpdate => {
+          toUpdate.profilePicture = `${req.user.username}.png`;
+          toUpdate.save();
+        })
+      }
+    })
+    var upload = multer({ storage: storage })
+    return upload;
+}
 
 export default User;

@@ -13,6 +13,7 @@ module.exports = (passport) => {
       const dbUser = await userQueries.getUserById(id);
       const user = { username: dbUser.username, }
       user.id = dbUser.id;
+      user.profilePicture = dbUser.profilePicture;
       Object.assign(user, getUserType(dbUser))
       done(null, user);
     })

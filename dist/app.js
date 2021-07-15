@@ -149,6 +149,11 @@ app.use(function (req, res, next) {
 (0, _passport2["default"])(_passport["default"]);
 app.use(_passport["default"].initialize());
 app.use(_passport["default"].session());
+app.use(function (req, res, next) {
+  app.locals.user = req.user;
+  console.log(app.locals.user);
+  next();
+});
 /**app.get('*', (req, res, next) =>
 {
     res.locals.user = req.user || null;

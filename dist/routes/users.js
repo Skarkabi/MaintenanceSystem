@@ -29,7 +29,31 @@ var router = _express["default"].Router();
 
 
 router.get('/display-user/:id', function (req, res, next) {
-  console.log(req.user.id + " " + req.params.id);
+  console.log(req.user.id);
+  console.log(req.params);
+
+  if (req.user.id == req.params.id || req.user.admin) {
+    var msg = req.flash();
+
+    _User["default"].getUserById(req.params.id).then(function (foundUser) {
+      res.render('displayUser', {
+        title: "".concat(foundUser.firstName, " ").concat(foundUser.lastName, "'s Page"),
+        jumbotronDescription: "This is ".concat(foundUser.firstName, " ").concat(foundUser.lastName, "'s profile page."),
+        existingUser: foundUser,
+        showPii: req.user.admin || req.user.id == req.params.id,
+        msgType: msg
+      });
+    });
+  } else {
+    req.flash('error_msg', "You do not have access to this page.");
+    res.render("accessDenied", {
+      title: "Access Denied",
+      msgType: req.flash()
+    });
+  }
+});
+router.get('/display-user/', function (req, res, next) {
+  console.log(req.user.id);
 
   if (req.user.id == req.params.id || req.user.admin) {
     var msg = req.flash();
@@ -94,15 +118,42 @@ router.get('/', /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }());
+router.get('/edit/:id', /*#__PURE__*/function () {
+  var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(req, res, next) {
+    return _regenerator["default"].wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            res.render('editProfilePicture', {
+              title: 'editUser',
+              jumbotronDescription: "Edit Profile Picture.",
+              msgType: req.flash()
+            });
+
+          case 1:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+
+  return function (_x4, _x5, _x6) {
+    return _ref2.apply(this, arguments);
+  };
+}());
+router.post('/edit/:id', _User["default"].uploadProfilePhoto().single('upload'), function (req, res, next) {
+  res.redirect('back');
+});
 /**
  * Displays create user page.
  */
 
 router.get('/create', /*#__PURE__*/function () {
-  var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(req, res, next) {
-    return _regenerator["default"].wrap(function _callee2$(_context2) {
+  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(req, res, next) {
+    return _regenerator["default"].wrap(function _callee3$(_context3) {
       while (1) {
-        switch (_context2.prev = _context2.next) {
+        switch (_context3.prev = _context3.next) {
           case 0:
             if (req.user.admin) {
               res.render('createUpdateUser', {
@@ -122,14 +173,14 @@ router.get('/create', /*#__PURE__*/function () {
 
           case 1:
           case "end":
-            return _context2.stop();
+            return _context3.stop();
         }
       }
-    }, _callee2);
+    }, _callee3);
   }));
 
-  return function (_x4, _x5, _x6) {
-    return _ref2.apply(this, arguments);
+  return function (_x7, _x8, _x9) {
+    return _ref3.apply(this, arguments);
   };
 }());
 router.get('/delete/:id', function (req, res, next) {

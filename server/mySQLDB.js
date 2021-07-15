@@ -3,7 +3,7 @@ import Sequelize from 'sequelize';
 
 const dbName = 'maintanence';
 const dbUserName = 'root';
-const dbPassword = 'mosjsfskmo1';
+const dbPassword = 'mosjsfskmo';
 const dbHost = 'localhost';
 const dbPort = '3306';
 
@@ -15,6 +15,8 @@ const mySQLDB = new Sequelize(dbName, dbUserName, dbPassword, {
 
 mySQLDB.sync().then(() => {
     console.log(`Database & tables created!`)
-})
+}).catch(err => {
+    console.log(`Could not connect to database ${err}`);
+});
 
 export default mySQLDB;

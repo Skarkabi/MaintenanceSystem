@@ -5,6 +5,7 @@ import Bluebird from 'bluebird';
 import { body, validationResult } from 'express-validator';
 import User from '../models/User';
 
+
 const router = express.Router();
 
 /** 
@@ -99,7 +100,9 @@ router.get('/edit/:id', async(req, res, next) => {
     });
 })
 
-router.post('/edit/:id', User.uploadProfilePhoto().single('upload'), (req,res,next) =>{
+var count = 1;
+router.post('/edit/:id', (req,res,next) =>{
+    User.updateProfilePhoto(req.user.id, req.user.username, req.body.image);
     res.redirect('back');
 })
 

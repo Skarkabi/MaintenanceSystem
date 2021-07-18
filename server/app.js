@@ -10,7 +10,7 @@ import session from 'express-session';
 import flash from 'express-flash';
 import passport from 'passport';
 import sequelizeStore from 'connect-session-sequelize'
-
+import bodyParser from 'body-parser';
 import passportConfig from './passport';
 import sequelize from './mySQLDB';
 
@@ -81,9 +81,11 @@ app.set('view engine', 'hbs');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({limit: '50mb', extended: true}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 const SequelizeStore = sequelizeStore(session.Store);
 
@@ -112,7 +114,6 @@ app.use(passport.session());
 
 app.use(function (req, res, next){
     app.locals.user = req.user;
-    console.log(app.locals.user);
     next();
 })
 
@@ -158,12 +159,10 @@ function taskDate() {
     } 
 
     today = dd+'/'+mm+'/'+yyyy;
-    console.log(today);
     return today;
 }
 
 var datemilli = Date.parse('Sun May 11,2014');
-console.log(taskDate(datemilli));
 
 const newVehicle = {
     dateAdded: taskDate(),

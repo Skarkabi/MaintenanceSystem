@@ -31,6 +31,8 @@ var _passport = _interopRequireDefault(require("passport"));
 
 var _connectSessionSequelize = _interopRequireDefault(require("connect-session-sequelize"));
 
+var _bodyParser = _interopRequireDefault(require("body-parser"));
+
 var _passport2 = _interopRequireDefault(require("./passport"));
 
 var _mySQLDB = _interopRequireDefault(require("./mySQLDB"));
@@ -122,10 +124,15 @@ app.set('view engine', 'hbs');
 app.use((0, _morgan["default"])('dev'));
 app.use(_express["default"].json());
 app.use(_express["default"].urlencoded({
-  extended: false
+  limit: '50mb',
+  extended: true
 }));
 app.use((0, _cookieParser["default"])());
 app.use(_express["default"]["static"](_path["default"].join(__dirname, '../public')));
+app.use(_bodyParser["default"].urlencoded({
+  extended: false
+}));
+app.use(_bodyParser["default"].json());
 var SequelizeStore = (0, _connectSessionSequelize["default"])(_expressSession["default"].Store);
 app.use((0, _expressSession["default"])({
   secret: 'secret',
@@ -151,7 +158,6 @@ app.use(_passport["default"].initialize());
 app.use(_passport["default"].session());
 app.use(function (req, res, next) {
   app.locals.user = req.user;
-  console.log(app.locals.user);
   next();
 });
 /**app.get('*', (req, res, next) =>
@@ -192,12 +198,10 @@ function taskDate() {
   }
 
   today = dd + '/' + mm + '/' + yyyy;
-  console.log(today);
   return today;
 }
 
 var datemilli = Date.parse('Sun May 11,2014');
-console.log(taskDate(datemilli));
 var newVehicle = {
   dateAdded: taskDate(),
   cateogry: "Tester",

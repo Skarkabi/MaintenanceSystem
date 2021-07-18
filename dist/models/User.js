@@ -17,6 +17,8 @@ var _sequelize = _interopRequireDefault(require("sequelize"));
 
 var _multer = _interopRequireDefault(require("multer"));
 
+var _fs = _interopRequireDefault(require("fs"));
+
 var _mySQLDB = _interopRequireDefault(require("../mySQLDB"));
 
 var mappings = {
@@ -184,26 +186,22 @@ User.prototype.comparePassword = function (password) {
   });
 };
 
-User.uploadProfilePhoto = function () {
-  var storage = _multer["default"].diskStorage({
-    destination: function destination(req, file, cb) {
-      cb(null, './public/profilePictures');
-    },
-    filename: function filename(req, file, cb) {
-      console.log("FILEP");
-      console.log(req.user);
-      cb(null, req.user.username + ".png");
-      User.getUserById(req.user.id).then(function (toUpdate) {
-        toUpdate.profilePicture = "".concat(req.user.username, ".png");
-        toUpdate.save();
-      });
-    }
-  });
+User.updateProfilePhoto = function (userId, username, profilePicture) {
+  profilePicture = JSON.stringify(profilePicture).slice(23);
+  console.log("int here");
 
-  var upload = (0, _multer["default"])({
-    storage: storage
+  _fs["default"].writeFileSync("./public/profilePictures/".concat(username, ".jpeg"), new Buffer.from(profilePicture, 'base64', function (err) {
+    if (err) return console.error(err);
+    console.log('file saved to ', '/mytest2.png');
+  }));
+
+  console.log("didnt break yet");
+  User.getUserById(userId).then(function (toUpdate) {
+    toUpdate.profilePicture = "".concat(username, ".jpeg");
+    toUpdate.save();
+  })["catch"](function (err) {
+    console.log("This happened " + err);
   });
-  return upload;
 };
 
 var _default = User;

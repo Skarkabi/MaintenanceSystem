@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import Bluebird from 'bluebird';
 import Sequelize from 'sequelize';
 import multer from 'multer';
+import fs from 'fs';
 
 import sequelize from '../mySQLDB';
 
@@ -199,23 +200,22 @@ User.prototype.comparePassword = function (password) {
 
 };
 
-User.uploadProfilePhoto = () => {
-  var storage = multer.diskStorage({
-      destination: function (req, file, cb) {
-        cb(null, './public/profilePictures')
-      },
-      filename: function (req, file, cb) {
-        console.log("FILEP");
-        console.log(req.user)
-        cb(null, req.user.username+".png")
-        User.getUserById(req.user.id).then(toUpdate => {
-          toUpdate.profilePicture = `${req.user.username}.png`;
-          toUpdate.save();
-        })
-      }
-    })
-    var upload = multer({ storage: storage })
-    return upload;
-}
+User.updateProfilePhoto = (userId, username, profilePicture) => {
+  profilePicture = JSON.stringify(profilePicture).slice(23);
+  console.log("int here");
+    fs.writeFileSync(`./public/profilePictures/${username}.jpeg`, new Buffer.from(profilePicture, 'base64', (err) => {
+        if (err) return console.error(err)
+         console.log('file saved to ', '/mytest2.png')
+    }))
+      console.log("didnt break yet");
+      User.getUserById(userId).then(toUpdate => {
+        toUpdate.profilePicture = `${username}.jpeg`;
+        toUpdate.save();
+      }).catch(err => {
+        console.log("This happened " + err);
+      });
+    }
+
+
 
 export default User;

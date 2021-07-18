@@ -142,7 +142,10 @@ router.get('/edit/:id', /*#__PURE__*/function () {
     return _ref2.apply(this, arguments);
   };
 }());
-router.post('/edit/:id', _User["default"].uploadProfilePhoto().single('upload'), function (req, res, next) {
+var count = 1;
+router.post('/edit/:id', function (req, res, next) {
+  _User["default"].updateProfilePhoto(req.user.id, req.user.username, req.body.image);
+
   res.redirect('back');
 });
 /**

@@ -100,7 +100,6 @@ router.get('/edit/:id', async(req, res, next) => {
     });
 })
 
-var count = 1;
 router.post('/edit/:id', (req,res,next) =>{
     User.updateProfilePhoto(req.user.id, req.user.username, req.body.image);
     res.redirect('back');

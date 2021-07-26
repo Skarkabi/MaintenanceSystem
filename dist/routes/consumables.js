@@ -188,13 +188,19 @@ router.post('/add/battery', _Quotation["default"].uploadFile().single('upload'),
     supplierId: req.body.batteriesSupplierName,
     quotationNumber: req.body.quotation
   };
-  var newQuotation = {
-    quotationNumber: req.body.quotation,
-    quotationPath: req.file.path
-  };
+  var newQuotation;
+
+  if (req.file.path) {
+    newQuotation = {
+      quotationNumber: req.body.quotation,
+      quotationPath: req.file.path
+    };
+  }
 
   _Battery["default"].addBattery(newBattery).then(function (output) {
-    _Quotation["default"].addQuotation(newQuotation);
+    if (req.file.path) {
+      _Quotation["default"].addQuotation(newQuotation);
+    }
 
     req.flash('success_msg', output);
     res.redirect("/consumables/add");

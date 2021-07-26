@@ -114,13 +114,20 @@ router.post('/add/battery', Quotation.uploadFile().single('upload')
 
         }
 
-        const newQuotation = {
-            quotationNumber: req.body.quotation,
-            quotationPath: req.file.path
+        var newQuotation;
+        if(req.file.path){
+            newQuotation = {
+                quotationNumber: req.body.quotation,
+                quotationPath: req.file.path
+            }
         }
+        
 
         Battery.addBattery(newBattery).then(output =>{
+            if(req.file.path){
                 Quotation.addQuotation(newQuotation);
+            }
+                
                 req.flash('success_msg',  output);
                 res.redirect("/consumables/add");
            

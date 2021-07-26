@@ -6,6 +6,9 @@ import Bluebird from 'bluebird';
 import Supplier from '../Supplier';
 import Quotation from '../Quotation';
 
+/**
+ * Declaring the datatypes used within the Brake class
+ */
 const mappings = {
     id: {
         type: Sequelize.INTEGER,
@@ -74,17 +77,20 @@ const mappings = {
     },
 };
 
+/**
+ * Defining the brake stocks table within the MySQL database using Sequelize
+ */
 const Brake = sequelize.define('brake_stocks', mappings, {
   indexes: [
     {
-      name: 'brake_id_index',
-      method: 'BTREE',
-      fields: ['id'],
+        name: 'brake_id_index',
+        method: 'BTREE',
+        fields: ['id'],
     },
     {
-      name: 'brake_quantity_index',
-      method: 'BTREE',
-      fields: ['quantity'],
+        name: 'brake_quantity_index',
+        method: 'BTREE',
+        fields: ['quantity'],
     },
     {
         name: 'brake_carBrand_index',
@@ -149,25 +155,37 @@ const Brake = sequelize.define('brake_stocks', mappings, {
   ],
 });
 
+/**
+ * Function to update Brake stock
+ * Takes in the brake object and if the value should be deleted or added
+ * @param {*} newBattery 
+ * @param {*} action 
+ * @returns msg to be flashed to user
+ */
 Brake.updateBrake = (newBrake, action) => {
     return new Bluebird((resolve, reject) => {
+        //Creating the new Consumable value to be updated in the consumable databse
         const newConsumable = {
             category: "Brake",
             quantity: newBrake.quantity
         };
+
+        //Checking if the brake spec exists within the stock
         Brake.findOne({
             where: {id: newBrake.id}
 
         }).then(foundBrake => {
+             //If the brake exists in the databse the function sets the new quantity to the new value
             var quant;
             if(action === "add"){
-               quant = parseInt(newBrake.quantity) + foundBrake.quantity;
+                quant = parseInt(newBrake.quantity) + foundBrake.quantity;
             
             }else if(action ==="delet"){
                 quant = foundBrake.quantity - parseInt(newBrake.quantity);
 
             } 
 
+            //If the new value is 0 the brake definition is deleted from the stock
             if(quant === 0){
                 foundBrake.destroy().then(() => {
                     resolve("Brake Completly Removed From Stock!");
@@ -177,16 +195,20 @@ Brake.updateBrake = (newBrake, action) => {
 
                 });
 
+            //If the new quantity is less than 0 rejects the user input
             }else if(quant < 0){
                 reject("Can Not Delete More Than Exists in Stock");
 
+            //If quantity is > 0 the brake quantity is updated
             }else{
+                //looking for the brake to update and setting the new quantity
                 Brake.update({quantity:quant}, {
                     where: {
                         id: newBrake.id
                     }
     
                 }).then(() => {
+                    //Updating the value from the consumables database
                     Consumable.updateConsumable(newConsumable,action).then(() => {
                         if(action === "delet"){
                             resolve(newBrake.quantity + " Brakes Sucessfully Deleted from Existing Stock!");
@@ -212,12 +234,21 @@ Brake.updateBrake = (newBrake, action) => {
     });
 
 }
+
+/**
+ * Function to add a new battery into stock
+ * Function takes an object with the needed battery info
+ * @param {*} newBattery 
+ * @returns msg to be flashed to user
+ */
 Brake.addBrake = (newBrake) => {
     return new Bluebird((resolve, reject) => {
+        //Creating the new Consumable value to be updated in the consumable databse
         const newConsumable = {
             category: "Brake",
             quantity: newBrake.quantity
         };
+        //Looking if the brake with exact specs and same quotation number already exists in stock
         Brake.findOne({
             where: {
                 category: newBrake.category,
@@ -231,15 +262,19 @@ Brake.addBrake = (newBrake) => {
             }
 
         }).then(foundBrake => {
+            //If this brake with this quotation number exists the function rejects the creation
             if(foundBrake){
                 reject("Brakes With these Details Already Registered, Please Add to Existing Stock");
 
+            //If the brake is not found the function creates a brake and updates the consumable stock
             }else{
+                //Converting values to appropiate number type
                 newBrake.singleCost = parseFloat(newBrake.singleCost);
                 newBrake.quantity = parseInt(newBrake.quantity);
                 newBrake.minQuantity = parseInt(newBrake.minQuantity);
                 newBrake.totalCost = newBrake.singleCost * newBrake.quantity;
                 Brake.create(newBrake).then(() => {
+                    //Updating consumable stock database
                     Consumable.updateConsumable(newConsumable, "add").then(() => {
                         resolve(newBrake.quantity + " Brakes Sucessfully Added!");
 
@@ -260,10 +295,18 @@ Brake.addBrake = (newBrake) => {
     });
 
 }
+
+/**
+ * Function to set virtual datatype supplier name using supplier ids in brake
+ * @returns List of brakes with their supplier names
+ */
 Brake.getStock = () => {
     return new Bluebird ((resolve, reject) => {
+        //Getting all the brakes found in the database
         Brake.findAndCountAll().then(breakes => {
+            //Calling supplier function to add supplier name to brake objects
             Supplier.getSupplierNames(breakes).then(() => {
+                //returning the brakes 
                 resolve(breakes);
     
             }).catch(err => {
@@ -278,17 +321,30 @@ Brake.getStock = () => {
     })
 }
 
+/**
+ * function to return distinct values in object
+ * @param {*} values 
+ * @returns filtered values 
+ */
 function getDistinct(values){
     return values.filter((value, index, self) => self.indexOf(value) === index);
 }
 
+/**
+ * Function to return list of brakes with their supplier names, as well as distinct values found within the database
+ * @returns object that includes all brakes, suppliers, and distinct values of each brake spec
+ */
 Brake.getBrakeStock = () =>{
     return new Bluebird(async (resolve,reject) => {
+        //Declaring all variables to be returned
         var brakeC, brakeS, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity;
+        //Getting all suppliers saved in database
         Supplier.findAll().then(suppliers => {
             brakeS = suppliers
+            //Getting all brakes from database and setting supplier names 
             Brake.getStock().then(consumables => {
                 brakeC = consumables
+                //Mapping brake values to not return double values
                 brakeCategory = getDistinct(brakeC.rows.map(val => val.category))
                 brakeCBrand = getDistinct(brakeC.rows.map(val => val.carBrand))
                 brakeCYear = getDistinct(brakeC.rows.map(val => val.carYear))
@@ -297,6 +353,7 @@ Brake.getBrakeStock = () =>{
                 brakeQuantity = getDistinct(brakeC.rows.map(val => val.quantity))
                 brakeBrand = getDistinct(brakeC.rows.map(val => val.bBrand))
 
+                //Creating variable of all need variables to return
                 var values = {
                     consumable: brakeC.rows, suppliers: brakeS, brakeCategory: brakeCategory, brakeCBrand: brakeCBrand, brakeCYear: brakeCYear,
                     brakeCChassis: brakeCChassis, brakeBrand: brakeBrand, brakePBrand: brakePBrand, brakeQuantity: brakeQuantity
@@ -317,8 +374,13 @@ Brake.getBrakeStock = () =>{
 
 }
 
+/**
+ * Function to find matching quotation of brakes
+ * @returns Quotation object
+ */
 Brake.getQuotation = () => {
     return new Bluebird((resolve, reject) => {
+        //Getting the quotation from database
         Quotation.getQuotation(this.quotationNumber).then(foundQuotation => {
             resolve(foundQuotation);
         }).catch(err =>{
@@ -327,37 +389,72 @@ Brake.getQuotation = () => {
     })
 }
 
+/**
+ * Function to find all brakes in database with specific supplier ID
+ * Function takes in the supplier ID of the supplier being searched for
+ * @param {*} supplierId 
+ * @returns List of brakes purchased from that specified supplier ID
+ */
 Brake.getWithSupplier = supplierId => {
     return new Bluebird((resolve, reject) => {
+        //Finding all brakes with specified supplier ID
         Brake.findAndCountAll({
             where: {
                 supplierId: supplierId
             }
-        }).then(async foundBrakes => {
-            await Supplier.getSupplierNames(foundBrakes);
-            resolve(foundBrakes.rows);
+
+        }).then(foundBrakes => {
+            //Adding supplier Name to batteries 
+            Supplier.getSupplierNames(foundBrakes).then(() => {
+                resolve(foundBrakes.rows);
+
+            }).catch(err => {
+                reject(err);
+            });
+            
         }).catch(err => {
             reject(err);
         });
+
     });
+
 }
 
+/**
+ * Function to find different brakes from a specific suppleir 
+ * @returns list of brake values from specific supplier regardless of quotation numbers
+ */
 Brake.groupSupplier = () => {
     return new Bluebird((resolve, reject) => {
+         //Finding brakes from database and returning specified attributes 
         Brake.findAll({
+            //Declaring attributes to return from database
             attributes:
               ['category', 'carBrand', 'carYear', 'chassis', 'bBrand', 'singleCost', 'supplierId',
               [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
             ],
 
+            //Declaring how to group return values
             group: ["category", "carBrand", "carYear", "chassis", "bBrand", "singleCost", "supplierId",   "preferredBrand",]
             
-        }).then(async (values) => { 
+        }).then((values) => { 
+            //Setting variable to return batteries with their supplier names
             var result = {count: values.length, rows: values}
-            await Supplier.getSupplierNames(result);
-           resolve(result);
+            Supplier.getSupplierNames(result).then(() => {
+                resolve(result);
+            
+            }).catch(err => {
+                reject(err);
+
+            });
+
+        }).catch(err => {
+            reject(err);
+
         });
-    })
+
+    });
+    
 }
 
 

@@ -127,14 +127,14 @@ const Brake = sequelize.define('brake_stocks', mappings, {
         fields: ['minQuantity']
     },
     {
-      name: 'brake_createdAt_index',
-      method: 'BTREE',
-      fields: ['createdAt'],
+        name: 'brake_createdAt_index',
+        method: 'BTREE',
+        fields: ['createdAt'],
     },
     {
-      name: 'brake_updatedAt_index',
-      method: 'BTREE',
-      fields: ['updatedAt'],
+        name: 'brake_updatedAt_index',
+        method: 'BTREE',
+        fields: ['updatedAt'],
     },
     {
         name: 'brake_supplierId_index',

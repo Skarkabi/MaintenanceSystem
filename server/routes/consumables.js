@@ -115,7 +115,7 @@ router.post('/add/battery', Quotation.uploadFile().single('upload')
         }
 
         var newQuotation;
-        if(req.file.path){
+        if(req.file){
             newQuotation = {
                 quotationNumber: req.body.quotation,
                 quotationPath: req.file.path
@@ -124,7 +124,7 @@ router.post('/add/battery', Quotation.uploadFile().single('upload')
         
 
         Battery.addBattery(newBattery).then(output =>{
-            if(req.file.path){
+            if(req.file){
                 Quotation.addQuotation(newQuotation);
             }
                 
@@ -154,13 +154,18 @@ router.post('/add/brake', Quotation.uploadFile().single('upload'),
             quotationNumber: req.body.quotation
         }
 
-        const newQuotation = {
-            quotationNumber: req.body.quotation,
-            quotationPath: req.file.path
+        var newQuotation;
+        if(req.file){
+            newQuotation = {
+                quotationNumber: req.body.quotation,
+                quotationPath: req.file.path
+            }
         }
         
         Brake.addBrake(newBrake).then(output =>{
-           Quotation.addQuotation(newQuotation);
+            if(req.file){
+                Quotation.addQuotation(newQuotation);
+            }
             req.flash('success_msg', output);
             res.redirect("/consumables/add");
 
@@ -232,13 +237,18 @@ Quotation.uploadFile().single('upload'), (req, res, next) => {
 
         };
 
-        const newQuotation = {
-            quotationNumber: req.body.quotation,
-            quotationPath: req.file.path
+        var newQuotation;
+        if(req.file){
+            newQuotation = {
+                quotationNumber: req.body.quotation,
+                quotationPath: req.file.path
+            }
         }
     
         Filter.addFilter(newFilter).then(output => {    
-            Quotation.addQuotation(newQuotation);
+            if(req.file){
+                Quotation.addQuotation(newQuotation);
+            }
             req.flash('success_msg', output);
             res.redirect("/consumables/add");
 
@@ -282,13 +292,18 @@ router.post('/add/grease',Quotation.uploadFile().single('upload')
 
         };
 
-        const newQuotation = {
-            quotationNumber: req.body.quotation,
-            quotationPath: req.file.path
+        var newQuotation;
+        if(req.file){
+            newQuotation = {
+                quotationNumber: req.body.quotation,
+                quotationPath: req.file.path
+            }
         }
 
         Grease.addGrease(newGrease).then(output => {
-            Quotation.addQuotation(newQuotation);
+            if(req.file){
+                Quotation.addQuotation(newQuotation);
+            }
             req.flash('success_msg', output);
             res.redirect("/consumables/add");
             
@@ -331,18 +346,20 @@ router.post('/add/oil', Quotation.uploadFile().single('upload')
             quotationNumber: req.body.quotation
         };
 
-        const newQuotation = {
-            quotationNumber: req.body.quotation,
-            quotationPath: req.file.path
-
+        var newQuotation;
+        if(req.file){
+            newQuotation = {
+                quotationNumber: req.body.quotation,
+                quotationPath: req.file.path
+            }
         }
 
         Oil.addOil(newOil).then(output => {
-            Quotation.addQuotation(newQuotation).then(() => {
-                req.flash('success_msg', output);
-                res.redirect("/consumables/add");
-
-            });
+            if(req.file){
+                Quotation.addQuotation(newQuotation);
+            }
+            req.flash('success_msg', output);
+            res.redirect("/consumables/add");
 
         }).catch(err =>{
             req.flash('error_msg', err);

@@ -190,7 +190,7 @@ router.post('/add/battery', _Quotation["default"].uploadFile().single('upload'),
   };
   var newQuotation;
 
-  if (req.file.path) {
+  if (req.file) {
     newQuotation = {
       quotationNumber: req.body.quotation,
       quotationPath: req.file.path
@@ -198,7 +198,7 @@ router.post('/add/battery', _Quotation["default"].uploadFile().single('upload'),
   }
 
   _Battery["default"].addBattery(newBattery).then(function (output) {
-    if (req.file.path) {
+    if (req.file) {
       _Quotation["default"].addQuotation(newQuotation);
     }
 
@@ -223,13 +223,19 @@ router.post('/add/brake', _Quotation["default"].uploadFile().single('upload'), f
     supplierId: req.body.brakeSupplierName,
     quotationNumber: req.body.quotation
   };
-  var newQuotation = {
-    quotationNumber: req.body.quotation,
-    quotationPath: req.file.path
-  };
+  var newQuotation;
+
+  if (req.file) {
+    newQuotation = {
+      quotationNumber: req.body.quotation,
+      quotationPath: req.file.path
+    };
+  }
 
   _Brake["default"].addBrake(newBrake).then(function (output) {
-    _Quotation["default"].addQuotation(newQuotation);
+    if (req.file) {
+      _Quotation["default"].addQuotation(newQuotation);
+    }
 
     req.flash('success_msg', output);
     res.redirect("/consumables/add");
@@ -308,13 +314,19 @@ router.post('/add/filter', _Quotation["default"].uploadFile().single('upload'), 
     supplierId: req.body.filterSupplierName,
     quotationNumber: req.body.quotation
   };
-  var newQuotation = {
-    quotationNumber: req.body.quotation,
-    quotationPath: req.file.path
-  };
+  var newQuotation;
+
+  if (req.file) {
+    newQuotation = {
+      quotationNumber: req.body.quotation,
+      quotationPath: req.file.path
+    };
+  }
 
   _Filter["default"].addFilter(newFilter).then(function (output) {
-    _Quotation["default"].addQuotation(newQuotation);
+    if (req.file) {
+      _Quotation["default"].addQuotation(newQuotation);
+    }
 
     req.flash('success_msg', output);
     res.redirect("/consumables/add");
@@ -348,13 +360,19 @@ router.post('/add/grease', _Quotation["default"].uploadFile().single('upload'), 
     supplierId: req.body.greaseSupplierName,
     quotationNumber: req.body.quotation
   };
-  var newQuotation = {
-    quotationNumber: req.body.quotation,
-    quotationPath: req.file.path
-  };
+  var newQuotation;
+
+  if (req.file) {
+    newQuotation = {
+      quotationNumber: req.body.quotation,
+      quotationPath: req.file.path
+    };
+  }
 
   _Grease["default"].addGrease(newGrease).then(function (output) {
-    _Quotation["default"].addQuotation(newQuotation);
+    if (req.file) {
+      _Quotation["default"].addQuotation(newQuotation);
+    }
 
     req.flash('success_msg', output);
     res.redirect("/consumables/add");
@@ -388,16 +406,22 @@ router.post('/add/oil', _Quotation["default"].uploadFile().single('upload'), fun
     supplierId: req.body.oilSupplierName,
     quotationNumber: req.body.quotation
   };
-  var newQuotation = {
-    quotationNumber: req.body.quotation,
-    quotationPath: req.file.path
-  };
+  var newQuotation;
+
+  if (req.file) {
+    newQuotation = {
+      quotationNumber: req.body.quotation,
+      quotationPath: req.file.path
+    };
+  }
 
   _Oil["default"].addOil(newOil).then(function (output) {
-    _Quotation["default"].addQuotation(newQuotation).then(function () {
-      req.flash('success_msg', output);
-      res.redirect("/consumables/add");
-    });
+    if (req.file) {
+      _Quotation["default"].addQuotation(newQuotation);
+    }
+
+    req.flash('success_msg', output);
+    res.redirect("/consumables/add");
   })["catch"](function (err) {
     req.flash('error_msg', err);
     res.redirect("/consumables/add");

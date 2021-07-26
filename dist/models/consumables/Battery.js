@@ -2,20 +2,12 @@
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
-var _typeof = require("@babel/runtime/helpers/typeof");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports["default"] = void 0;
 
-var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
-
-var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
-
 var _lodash = _interopRequireDefault(require("lodash"));
-
-var _bcrypt = _interopRequireDefault(require("bcrypt"));
 
 var _bluebird = _interopRequireDefault(require("bluebird"));
 
@@ -25,14 +17,11 @@ var _Consumables = _interopRequireDefault(require("../Consumables"));
 
 var _mySQLDB = _interopRequireDefault(require("../../mySQLDB"));
 
-var _express = _interopRequireWildcard(require("express"));
-
 var _Supplier = _interopRequireDefault(require("../Supplier"));
 
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
+/**
+ * Declaring the datatypes used within the Battery class
+ */
 var mappings = {
   id: {
     type: _sequelize["default"].INTEGER,
@@ -79,6 +68,9 @@ var mappings = {
     allowNull: false
   }
 };
+/**
+ * Definxwing the battery stocks table within the MySQL database using Sequelize
+ */
 
 var Battery = _mySQLDB["default"].define('battery_stocks', mappings, {
   indexes: [{
@@ -123,38 +115,49 @@ var Battery = _mySQLDB["default"].define('battery_stocks', mappings, {
     fields: ['quotationNumber']
   }]
 });
+/**
+ * Function to update battery stock
+ * Takes in the battery object and if the value should be deleted or added
+ * @param {*} newBattery 
+ * @param {*} action 
+ * @returns 
+ */
+
 
 Battery.updateBattery = function (newBattery, action) {
   return new _bluebird["default"](function (resolve, reject) {
+    //Creating the new Consumable value to be updated in the consumable databse
     var newConsumable = {
       category: "Battery",
       quantity: newBattery.quantity
-    };
+    }; //Checking if the battery spec exists within the stock
+
     Battery.findOne({
       where: {
         id: newBattery.id
       }
     }).then(function (foundBattery) {
+      //If the battery exists in the databse the function sets the new quantity to the new value
       var quant;
 
       if (action === "add") {
         quant = parseInt(newBattery.quantity) + foundBattery.quantity;
       } else if (action === "delet") {
         quant = foundBattery.quantity - parseInt(newBattery.quantity);
-      }
+      } //If the new value is 0 the battery definition is deleted from the stock
+
 
       if (quant === 0) {
         console.log("About to destroy " + foundBattery);
         foundBattery.destroy().then(function () {
           resolve("Battery Completly removed from stock!");
         })["catch"](function (err) {
-          console.log("About to destroy Failed");
           reject("An Error Occured Batteries Could not be deleted " + err + " ");
-        });
+        }); //If the new quantity is less than 0 rejects the user input
       } else if (quant < 0) {
-        reject("Can not Delete More Than Exists in Stock");
+        reject("Can not Delete More Than Exists in Stock"); //If quantity is > 0 the battery quantity is updated
       } else {
-        console.log("Hanging in here");
+        //looking for the battery to update and setting the new quantity
         Battery.update({
           quantity: quant
         }, {
@@ -162,6 +165,7 @@ Battery.updateBattery = function (newBattery, action) {
             id: newBattery.id
           }
         }).then(function () {
+          //Updating the value from the consumables database
           _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
             if (action === "delet") {
               resolve(newBattery.quantity + " Batteries Sucessfully Deleted from Existing Stock!");
@@ -169,25 +173,33 @@ Battery.updateBattery = function (newBattery, action) {
               resolve(newBattery.quantity + " Batteries Sucessfully Added to Existing Stock!");
             }
           })["catch"](function (err) {
-            reject("An Error Occured Batteries Could not be " + action + "ed");
+            reject("An Error Occured Batteries Could not be " + action + "ed " + err);
           });
         })["catch"](function (err) {
-          reject("An Error Occured Batteries Could not be " + action + "ed");
+          reject("An Error Occured Batteries Could not be " + action + "ed " + err);
         });
       }
     })["catch"](function (err) {
-      reject("An Error Occured Batteries Could not be " + action + "ed");
+      reject("An Error Occured Batteries Could not be " + action + "ed " + err);
     });
   });
 };
+/**
+ * Function to add a new battery into stock
+ * Function takes an object with the needed battery info
+ * @param {*} newBattery 
+ * @returns 
+ */
+
 
 Battery.addBattery = function (newBattery) {
-  console.log(newBattery);
   return new _bluebird["default"](function (resolve, reject) {
+    //Creating the new Consumable value to be updated in the consumable databse
     var newConsumable = {
       category: "Battery",
       quantity: newBattery.quantity
-    };
+    }; //Looking if the battery with exact specs and same quotation number already exists in stock
+
     Battery.findOne({
       where: {
         batSpec: newBattery.batSpec,
@@ -197,30 +209,39 @@ Battery.addBattery = function (newBattery) {
         quotationNumber: newBattery.quotationNumber
       }
     }).then(function (foundBattery) {
+      //If this battery with this quotation number exists the function rejects the creation
       if (foundBattery) {
-        reject("Batteries With these Details Already Registered, Please Add to Existing Stock");
+        reject("Batteries With these Details Already Registered, Please Add to Existing Stock"); //If the battery is not found the function creates a battery and updates the consumable stock
       } else {
-        console.log("Adding this " + JSON.stringify(newBattery));
         Battery.create(newBattery).then(function () {
+          //Updating consumable stock database
           _Consumables["default"].updateConsumable(newConsumable, "add").then(function () {
             resolve(newBattery.quantity + " Batteries Sucessfully Added!");
           })["catch"](function (err) {
-            reject("An Error Occured Batteries Could not be Added");
+            reject("An Error Occured Batteries Could not be Added " + err);
           });
         })["catch"](function (err) {
-          reject("An Error Occured Batteries Could not be Added");
+          reject("An Error Occured Batteries Could not be Added " + err);
         });
       }
     })["catch"](function (err) {
-      reject("An Error Occured Batteries Could not be Added");
+      reject("An Error Occured Batteries Could not be Added " + err);
     });
   });
 };
+/**
+ * Function to set virtual datatype supplier name using supplier ids in battery
+ * @returns List of batteries with their supplier names
+ */
+
 
 Battery.getStock = function () {
   return new _bluebird["default"](function (resolve, reject) {
+    //Getting all the batteries found in the database
     Battery.findAndCountAll().then(function (batteries) {
+      //Calling supplier function to add supplier name to battery objects
       _Supplier["default"].getSupplierNames(batteries).then(function () {
+        //returning the batteries 
         resolve(batteries);
       })["catch"](function (err) {
         reject(err);
@@ -230,132 +251,109 @@ Battery.getStock = function () {
     });
   });
 };
+/**
+ * Function to return list of batteries with their supplier names, as well as unique values found within the database
+ * @returns object that includes all batteries, suppliers, and unique values of each battery spec
+ */
+
 
 Battery.getBatteryStocks = function () {
-  return new _bluebird["default"]( /*#__PURE__*/function () {
-    var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
-      var batteriesC, batteriesS, batSpecs, carBrands, carYears, batteryQuantity, test, sTest;
-      return _regenerator["default"].wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _Supplier["default"].findAll().then(function (suppliers) {
-                batteriesS = suppliers;
-                Battery.getStock().then(function (consumables) {
-                  batteriesC = consumables;
-                  batSpecs = batteriesC.rows.map(function (val) {
-                    return val.batSpec;
-                  }).filter(function (value, index, self) {
-                    return self.indexOf(value) === index;
-                  });
-                  carBrands = batteriesC.rows.map(function (val) {
-                    return val.carBrand;
-                  }).filter(function (value, index, self) {
-                    return self.indexOf(value) === index;
-                  });
-                  carYears = batteriesC.rows.map(function (val) {
-                    return val.carYear;
-                  }).filter(function (value, index, self) {
-                    return self.indexOf(value) === index;
-                  });
-                  var values = {
-                    consumable: batteriesC.rows,
-                    suppliers: batteriesS,
-                    specs: batSpecs,
-                    brands: carBrands,
-                    years: carYears
-                  };
-                  console.log("See if it works 5s");
-                  console.log(values.years);
-                  resolve(values);
-                })["catch"](function () {
-                  reject(err);
-                });
-              });
+  return new _bluebird["default"](function (resolve, reject) {
+    //Declaring all variables to be returned
+    var batteriesC, batteriesS, batSpecs, carBrands, carYears; //Getting all suppliers saved in database
 
-            case 1:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee);
-    }));
+    _Supplier["default"].findAll().then(function (suppliers) {
+      batteriesS = suppliers; //Getting all batteries from database and setting supplier names 
 
-    return function (_x, _x2) {
-      return _ref.apply(this, arguments);
-    };
-  }());
+      Battery.getStock().then(function (consumables) {
+        batteriesC = consumables; //Mapping battery values to not return double values
+
+        batSpecs = batteriesC.rows.map(function (val) {
+          return val.batSpec;
+        }).filter(function (value, index, self) {
+          return self.indexOf(value) === index;
+        });
+        carBrands = batteriesC.rows.map(function (val) {
+          return val.carBrand;
+        }).filter(function (value, index, self) {
+          return self.indexOf(value) === index;
+        });
+        carYears = batteriesC.rows.map(function (val) {
+          return val.carYear;
+        }).filter(function (value, index, self) {
+          return self.indexOf(value) === index;
+        }); //Creating variable of all need variables to return
+
+        var values = {
+          consumable: batteriesC.rows,
+          suppliers: batteriesS,
+          specs: batSpecs,
+          brands: carBrands,
+          years: carYears
+        };
+        resolve(values);
+      })["catch"](function () {
+        reject(err);
+      });
+    });
+  });
 };
+/**
+ * Function to find all batteries in database with specific supplier ID
+ * Function takes in the supplier ID of the supplier being searched for
+ * @param {*} supplierId 
+ * @returns List of batteries purchased from that specified supplier ID
+ */
+
 
 Battery.getWithSupplier = function (supplierId) {
   return new _bluebird["default"](function (resolve, reject) {
+    //Finding all batteries with specified supplier ID
     Battery.findAndCountAll({
       where: {
         supplierId: supplierId
       }
-    }).then( /*#__PURE__*/function () {
-      var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(foundBrakes) {
-        return _regenerator["default"].wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                _context2.next = 2;
-                return _Supplier["default"].getSupplierNames(foundBrakes);
-
-              case 2:
-                resolve(foundBrakes.rows);
-
-              case 3:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2);
-      }));
-
-      return function (_x3) {
-        return _ref2.apply(this, arguments);
-      };
-    }())["catch"](function (err) {
+    }).then(function (foundBrakes) {
+      //Adding supplier Name to batteries 
+      _Supplier["default"].getSupplierNames(foundBrakes).then(function () {
+        resolve(foundBrakes.rows);
+      })["catch"](function (err) {
+        reject(err);
+      });
+    })["catch"](function (err) {
       reject(err);
     });
   });
 };
+/**
+ * Function to find different batteries from a specific suppleir 
+ * @returns list of batter values from specific supplier regardless of quotation numbers
+ */
+
 
 Battery.groupSupplier = function () {
   return new _bluebird["default"](function (resolve, reject) {
+    //Finding batteries from database and returning specified attributes 
     Battery.findAll({
+      //Declating attributes to return from database
       attributes: ['batSpec', 'carBrand', 'carYear', 'supplierId', [_mySQLDB["default"].fn('sum', _mySQLDB["default"].col('quantity')), 'quantity']],
+      //Declaring how to group return values
       group: ["batSpec", "carBrand", "carYear", "supplierId"]
-    }).then( /*#__PURE__*/function () {
-      var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(values) {
-        var result;
-        return _regenerator["default"].wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                result = {
-                  count: values.length,
-                  rows: values
-                };
-                _context3.next = 3;
-                return _Supplier["default"].getSupplierNames(result);
-
-              case 3:
-                resolve(result);
-
-              case 4:
-              case "end":
-                return _context3.stop();
-            }
-          }
-        }, _callee3);
-      }));
-
-      return function (_x4) {
-        return _ref3.apply(this, arguments);
+    }).then(function (values) {
+      //Setting variable to return batteries with their supplier names
+      var result = {
+        count: values.length,
+        rows: values
       };
-    }());
+
+      _Supplier["default"].getSupplierNames(result).then(function () {
+        resolve(result);
+      })["catch"](function (err) {
+        reject(err);
+      });
+    })["catch"](function (err) {
+      reject(err);
+    });
   });
 };
 

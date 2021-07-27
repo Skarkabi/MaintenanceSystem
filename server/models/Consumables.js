@@ -70,7 +70,15 @@ const Consumable = sequelize.define('consumable_stocks', mappings, {
   ],
 });
 
+/**
+ * Function to update consumable stock
+ * Takes in the consumable object and if the value should be deleted or added
+ * @param {*} newBattery 
+ * @param {*} action 
+ * @returns msg to flash for the user
+ */
 Consumable.updateConsumable = (createConsumable, action) => {
+    //Creating the new Consumable value to be updated in the consumable databse
     const newConsumable = 
     {
       category: createConsumable.category,
@@ -78,7 +86,9 @@ Consumable.updateConsumable = (createConsumable, action) => {
     }
 
     return new Bluebird((resolve, reject) => {
+      //Checking if the consumable category already exists in stock
       Consumable.getConsumableByCategory(newConsumable.category).then(isCategory => {
+        //If Consumable exists update the new vale
         if (isCategory){
           if(action === "add"){
             var quant = newConsumable.quantity + isCategory.quantity;
@@ -87,6 +97,7 @@ Consumable.updateConsumable = (createConsumable, action) => {
             var quant = isCategory.quantity - newConsumable.quantity;
           }
           
+          //Updating the consumable stock value
           Consumable.update({quantity: quant}, {
             where: {
               category: newConsumable.category
@@ -100,7 +111,9 @@ Consumable.updateConsumable = (createConsumable, action) => {
 
           });
 
+        //If Consumable doesn't exist create a new category in database
         }else{
+          //Creating new consumable category in database
           Consumable.create(newConsumable).then(() => {
             resolve("New Consumable Created");
 
@@ -120,34 +133,46 @@ Consumable.updateConsumable = (createConsumable, action) => {
 
 }
 
+/**
+ * Function to get all consumable stocks 
+ * Function gets all available consumable stock options 
+ * @returns object with lists of all avialable consumables
+ */
 Consumable.getFullStock = () => {
     return new Bluebird((resolve, reject) => {
+        //Getting battery stock
         Battery.getStock().then(batteries => {
+            //Getting brake stock
             Brake.getStock().then(brakes => {
+                //Getting filter stock
                 Filter.getStock().then(filters => {
+                    //Getting grease stock
                     Grease.getStock().then(grease => {
+                        //Getting oil stock
                         Oil.getStock().then(oil => {
+                            //Creating variable of all need lists to return
                             var values = {batteries: batteries.rows, brakes: brakes.rows,
                                           filters: filters.rows, grease: grease.rows, oil: oil.rows};
 
                             resolve(values);
 
                         }).catch(err => {
-                          reject("Error Connecting to the server");
+                          reject("Error Connecting to the server " + err);
+
                         });
 
                     }).catch(err => {
-                        reject("Error Connecting to the server");
+                        reject("Error Connecting to the server " + err);
                     
                     });
   
                 }).catch(err => {
-                  reject("Error Connecting to the server");
+                  reject("Error Connecting to the server " + err);
 
                 });
 
             }).catch(err => {
-              reject("Error Connecting to the server");
+              reject("Error Connecting to the server " + err);
 
             });
         
@@ -160,63 +185,15 @@ Consumable.getFullStock = () => {
   
 }
 
+/**
+ * Function to see if consumable category exists
+ * @param {*} category 
+ * @returns the found consumable category
+ */
 Consumable.getConsumableByCategory = category => Consumable.findOne({
   where:{category}
 
 });
 
-Consumable.getSpecific = (consumable) => {
-    return new Bluebird(async (resolve, reject) => {
-        if(consumable == "battery"){
-            Battery.findAndCountAll({raw:false}).then(async batteries => {
-              await Supplier.getSupplierNames(batteries);
-              resolve(batteries);
-              
-            }).catch(err => {
-                reject(err);
-
-            });
-    
-        }else if(consumable == "brake"){   
-            Brake.findAndCountAll().then(async brakes => {
-                await Supplier.getSupplierNames(brakes);
-                resolve (brakes);
-
-            }).catch(err => {
-                reject(err);
-
-            });
-
-        }else if(consumable == "filter"){
-            Filter.findAndCountAll().then(async filters => {
-                await Supplier.getSupplierNames(filters);
-                resolve(filters);
-
-            }).catch(err =>{
-                reject(err);
-
-            });
-            
-        }else if(consumable == "grease"){
-            Grease.findAndCountAll().then(async grease => {
-              await Supplier.getSupplierNames(grease);
-                resolve(grease);
-
-            }).catch(err =>{
-                reject(err);
-
-            });
-
-        }else if(consumable == "oil"){
-            Oil.findAndCountAll().then(oil => {
-                resolve(oil);
-
-            }).catch(err =>{
-                reject(err);
-
-            });
-        };
-    });
-};
 
 export default Consumable;

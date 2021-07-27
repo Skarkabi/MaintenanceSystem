@@ -7,10 +7,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
-var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
-
-var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
-
 var _lodash = _interopRequireDefault(require("lodash"));
 
 var _bcrypt = _interopRequireDefault(require("bcrypt"));
@@ -86,20 +82,32 @@ var Consumable = _mySQLDB["default"].define('consumable_stocks', mappings, {
     fields: ['updatedAt']
   }]
 });
+/**
+ * Function to update consumable stock
+ * Takes in the consumable object and if the value should be deleted or added
+ * @param {*} newBattery 
+ * @param {*} action 
+ * @returns msg to flash for the user
+ */
+
 
 Consumable.updateConsumable = function (createConsumable, action) {
+  //Creating the new Consumable value to be updated in the consumable databse
   var newConsumable = {
     category: createConsumable.category,
     quantity: parseFloat(createConsumable.quantity)
   };
   return new _bluebird["default"](function (resolve, reject) {
+    //Checking if the consumable category already exists in stock
     Consumable.getConsumableByCategory(newConsumable.category).then(function (isCategory) {
+      //If Consumable exists update the new vale
       if (isCategory) {
         if (action === "add") {
           var quant = newConsumable.quantity + isCategory.quantity;
         } else if (action === "delet") {
           var quant = isCategory.quantity - newConsumable.quantity;
-        }
+        } //Updating the consumable stock value
+
 
         Consumable.update({
           quantity: quant
@@ -111,8 +119,9 @@ Consumable.updateConsumable = function (createConsumable, action) {
           resolve("Consumable updated");
         })["catch"](function (err) {
           reject(err);
-        });
+        }); //If Consumable doesn't exist create a new category in database
       } else {
+        //Creating new consumable category in database
         Consumable.create(newConsumable).then(function () {
           resolve("New Consumable Created");
         })["catch"](function (err) {
@@ -124,14 +133,26 @@ Consumable.updateConsumable = function (createConsumable, action) {
     });
   });
 };
+/**
+ * Function to get all consumable stocks 
+ * Function gets all available consumable stock options 
+ * @returns object with lists of all avialable consumables
+ */
+
 
 Consumable.getFullStock = function () {
   return new _bluebird["default"](function (resolve, reject) {
+    //Getting battery stock
     _Battery["default"].getStock().then(function (batteries) {
+      //Getting brake stock
       _Brake["default"].getStock().then(function (brakes) {
+        //Getting filter stock
         _Filter["default"].getStock().then(function (filters) {
+          //Getting grease stock
           _Grease["default"].getStock().then(function (grease) {
+            //Getting oil stock
             _Oil["default"].getStock().then(function (oil) {
+              //Creating variable of all need lists to return
               var values = {
                 batteries: batteries.rows,
                 brakes: brakes.rows,
@@ -141,22 +162,28 @@ Consumable.getFullStock = function () {
               };
               resolve(values);
             })["catch"](function (err) {
-              reject("Error Connecting to the server");
+              reject("Error Connecting to the server " + err);
             });
           })["catch"](function (err) {
-            reject("Error Connecting to the server");
+            reject("Error Connecting to the server " + err);
           });
         })["catch"](function (err) {
-          reject("Error Connecting to the server");
+          reject("Error Connecting to the server " + err);
         });
       })["catch"](function (err) {
-        reject("Error Connecting to the server");
+        reject("Error Connecting to the server " + err);
       });
     })["catch"](function (err) {
       reject("Error Connecting to the server " + err);
     });
   });
 };
+/**
+ * Function to see if consumable category exists
+ * @param {*} category 
+ * @returns the found consumable category
+ */
+
 
 Consumable.getConsumableByCategory = function (category) {
   return Consumable.findOne({
@@ -164,147 +191,6 @@ Consumable.getConsumableByCategory = function (category) {
       category: category
     }
   });
-};
-
-Consumable.getSpecific = function (consumable) {
-  return new _bluebird["default"]( /*#__PURE__*/function () {
-    var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(resolve, reject) {
-      return _regenerator["default"].wrap(function _callee5$(_context5) {
-        while (1) {
-          switch (_context5.prev = _context5.next) {
-            case 0:
-              if (consumable == "battery") {
-                _Battery["default"].findAndCountAll({
-                  raw: false
-                }).then( /*#__PURE__*/function () {
-                  var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(batteries) {
-                    return _regenerator["default"].wrap(function _callee$(_context) {
-                      while (1) {
-                        switch (_context.prev = _context.next) {
-                          case 0:
-                            _context.next = 2;
-                            return _Supplier["default"].getSupplierNames(batteries);
-
-                          case 2:
-                            resolve(batteries);
-
-                          case 3:
-                          case "end":
-                            return _context.stop();
-                        }
-                      }
-                    }, _callee);
-                  }));
-
-                  return function (_x3) {
-                    return _ref2.apply(this, arguments);
-                  };
-                }())["catch"](function (err) {
-                  reject(err);
-                });
-              } else if (consumable == "brake") {
-                _Brake["default"].findAndCountAll().then( /*#__PURE__*/function () {
-                  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(brakes) {
-                    return _regenerator["default"].wrap(function _callee2$(_context2) {
-                      while (1) {
-                        switch (_context2.prev = _context2.next) {
-                          case 0:
-                            _context2.next = 2;
-                            return _Supplier["default"].getSupplierNames(brakes);
-
-                          case 2:
-                            resolve(brakes);
-
-                          case 3:
-                          case "end":
-                            return _context2.stop();
-                        }
-                      }
-                    }, _callee2);
-                  }));
-
-                  return function (_x4) {
-                    return _ref3.apply(this, arguments);
-                  };
-                }())["catch"](function (err) {
-                  reject(err);
-                });
-              } else if (consumable == "filter") {
-                _Filter["default"].findAndCountAll().then( /*#__PURE__*/function () {
-                  var _ref4 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(filters) {
-                    return _regenerator["default"].wrap(function _callee3$(_context3) {
-                      while (1) {
-                        switch (_context3.prev = _context3.next) {
-                          case 0:
-                            _context3.next = 2;
-                            return _Supplier["default"].getSupplierNames(filters);
-
-                          case 2:
-                            resolve(filters);
-
-                          case 3:
-                          case "end":
-                            return _context3.stop();
-                        }
-                      }
-                    }, _callee3);
-                  }));
-
-                  return function (_x5) {
-                    return _ref4.apply(this, arguments);
-                  };
-                }())["catch"](function (err) {
-                  reject(err);
-                });
-              } else if (consumable == "grease") {
-                _Grease["default"].findAndCountAll().then( /*#__PURE__*/function () {
-                  var _ref5 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(grease) {
-                    return _regenerator["default"].wrap(function _callee4$(_context4) {
-                      while (1) {
-                        switch (_context4.prev = _context4.next) {
-                          case 0:
-                            _context4.next = 2;
-                            return _Supplier["default"].getSupplierNames(grease);
-
-                          case 2:
-                            resolve(grease);
-
-                          case 3:
-                          case "end":
-                            return _context4.stop();
-                        }
-                      }
-                    }, _callee4);
-                  }));
-
-                  return function (_x6) {
-                    return _ref5.apply(this, arguments);
-                  };
-                }())["catch"](function (err) {
-                  reject(err);
-                });
-              } else if (consumable == "oil") {
-                _Oil["default"].findAndCountAll().then(function (oil) {
-                  resolve(oil);
-                })["catch"](function (err) {
-                  reject(err);
-                });
-              }
-
-              ;
-
-            case 2:
-            case "end":
-              return _context5.stop();
-          }
-        }
-      }, _callee5);
-    }));
-
-    return function (_x, _x2) {
-      return _ref.apply(this, arguments);
-    };
-  }());
 };
 
 var _default = Consumable;

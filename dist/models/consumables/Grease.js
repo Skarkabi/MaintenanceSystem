@@ -23,6 +23,9 @@ var _bluebird = _interopRequireDefault(require("bluebird"));
 
 var _Supplier = _interopRequireDefault(require("../Supplier"));
 
+/**
+ * Declaring the datatypes used within the Grease class
+ */
 var mappings = {
   id: {
     type: _sequelize["default"].INTEGER,
@@ -73,6 +76,9 @@ var mappings = {
     allowNull: false
   }
 };
+/**
+ * Defining the grease stocks table within the MySQL database using Sequelize
+ */
 
 var Grease = _mySQLDB["default"].define('grease_stocks', mappings, {
   indexes: [{
@@ -121,67 +127,90 @@ var Grease = _mySQLDB["default"].define('grease_stocks', mappings, {
     fields: ['quotationNumber']
   }]
 });
+/**
+ * Function to update Grease stock
+ * Takes in the grease object and if the value should be deleted or added
+ * @param {*} newFrease 
+ * @param {*} action 
+ * @returns msg to be flashed to user
+ */
+
 
 Grease.updateGrease = function (newGrease, action) {
   return new _bluebird["default"](function (resolve, reject) {
+    //Creating the new Consumable value to be updated in the consumable databse
     var newConsumable = {
       category: "Grease",
       quantity: newGrease.volume
-    };
+    }; //Checking if the grease spec exists within the stock
+
     Grease.findOne({
       where: {
         id: newGrease.id
       }
     }).then(function (foundGrease) {
+      //If the grease exists in the databse the function sets the new quantity to the new value
       var quant;
 
       if (action === "add") {
         quant = parseFloat(newGrease.volume) + foundGrease.volume;
       } else if (action === "delet") {
         quant = foundGrease.volume - parseFloat(newGrease.volume);
-      }
+      } //If the new value is 0 the brake definition is deleted from the stock
+
 
       if (quant === 0) {
         foundGrease.destroy().then(function () {
           _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
             resolve(newGrease.volume + " Liters Of Grease Sucessfully Deleted from Existing Stock!");
           })["catch"](function (err) {
-            reject("An Error Occured Grease Could not be Deleted");
+            reject("An Error Occured Grease Could not be Deleted " + err);
           });
         })["catch"](function (err) {
-          reject("An Error Occured Grease Could not be Deleted");
+          reject("An Error Occured Grease Could not be Deleted " + err);
         });
-      } else if (quant < 0) {
-        reject("Can Not Delete More Than Exists in Stock!");
-      } else {
-        Grease.update({
-          volume: quant
-        }, {
-          where: {
-            id: newGrease.id
-          }
-        }).then(function () {
-          _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
-            resolve(newGrease.volume + " Liters of Grease Sucessfully Added to Existing Stock!");
+      } //If the new quantity is less than 0 rejects the user input
+      else if (quant < 0) {
+          reject("Can Not Delete More Than Exists in Stock!"); //If quantity is > 0 the grease quantity is updated
+        } else {
+          Grease.update({
+            volume: quant
+          }, {
+            where: {
+              id: newGrease.id
+            }
+          }).then(function () {
+            //Updating the value from the consumables database
+            _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
+              resolve(newGrease.volume + " Liters of Grease Sucessfully Added to Existing Stock!");
+            })["catch"](function (err) {
+              reject("An Error Occured Grease Could not be Added " + err);
+            });
           })["catch"](function (err) {
             reject("An Error Occured Grease Could not be Added " + err);
           });
-        })["catch"](function (err) {
-          reject("An Error Occured Grease Could not be Added " + err);
-        });
-      }
+        }
     })["catch"](function (err) {
       reject("An Error Occured Grease Could not be Added " + err);
     });
   });
 };
+/**
+ * Function to add a new grease into stock
+ * Function takes an object with the needed grease info
+ * @param {*} newGrease 
+ * @returns msg to be flashed to user
+ */
+
 
 Grease.addGrease = function (newGrease) {
   return new _bluebird["default"](function (resolve, reject) {
+    //Creating the new Consumable value to be updated in the consumable databse
     var newConsumable = {
       category: "Grease",
       quantity: newGrease.volume
-    };
+    }; //Looking if the grease with exact specs and same quotation number already exists in stock
+
     Grease.findOne({
       where: {
         greaseSpec: newGrease.greaseSpec,
@@ -192,30 +221,40 @@ Grease.addGrease = function (newGrease) {
         quotationNumber: newGrease.quotationNumber
       }
     }).then(function (foundGrease) {
+      //If this grease with this quotation number exists the function rejects the creation
       if (foundGrease) {
-        reject("Grease With these Details Already Registered, Please Add to Existing Stock");
+        reject("Grease With these Details Already Registered, Please Add to Existing Stock"); //If the grease is not found the function creates a brake and updates the consumable stock
       } else {
+        //Converting values to appropiate number type
         newGrease.volume = parseFloat(newGrease.volume);
         newGrease.minVolume = parseFloat(newGrease.minVolume);
         Grease.create(newGrease).then(function () {
+          //Updating consumable stock database
           _Consumables["default"].updateConsumable(newConsumable, "add").then(function () {
             resolve(newGrease.volume + " Liters of Greace Sucessfully Added!");
           })["catch"](function (err) {
-            reject("An Error Occured Grease Could not be Added");
+            reject("An Error Occured Grease Could not be Added (Error: " + err + ")");
           });
         })["catch"](function (err) {
-          reject("An Error Occured Grease Could not be Added");
+          reject("An Error Occured Grease Could not be Added (Error: " + err + ")");
         });
       }
     })["catch"](function (err) {
-      reject("An Error Occured Grease Could not be Added");
+      reject("An Error Occured Grease Could not be Added (Error: " + err + ")");
     });
   });
 };
+/**
+ * Function to set virtual datatype supplier name using supplier ids in grease
+ * @returns List of grease with their supplier names
+ */
+
 
 Grease.getStock = function () {
   return new _bluebird["default"](function (resolve, reject) {
+    //Getting all the grease found in the database
     Grease.findAndCountAll().then(function (grease) {
+      //Calling supplier function to add supplier name to grease objects
       _Supplier["default"].getSupplierNames(grease).then(function () {
         resolve(grease);
       })["catch"](function (err) {
@@ -226,12 +265,23 @@ Grease.getStock = function () {
     });
   });
 };
+/**
+ * function to return distinct values in object
+ * @param {*} values 
+ * @returns filtered values 
+ */
+
 
 function getDistinct(values) {
   return values.filter(function (value, index, self) {
     return self.indexOf(value) === index;
   });
 }
+/**
+ * Function to return list of grease with their supplier names, as well as distinct values found within the database
+ * @returns object that includes all grease, suppliers, and distinct values of each grease spec
+ */
+
 
 Grease.getGreaseStock = function () {
   return new _bluebird["default"]( /*#__PURE__*/function () {
@@ -241,10 +291,14 @@ Grease.getGreaseStock = function () {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
+              //Declaring all variables to be returned
+              //Getting all suppliers saved in database
               _Supplier["default"].findAll().then(function (suppliers) {
-                greaseS = suppliers;
+                greaseS = suppliers; //Getting all brakes from database and setting supplier names 
+
                 Grease.getStock().then(function (consumables) {
-                  greaseC = consumables;
+                  greaseC = consumables; //Mapping brake values to not return double values
+
                   greaseSpec = getDistinct(greaseC.rows.map(function (val) {
                     return val.greaseSpec;
                   }));
@@ -256,7 +310,8 @@ Grease.getGreaseStock = function () {
                   }));
                   carYear = getDistinct(greaseC.rows.map(function (val) {
                     return val.carYear;
-                  }));
+                  })); //Creating variable of all need variables to return
+
                   var values = {
                     consumables: greaseC.rows,
                     suppliers: greaseS,
@@ -286,76 +341,62 @@ Grease.getGreaseStock = function () {
     };
   }());
 };
+/**
+ * Function to find all grease in database with specific supplier ID
+ * Function takes in the supplier ID of the supplier being searched for
+ * @param {*} supplierId 
+ * @returns List of grease purchased from that specified supplier ID
+ */
+
 
 Grease.getWithSupplier = function (supplierId) {
   return new _bluebird["default"](function (resolve, reject) {
+    //Finding all grease with specified supplier ID
     Grease.findAndCountAll({
       where: {
         supplierId: supplierId
       }
-    }).then( /*#__PURE__*/function () {
-      var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(foundGreases) {
-        return _regenerator["default"].wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                _context2.next = 2;
-                return _Supplier["default"].getSupplierNames(foundGreases);
-
-              case 2:
-                resolve(foundGreases.rows);
-
-              case 3:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2);
-      }));
-
-      return function (_x3) {
-        return _ref2.apply(this, arguments);
-      };
-    }())["catch"](function (err) {
+    }).then(function (foundGreases) {
+      //Adding supplier Name to Grease 
+      _Supplier["default"].getSupplierNames(foundGreases).then(function () {
+        resolve(foundGreases.rows);
+      })["catch"](function (err) {
+        reject(err);
+      });
+    })["catch"](function (err) {
       reject(err);
     });
   });
 };
+/**
+ * Function to find different grease from a specific suppleir 
+ * @returns list of grease values from specific supplier regardless of quotation numbers
+ */
+
 
 Grease.groupSupplier = function () {
   return new _bluebird["default"](function (resolve, reject) {
+    //Finding grease from database and returning specified attributes 
     Grease.findAll({
+      //Declaring attributes to return from database
       attributes: ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'supplierId', [_mySQLDB["default"].fn('sum', _mySQLDB["default"].col('volume')), 'volume']],
+      //Declaring how to group return values
       group: ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'supplierId']
-    }).then( /*#__PURE__*/function () {
-      var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(values) {
-        var result;
-        return _regenerator["default"].wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                result = {
-                  count: values.length,
-                  rows: values
-                };
-                _context3.next = 3;
-                return _Supplier["default"].getSupplierNames(result);
-
-              case 3:
-                resolve(result);
-
-              case 4:
-              case "end":
-                return _context3.stop();
-            }
-          }
-        }, _callee3);
-      }));
-
-      return function (_x4) {
-        return _ref3.apply(this, arguments);
+    }).then(function (values) {
+      //Setting variable to return brakes with their supplier names
+      var result = {
+        count: values.length,
+        rows: values
       };
-    }());
+
+      _Supplier["default"].getSupplierNames(result).then(function () {
+        resolve(result);
+      })["catch"](function (err) {
+        reject(err);
+      });
+    })["catch"](function (err) {
+      reject(err);
+    });
   });
 };
 

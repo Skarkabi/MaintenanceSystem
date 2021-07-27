@@ -1,42 +1,11 @@
 import express from 'express';
-import { body } from 'express-validator';
 import Vehicle from '../models/Vehicle';
 
 const router = express.Router();
 
-/** 
- * Displays login page.
- */
-/*
-router.get('/display-vehicle/:plate', (req,res,next) =>
-{
-    if(req.user)
-    {
-        User.getUserById(req.params.id).then(foundUser => {
-            res.render('displayUser', {
-                title: (`${foundUser.firstName} ${foundUser.lastName}'s Page`),
-                jumbotronDescription: `This is ${foundUser.firstName} ${foundUser.lastName}'s profile page.`,
-                existingUser: foundUser,
-                showPii: req.user.admin || req.user.id == req.params.id,
-            });
-        });
-    }
-});
-*/
-
 router.get('/add', (req, res, next) =>
 {
     if(req.user){
-        var d = new Date();
-        var n = d.getFullYear();
-
-        var span = [];
-        var i;
-        for(i = n - 2000; i >= 0; i--){
-            span[i] = n - i;
-            console.log("In here" + span[i]);
-        }
-        console.log(span);
         Vehicle.getVehicleStock().then(values => {
             res.render('addUpdateVehicle', {
                 title: 'Add New Vehicle',
@@ -132,7 +101,7 @@ router.get('/', (req, res, next) => {
         res.redirect('/');
 
     }
-    
+
 });
 
 export default router;

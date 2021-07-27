@@ -1,73 +1,23 @@
 import express from 'express';
-import passport from 'passport';
-import Bluebird from 'bluebird';
-//import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
-import { body, validationResult,check } from 'express-validator';
 import Consumable from '../models/Consumables';
 import Battery from '../models/consumables/Battery';
 import Brake from '../models/consumables/Brake';
 import Filter from '../models/consumables/Filter';
-import Sequelize from 'sequelize';
 import Grease from '../models/consumables/Grease';
 import Oil from '../models/consumables/Oil';
-import { errors } from 'puppeteer';
 import Supplier from '../models/Supplier';
 import Quotation from '../models/Quotation';
-import multer from 'multer';
 import fs from 'fs';
-import puppeteer from 'puppeteer'
 
 const router = express.Router();
 
-function onlyUnique(value, index, self) {
-    return self.indexOf(value) === index;
-  }
-  
-  // usage example:
-  var a = ['a', 1, 'a', 2, '1'];
-  var unique = a.filter(onlyUnique);
-  
-  console.log(unique); // ['a', 1, 2, '1']
-
-async function getStocks(){
-    var batteries, brakes, filters, grease, oil, suppliers;
-    await Battery.getBatteryStocks().then(values =>{
-        console.log("I am in here")
-        batteries = values;
-    });
-
-    await Brake.getBrakeStock().then(values =>{
-        brakes = values;
-    });
-
-    await Filter.getFilterStock().then(values =>{
-        filters = values;
-    });
-
-    await Grease.getGreaseStock().then(values => {
-        grease = values;
-    });
-
-    await Oil.getOilStock().then(values => {
-        oil = values;
-    })
-
-    await Supplier.findAll().then(values => {
-        suppliers = values;
-    })
-
-    var values = {
-        batteries: batteries, brakes: brakes, filters: filters,
-        grease: grease, oil: oil, supplier: suppliers
-    };
-    return values
-}
 
 router.get('/add', async (req, res, next) =>
 {
     console.log("I am in here Add");
     if(req.user){
-        getStocks().then(values =>{
+        Consumable.getDistinctConsumableValues().then(values =>{
+            console.log(values);
             res.render('addConsumable', {
                 title: 'Add New Consumable',
                 jumbotronDescription: `Add a new user Consumable.`,

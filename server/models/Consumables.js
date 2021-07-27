@@ -7,7 +7,7 @@ import Brake from './consumables/Brake';
 import Filter from './consumables/Filter';
 import Grease from './consumables/Grease';
 import Oil from './consumables/Oil';
-
+import Supplier from './Supplier';
 /**
  * Setting the Datatypes for the MySQL tables
  */
@@ -148,11 +148,21 @@ Consumable.getFullStock = () => {
                     Grease.getStock().then(grease => {
                         //Getting oil stock
                         Oil.getStock().then(oil => {
-                            //Creating variable of all need lists to return
-                            var values = {batteries: batteries.rows, brakes: brakes.rows,
-                                          filters: filters.rows, grease: grease.rows, oil: oil.rows};
+                            //Getting all Supplier Stock
+                            Supplier.findAll().then(suppliers => {
+                                //Creating variable of all need lists to return
+                                var values = {
+                                  batteries: batteries.rows, brakes: brakes.rows,
+                                  filters: filters.rows, grease: grease.rows, 
+                                  oil: oil.rows, supplier: suppliers
+                                };
 
-                            resolve(values);
+                                resolve(values);
+
+                            }).catch(err => {
+                              reject("Error Connecting to the server " + err);
+                              
+                            });
 
                         }).catch(err => {
                           reject("Error Connecting to the server " + err);
@@ -182,6 +192,55 @@ Consumable.getFullStock = () => {
     });
   
 }
+
+Consumable.getDistinctConsumableValues = () => {
+    return new Bluebird((resolve, reject) => {
+        Battery.getBatteryStocks().then(batteries =>{
+            Brake.getBrakeStock().then(brakes =>{
+                Filter.getFilterStock().then(filters =>{
+                    Grease.getGreaseStock().then(grease => {
+                        Oil.getOilStock().then(oil => {
+                            Supplier.findAll().then(suppliers => {
+                                var values = {
+                                    batteries: batteries, brakes: brakes, filters: filters,
+                                    grease: grease, oil: oil, supplier: suppliers
+                                };
+                                resolve(values);
+
+                            }).catch(err => {
+                              reject("Error Connecting to the server " + err);
+
+                            });
+
+                        }).catch(err => {
+                          reject("Error Connecting to the server " + err);
+
+                        });
+
+                    }).catch(err => {
+                      reject("Error Connecting to the server " + err);
+
+                    });
+
+                }).catch(err => {
+                  reject("Error Connecting to the server " + err);
+
+                });
+
+            }).catch(err => {
+              reject("Error Connecting to the server " + err);
+
+            });
+
+        }).catch(err => {
+          reject("Error Connecting to the server " + err);
+
+        });
+
+    });
+
+}
+
 
 /**
  * Function to see if consumable category exists

@@ -25,6 +25,8 @@ var _Grease = _interopRequireDefault(require("./consumables/Grease"));
 
 var _Oil = _interopRequireDefault(require("./consumables/Oil"));
 
+var _Supplier = _interopRequireDefault(require("./Supplier"));
+
 /**
  * Setting the Datatypes for the MySQL tables
  */
@@ -148,15 +150,59 @@ Consumable.getFullStock = function () {
           _Grease["default"].getStock().then(function (grease) {
             //Getting oil stock
             _Oil["default"].getStock().then(function (oil) {
-              //Creating variable of all need lists to return
-              var values = {
-                batteries: batteries.rows,
-                brakes: brakes.rows,
-                filters: filters.rows,
-                grease: grease.rows,
-                oil: oil.rows
-              };
-              resolve(values);
+              //Getting all Supplier Stock
+              _Supplier["default"].findAll().then(function (suppliers) {
+                //Creating variable of all need lists to return
+                var values = {
+                  batteries: batteries.rows,
+                  brakes: brakes.rows,
+                  filters: filters.rows,
+                  grease: grease.rows,
+                  oil: oil.rows,
+                  supplier: suppliers
+                };
+                resolve(values);
+              })["catch"](function (err) {
+                reject("Error Connecting to the server " + err);
+              });
+            })["catch"](function (err) {
+              reject("Error Connecting to the server " + err);
+            });
+          })["catch"](function (err) {
+            reject("Error Connecting to the server " + err);
+          });
+        })["catch"](function (err) {
+          reject("Error Connecting to the server " + err);
+        });
+      })["catch"](function (err) {
+        reject("Error Connecting to the server " + err);
+      });
+    })["catch"](function (err) {
+      reject("Error Connecting to the server " + err);
+    });
+  });
+};
+
+Consumable.getDistinctConsumableValues = function () {
+  return new _bluebird["default"](function (resolve, reject) {
+    _Battery["default"].getBatteryStocks().then(function (batteries) {
+      _Brake["default"].getBrakeStock().then(function (brakes) {
+        _Filter["default"].getFilterStock().then(function (filters) {
+          _Grease["default"].getGreaseStock().then(function (grease) {
+            _Oil["default"].getOilStock().then(function (oil) {
+              _Supplier["default"].findAll().then(function (suppliers) {
+                var values = {
+                  batteries: batteries,
+                  brakes: brakes,
+                  filters: filters,
+                  grease: grease,
+                  oil: oil,
+                  supplier: suppliers
+                };
+                resolve(values);
+              })["catch"](function (err) {
+                reject("Error Connecting to the server " + err);
+              });
             })["catch"](function (err) {
               reject("Error Connecting to the server " + err);
             });

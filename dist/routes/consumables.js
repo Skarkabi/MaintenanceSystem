@@ -2,8 +2,6 @@
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
-var _typeof = require("@babel/runtime/helpers/typeof");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -15,12 +13,6 @@ var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/
 
 var _express = _interopRequireDefault(require("express"));
 
-var _passport = _interopRequireDefault(require("passport"));
-
-var _bluebird = _interopRequireDefault(require("bluebird"));
-
-var _expressValidator = require("express-validator");
-
 var _Consumables = _interopRequireDefault(require("../models/Consumables"));
 
 var _Battery = _interopRequireDefault(require("../models/consumables/Battery"));
@@ -29,105 +21,17 @@ var _Brake = _interopRequireDefault(require("../models/consumables/Brake"));
 
 var _Filter = _interopRequireDefault(require("../models/consumables/Filter"));
 
-var _sequelize = _interopRequireDefault(require("sequelize"));
-
 var _Grease = _interopRequireDefault(require("../models/consumables/Grease"));
 
 var _Oil = _interopRequireDefault(require("../models/consumables/Oil"));
-
-var _puppeteer = _interopRequireWildcard(require("puppeteer"));
 
 var _Supplier = _interopRequireDefault(require("../models/Supplier"));
 
 var _Quotation = _interopRequireDefault(require("../models/Quotation"));
 
-var _multer = _interopRequireDefault(require("multer"));
-
 var _fs = _interopRequireDefault(require("fs"));
 
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-//import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
 var router = _express["default"].Router();
-
-function onlyUnique(value, index, self) {
-  return self.indexOf(value) === index;
-} // usage example:
-
-
-var a = ['a', 1, 'a', 2, '1'];
-var unique = a.filter(onlyUnique);
-console.log(unique); // ['a', 1, 2, '1']
-
-function getStocks() {
-  return _getStocks.apply(this, arguments);
-}
-
-function _getStocks() {
-  _getStocks = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee9() {
-    var batteries, brakes, filters, grease, oil, suppliers, values;
-    return _regenerator["default"].wrap(function _callee9$(_context9) {
-      while (1) {
-        switch (_context9.prev = _context9.next) {
-          case 0:
-            _context9.next = 2;
-            return _Battery["default"].getBatteryStocks().then(function (values) {
-              console.log("I am in here");
-              batteries = values;
-            });
-
-          case 2:
-            _context9.next = 4;
-            return _Brake["default"].getBrakeStock().then(function (values) {
-              brakes = values;
-            });
-
-          case 4:
-            _context9.next = 6;
-            return _Filter["default"].getFilterStock().then(function (values) {
-              filters = values;
-            });
-
-          case 6:
-            _context9.next = 8;
-            return _Grease["default"].getGreaseStock().then(function (values) {
-              grease = values;
-            });
-
-          case 8:
-            _context9.next = 10;
-            return _Oil["default"].getOilStock().then(function (values) {
-              oil = values;
-            });
-
-          case 10:
-            _context9.next = 12;
-            return _Supplier["default"].findAll().then(function (values) {
-              suppliers = values;
-            });
-
-          case 12:
-            values = {
-              batteries: batteries,
-              brakes: brakes,
-              filters: filters,
-              grease: grease,
-              oil: oil,
-              supplier: suppliers
-            };
-            return _context9.abrupt("return", values);
-
-          case 14:
-          case "end":
-            return _context9.stop();
-        }
-      }
-    }, _callee9);
-  }));
-  return _getStocks.apply(this, arguments);
-}
 
 router.get('/add', /*#__PURE__*/function () {
   var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(req, res, next) {
@@ -138,7 +42,8 @@ router.get('/add', /*#__PURE__*/function () {
             console.log("I am in here Add");
 
             if (req.user) {
-              getStocks().then(function (values) {
+              _Consumables["default"].getDistinctConsumableValues().then(function (values) {
+                console.log(values);
                 res.render('addConsumable', {
                   title: 'Add New Consumable',
                   jumbotronDescription: "Add a new user Consumable.",

@@ -158,7 +158,7 @@ const Brake = sequelize.define('brake_stocks', mappings, {
 /**
  * Function to update Brake stock
  * Takes in the brake object and if the value should be deleted or added
- * @param {*} newBattery 
+ * @param {*} newBrake 
  * @param {*} action 
  * @returns msg to be flashed to user
  */
@@ -236,9 +236,9 @@ Brake.updateBrake = (newBrake, action) => {
 }
 
 /**
- * Function to add a new battery into stock
- * Function takes an object with the needed battery info
- * @param {*} newBattery 
+ * Function to add a new brake into stock
+ * Function takes an object with the needed brake info
+ * @param {*} newBrake 
  * @returns msg to be flashed to user
  */
 Brake.addBrake = (newBrake) => {
@@ -404,7 +404,7 @@ Brake.getWithSupplier = supplierId => {
             }
 
         }).then(foundBrakes => {
-            //Adding supplier Name to batteries 
+            //Adding supplier Name to filters 
             Supplier.getSupplierNames(foundBrakes).then(() => {
                 resolve(foundBrakes.rows);
 
@@ -426,7 +426,7 @@ Brake.getWithSupplier = supplierId => {
  */
 Brake.groupSupplier = () => {
     return new Bluebird((resolve, reject) => {
-         //Finding brakes from database and returning specified attributes 
+        //Finding brakes from database and returning specified attributes 
         Brake.findAll({
             //Declaring attributes to return from database
             attributes:
@@ -438,7 +438,7 @@ Brake.groupSupplier = () => {
             group: ["category", "carBrand", "carYear", "chassis", "bBrand", "singleCost", "supplierId",   "preferredBrand",]
             
         }).then((values) => { 
-            //Setting variable to return batteries with their supplier names
+            //Setting variable to return brakes with their supplier names
             var result = {count: values.length, rows: values}
             Supplier.getSupplierNames(result).then(() => {
                 resolve(result);

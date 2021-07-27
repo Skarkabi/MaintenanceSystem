@@ -7,10 +7,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
-var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
-
-var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
-
 var _express = _interopRequireDefault(require("express"));
 
 var _Consumables = _interopRequireDefault(require("../models/Consumables"));
@@ -25,57 +21,46 @@ var _Grease = _interopRequireDefault(require("../models/consumables/Grease"));
 
 var _Oil = _interopRequireDefault(require("../models/consumables/Oil"));
 
-var _Supplier = _interopRequireDefault(require("../models/Supplier"));
-
 var _Quotation = _interopRequireDefault(require("../models/Quotation"));
 
 var _fs = _interopRequireDefault(require("fs"));
 
 var router = _express["default"].Router();
+/**
+ * Express route to get add a new consumbale page
+ */
 
-router.get('/add', /*#__PURE__*/function () {
-  var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(req, res, next) {
-    return _regenerator["default"].wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            console.log("I am in here Add");
 
-            if (req.user) {
-              _Consumables["default"].getDistinctConsumableValues().then(function (values) {
-                console.log(values);
-                res.render('addConsumable', {
-                  title: 'Add New Consumable',
-                  jumbotronDescription: "Add a new user Consumable.",
-                  submitButtonText: 'Create',
-                  action: "/upload/single",
-                  values: values,
-                  page: "add",
-                  msgType: req.flash()
-                });
-              });
-            }
+router.get('/add', function (req, res, next) {
+  //Check if a user is loged in
+  if (req.user) {
+    //If User exists get all distinct consumable and supplier values and load add new consumable page
+    _Consumables["default"].getDistinctConsumableValues().then(function (values) {
+      res.render('addConsumable', {
+        title: 'Add New Consumable',
+        jumbotronDescription: "Add a new user Consumable.",
+        submitButtonText: 'Create',
+        action: "/upload/single",
+        values: values,
+        page: "add",
+        msgType: req.flash()
+      });
+    });
+  }
+});
+/**
+ * Express route to update battery data
+ * Route takes the id and action from the req paramaters and quantity from user input  
+ */
 
-          case 2:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee);
-  }));
-
-  return function (_x, _x2, _x3) {
-    return _ref.apply(this, arguments);
-  };
-}());
 router.post('/update-battery/:action/:id', function (req, res, next) {
+  //Creating new battery variable to update
   var newBattery = {
     id: req.params.id,
     quantity: req.body.newQuantity
-  };
+  }; //Updating battery in database
 
   _Battery["default"].updateBattery(newBattery, req.params.action).then(function (output) {
-    console.log("Maded it in here");
     req.flash('success_msg', output);
     res.redirect('back');
   })["catch"](function (err) {
@@ -83,7 +68,13 @@ router.post('/update-battery/:action/:id', function (req, res, next) {
     res.redirect('back');
   });
 });
+/**
+ * Express route to add a new battery in database
+ * Route takes battery and quotation data from user input 
+ */
+
 router.post('/add/battery', _Quotation["default"].uploadFile().single('upload'), function (req, res, next) {
+  //Creating new battrey variable to be added to database   
   var newBattery = {
     batSpec: req.body.batSpec,
     carBrand: req.body.carBrand,
@@ -92,17 +83,20 @@ router.post('/add/battery', _Quotation["default"].uploadFile().single('upload'),
     minQuantity: req.body.quantityMinBatteries,
     supplierId: req.body.batteriesSupplierName,
     quotationNumber: req.body.quotation
-  };
-  var newQuotation;
+  }; //Declaring new quotation to be added to database
+
+  var newQuotation; //Creating quotation variable quotation was selected
 
   if (req.file) {
     newQuotation = {
       quotationNumber: req.body.quotation,
       quotationPath: req.file.path
     };
-  }
+  } //Adding new battery to database
+
 
   _Battery["default"].addBattery(newBattery).then(function (output) {
+    //Add quotation info to database if quotation was uploaded
     if (req.file) {
       _Quotation["default"].addQuotation(newQuotation);
     }
@@ -114,7 +108,13 @@ router.post('/add/battery', _Quotation["default"].uploadFile().single('upload'),
     res.redirect("/consumables/add");
   });
 });
+/**
+ * Express route to add a new brake in database
+ * Route takes brake and quotation data from user input 
+ */
+
 router.post('/add/brake', _Quotation["default"].uploadFile().single('upload'), function (req, res, next) {
+  //Creating new brake variable to be added to database
   var newBrake = {
     category: req.body.brakeCategory,
     carBrand: req.body.brakeCBrand,
@@ -127,17 +127,20 @@ router.post('/add/brake', _Quotation["default"].uploadFile().single('upload'), f
     minQuantity: req.body.minQuantityBrakes,
     supplierId: req.body.brakeSupplierName,
     quotationNumber: req.body.quotation
-  };
-  var newQuotation;
+  }; //Declaring new quotation to be added to database
+
+  var newQuotation; //Creating quotation variable quotation was selected
 
   if (req.file) {
     newQuotation = {
       quotationNumber: req.body.quotation,
       quotationPath: req.file.path
     };
-  }
+  } //Adding new brake to database
+
 
   _Brake["default"].addBrake(newBrake).then(function (output) {
+    //Add quotation info to database if quotation was uploaded
     if (req.file) {
       _Quotation["default"].addQuotation(newQuotation);
     }
@@ -149,11 +152,17 @@ router.post('/add/brake', _Quotation["default"].uploadFile().single('upload'), f
     res.redirect("/consumables/add");
   });
 });
+/**
+ * Express route to update brake data
+ * Route takes the id and action from the req paramaters and quantity from user input  
+ */
+
 router.post('/update-brake/:action/:id', function (req, res, next) {
+  //Creating new brake variable to update
   var newBrake = {
     id: req.params.id,
     quantity: req.body.newQuantity
-  };
+  }; //Updating brake in database
 
   _Brake["default"].updateBrake(newBrake, req.params.action).then(function (output) {
     req.flash('success_msg', output);
@@ -163,48 +172,45 @@ router.post('/update-brake/:action/:id', function (req, res, next) {
     res.redirect("back");
   });
 });
-router.get('/display-vehicle/:id', /*#__PURE__*/function () {
-  var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(req, res, next) {
-    return _regenerator["default"].wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            if (req.user) {
-              Vehicle.getVehicleByPlate(req.params.id).then(function (foundVehicle) {
-                var iconType;
+/**
+ * Express route to display selected vehicle
+ */
 
-                if (foundVehicle.category.includes("PICKUP") || foundVehicle.category === "4X4") {
-                  iconType = "pickup";
-                } else if (foundVehicle.category.includes("TROLLY")) {
-                  iconType = "trolly";
-                } else {
-                  iconType = foundVehicle.category.toLowerCase();
-                }
+router.get('/display-vehicle/:id', function (req, res, next) {
+  //Get vehicle information if a user is logged in
+  if (req.user) {
+    //Getting vehicle data from database by the vehicle plate number
+    Vehicle.getVehicleByPlate(req.params.id).then(function (foundVehicle) {
+      //Declating variable to select the type of icon to display with vehicle information
+      var iconType; //Different vehicle icon options
 
-                res.render('displayVehical', {
-                  title: "".concat(foundVehicle.brand, " ").concat(foundVehicle.model, " Plate # ").concat(foundVehicle.plate),
-                  jumbotronDescription: "Information for ".concat(foundVehicle.brand, " ").concat(foundVehicle.model, " Plate # ").concat(foundVehicle.plate, "."),
-                  existingVehicle: foundVehicle,
-                  showPii: req.user.admin,
-                  iconType: iconType,
-                  msgType: req.flash()
-                });
-              });
-            }
+      if (foundVehicle.category.includes("PICKUP") || foundVehicle.category === "4X4") {
+        iconType = "pickup";
+      } else if (foundVehicle.category.includes("TROLLY")) {
+        iconType = "trolly";
+      } else {
+        iconType = foundVehicle.category.toLowerCase();
+      } //Loading the display vehicle page
 
-          case 1:
-          case "end":
-            return _context2.stop();
-        }
-      }
-    }, _callee2);
-  }));
 
-  return function (_x4, _x5, _x6) {
-    return _ref2.apply(this, arguments);
-  };
-}());
+      res.render('displayVehical', {
+        title: "".concat(foundVehicle.brand, " ").concat(foundVehicle.model, " Plate # ").concat(foundVehicle.plate),
+        jumbotronDescription: "Information for ".concat(foundVehicle.brand, " ").concat(foundVehicle.model, " Plate # ").concat(foundVehicle.plate, "."),
+        existingVehicle: foundVehicle,
+        showPii: req.user.admin,
+        iconType: iconType,
+        msgType: req.flash()
+      });
+    });
+  }
+});
+/**
+ * Express route to add a new filter in database
+ * Route takes filter and quotation data from user input 
+ */
+
 router.post('/add/filter', _Quotation["default"].uploadFile().single('upload'), function (req, res, next) {
+  //Creating new filter variable to be added to database   
   var newFilter = {
     carBrand: req.body.filterCarBrand,
     carModel: req.body.filterCarModel,
@@ -218,17 +224,20 @@ router.post('/add/filter', _Quotation["default"].uploadFile().single('upload'), 
     minQuantity: req.body.minFilterQuantity,
     supplierId: req.body.filterSupplierName,
     quotationNumber: req.body.quotation
-  };
-  var newQuotation;
+  }; //Declaring new quotation to be added to database
+
+  var newQuotation; //Creating quotation variable quotation was selected
 
   if (req.file) {
     newQuotation = {
       quotationNumber: req.body.quotation,
       quotationPath: req.file.path
     };
-  }
+  } //Adding new filter to database
+
 
   _Filter["default"].addFilter(newFilter).then(function (output) {
+    //Add quotation info to database if quotation was uploaded
     if (req.file) {
       _Quotation["default"].addQuotation(newQuotation);
     }
@@ -240,11 +249,17 @@ router.post('/add/filter', _Quotation["default"].uploadFile().single('upload'), 
     res.redirect("/consumables/add");
   });
 });
+/**
+ * Express route to update filter data
+ * Route takes the id and action from the req paramaters and quantity from user input  
+ */
+
 router.post('/update-filter/:action/:id', function (req, res, next) {
+  //Creating new filter variable to update
   var newFilter = {
     id: req.params.id,
     quantity: req.body.newQuantity
-  };
+  }; //Updating filter in database
 
   _Filter["default"].updateFilter(newFilter, req.params.action).then(function (output) {
     req.flash('success_msg', output);
@@ -254,7 +269,13 @@ router.post('/update-filter/:action/:id', function (req, res, next) {
     res.redirect("back");
   });
 });
+/**
+ * Express route to add a new grease in database
+ * Route takes grease and quotation data from user input 
+ */
+
 router.post('/add/grease', _Quotation["default"].uploadFile().single('upload'), function (req, res, next) {
+  //Creating new grease variable to be added to database
   var newGrease = {
     greaseSpec: req.body.greaseSpec,
     typeOfGrease: req.body.greaseType,
@@ -264,17 +285,20 @@ router.post('/add/grease', _Quotation["default"].uploadFile().single('upload'), 
     minVolume: req.body.quantityMinGrease,
     supplierId: req.body.greaseSupplierName,
     quotationNumber: req.body.quotation
-  };
-  var newQuotation;
+  }; //Declaring new quotation to be added to database
+
+  var newQuotation; //Creating quotation variable quotation was selected
 
   if (req.file) {
     newQuotation = {
       quotationNumber: req.body.quotation,
       quotationPath: req.file.path
     };
-  }
+  } //Adding new grease to database
+
 
   _Grease["default"].addGrease(newGrease).then(function (output) {
+    //Add quotation info to database if quotation was uploaded
     if (req.file) {
       _Quotation["default"].addQuotation(newQuotation);
     }
@@ -286,11 +310,17 @@ router.post('/add/grease', _Quotation["default"].uploadFile().single('upload'), 
     res.redirect("/consumables/add");
   });
 });
+/**
+ * Express route to update grease data
+ * Route takes the id and action from the req paramaters and quantity from user input  
+ */
+
 router.post('/update-grease/:action/:id', function (req, res, next) {
+  //Creating new grease variable to update
   var newGrease = {
     id: req.params.id,
     volume: req.body.newQuantity
-  };
+  }; //Updating grease in database
 
   _Grease["default"].updateGrease(newGrease, req.params.action).then(function (output) {
     req.flash('success_msg', output);
@@ -300,7 +330,13 @@ router.post('/update-grease/:action/:id', function (req, res, next) {
     res.redirect("back");
   });
 });
+/**
+ * Express route to add a new oil in database
+ * Route takes oil and quotation data from user input 
+ */
+
 router.post('/add/oil', _Quotation["default"].uploadFile().single('upload'), function (req, res, next) {
+  //Creating new oil variable to be added to database   
   var newOil = {
     oilSpec: req.body.oilSpec,
     typeOfOil: req.body.oilType,
@@ -310,17 +346,20 @@ router.post('/add/oil', _Quotation["default"].uploadFile().single('upload'), fun
     oilPrice: req.body.oilPrice,
     supplierId: req.body.oilSupplierName,
     quotationNumber: req.body.quotation
-  };
-  var newQuotation;
+  }; //Declaring new quotation to be added to database
+
+  var newQuotation; //Creating quotation variable quotation was selected
 
   if (req.file) {
     newQuotation = {
       quotationNumber: req.body.quotation,
       quotationPath: req.file.path
     };
-  }
+  } //Adding new oil to database
+
 
   _Oil["default"].addOil(newOil).then(function (output) {
+    //Add quotation info to database if quotation was uploaded
     if (req.file) {
       _Quotation["default"].addQuotation(newQuotation);
     }
@@ -332,11 +371,17 @@ router.post('/add/oil', _Quotation["default"].uploadFile().single('upload'), fun
     res.redirect("/consumables/add");
   });
 });
+/**
+ * Express route to update oil data
+ * Route takes the id and action from the req paramaters and quantity from user input  
+ */
+
 router.post('/update-oil/:action/:id', function (req, res, next) {
+  //Creating new oil variable to update
   var newOil = {
     id: req.params.id,
     volume: req.body.newQuantity
-  };
+  }; //Updating oil in database
 
   _Oil["default"].updateOil(newOil, req.params.action).then(function (output) {
     req.flash('success_msg', output);
@@ -363,194 +408,130 @@ router.get('/delete/:id', function (req, res, next) {
     });
   }
 });
-router.get('/', /*#__PURE__*/function () {
-  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(req, res, next) {
-    return _regenerator["default"].wrap(function _callee3$(_context3) {
-      while (1) {
-        switch (_context3.prev = _context3.next) {
-          case 0:
-            if (req.user) {
-              _Consumables["default"].findAndCountAll().then(function (consumables) {
-                var entriesNum = [];
+/**
+ * Express route to display all consumable info
+ */
 
-                for (var i = 0; i < consumables.count; i++) {
-                  entriesNum[0] = i + 1;
-                }
+router.get('/', function (req, res, next) {
+  //Check if a user is logged in to the system
+  if (req.user) {
+    //Getting all consumables from database
+    _Consumables["default"].findAndCountAll().then(function (consumables) {
+      //Loading consumables display page
+      res.render("displayConsumables", {
+        title: "Consumables",
+        jumbotronDescription: "View all consumables in the system.",
+        consumables: consumables.rows,
+        msgType: req.flash()
+      });
+    });
+  } else {
+    res.redirect('/');
+  }
+});
+/**
+ * Express route to display specific consumable category info
+ */
 
-                res.render("displayConsumables", {
-                  title: "Consumables",
-                  jumbotronDescription: "View all consumables in the system.",
-                  consumables: consumables.rows,
-                  msgType: req.flash()
-                });
-              });
-            } else {
-              res.redirect('/');
-            }
+router.get('/:category', function (req, res, next) {
+  //Check if a user is logged in to the system
+  if (req.user) {
+    //Variable to set the title of page as the selected consumable category
+    var title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1); //Creating the appropriate consumable category model
 
-          case 1:
-          case "end":
-            return _context3.stop();
-        }
-      }
-    }, _callee3);
-  }));
+    var model = getConsumableModel(req.params.category); //Grouping consumable category by the suppliers
 
-  return function (_x7, _x8, _x9) {
-    return _ref3.apply(this, arguments);
-  };
-}());
-router.get('/:category', /*#__PURE__*/function () {
-  var _ref4 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(req, res, next) {
-    var title, model;
-    return _regenerator["default"].wrap(function _callee4$(_context4) {
-      while (1) {
-        switch (_context4.prev = _context4.next) {
-          case 0:
-            if (req.user) {
-              title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1);
-              model = getConsumableModel(req.params.category);
-              console.log("LOOK HERE: ");
-              model.groupSupplier().then(function (consumables) {
-                res.render("displaySpecificConsumables", {
-                  title: title,
-                  typeOf: req.params.category,
-                  jumbotronDescription: "View all " + req.params.category + " in the system.",
-                  consumables: consumables.rows,
-                  page: "view",
-                  msgType: req.flash()
-                });
-              });
-            }
+    model.groupSupplier().then(function (consumables) {
+      //Loading page to display consumable category info by supplier 
+      res.render("displaySpecificConsumables", {
+        title: title,
+        typeOf: req.params.category,
+        jumbotronDescription: "View all " + req.params.category + " in the system.",
+        consumables: consumables.rows,
+        page: "view",
+        msgType: req.flash()
+      });
+    });
+  }
+});
+/**
+ * Express route to display consumable category info of selected supplier
+ */
 
-          case 1:
-          case "end":
-            return _context4.stop();
-        }
-      }
-    }, _callee4);
-  }));
+router.get('/:category/:supplier', function (req, res, next) {
+  //Check if a user is logged in
+  if (req.user) {
+    //Set page title to selected consumable category
+    var title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1); //Creating the appropriate consumable category model
 
-  return function (_x10, _x11, _x12) {
-    return _ref4.apply(this, arguments);
-  };
-}());
-router.get('/:category/:supplier', /*#__PURE__*/function () {
-  var _ref5 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(req, res, next) {
-    var title, model;
-    return _regenerator["default"].wrap(function _callee5$(_context5) {
-      while (1) {
-        switch (_context5.prev = _context5.next) {
-          case 0:
-            if (req.user) {
-              title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1);
-              model = getConsumableModel(req.params.category);
-              model.getWithSupplier(req.params.supplier).then(function (foundModel) {
-                res.render("displaySpecificConsumables", {
-                  title: title,
-                  typeOf: req.params.category,
-                  jumbotronDescription: "View all " + title + " from " + foundModel[0].supplierName + " in the system.",
-                  consumables: foundModel,
-                  page: "add",
-                  specfic: true,
-                  msgType: req.flash()
-                });
-              });
-            }
+    var model = getConsumableModel(req.params.category); //Getting consumable category info
 
-          case 1:
-          case "end":
-            return _context5.stop();
-        }
-      }
-    }, _callee5);
-  }));
+    model.getWithSupplier(req.params.supplier).then(function (foundModel) {
+      //Loading selected consumable category of selected supplier
+      res.render("displaySpecificConsumables", {
+        title: title,
+        typeOf: req.params.category,
+        jumbotronDescription: "View all " + title + " from " + foundModel[0].supplierName + " in the system.",
+        consumables: foundModel,
+        page: "add",
+        specfic: true,
+        msgType: req.flash()
+      });
+    });
+  }
+});
+/**
+ * Express Route to download consumable quotation
+ */
 
-  return function (_x13, _x14, _x15) {
-    return _ref5.apply(this, arguments);
-  };
-}());
-router.get('/:category/download/:quotationNumber', /*#__PURE__*/function () {
-  var _ref6 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6(req, res, next) {
-    var path, tempFile;
-    return _regenerator["default"].wrap(function _callee6$(_context6) {
-      while (1) {
-        switch (_context6.prev = _context6.next) {
-          case 0:
-            path = "".concat(__dirname);
-            tempFile = path.replace('/dist/routes', "/server/uploads/".concat(req.params.quotationNumber, ".pdf"));
-            res.download(tempFile, function (err) {
-              if (err) {
-                req.flash("error_msg", "File Does Not Exist!");
-                res.redirect("back");
-              }
-            });
+router.get('/:category/download/:quotationNumber', function (req, res, next) {
+  //Setting directory location of selected quotation
+  var path = "".concat(__dirname); //Setting the location of the selected quotation
 
-          case 3:
-          case "end":
-            return _context6.stop();
-        }
-      }
-    }, _callee6);
-  }));
+  var tempFile = path.replace('/dist/routes', "/server/uploads/".concat(req.params.quotationNumber, ".pdf")); //Downloading selected quotation
 
-  return function (_x16, _x17, _x18) {
-    return _ref6.apply(this, arguments);
-  };
-}());
-router.get('/:category/view/:quotationNumber', /*#__PURE__*/function () {
-  var _ref7 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(req, res, next) {
-    var path, tempFile;
-    return _regenerator["default"].wrap(function _callee7$(_context7) {
-      while (1) {
-        switch (_context7.prev = _context7.next) {
-          case 0:
-            path = "".concat(__dirname);
-            tempFile = path.replace('/dist/routes', "/server/uploads/".concat(req.params.quotationNumber, ".pdf"));
+  res.download(tempFile, function (err) {
+    if (err) {
+      req.flash("error_msg", "File Does Not Exist!");
+      res.redirect("back");
+    }
+  });
+});
+/**
+ * Express Route to view consumable quotation
+ */
 
-            _fs["default"].readFile(tempFile, function (err, data) {
-              res.contentType("application/pdf");
-              res.send(data);
-            });
+router.get('/:category/view/:quotationNumber', function (req, res, next) {
+  //Setting directory location of selected quotation
+  var path = "".concat(__dirname); //Setting the location of the selected quotation
 
-          case 3:
-          case "end":
-            return _context7.stop();
-        }
-      }
-    }, _callee7);
-  }));
+  var tempFile = path.replace('/dist/routes', "/server/uploads/".concat(req.params.quotationNumber, ".pdf")); //Opening selected quotation
 
-  return function (_x19, _x20, _x21) {
-    return _ref7.apply(this, arguments);
-  };
-}());
-router.get('/close', /*#__PURE__*/function () {
-  var _ref8 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8(req, res, next) {
-    return _regenerator["default"].wrap(function _callee8$(_context8) {
-      while (1) {
-        switch (_context8.prev = _context8.next) {
-          case 0:
-            res.render("closeWindow");
+  _fs["default"].readFile(tempFile, function (err, data) {
+    if (err) {
+      req.flash("error_msg", "File Does Not Exist!");
+      res.redirect("back");
+    }
 
-          case 1:
-          case "end":
-            return _context8.stop();
-        }
-      }
-    }, _callee8);
-  }));
+    res.contentType("application/pdf");
+    res.send(data);
+  });
+});
+/**
+ * Express Route to close the current window
+ */
 
-  return function (_x22, _x23, _x24) {
-    return _ref8.apply(this, arguments);
-  };
-}());
+router.get('/close', function (req, res, next) {
+  res.render("closeWindow");
+});
+/**
+ * Function to set the selected consumable category model
+ * @param {*} consumableModel 
+ * @returns consumable category model
+ */
 
 function getConsumableModel(consumableModel) {
-  console.log("My Model Will be " + consumableModel);
-
   if (consumableModel === "brake") {
-    console.log("My Model Will return " + consumableModel);
     return _Brake["default"];
   } else if (consumableModel === "filter") {
     return _Filter["default"];

@@ -1,21 +1,13 @@
 import express from 'express';
-import passport from 'passport';
-import Bluebird from 'bluebird';
-//import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
-import { body, validationResult } from 'express-validator';
 import User from '../models/User';
-
 
 const router = express.Router();
 
 /** 
- * Displays login page.
+ * Express Route to display sleected user information
  */
-
-router.get('/display-user/:id', (req,res,next) =>
-{
-    console.log(req.user.id)
-    console.log(req.params);
+router.get('/display-user/:id', (req,res,next) => {
+    //Checking if the logged in user has permission to view this info
     if(req.user.id == req.params.id || req.user.admin)
     {
         let msg = req.flash();
@@ -26,15 +18,21 @@ router.get('/display-user/:id', (req,res,next) =>
                 existingUser: foundUser,
                 showPii: req.user.admin || req.user.id == req.params.id,
                 msgType: msg
+
             });
+
         });
+
     }else{
         req.flash('error_msg', "You do not have access to this page.");
         res.render("accessDenied", {
             title: "Access Denied",
             msgType: req.flash()
+
         });
+
     }
+    
 });
 
 router.get('/display-user/', (req,res,next) =>
@@ -150,94 +148,18 @@ router.post('/edit/:id', (req,res,next) =>{
  /**
   * Creates an user.
   */
- router.post('/create', [
-     body('eID', "Employee ID field is mandatory").not().isEmpty(),
-     body('firstName', "First name field is mandatory").not().isEmpty(),
-     body('lastName', "Last name field is mandatory").not().isEmpty(),
-     body('username', "Username field is mandatory").not().isEmpty(),
-     body('password', "Password lenght should be at least 6 chars long").isLength({ min: 5 })
- ], (req, res, next) =>{   
-        User.createUser(req.body).then(output => {
-            req.flash('success_msg', output);
-            res.redirect('/users/create')
+ router.post('/create', (req, res, next) =>{   
+    User.createUser(req.body).then(output => {
+        req.flash('success_msg', output);
+        res.redirect('/users/create')
 
-        }).catch(err => {
-            req.flash('error_msg', err);
-            res.redirect('/users/create')
+    }).catch(err => {
+        req.flash('error_msg', err);
+        res.redirect('/users/create')
             
-        });
     });
- 
- 
 
-
-
-/* 
-* Models
-import Utils from '../Utils';
-import CourseInstance from '../models/CourseInstance';
-import Grade from '../models/Grade';
-import Faculty from '../models/Faculty';
-
-import EmailSender from '../EmailSender'
-import ErrorHandler from '../errorHandler';
-import Counter from '../models/IdCounter';
-*/
-
-
-/**
- * We will have 3 different types of users as following
- * Admin
- * professor
- * Student
- */
-
-
-
-/**
- * Allows users to login to system.
- */
-/*
-router.post('/users/login', (req, res, next) =>
-{
-    var firstName = req.body.fName;
-    const newUser = new User(
-        {
-            firstName: req.body.fName,
-            lastName: req.body.lName
-        }
-    );
-
-    User.addUser(newUser).then(result =>
-        {
-            console.log(`You successfully added user ${result.firstName}.`);
-        }).catch(err =>
-        {
-            console.log(err);
-        });
-
-    // Make sure that we are not showing the user login page, if the user already logged in.
-    if (req.user)
-    {
-        console.log("AAAAAA1");
-        res.render('/');
-    }
-    else
-    {
-        console.log("AAAAAAAAAA");
-        res.render('login', { title: 'Login', landingPage: true });
-    }
 });
-
-/**
- * Allows users to logout from the system.
- */
-/*
-router.get('/logout', (req, res) =>
-{
-    req.logout();
-    res.redirect('/users/login');
-});
-*/
+ 
 export default router;
 

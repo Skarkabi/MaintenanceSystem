@@ -1,8 +1,7 @@
 import express from 'express';
 import Bluebird from 'bluebird';
-import passport from 'passport';
-import { Authenticate, Login, RegenerateSession, SaveSession } from '../authenticator';
-import errorHandler from '../errorHandler';
+import { Authenticate, Login, RegenerateSession, SaveSession } from '../authenticator';;
+
 const router = express.Router();
 
 

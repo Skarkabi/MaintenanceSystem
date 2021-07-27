@@ -15,11 +15,9 @@ var _express = _interopRequireDefault(require("express"));
 
 var _bluebird = _interopRequireDefault(require("bluebird"));
 
-var _passport = _interopRequireDefault(require("passport"));
-
 var _authenticator = require("../authenticator");
 
-var _errorHandler = _interopRequireDefault(require("../errorHandler"));
+;
 
 var router = _express["default"].Router();
 /**

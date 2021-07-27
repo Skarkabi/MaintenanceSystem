@@ -12,6 +12,10 @@ var _express = _interopRequireDefault(require("express"));
 var _Consumables = _interopRequireDefault(require("../models/Consumables"));
 
 var router = _express["default"].Router();
+/**
+ * Express Route to display all maintanence jobs
+ */
+
 
 router.get('/', function (req, res, next) {
   res.render('displayMains', {
@@ -19,12 +23,20 @@ router.get('/', function (req, res, next) {
     jumbotronDescription: "All Maintantence Requests"
   });
 });
+/**
+ * Express Route to load create new maintenace request page
+ */
+
 router.get('/create', function (req, res, next) {
   res.render('createUpdateMain', {
     title: "New Maintanence Request",
     jumbotronDescription: "Create a New Maintanence Request"
   });
 });
+/**
+ * Express Route to get selected maintenance job details
+ */
+
 router.get('/:req', function (req, res, next) {
   _Consumables["default"].getFullStock().then(function (consumablesToSelect) {
     var consumables = [];

@@ -90,12 +90,3 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
-
-const dns = require('dns');
-dns.resolve('mysql.tmi.local', (err, value) => { 
-    if(err) { 
-        console.log(err); 
-        return; 
-    } 
-    console.log(value); 
-}) 

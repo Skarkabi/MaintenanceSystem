@@ -92,14 +92,3 @@ function onListening() {
   var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
-
-var dns = require('dns');
-
-dns.resolve('mysql.tmi.local', function (err, value) {
-  if (err) {
-    console.log(err);
-    return;
-  }
-
-  console.log(value);
-});

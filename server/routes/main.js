@@ -3,20 +3,33 @@ import Consumable from '../models/Consumables';
 
 const router = express.Router();
 
+/**
+ * Express Route to display all maintanence jobs
+ */
 router.get('/', (req, res,next) => {
     res.render('displayMains', {
-    title: (`Maintanence Requestds`),
-    jumbotronDescription: `All Maintantence Requests`,
-});
-})
+        title: (`Maintanence Requestds`),
+        jumbotronDescription: `All Maintantence Requests`,
+   
+    });
 
+});
+
+/**
+ * Express Route to load create new maintenace request page
+ */
 router.get('/create', (req,res,next) => {
     res.render('createUpdateMain', {
-    title: (`New Maintanence Request`),
-    jumbotronDescription: `Create a New Maintanence Request`,
-});
-})
+        title: (`New Maintanence Request`),
+        jumbotronDescription: `Create a New Maintanence Request`,
+    
+    });
 
+});
+
+/**
+ * Express Route to get selected maintenance job details
+ */
 router.get('/:req', (req, res, next) => {
     Consumable.getFullStock().then(consumablesToSelect => {
         var consumables = [];
@@ -53,8 +66,11 @@ router.get('/:req', (req, res, next) => {
             mainEmployee: employees,
             consumableTable: consumablesToSelect,
         });
-        console.log(consumablesToSelect);
-    })
 
-})
+        console.log(consumablesToSelect);
+    
+    });
+
+});
+
 export default router;

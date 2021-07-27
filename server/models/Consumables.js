@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import bcrypt from 'bcrypt';
 import Bluebird from 'bluebird';
 import Sequelize from 'sequelize';
 import sequelize from '../mySQLDB';
@@ -8,7 +7,6 @@ import Brake from './consumables/Brake';
 import Filter from './consumables/Filter';
 import Grease from './consumables/Grease';
 import Oil from './consumables/Oil';
-import Supplier from './Supplier';
 
 /**
  * Setting the Datatypes for the MySQL tables

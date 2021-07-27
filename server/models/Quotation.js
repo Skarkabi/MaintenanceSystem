@@ -2,11 +2,11 @@ import _ from 'lodash';
 import Bluebird from 'bluebird';
 import Sequelize from 'sequelize';
 import sequelize from '../mySQLDB';
-import e, { response } from 'express';
-import Supplier from './Supplier';
 import multer from 'multer';
-import fs from 'fs';
 
+/**
+ * Declaring the datatypes used within the Quotation class
+ */
 const mappings = {
     quotationNumber: {
         type: Sequelize.DataTypes.STRING,
@@ -26,6 +26,9 @@ const mappings = {
     },
 }
 
+/**
+ * Defining the quotation table within the MySQL database using Sequelize
+ */
 const Quotation = sequelize.define('Quotations', mappings, {
     indexes: [
         {
@@ -48,40 +51,67 @@ const Quotation = sequelize.define('Quotations', mappings, {
             method: 'BTREE',
             fields: ['updatedAt'],
           },
+
     ]
+
 });
 
-const DIRECTORY = "./server/uploads";
-const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500 MB file limit.
 
+/**
+ * Function to upload pdf file to server using multer
+ * @returns the uploaded file
+ */
 Quotation.uploadFile = () => {
+    //Declating the multer storage variable
     var storage = multer.diskStorage({
+        //Setting the upload destination
         destination: function (req, file, cb) {
           cb(null, './server/uploads')
+
         },
+        //Setting the upload name
         filename: function (req, file, cb) {
           console.log("FILE");
           console.log(req)
           cb(null, req.body.quotation + ".pdf")
+
         }
       })
       
+      //Declaring the multer storage variable
       var upload = multer({ storage: storage })
+
       return upload;
+
 }
 
+/**
+ * Function to add new Quotation name and path to database
+ * @param {*} newQuotation 
+ */
 Quotation.addQuotation = newQuotation => {
     Quotation.create(newQuotation);
+
 }
 
+/**
+ * Function to retrieve quotation path from database
+ * @param {*} quotationNumber 
+ * @returns path to where the quotation exists
+ */
 Quotation.getQuotation = quotationNumber => {
     return new Bluebird((resolve, reject) => {
+        //Checking if the quotation number exists
         Quotation.findOne({
             where: {
                 quotationNumber: quotationNumber
             }
+        
+        //If quotation exists return its path 
         }).then(foundQuotation => {
             resolve(foundQuotation.quotationPath);
+
+        //If dosent exists return error    
         }).catch(err => {
             reject(err);
         });

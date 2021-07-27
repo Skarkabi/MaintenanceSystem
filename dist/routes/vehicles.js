@@ -9,47 +9,12 @@ exports["default"] = void 0;
 
 var _express = _interopRequireDefault(require("express"));
 
-var _expressValidator = require("express-validator");
-
 var _Vehicle = _interopRequireDefault(require("../models/Vehicle"));
 
 var router = _express["default"].Router();
-/** 
- * Displays login page.
- */
-
-/*
-router.get('/display-vehicle/:plate', (req,res,next) =>
-{
-    if(req.user)
-    {
-        User.getUserById(req.params.id).then(foundUser => {
-            res.render('displayUser', {
-                title: (`${foundUser.firstName} ${foundUser.lastName}'s Page`),
-                jumbotronDescription: `This is ${foundUser.firstName} ${foundUser.lastName}'s profile page.`,
-                existingUser: foundUser,
-                showPii: req.user.admin || req.user.id == req.params.id,
-            });
-        });
-    }
-});
-*/
-
 
 router.get('/add', function (req, res, next) {
   if (req.user) {
-    var d = new Date();
-    var n = d.getFullYear();
-    var span = [];
-    var i;
-
-    for (i = n - 2000; i >= 0; i--) {
-      span[i] = n - i;
-      console.log("In here" + span[i]);
-    }
-
-    console.log(span);
-
     _Vehicle["default"].getVehicleStock().then(function (values) {
       res.render('addUpdateVehicle', {
         title: 'Add New Vehicle',

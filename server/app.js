@@ -13,13 +13,8 @@ import sequelizeStore from 'connect-session-sequelize'
 import bodyParser from 'body-parser';
 import passportConfig from './passport';
 import sequelize from './mySQLDB';
-
 import breadcrumbs from 'express-breadcrumbs';
 import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access';
-import Suppleir from './models/Supplier';
-import Quotation from './models/Quotation';
-require('./models/Session');
-const multer = require("multer");
 import signInRouter from './routes/sign-in';
 import usersRouter from './routes/users';
 import homePageRouter from './routes/homePage';
@@ -27,8 +22,8 @@ import signOutRouter from './routes/sign-out';
 import vehicleRouter from './routes/vehicles';
 import consumableRouter from './routes/consumables';
 import supplierRouter from './routes/supplier';
-import Supplier from './models/Supplier';
 import mainRouter from './routes/main';
+require('./models/Session');
 
 handlebars.registerHelper("counter", function (index){
     return index + 1;
@@ -117,12 +112,6 @@ app.use(function (req, res, next){
     next();
 })
 
-/**app.get('*', (req, res, next) =>
-{
-    res.locals.user = req.user || null;
-    next();
-})
-*/
 
 app.use('/login', signInRouter);
 app.use('/users', usersRouter);
@@ -141,60 +130,6 @@ app.use((req, res, next) =>
     res.locals.error = req.flash('error');
     next();
 });
-
-function taskDate() {
-    var today = new Date();
-    var dd = today.getDate();
-
-    var mm = today.getMonth()+1; 
-    var yyyy = today.getFullYear();
-    if(dd<10) 
-    {
-        dd='0'+dd;
-    } 
-
-    if(mm<10) 
-    {
-        mm='0'+mm;
-    } 
-
-    today = dd+'/'+mm+'/'+yyyy;
-    return today;
-}
-
-var datemilli = Date.parse('Sun May 11,2014');
-
-const newVehicle = {
-    dateAdded: taskDate(),
-    cateogry: "Tester",
-    brand: "tester",
-    model: "tester",
-    year: "2019",
-    plate: "12232398",
-    chassis: "23234Ad3",
-    kmDrive: 0,
-    kmForOilChange: 1000,
-    oilType: "Disel"
-
-};
-
-
-/*
-Oil.findAndCountAll().then(foundBatteries =>{
-    var count = foundBatteries.count;
-    var newBatteris = foundBatteries.rows;
-    var totalQuant = 0;
-    var i;
-    for(i = 0; i < count; i++){
-       totalQuant += newBatteris[i].volume;
-    }
-    Consumable.addConsumable({category: "Oil", quantity: totalQuant})
-})
-*/
-
-
-
-
 
 app.use(breadcrumbs.init());
 app.use(breadcrumbs.setHome({name: 'Dashboard', url: '/'}));
@@ -221,4 +156,5 @@ app.use((err, req, res, next) =>
     res.status(err.status || 500);
     res.render('error');
 });
+
 export default app;

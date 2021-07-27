@@ -41,10 +41,6 @@ var _expressBreadcrumbs = _interopRequireDefault(require("express-breadcrumbs"))
 
 var _allowPrototypeAccess = require("@handlebars/allow-prototype-access");
 
-var _Supplier = _interopRequireDefault(require("./models/Supplier"));
-
-var _Quotation = _interopRequireDefault(require("./models/Quotation"));
-
 var _signIn = _interopRequireDefault(require("./routes/sign-in"));
 
 var _users = _interopRequireDefault(require("./routes/users"));
@@ -62,8 +58,6 @@ var _supplier = _interopRequireDefault(require("./routes/supplier"));
 var _main = _interopRequireDefault(require("./routes/main"));
 
 require('./models/Session');
-
-var multer = require("multer");
 
 _handlebars["default"].registerHelper("counter", function (index) {
   return index + 1;
@@ -160,13 +154,6 @@ app.use(function (req, res, next) {
   app.locals.user = req.user;
   next();
 });
-/**app.get('*', (req, res, next) =>
-{
-    res.locals.user = req.user || null;
-    next();
-})
-*/
-
 app.use('/login', _signIn["default"]);
 app.use('/users', _users["default"]);
 app.use('/', _homePage["default"]);
@@ -182,51 +169,6 @@ app.use(function (req, res, next) {
   res.locals.error = req.flash('error');
   next();
 });
-
-function taskDate() {
-  var today = new Date();
-  var dd = today.getDate();
-  var mm = today.getMonth() + 1;
-  var yyyy = today.getFullYear();
-
-  if (dd < 10) {
-    dd = '0' + dd;
-  }
-
-  if (mm < 10) {
-    mm = '0' + mm;
-  }
-
-  today = dd + '/' + mm + '/' + yyyy;
-  return today;
-}
-
-var datemilli = Date.parse('Sun May 11,2014');
-var newVehicle = {
-  dateAdded: taskDate(),
-  cateogry: "Tester",
-  brand: "tester",
-  model: "tester",
-  year: "2019",
-  plate: "12232398",
-  chassis: "23234Ad3",
-  kmDrive: 0,
-  kmForOilChange: 1000,
-  oilType: "Disel"
-};
-/*
-Oil.findAndCountAll().then(foundBatteries =>{
-    var count = foundBatteries.count;
-    var newBatteris = foundBatteries.rows;
-    var totalQuant = 0;
-    var i;
-    for(i = 0; i < count; i++){
-       totalQuant += newBatteris[i].volume;
-    }
-    Consumable.addConsumable({category: "Oil", quantity: totalQuant})
-})
-*/
-
 app.use(_expressBreadcrumbs["default"].init());
 app.use(_expressBreadcrumbs["default"].setHome({
   name: 'Dashboard',

@@ -12,7 +12,7 @@
                         <input list="name" name="name" class="form-control" required>
                         <datalist id="name">
                             {{#each supplier.names}}
-                                <option value="{{this.name}}"></option>
+                                <option value="{{this}}"></option>
                             {{/each}}
                         </datalist>
                     </div>
@@ -25,7 +25,7 @@
                         <input list="email" type="email" name="email" class="form-control" required>
                         <datalist id="email">
                             {{#each supplier.emails}}
-                                <option value="{{this.email}}"></option>
+                                <option value="{{this}}"></option>
                             {{/each}}
                         </datalist>
                     </div>
@@ -36,7 +36,7 @@
                         <input list="category" name="category" class="form-control" required>
                         <datalist id="category">
                             {{#each supplier.categories}}
-                                <option value="{{this.category}}"></option>
+                                <option value="{{this}}"></option>
                             {{/each}}
                         </datalist>
                     </div>
@@ -45,7 +45,7 @@
                         <input list="brand" name="brand" class="form-control" required>
                         <datalist id="brand">
                             {{#each supplier.brands}}
-                                <option value="{{this.brand}}"></option>
+                                <option value="{{this}}"></option>
                             {{/each}}
                         </datalist>
                     </div>

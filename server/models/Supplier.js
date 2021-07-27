@@ -1,10 +1,11 @@
 import Bluebird from 'bluebird';
 import _ from 'lodash';
 import Sequelize from 'sequelize';
-
 import sequelize from '../mySQLDB';
-import Brake from './consumables/Brake';
 
+/**
+ * Declaring the datatypes used within the Battery class
+ */
 const mappings = {
     id: {
         type: Sequelize.INTEGER,
@@ -47,6 +48,9 @@ const mappings = {
 
 }
 
+/**
+ * Defining the supplier table within the MySQL database using Sequelize
+ */
 const Supplier = sequelize.define('Suppliers', mappings, {
     indexes: [
         {
@@ -90,15 +94,26 @@ const Supplier = sequelize.define('Suppliers', mappings, {
             fields: ['updatedAt'],
           },
     ]
+
 });
 
+/**
+ * Function to add a new suppleir into database
+ * Function takes an object with the needed supplier info
+ * @param {*} newSupplier 
+ * @returns msg to flash for the user
+ */
 Supplier.addSupplier = (newSupplier) => {
     return new Bluebird((resolve, reject) => {
+        //Declating variable to represent the supplier
         var supplierInfo = {name: newSupplier.name, category: newSupplier.category};
+        //Checking if supplier exists in database
         Supplier.getByNameAndCategory(supplierInfo).then(isSupplier => {
+            //If Supplier Exists reject user input
             if(isSupplier){
                 reject("This Supplier Already Exists");
 
+            //If supplier doesn't exist add new supplier to database
             }else{
                 Supplier.create(newSupplier).then(() => {
                     resolve("New Supplier " + newSupplier.name + " Was Sucessfully Added to the System!");
@@ -106,26 +121,73 @@ Supplier.addSupplier = (newSupplier) => {
                 }).catch(err => {
                     reject("An Error has Occured, Supplier " + newSupplier.name + " Could not be Added to the System (" + err + ")");
 
-                })
+                });
+
             }
 
         }).catch(err => {
             reject("Could not Connect to the Server (" + err + ")");
 
         });
-    })
+
+    });
+
 }
 
+/**
+ * Function to get requested supplier from database
+ * @param {*} info 
+ * @returns found supplier
+ */
 Supplier.getByNameAndCategory = info => {
     return new Bluebird((resolve, reject) => {
+        //Getting the requested supplier 
         Supplier.findOne({
             where: {
                 name: info.name,
                 category: info.category,
             }
 
+        //If supplier found it is returned
         }).then(foundSupplier => {
             resolve(foundSupplier);
+
+        //If not found return error
+        }).catch(err => {
+            reject(err);
+
+        });
+
+    });
+
+}
+
+/**
+ * Function to get supplier info by supplier ID
+ * @param {*} id 
+ * @returns list of supplier names with their ids
+ */
+Supplier.getById = id => {
+    return new Bluebird((resolve, reject) => {
+        //Getting all suppleirs with requested id
+        Supplier.findAll({
+            where: {
+                id: id
+            },
+
+            //Declating attributes to return
+            attributes:['id', 'name']
+
+        }).then(foundSupplier => {
+            //Create a map of names and id to be returned
+            var supplierMap = new Map();
+            //Mapping the found supplier's id and name
+            foundSupplier.map(values => {
+                return supplierMap.set(values.id, values.name)
+
+            });
+            
+            resolve(supplierMap);
 
         }).catch(err => {
             reject(err);
@@ -136,91 +198,73 @@ Supplier.getByNameAndCategory = info => {
 
 }
 
-Supplier.getById = id => {
+/**
+ * function to return distinct values in object
+ * @param {*} values 
+ * @returns filtered values 
+ */
+ function getDistinct(values){
+    return values.filter((value, index, self) => self.indexOf(value) === index);
+}
+
+/**
+ * Function to return list of distinct supplier values found within the database
+ * @returns object that includes all distinct values of suppliers
+ */
+Supplier.getStock = () => {
     return new Bluebird((resolve, reject) => {
-        Supplier.findAll({
-            where: {
-                id: id
-            },
-            attributes:['id', 'name']
-        }).then(foundSupplier => {
-            
-            //var supplierMap = foundSupplier.map(values => {return new Map(values.id,values.name)});
-            var supplierMap = new Map();
-            foundSupplier.map(values => {
-                return supplierMap.set(values.id, values.name)
+        //Declaring all variables to be returned
+        var name, phone, email, category, brand;
+        //Getting all suppliers saved in database
+        Supplier.findAll().then(values => {
+             //Mapping supplier values to not return double values
+            name = getDistinct(values.map(val => val.name));
+            phone = getDistinct(values.map(val => val.phone));
+            email = getDistinct(values.map(val => val.email));
+            category = getDistinct(values.map(val => val.category));
+            brand = getDistinct(values.map(val => val.brand));
+
+            //Creating variable of all need variables to return
+            var suppliers = {
+                names: name, phones: phone, emails: email, 
+                categories: category, brands: brand
+            };
+            resolve(suppliers);
+
+        }).catch(() => {
+            reject("Error Connecting to the Server");
+
+        });
+    
+    });
+}
+
+/**
+ * Function to set virtual datatype supplier name of consumables
+ * @param {*} consumable 
+ * @returns list of consumables with their supplier names
+ */
+Supplier.getSupplierNames = (consumable) => {
+    return new Bluebird((resolve, reject) => {
+        //Initializing variable of distinct supplier IDs
+        let values = consumable.rows.map(a => a.supplierId);
+        //Getting suppliers from the database
+        Supplier.getById(values).then(supplierNames => {
+            //Setting virtual datatype supplier name
+            consumable.rows.map(value => {
+                return value.setDataValue('supplierName', supplierNames.get(value.supplierId));
+
             });
-            
-            resolve(supplierMap);
+
+            resolve("completed");
 
         }).catch(err => {
             reject(err);
 
-        })
-    })
-}
-
-Supplier.getStock = () => {
-    return new Bluebird(async (resolve, reject) => {
-        var name, phone, email, category, brand;
-        await Supplier.findAll({attributes: [[Sequelize.literal('DISTINCT `name`'), 'name']]}).then(values => {
-            name = values;
-
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-
         });
-
-        await Supplier.findAll({attributes: [[Sequelize.literal('DISTINCT `phone`'), 'phone']]}).then(values => {
-            phone = values;
-
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-
-        });
-
-        await Supplier.findAll({attributes: [[Sequelize.literal('DISTINCT `email`'), 'email']]}).then(values => {
-            email = values;
-
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-
-        });
-
-        await Supplier.findAll({attributes: [[Sequelize.literal('DISTINCT `category`'), 'category']]}).then(values => {
-            category = values;
-
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-
-        });
-
-        await Supplier.findAll({attributes: [[Sequelize.literal('DISTINCT `brand`'), 'brand']]}).then(values => {
-            brand = values;
-
-        }).catch(() => {
-            reject("Error Connecting to the Server");
-
-        });
-
-        var suppliers = {names: name, phones: phone, emails: email, categories: category, brands: brand};
-        resolve(suppliers);
-    })
-}
-
-Supplier.getSupplierNames = (brakes) => {
-    return new Bluebird((resolve, reject) => {
-            let values = brakes.rows.map(a => a.supplierId);
-            Supplier.getById(values).then(supplierNames => {
-                brakes.rows.map(value => {
-                    return value.setDataValue('supplierName', supplierNames.get(value.supplierId));
-
-                });
-                resolve("completed");
-            });
             
-        
-    }); 
+    });
+
 }
 
 export default Supplier;

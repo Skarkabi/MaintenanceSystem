@@ -7,10 +7,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
-var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
-
-var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
-
 var _bluebird = _interopRequireDefault(require("bluebird"));
 
 var _lodash = _interopRequireDefault(require("lodash"));
@@ -19,8 +15,9 @@ var _sequelize = _interopRequireDefault(require("sequelize"));
 
 var _mySQLDB = _interopRequireDefault(require("../mySQLDB"));
 
-var _Brake = _interopRequireDefault(require("./consumables/Brake"));
-
+/**
+ * Declaring the datatypes used within the Battery class
+ */
 var mappings = {
   id: {
     type: _sequelize["default"].INTEGER,
@@ -56,6 +53,9 @@ var mappings = {
     allowNull: false
   }
 };
+/**
+ * Defining the supplier table within the MySQL database using Sequelize
+ */
 
 var Supplier = _mySQLDB["default"].define('Suppliers', mappings, {
   indexes: [{
@@ -92,16 +92,26 @@ var Supplier = _mySQLDB["default"].define('Suppliers', mappings, {
     fields: ['updatedAt']
   }]
 });
+/**
+ * Function to add a new suppleir into database
+ * Function takes an object with the needed supplier info
+ * @param {*} newSupplier 
+ * @returns msg to flash for the user
+ */
+
 
 Supplier.addSupplier = function (newSupplier) {
   return new _bluebird["default"](function (resolve, reject) {
+    //Declating variable to represent the supplier
     var supplierInfo = {
       name: newSupplier.name,
       category: newSupplier.category
-    };
+    }; //Checking if supplier exists in database
+
     Supplier.getByNameAndCategory(supplierInfo).then(function (isSupplier) {
+      //If Supplier Exists reject user input
       if (isSupplier) {
-        reject("This Supplier Already Exists");
+        reject("This Supplier Already Exists"); //If supplier doesn't exist add new supplier to database
       } else {
         Supplier.create(newSupplier).then(function () {
           resolve("New Supplier " + newSupplier.name + " Was Sucessfully Added to the System!");
@@ -114,32 +124,49 @@ Supplier.addSupplier = function (newSupplier) {
     });
   });
 };
+/**
+ * Function to get requested supplier from database
+ * @param {*} info 
+ * @returns found supplier
+ */
+
 
 Supplier.getByNameAndCategory = function (info) {
   return new _bluebird["default"](function (resolve, reject) {
+    //Getting the requested supplier 
     Supplier.findOne({
       where: {
         name: info.name,
         category: info.category
-      }
+      } //If supplier found it is returned
+
     }).then(function (foundSupplier) {
-      resolve(foundSupplier);
+      resolve(foundSupplier); //If not found return error
     })["catch"](function (err) {
       reject(err);
     });
   });
 };
+/**
+ * Function to get supplier info by supplier ID
+ * @param {*} id 
+ * @returns list of supplier names with their ids
+ */
+
 
 Supplier.getById = function (id) {
   return new _bluebird["default"](function (resolve, reject) {
+    //Getting all suppleirs with requested id
     Supplier.findAll({
       where: {
         id: id
       },
+      //Declating attributes to return
       attributes: ['id', 'name']
     }).then(function (foundSupplier) {
-      //var supplierMap = foundSupplier.map(values => {return new Map(values.id,values.name)});
-      var supplierMap = new Map();
+      //Create a map of names and id to be returned
+      var supplierMap = new Map(); //Mapping the found supplier's id and name
+
       foundSupplier.map(function (values) {
         return supplierMap.set(values.id, values.name);
       });
@@ -149,98 +176,82 @@ Supplier.getById = function (id) {
     });
   });
 };
+/**
+ * function to return distinct values in object
+ * @param {*} values 
+ * @returns filtered values 
+ */
+
+
+function getDistinct(values) {
+  return values.filter(function (value, index, self) {
+    return self.indexOf(value) === index;
+  });
+}
+/**
+ * Function to return list of distinct supplier values found within the database
+ * @returns object that includes all distinct values of suppliers
+ */
+
 
 Supplier.getStock = function () {
-  return new _bluebird["default"]( /*#__PURE__*/function () {
-    var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(resolve, reject) {
-      var name, phone, email, category, brand, suppliers;
-      return _regenerator["default"].wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _context.next = 2;
-              return Supplier.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `name`'), 'name']]
-              }).then(function (values) {
-                name = values;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 2:
-              _context.next = 4;
-              return Supplier.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `phone`'), 'phone']]
-              }).then(function (values) {
-                phone = values;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 4:
-              _context.next = 6;
-              return Supplier.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `email`'), 'email']]
-              }).then(function (values) {
-                email = values;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 6:
-              _context.next = 8;
-              return Supplier.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `category`'), 'category']]
-              }).then(function (values) {
-                category = values;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 8:
-              _context.next = 10;
-              return Supplier.findAll({
-                attributes: [[_sequelize["default"].literal('DISTINCT `brand`'), 'brand']]
-              }).then(function (values) {
-                brand = values;
-              })["catch"](function () {
-                reject("Error Connecting to the Server");
-              });
-
-            case 10:
-              suppliers = {
-                names: name,
-                phones: phone,
-                emails: email,
-                categories: category,
-                brands: brand
-              };
-              resolve(suppliers);
-
-            case 12:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee);
-    }));
-
-    return function (_x, _x2) {
-      return _ref.apply(this, arguments);
-    };
-  }());
-};
-
-Supplier.getSupplierNames = function (brakes) {
   return new _bluebird["default"](function (resolve, reject) {
-    var values = brakes.rows.map(function (a) {
-      return a.supplierId;
+    //Declaring all variables to be returned
+    var name, phone, email, category, brand; //Getting all suppliers saved in database
+
+    Supplier.findAll().then(function (values) {
+      //Mapping supplier values to not return double values
+      name = getDistinct(values.map(function (val) {
+        return val.name;
+      }));
+      phone = getDistinct(values.map(function (val) {
+        return val.phone;
+      }));
+      email = getDistinct(values.map(function (val) {
+        return val.email;
+      }));
+      category = getDistinct(values.map(function (val) {
+        return val.category;
+      }));
+      brand = getDistinct(values.map(function (val) {
+        return val.brand;
+      })); //Creating variable of all need variables to return
+
+      var suppliers = {
+        names: name,
+        phones: phone,
+        emails: email,
+        categories: category,
+        brands: brand
+      };
+      resolve(suppliers);
+    })["catch"](function () {
+      reject("Error Connecting to the Server");
     });
+  });
+};
+/**
+ * Function to set virtual datatype supplier name of consumables
+ * @param {*} consumable 
+ * @returns list of consumables with their supplier names
+ */
+
+
+Supplier.getSupplierNames = function (consumable) {
+  return new _bluebird["default"](function (resolve, reject) {
+    //Initializing variable of distinct supplier IDs
+    var values = consumable.rows.map(function (a) {
+      return a.supplierId;
+    }); //Getting suppliers from the database
+
     Supplier.getById(values).then(function (supplierNames) {
-      brakes.rows.map(function (value) {
+      //Setting virtual datatype supplier name
+      consumable.rows.map(function (value) {
         return value.setDataValue('supplierName', supplierNames.get(value.supplierId));
       });
       resolve("completed");
+    })["catch"](function (err) {
+      reject(err);
     });
   });
 };

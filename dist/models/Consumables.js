@@ -9,8 +9,6 @@ exports["default"] = void 0;
 
 var _lodash = _interopRequireDefault(require("lodash"));
 
-var _bcrypt = _interopRequireDefault(require("bcrypt"));
-
 var _bluebird = _interopRequireDefault(require("bluebird"));
 
 var _sequelize = _interopRequireDefault(require("sequelize"));
@@ -26,8 +24,6 @@ var _Filter = _interopRequireDefault(require("./consumables/Filter"));
 var _Grease = _interopRequireDefault(require("./consumables/Grease"));
 
 var _Oil = _interopRequireDefault(require("./consumables/Oil"));
-
-var _Supplier = _interopRequireDefault(require("./Supplier"));
 
 /**
  * Setting the Datatypes for the MySQL tables

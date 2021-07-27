@@ -2,8 +2,6 @@
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
-var _typeof = require("@babel/runtime/helpers/typeof");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -17,18 +15,11 @@ var _sequelize = _interopRequireDefault(require("sequelize"));
 
 var _mySQLDB = _interopRequireDefault(require("../mySQLDB"));
 
-var _express = _interopRequireWildcard(require("express"));
-
-var _Supplier = _interopRequireDefault(require("./Supplier"));
-
 var _multer = _interopRequireDefault(require("multer"));
 
-var _fs = _interopRequireDefault(require("fs"));
-
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
+/**
+ * Declaring the datatypes used within the Quotation class
+ */
 var mappings = {
   quotationNumber: {
     type: _sequelize["default"].DataTypes.STRING,
@@ -47,6 +38,9 @@ var mappings = {
     allowNull: false
   }
 };
+/**
+ * Defining the quotation table within the MySQL database using Sequelize
+ */
 
 var Quotation = _mySQLDB["default"].define('Quotations', mappings, {
   indexes: [{
@@ -67,40 +61,59 @@ var Quotation = _mySQLDB["default"].define('Quotations', mappings, {
     fields: ['updatedAt']
   }]
 });
+/**
+ * Function to upload pdf file to server using multer
+ * @returns the uploaded file
+ */
 
-var DIRECTORY = "./server/uploads";
-var MAX_FILE_SIZE = 500 * 1024 * 1024; // 500 MB file limit.
 
 Quotation.uploadFile = function () {
+  //Declating the multer storage variable
   var storage = _multer["default"].diskStorage({
+    //Setting the upload destination
     destination: function destination(req, file, cb) {
       cb(null, './server/uploads');
     },
+    //Setting the upload name
     filename: function filename(req, file, cb) {
       console.log("FILE");
       console.log(req);
       cb(null, req.body.quotation + ".pdf");
     }
-  });
+  }); //Declaring the multer storage variable
+
 
   var upload = (0, _multer["default"])({
     storage: storage
   });
   return upload;
 };
+/**
+ * Function to add new Quotation name and path to database
+ * @param {*} newQuotation 
+ */
+
 
 Quotation.addQuotation = function (newQuotation) {
   Quotation.create(newQuotation);
 };
+/**
+ * Function to retrieve quotation path from database
+ * @param {*} quotationNumber 
+ * @returns path to where the quotation exists
+ */
+
 
 Quotation.getQuotation = function (quotationNumber) {
   return new _bluebird["default"](function (resolve, reject) {
+    //Checking if the quotation number exists
     Quotation.findOne({
       where: {
         quotationNumber: quotationNumber
-      }
+      } //If quotation exists return its path 
+
     }).then(function (foundQuotation) {
-      resolve(foundQuotation.quotationPath);
+      resolve(foundQuotation.quotationPath); //If dosent exists return error    
     })["catch"](function (err) {
       reject(err);
     });

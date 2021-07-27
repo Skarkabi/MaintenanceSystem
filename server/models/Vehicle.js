@@ -1,10 +1,12 @@
 import _ from 'lodash';
-import bcrypt from 'bcrypt';
 import Bluebird from 'bluebird';
 import Sequelize from 'sequelize';
 
 import sequelize from '../mySQLDB';
 
+/**
+ * Declaring the datatypes used within the Vehicle class
+ */
 const mappings = {
   dateAdded: {
     type: Sequelize.DataTypes.STRING,
@@ -58,6 +60,9 @@ const mappings = {
   },
 };
 
+/**
+ * Defining the vehicel stocks table within the MySQL database using Sequelize
+ */
 const Vehicle = sequelize.define('vehicle_stocks', mappings, {
   indexes: [
     {
@@ -123,8 +128,15 @@ const Vehicle = sequelize.define('vehicle_stocks', mappings, {
   ],
 });
 
+/**
+ * Function to add vehicle in vehicle stock
+ * Function takes vehicle data and adds it into the database
+ * @param {*} createVehicled 
+ * @returns msg to be flashed to user
+ */
 Vehicle.addVehicle = (createVehicled) => {
   const newVehicle = 
+  //Creating the vehicle to be added in the database
   {
     dateAdded: taskDate(),
     category: createVehicled.category,
@@ -138,18 +150,20 @@ Vehicle.addVehicle = (createVehicled) => {
     oilType: createVehicled.oilType
   }
 
-
   return new Bluebird ((resolve, reject) => {
+    //Check if the vehicle plate number already exists in database
     Vehicle.getVehicleByPlate(newVehicle.plate).then(isVehicle => {
+      //If vehicle plate number exists reject user input
       if (isVehicle){
         reject("Vehicle With Plate# " + newVehicle.plate + " Already Exists");
 
       }else{
+        //If vehicle plate number doesn't exist add to database
         Vehicle.create(newVehicle).then(() => {
           resolve("Vehicle With Plate# " + newVehicle.plate + " Was Sucessfully Added!");
 
         }).catch(err => {
-          reject("Vehicle With Plate# " + newVehicle.plate + " Could Not Be Added");
+          reject("Vehicle With Plate# " + newVehicle.plate + " Could Not Be Added " + err);
 
         });
 
@@ -164,18 +178,31 @@ Vehicle.addVehicle = (createVehicled) => {
 
 }
 
+/**
+ * Function to get vehicle from database by plate number
+ * @param {*} plate 
+ * @returns found vehicle
+ */
 Vehicle.getVehicleByPlate = plate => Vehicle.findOne({
   where:{plate}
 });
 
+/**
+ * Function to delete vehicle from database by its plate and chassis number
+ * @param {*} info 
+ * @returns msh to flash to user
+ */
 Vehicle.deleteVehicleByPlateAndChassis = info => {
   return new Bluebird ((resolve, reject) => {
+    //Checking if vehicle exists
     Vehicle.getVehicleByPlate(info.plate).then(foundVehicle => {
+      //If vehicle exists delete it from database
       foundVehicle.destroy();
       resolve("Vehicle Plate# " + info.plate + " Chassis# " + info.chassis + " Was Sucessfully Removed From the System!");
 
     }).catch(err => {
-      reject("An Error has Occured User with Employee ID# " + id + " Could not be Deleted");
+      //If vehicle doesn't exist reject user request
+      reject("An Error has Occured User with Employee ID# " + id + " Could not be Deleted " + err);
 
     });
 
@@ -183,8 +210,13 @@ Vehicle.deleteVehicleByPlateAndChassis = info => {
 
 }
 
+/**
+ * Function to get all vehicles from database
+ * @returns object with number of vehicles and list of vehicles
+ */
 Vehicle.getStock =() => {
   return new Bluebird((resolve, reject) => {
+    //Getting all vehicles from database
     Vehicle.findAndCountAll().then(vehicle => {
       resolve(vehicle);
 
@@ -197,14 +229,26 @@ Vehicle.getStock =() => {
 
 }
 
+/**
+ * function to return distinct values in object
+ * @param {*} values 
+ * @returns filtered values 
+ */
 function getDistinct(values){
   return values.filter((value, index, self) => self.indexOf(value) === index);
 }
 
+/**
+ * Function to return list of vehicles distinct values found within the database
+ * @returns object that includes all distinct values of each vehicle spec
+ */
 Vehicle.getVehicleStock = () => {
   return new Bluebird((resolve, reject) => {
+    //Declaring all variables to be returned
     var category, brand, model, year, plate, chassis, oilType;
+    //Getting all vehicles from database
     Vehicle.getStock().then(vehicles => {
+      //Mapping vehicle values to not return double values
       category = getDistinct(vehicles.rows.map(val => val.category));
       brand = getDistinct(vehicles.rows.map(val => val.brand));
       model = getDistinct(vehicles.rows.map(val => val.model));
@@ -213,6 +257,7 @@ Vehicle.getVehicleStock = () => {
       chassis = getDistinct(vehicles.rows.map(val => val.chassis));
       oilType = getDistinct(vehicles.rows.map(val => val.oilType));
 
+      //Creating variable of all need variables to return
       var values = {
         category: category, brands: brand, models: model, years: year,
         plates: plate, chassis: chassis, oilTypes: oilType

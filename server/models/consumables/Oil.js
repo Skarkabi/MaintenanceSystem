@@ -5,6 +5,9 @@ import Supplier from '../Supplier';
 import sequelize from '../../mySQLDB';
 import Consumable from '../Consumables';
 
+/**
+ * Declaring the datatypes used within the Grease class
+ */
 const mappings = {
     id: {
         type: Sequelize.INTEGER,
@@ -38,25 +41,27 @@ const mappings = {
     supplierId:{
       type: Sequelize.DataTypes.INTEGER,
       allowNull: false
-  },
-  supplierName:{
-    type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.STRING, ['supplierName']),
-   
-},
-  quotationNumber:{
+    },
+    supplierName:{
+      type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.STRING, ['supplierName']),
+    },
+    quotationNumber:{
       type: Sequelize.DataTypes.STRING,
       allowNull: false
-  },
+    },
     createdAt: {
-        type: Sequelize.DataTypes.DATE,
-        allowNull: false,
+      type: Sequelize.DataTypes.DATE,
+      allowNull: false,
     },
     updatedAt: {
-        type: Sequelize.DataTypes.DATE,
-        allowNull: false,
+      type: Sequelize.DataTypes.DATE,
+      allowNull: false,
     },
 }
 
+/**
+ * Defining the oil stocks table within the MySQL database using Sequelize
+ */
 const Oil = sequelize.define('oil_stocks', mappings, {
   indexes: [
     {
@@ -70,19 +75,19 @@ const Oil = sequelize.define('oil_stocks', mappings, {
       fields: ['volume'],
     },
     {
-        name: 'oil_minVolume_index',
-        method: 'BTREE',
-        fields: ['minVolume'],
-      },
-    {
-        name: 'oil_oilSpec_index',
-        method: 'BTREE',
-        fields: ['oilSpec']
+      name: 'oil_minVolume_index',
+      method: 'BTREE',
+      fields: ['minVolume'],
     },
     {
-        name: 'oil_typeOfOil_index',
-        method: 'BTREE',
-        fields: ['typeOfOil']
+      name: 'oil_oilSpec_index',
+      method: 'BTREE',
+      fields: ['oilSpec']
+    },
+    {
+      name: 'oil_typeOfOil_index',
+      method: 'BTREE',
+      fields: ['typeOfOil']
     },
     {
       name: 'oil_oilPrice_index',
@@ -112,9 +117,15 @@ const Oil = sequelize.define('oil_stocks', mappings, {
   ],
 });
 
+/**
+ * Function to set virtual datatype supplier name using supplier ids in oil
+ * @returns List of oil with their supplier names
+ */
 Oil.getStock = () => {
   return new Bluebird((resolve, reject) => {
+    //Getting all the oil found in the database
     Oil.findAndCountAll().then(oil => {
+      //Calling supplier function to add supplier name to oil objects
       Supplier.getSupplierNames(oil).then(() => {
         resolve(oil);
 
@@ -132,21 +143,35 @@ Oil.getStock = () => {
 
 }
 
+/**
+ * function to return distinct values in object
+ * @param {*} values 
+ * @returns filtered values 
+ */
 function getDistinct(values){
   return values.filter((value, index, self) => self.indexOf(value) === index);
 }
 
+/**
+ * Function to return list of oil with their supplier names, as well as distinct values found within the database
+ * @returns object that includes all oil, suppliers, and distinct values of each oil spec
+ */
 Oil.getOilStock = () => {
     return new Bluebird((resolve, reject) => {
-        var oilC, oilS, oilSpecs, typeOfOils, preferredBrands
+        //Declaring all variables to be returned
+        var oilC, oilS, oilSpecs, typeOfOils, preferredBrands;
+        //Getting all suppliers saved in database
         Supplier.findAll().then(suppliers => {
             oilS = suppliers;
+            //Getting all oil from database and setting supplier names 
             Oil.getStock().then(consumables => {
                 oilC = consumables;
+                //Mapping oil values to not return double values
                 oilSpecs = getDistinct(oilC.rows.map(val => val.oilSpec));
                 typeOfOils = getDistinct(oilC.rows.map(val => val.typeOfOil));
                 preferredBrands = getDistinct(oilC.rows.map(val => val.preferredBrand));
 
+                //Creating variable of all need variables to return
                 var values = {
                     consumables: oilC.rows, suppliers: oilS, specs: oilSpecs, 
                     typeOfOils: typeOfOils, preferredBrands: preferredBrands
@@ -169,19 +194,29 @@ Oil.getOilStock = () => {
 
 }
 
+/**
+ * Function to update Oil stock
+ * Takes in the oil object and if the value should be deleted or added
+ * @param {*} nrewOil 
+ * @param {*} action 
+ * @returns msg to be flashed to user
+ */
 Oil.updateOil = (newOil,action) => {
   return new Bluebird((resolve, reject) => {
+    //Creating the new Consumable value to be updated in the consumable databse
     const newConsumable = {
       category: "Oil",
       quantity: newOil.volume
     };
 
+    //Checking if the oil spec exists within the stock
     Oil.findOne({
       where: {
         id: newOil.id
       }
 
     }).then(foundOil => {
+      //If the oil exists in the databse the function sets the new quantity to the new value
       var quant;
       if(action === "add"){
           quant = parseFloat(newOil.volume) + foundOil.volume;
@@ -191,23 +226,27 @@ Oil.updateOil = (newOil,action) => {
       
       }
 
+      //If the new value is 0 the oil definition is deleted from the stock
       if(quant === 0){
         foundOil.destroy().then(() => {
           Consumable.updateConsumable(newConsumable, action).then(() => {
             resolve(newOil.voulme + " liters Of Oil Successfully Deleted from Existing Stock!");
           
           }).catch(err => {
-            reject("An Error Occured Oil Could not be Deleted");
+            reject("An Error Occured Oil Could not be Deleted " + err);
           
           });
         
         }).catch(err => {
-          reject("An Error Occured Oil Could not be Deleted");
+          reject("An Error Occured Oil Could not be Deleted " + err);
 
         });
+
+      //If the new quantity is less than 0 rejects the user input  
       }else if(quant < 0){
         reject("Can not Delete more than exists in stock");
         
+      //If quantity is > 0 the grease quantity is updated
       }else{
         Oil.update({volume: quant}, {
           where: {
@@ -215,23 +254,24 @@ Oil.updateOil = (newOil,action) => {
           }
   
         }).then(() => {
+          //Updating the value from the consumables database
           Consumable.updateConsumable(newConsumable, action).then(() => {
             resolve(newOil.volume + " Liters of Oil Sucessfully Added to Existing Stock!");
       
           }).catch(err => {
-              reject("An Error Occured Oil Could not be Added");
+              reject("An Error Occured Oil Could not be Added " + err);
   
           });
   
         }).catch(err => {
-          reject("An Error Occured Oil Could not be Added");
+          reject("An Error Occured Oil Could not be Added " + err);
   
         });
 
       }
 
     }).catch(err => {
-      reject("An Error Occured Oil Could not be Added");
+      reject("An Error Occured Oil Could not be Added " + err);
 
     });
 
@@ -239,13 +279,21 @@ Oil.updateOil = (newOil,action) => {
 
 }
 
+/**
+ * Function to add a new oil into stock
+ * Function takes an object with the needed oil info
+ * @param {*} newOil 
+ * @returns msg to be flashed to user
+ */
 Oil.addOil = (newOil) => {
   return new Bluebird((resolve, reject) => {
+    //Creating the new Consumable value to be updated in the consumable databse
     const newConsumable = {
       category: "Oil",
       quantity: newOil.volume
     };
 
+    //Looking if the oil with exact specs and same quotation number already exists in stock
     Oil.findOne({
       where: {
         oilSpec: newOil.oilSpec,
@@ -257,30 +305,33 @@ Oil.addOil = (newOil) => {
       }
 
     }).then(foundOil => {
+      //If this oil with this quotation number exists the function rejects the creation
       if(foundOil){
         reject("Oil With these Details Already Registered, Please Add to Existing Stock");
 
+      //If the oil is not found the function creates a oil and updates the consumable stock
       }else{
         newOil.volume = parseFloat(newOil.volume);
         newOil.minVolume = parseFloat(newOil.minVolume);
         Oil.create(newOil).then(() => {
+          //Updating consumable stock database
           Consumable.updateConsumable(newConsumable, "add").then(() => {
             resolve(newOil.volume + " Liters of Oil Sucessfully Added!");
 
           }).catch(err => {
-            reject("An Error Occured Oil Could not be Added");
+            reject("An Error Occured Oil Could not be Added " + err);
 
           });
 
         }).catch(err => {
-          reject("An Error Occured Oil Could not be Added");
+          reject("An Error Occured Oil Could not be Added " + err);
 
         });
 
       }
 
     }).catch(err => {
-      reject("An Error Occured Oil Could not be Added");
+      reject("An Error Occured Oil Could not be Added " + err);
 
     });
 
@@ -288,37 +339,74 @@ Oil.addOil = (newOil) => {
 
 }
 
+/**
+ * Function to find different oil from a specific suppleir 
+ * @returns list of oil values from specific supplier regardless of quotation numbers
+ */
 Oil.groupSupplier = () => {
   return new Bluebird((resolve, reject) => {
+      //Finding oil from database and returning specified attributes 
       Oil.findAll({
+          //Declaring attributes to return from database
           attributes:
             ['oilSpec', 'typeOfOil', 'supplierId',
             [sequelize.fn('sum', sequelize.col('volume')), 'volume'],
           ],
 
+          //Declaring how to group return values
           group: ['oilSpec', 'typeOfOil', 'supplierId']
           
-      }).then(async (values) => { 
+      }).then((values) => { 
+          //Setting variable to return oil with their supplier names
           var result = {count: values.length, rows: values}
-          await Supplier.getSupplierNames(result);
-         resolve(result);
-      });
-  })
+          Supplier.getSupplierNames(result).then(() => {
+            resolve(result);
+
+          }).catch(err => {
+            reject(err);
+
+          });
+         
+      }).catch(err => {
+        reject(err);
+
+    });
+
+  });
+
 }
 
+/**
+ * Function to find all oil in database with specific supplier ID
+ * Function takes in the supplier ID of the supplier being searched for
+ * @param {*} supplierId 
+ * @returns List of oil purchased from that specified supplier ID
+ */
 Oil.getWithSupplier = supplierId => {
   return new Bluebird((resolve, reject) => {
+      //Finding all oil with specified supplier ID
       Oil.findAndCountAll({
           where: {
               supplierId: supplierId
           }
+
       }).then(async foundGreases => {
-          await Supplier.getSupplierNames(foundGreases);
-          resolve(foundGreases.rows);
+          //Adding supplier Name to Oil 
+          Supplier.getSupplierNames(foundGreases).then(() => {
+            resolve(foundGreases.rows);
+
+          }).catch(err => {
+            reject(err);
+
+        });
+          
       }).catch(err => {
           reject(err);
+
       });
+
   });
+  
 }
 
 export default Oil;

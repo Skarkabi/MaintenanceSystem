@@ -89,7 +89,7 @@ MaintenanceConsumables.getConsumables = reqNumber => {
                     return consumableMap.push({type: consumable, consumable: foundConsumable});
                 });
             }))
-            var result = {count: consumableMap.length, rows: consumableMap}
+            var result = {count: consumableMap.length, rows: consumableMap, isMain: true}
             Supplier.getSupplierNames(result).then(() => {
                 //console.log(result.rows[0].consumable);
                 resolve(result.rows);

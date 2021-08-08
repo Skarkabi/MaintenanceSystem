@@ -138,7 +138,8 @@ MaintenanceConsumables.getConsumables = function (reqNumber) {
               case 3:
                 result = {
                   count: consumableMap.length,
-                  rows: consumableMap
+                  rows: consumableMap,
+                  isMain: true
                 };
 
                 _Supplier["default"].getSupplierNames(result).then(function () {

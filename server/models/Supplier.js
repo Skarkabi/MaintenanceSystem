@@ -248,7 +248,7 @@ Supplier.getSupplierNames = (consumable) => {
     return new Bluebird((resolve, reject) => {
         //Initializing variable of distinct supplier IDs
         var values;
-        if(consumable.rows[0].type){
+        if(consumable.isMain){
             values = consumable.rows.map(a => a.consumable.supplierId);
         }else{
             values = consumable.rows.map(a => a.supplierId);
@@ -256,7 +256,7 @@ Supplier.getSupplierNames = (consumable) => {
         //Getting suppliers from the database
         Supplier.getById(values).then(supplierNames => {
             //Setting virtual datatype supplier name
-            if(consumable.rows[0].type){
+            if(consumable.isMain){
                 consumable.rows.map(value => {
                     return value.consumable.setDataValue('supplierName', supplierNames.get(value.consumable.supplierId));
                 })

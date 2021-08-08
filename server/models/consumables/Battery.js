@@ -30,6 +30,14 @@ const mappings = {
         type: Sequelize.DataTypes.STRING,
         allowNull:false,
     },
+    singleCost:{
+        type: Sequelize.DataTypes.DOUBLE,
+        allowNull: true
+    },
+    totalCost:{
+        type: Sequelize.DataTypes.DOUBLE,
+        allowNull: true
+    },
     quantity:{
         type: Sequelize.DataTypes.INTEGER,
         allowNull: true
@@ -91,6 +99,16 @@ const Battery = sequelize.define('battery_stocks', mappings, {
         name: 'battery_minQuantity_index',
         method: 'BTREE',
         fields: ['minQuantity']
+    },
+    {
+        name: 'brake_singleCost_index',
+        method: 'BTREE',
+        fields: ['singleCost']
+    },
+    {
+        name: 'brake_totalCost_index',
+        method: 'BTREE',
+        fields: ['totalCost']
     },
     {
         name: 'battery_createdAt_index',
@@ -228,6 +246,10 @@ Battery.addBattery = (newBattery) =>{
 
             //If the battery is not found the function creates a battery and updates the consumable stock
             }else{
+                newBattery.singleCost = parseFloat(newBattery.singleCost);
+                newBattery.quantity = parseInt(newBattery.quantity);
+                newBattery.minQuantity = parseInt(newBattery.minQuantity);
+                newBattery.totalCost = newBattery.singleCost * newBattery.quantity;
                 Battery.create(newBattery).then(()=> {
                     //Updating consumable stock database
                     Consumable.updateConsumable(newConsumable, "add").then(() => {
@@ -305,7 +327,7 @@ Battery.getBatteryStocks = () => {
     
                 resolve(values);
     
-            }).catch(() => {
+            }).catch(err => {
                reject(err);
 
             });

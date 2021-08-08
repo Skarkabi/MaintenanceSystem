@@ -79,6 +79,7 @@ router.post('/add/battery', Quotation.uploadFile().single('upload'), (req, res, 
         quantity: req.body.quantityBatteries,
         minQuantity: req.body.quantityMinBatteries,
         supplierId: req.body.batteriesSupplierName,
+        singleCost: req.body.batteryPrice,
         quotationNumber: quotationNumber
 
     }

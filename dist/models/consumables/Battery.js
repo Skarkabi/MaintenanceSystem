@@ -44,6 +44,14 @@ var mappings = {
     type: _sequelize["default"].DataTypes.STRING,
     allowNull: false
   },
+  singleCost: {
+    type: _sequelize["default"].DataTypes.DOUBLE,
+    allowNull: true
+  },
+  totalCost: {
+    type: _sequelize["default"].DataTypes.DOUBLE,
+    allowNull: true
+  },
   quantity: {
     type: _sequelize["default"].DataTypes.INTEGER,
     allowNull: true
@@ -97,6 +105,14 @@ var Battery = _mySQLDB["default"].define('battery_stocks', mappings, {
     name: 'battery_minQuantity_index',
     method: 'BTREE',
     fields: ['minQuantity']
+  }, {
+    name: 'brake_singleCost_index',
+    method: 'BTREE',
+    fields: ['singleCost']
+  }, {
+    name: 'brake_totalCost_index',
+    method: 'BTREE',
+    fields: ['totalCost']
   }, {
     name: 'battery_createdAt_index',
     method: 'BTREE',
@@ -213,6 +229,10 @@ Battery.addBattery = function (newBattery) {
       if (foundBattery) {
         reject("Batteries With these Details Already Registered, Please Add to Existing Stock"); //If the battery is not found the function creates a battery and updates the consumable stock
       } else {
+        newBattery.singleCost = parseFloat(newBattery.singleCost);
+        newBattery.quantity = parseInt(newBattery.quantity);
+        newBattery.minQuantity = parseInt(newBattery.minQuantity);
+        newBattery.totalCost = newBattery.singleCost * newBattery.quantity;
         Battery.create(newBattery).then(function () {
           //Updating consumable stock database
           _Consumables["default"].updateConsumable(newConsumable, "add").then(function () {
@@ -292,7 +312,7 @@ Battery.getBatteryStocks = function () {
           years: carYears
         };
         resolve(values);
-      })["catch"](function () {
+      })["catch"](function (err) {
         reject(err);
       });
     });

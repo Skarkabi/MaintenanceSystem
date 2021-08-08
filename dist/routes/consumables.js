@@ -90,6 +90,7 @@ router.post('/add/battery', _Quotation["default"].uploadFile().single('upload'),
     quantity: req.body.quantityBatteries,
     minQuantity: req.body.quantityMinBatteries,
     supplierId: req.body.batteriesSupplierName,
+    singleCost: req.body.batteryPrice,
     quotationNumber: quotationNumber
   }; //Declaring new quotation to be added to database
 

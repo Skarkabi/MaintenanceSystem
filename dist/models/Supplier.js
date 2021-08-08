@@ -242,7 +242,7 @@ Supplier.getSupplierNames = function (consumable) {
     //Initializing variable of distinct supplier IDs
     var values;
 
-    if (consumable.rows[0].type) {
+    if (consumable.isMain) {
       values = consumable.rows.map(function (a) {
         return a.consumable.supplierId;
       });
@@ -255,7 +255,7 @@ Supplier.getSupplierNames = function (consumable) {
 
     Supplier.getById(values).then(function (supplierNames) {
       //Setting virtual datatype supplier name
-      if (consumable.rows[0].type) {
+      if (consumable.isMain) {
         consumable.rows.map(function (value) {
           return value.consumable.setDataValue('supplierName', supplierNames.get(value.consumable.supplierId));
         });

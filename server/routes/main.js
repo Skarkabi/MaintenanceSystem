@@ -62,17 +62,18 @@ router.get('/:req', (req, res, next) => {
             totalCost: "58.4"
         }
     
-        res.render('displayMain', {
-            title: (`Maintanence Request # ${newMain.req}`),
-            jumbotronDescription: `Reques # ${newMain.req} for division ${newMain.division}`,
-            existingMain: newMain,
-            mainConsumable: consumables,
-            mainEmployee: employees,
-            consumableTable: consumablesToSelect,
-        });
-
-        console.log(consumablesToSelect);
-    
+        MaintenanceOrder.getByReq(req.params.req).then(found => {
+            console.log("THIS IS THE ORDER")
+            console.log(found);
+            res.render('displayMain', {
+                title: (`Maintanence Request # ${found.req}`),
+                jumbotronDescription: `Reques # ${found.req} for division ${newMain.division}`,
+                existingMain: found,
+                mainConsumable: consumables,
+                mainEmployee: employees,
+                consumableTable: consumablesToSelect,
+            });
+        })
     });
 
 });

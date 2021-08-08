@@ -119,10 +119,7 @@ const MaintenanceOrder = sequelize.define('maintenance_orders', mappings, {
 MaintenanceOrder.getOrders = () => {
     return new Bluebird((resolve, reject) => {
         MaintenanceOrder.findAll().then(orders => {
-           MaintenanceOrder.getVehicle(orders).then(() => {
-               orders.map(order => {
-                   order.setDataValue('createdAt', getDateWithoutTime(order.createdAt));
-               })
+           getVehicle(orders).then(() => {
                console.log(orders);
                resolve(orders);
            });
@@ -133,7 +130,20 @@ MaintenanceOrder.getOrders = () => {
     })
 } 
 
-MaintenanceOrder.getVehicle = orders => {
+MaintenanceOrder.getByReq = req => {
+    return new Bluebird((resolve, reject) => {
+        MaintenanceOrder.findOne({
+            where: {
+                req: req
+            }
+        }).then(found => {
+            getSingleVehicle(found);
+            resolve(found);
+        })
+    })
+}
+
+function getVehicle(orders) {
     return new Bluebird((resolve, reject) => {
         Vehicle.getStock().then(foundVehicles => {
             var vehicleMap = new Map();
@@ -141,9 +151,22 @@ MaintenanceOrder.getVehicle = orders => {
                 vehicleMap.set(vehicles.plate, vehicles);
             });
             orders.map(order => {
-                return order.setDataValue('vehicle_data', vehicleMap.get(order.plate));
+                order.setDataValue('createdAt', getDateWithoutTime(order.createdAt));
+                order.setDataValue('vehicle_data', vehicleMap.get(order.plate));
             });
             resolve("Set All");
+        }).catch(err => {
+            reject(err);
+        });
+    })
+}
+
+function getSingleVehicle(order){
+    return new Bluebird((resolve, reject) => {
+        Vehicle.getVehicleByPlate(order.plate).then(foundVehicle => {
+            order.setDataValue('createdAt', getDateWithoutTime(order.createdAt));
+            order.setDataValue('vehicle_data', foundVehicle);
+            resolve("Set Vehicle");
         }).catch(err => {
             reject(err);
         });

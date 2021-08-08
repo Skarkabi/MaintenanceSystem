@@ -123,10 +123,7 @@ var MaintenanceOrder = _mySQLDB["default"].define('maintenance_orders', mappings
 MaintenanceOrder.getOrders = function () {
   return new _bluebird["default"](function (resolve, reject) {
     MaintenanceOrder.findAll().then(function (orders) {
-      MaintenanceOrder.getVehicle(orders).then(function () {
-        orders.map(function (order) {
-          order.setDataValue('createdAt', getDateWithoutTime(order.createdAt));
-        });
+      getVehicle(orders).then(function () {
         console.log(orders);
         resolve(orders);
       });
@@ -136,7 +133,20 @@ MaintenanceOrder.getOrders = function () {
   });
 };
 
-MaintenanceOrder.getVehicle = function (orders) {
+MaintenanceOrder.getByReq = function (req) {
+  return new _bluebird["default"](function (resolve, reject) {
+    MaintenanceOrder.findOne({
+      where: {
+        req: req
+      }
+    }).then(function (found) {
+      getSingleVehicle(found);
+      resolve(found);
+    });
+  });
+};
+
+function getVehicle(orders) {
   return new _bluebird["default"](function (resolve, reject) {
     _Vehicle["default"].getStock().then(function (foundVehicles) {
       var vehicleMap = new Map();
@@ -144,14 +154,27 @@ MaintenanceOrder.getVehicle = function (orders) {
         vehicleMap.set(vehicles.plate, vehicles);
       });
       orders.map(function (order) {
-        return order.setDataValue('vehicle_data', vehicleMap.get(order.plate));
+        order.setDataValue('createdAt', getDateWithoutTime(order.createdAt));
+        order.setDataValue('vehicle_data', vehicleMap.get(order.plate));
       });
       resolve("Set All");
     })["catch"](function (err) {
       reject(err);
     });
   });
-};
+}
+
+function getSingleVehicle(order) {
+  return new _bluebird["default"](function (resolve, reject) {
+    _Vehicle["default"].getVehicleByPlate(order.plate).then(function (foundVehicle) {
+      order.setDataValue('createdAt', getDateWithoutTime(order.createdAt));
+      order.setDataValue('vehicle_data', foundVehicle);
+      resolve("Set Vehicle");
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
+}
 
 var _default = MaintenanceOrder;
 exports["default"] = _default;

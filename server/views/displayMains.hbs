@@ -27,15 +27,15 @@
         <tbody>
             {{#each orders}}
                 <tr>
-                    <td><a href="/maintanence/TMC6938">{{counter @index}}</a></td>
-                    <td><a href="/maintanence/TMC6938">{{this.createdAt}}</a></td>
-                    <td><a href="/maintanence/TMC6938">{{this.req}}</a></td>
-                    <td><a href="/maintanence/TMC6938">{{this.division}}</a></td>
-                    <td><a href="/maintanence/TMC6938">{{this.plate}}</a></td>
-                    <td><a href="/maintanence/TMC6938">{{this.vehicle_data.category}}</a></td>
-                    <td><a href="/maintanence/TMC6938">{{this.vehicle_data.brand}}</a></td>
-                    <td><a href="/maintanence/TMC6938">{{this.vehicle_data.model}}</a></td>
-                    <td><a href="/maintanence/TMC6938">{{this.vehicle_data.year}}</a></td>
+                    <td><a href="/maintanence/{{this.req}}">{{counter @index}}</a></td>
+                    <td><a href="/maintanence/{{this.req}}">{{this.createdAt}}</a></td>
+                    <td><a href="/maintanence/{{this.req}}">{{this.req}}</a></td>
+                    <td><a href="/maintanence/{{this.req}}">{{this.division}}</a></td>
+                    <td><a href="/maintanence/{{this.req}}">{{this.plate}}</a></td>
+                    <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.category}}</a></td>
+                    <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.brand}}</a></td>
+                    <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.model}}</a></td>
+                    <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.year}}</a></td>
                     {{#if (isdefined this.status "Not Started")}}
                         <td bgcolor="red" style="color:white; font-weight:bold">NOT STARTED</td>
                     {{/if}}

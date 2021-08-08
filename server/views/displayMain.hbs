@@ -18,7 +18,18 @@
                     <div class="col"  style="font-weight:bold;">
                         <div class="row">
                             <h4>Status:&nbsp; </h4>
-                            <h4 style="color:red; font-weight:bold">&nbsp;{{existingMain.status}}</h4>
+                            {{#if (isdefined existingMain.status "Not Started")}}
+                                <h4 style="color:red; font-weight:bold">&nbsp;NOT STARTED</h4>
+                            {{/if}}
+                            {{#if (isdefined existingMain.status "In Progress")}}
+                                <h4 style="color:#0000FF; font-weight:bold">&nbsp;IN PROGRESS</h4>
+                            {{/if}}
+                            {{#if (isdefined existingMain.status "Pending Material")}}
+                                <h4 style="color:#FD7F20; font-weight:bold">&nbsp;PENDING MATERIAL</h4>
+                            {{/if}}
+                            {{#if (isdefined existingMain.status "Completed")}}
+                                <h4 style="color:#00D100; font-weight:bold">&nbsp;COMPLETED</h4>
+                            {{/if}}
                         </div>
                     </div>
                     
@@ -30,7 +41,7 @@
             <div class="form-row">
                 <div class="form-group col display-main">
                     <label for="dateCreated">Date Created</label>
-                    <input type="text" class="form-control" name="dateCreated" brand="dateCreated" value="{{existingMain.dateCreated}}" readonly>
+                    <input type="text" class="form-control" name="dateCreated" brand="dateCreated" value="{{existingMain.createdAt}}" readonly>
                 </div>
                 <div class="form-group col display-main">
                     <label for="dateCreated">Request #</label>
@@ -48,27 +59,27 @@
                 </div>
                  <div class="form-group col display-main">
                     <label for="category">Vehicle Category</label>
-                    <input type="text" class="form-control" name="category" brand="category" value="{{existingMain.category}}" readonly>
+                    <input type="text" class="form-control" name="category" brand="category" value="{{existingMain.vehicle_data.category}}" readonly>
                 </div>
             </div>
             <div class="form-row">
                <div class="form-group col display-main">
                     <label for="brand">Vehicle Brand</label>
-                    <input type="text" class="form-control" name="brand" brand="brand" value="{{existingMain.brand}}" readonly>
+                    <input type="text" class="form-control" name="brand" brand="brand" value="{{existingMain.vehicle_data.brand}}" readonly>
                 </div>
                  <div class="form-group col display-main">
                     <label for="model">Vehicle Model</label>
-                    <input type="text" class="form-control" name="model" brand="model" value="{{existingMain.model}}" readonly>
+                    <input type="text" class="form-control" name="model" brand="model" value="{{existingMain.vehicle_data.model}}" readonly>
                 </div>
                  <div class="form-group col display-main">
                     <label for="year">Vehicle Year</label>
-                    <input type="text" class="form-control" name="year" brand="year" value="{{existingMain.year}}" readonly>
+                    <input type="text" class="form-control" name="year" brand="year" value="{{existingMain.vehicle_data.year}}" readonly>
                 </div>
             </div>
             <div class="form-row">
                <div class="form-group col display-main">
                     <label for="hourC">Cost Per Hour</label>
-                    <input type="text" class="form-control" name="hourC" brand="hourC" value="{{existingMain.hourCost}} AED" readonly>
+                    <input type="text" class="form-control" name="hourC" brand="hourC" value="{{existingMain.hour_cost}} AED" readonly>
                 </div>
                  <div class="form-group col display-main">
                     <label for="materialCost">Material Cost</label>
@@ -76,7 +87,7 @@
                 </div>
                  <div class="form-group col display-main">
                     <label for="totalCost">Total Cost</label>
-                    <input type="text" class="form-control" name="totalCost" brand="totalCost" value="{{existingMain.totalCost}} AED" readonly>
+                    <input type="text" class="form-control" name="totalCost" brand="totalCost" value="{{existingMain.total_cost}} AED" readonly>
                 </div>
             </div>
              <div class="form-row">

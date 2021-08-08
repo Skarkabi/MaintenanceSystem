@@ -78,15 +78,19 @@ router.get('/:req', function (req, res, next) {
       materialCost: "46.4",
       totalCost: "58.4"
     };
-    res.render('displayMain', {
-      title: "Maintanence Request # ".concat(newMain.req),
-      jumbotronDescription: "Reques # ".concat(newMain.req, " for division ").concat(newMain.division),
-      existingMain: newMain,
-      mainConsumable: consumables,
-      mainEmployee: employees,
-      consumableTable: consumablesToSelect
+
+    _MaintenanceOrder["default"].getByReq(req.params.req).then(function (found) {
+      console.log("THIS IS THE ORDER");
+      console.log(found);
+      res.render('displayMain', {
+        title: "Maintanence Request # ".concat(found.req),
+        jumbotronDescription: "Reques # ".concat(found.req, " for division ").concat(newMain.division),
+        existingMain: found,
+        mainConsumable: consumables,
+        mainEmployee: employees,
+        consumableTable: consumablesToSelect
+      });
     });
-    console.log(consumablesToSelect);
   });
 });
 var _default = router;

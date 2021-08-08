@@ -25,6 +25,8 @@ var _Battery = _interopRequireDefault(require("./consumables/Battery"));
 
 var _MaintenanceConsumables = _interopRequireDefault(require("./consumables/MaintenanceConsumables"));
 
+var _MaintenanceEmployee = _interopRequireDefault(require("./consumables/MaintenanceEmployee"));
+
 var mappings = {
   req: {
     type: _sequelize["default"].DataTypes.STRING,
@@ -48,6 +50,9 @@ var mappings = {
   },
   consumable_data: {
     type: _sequelize["default"].DataTypes.VIRTUAL(_sequelize["default"].DataTypes.JSON, ['consumable_data'])
+  },
+  employee_data: {
+    type: _sequelize["default"].DataTypes.VIRTUAL(_sequelize["default"].DataTypes.JSON, ['employee_data'])
   },
   discription: {
     type: _sequelize["default"].DataTypes.STRING,
@@ -144,7 +149,9 @@ MaintenanceOrder.getByReq = function (req) {
     }).then(function (found) {
       getSingleVehicle(found).then(function () {
         getConsumables(found).then(function () {
-          resolve(found);
+          getEmployees(found).then(function () {
+            resolve(found);
+          });
         });
       });
     });
@@ -156,6 +163,15 @@ function getConsumables(order) {
     _MaintenanceConsumables["default"].getConsumables(order.req).then(function (found) {
       order.setDataValue('consumable_data', found);
       resolve("Set All");
+    });
+  });
+}
+
+function getEmployees(order) {
+  return new _bluebird["default"](function (resolve, reject) {
+    _MaintenanceEmployee["default"].getEmployees(order.req).then(function (found) {
+      order.setDataValue('employee_data', found);
+      resolve("Done");
     });
   });
 }

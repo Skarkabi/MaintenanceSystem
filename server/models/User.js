@@ -204,7 +204,19 @@ User.getUserById = id => User.findOne({
     where:{id},
   });
 
-
+User.getAllUsersById = id => {
+  return new Bluebird((resolve, reject) => {
+    User.findAll({
+      where: {
+        id: id
+      }
+    }).then(found => {
+      resolve(found);
+    }).catch(err => {
+      reject(err);
+    })
+  })
+}
 /**
  * Function to find user by first name
  * @param {*} firstName 

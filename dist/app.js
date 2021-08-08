@@ -59,6 +59,8 @@ var _main = _interopRequireDefault(require("./routes/main"));
 
 require('./models/Session');
 
+require('./models/consumables/MaintenanceEmployee');
+
 _handlebars["default"].registerHelper("counter", function (index) {
   return index + 1;
 });

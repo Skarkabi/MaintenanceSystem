@@ -7,6 +7,7 @@ import Vehicle from './Vehicle';
 import User from './User';
 import Battery from './consumables/Battery';
 import MaintenanceConsumables from './consumables/MaintenanceConsumables';
+import MaintenanceEmployees from './consumables/MaintenanceEmployee';
 
 const mappings = {
     req: {
@@ -31,6 +32,9 @@ const mappings = {
     },
     consumable_data: {
         type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.JSON, ['consumable_data']),
+    },
+    employee_data: {
+        type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.JSON, ['employee_data']),
     },
     discription: {
         type: Sequelize.DataTypes.STRING,
@@ -140,7 +144,9 @@ MaintenanceOrder.getByReq = req => {
         }).then(found => {
             getSingleVehicle(found).then(() => {
                 getConsumables(found).then(() => {
-                    resolve(found);
+                    getEmployees(found).then(() => {
+                        resolve(found);
+                    });
                 });
             });
         });
@@ -152,6 +158,15 @@ function getConsumables(order){
         MaintenanceConsumables.getConsumables(order.req).then(found =>{
             order.setDataValue('consumable_data', found);
             resolve("Set All");
+        })
+    })
+}
+
+function getEmployees(order){
+    return new Bluebird((resolve, reject) => {
+        MaintenanceEmployees.getEmployees(order.req).then(found => {
+            order.setDataValue('employee_data', found)
+            resolve("Done");
         })
     })
 }

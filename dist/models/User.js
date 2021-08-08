@@ -186,6 +186,20 @@ User.getUserById = function (id) {
     }
   });
 };
+
+User.getAllUsersById = function (id) {
+  return new _bluebird["default"](function (resolve, reject) {
+    User.findAll({
+      where: {
+        id: id
+      }
+    }).then(function (found) {
+      resolve(found);
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
+};
 /**
  * Function to find user by first name
  * @param {*} firstName 

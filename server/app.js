@@ -24,6 +24,7 @@ import consumableRouter from './routes/consumables';
 import supplierRouter from './routes/supplier';
 import mainRouter from './routes/main';
 require('./models/Session');
+require('./models/consumables/MaintenanceEmployee');
 
 handlebars.registerHelper("counter", function (index){
     return index + 1;

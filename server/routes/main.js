@@ -49,7 +49,7 @@ router.get('/:req', (req, res, next) => {
                 jumbotronDescription: `Reques # ${found.req} for division ${found.division}`,
                 existingMain: found,
                 mainConsumable: found.consumable_data,
-                mainEmployee: employees,
+                mainEmployee: found.employee_data,
                 consumableTable: consumablesToSelect,
             });
         })

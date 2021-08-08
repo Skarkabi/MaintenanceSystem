@@ -68,7 +68,7 @@ router.get('/:req', function (req, res, next) {
         jumbotronDescription: "Reques # ".concat(found.req, " for division ").concat(found.division),
         existingMain: found,
         mainConsumable: found.consumable_data,
-        mainEmployee: employees,
+        mainEmployee: found.employee_data,
         consumableTable: consumablesToSelect
       });
     });

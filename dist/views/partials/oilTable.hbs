@@ -1,0 +1,74 @@
+<div class="col-md-12">
+    <table id="batteries-table" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Oil Spec</th>
+                <th scope="col">Oil Type</th>
+                <th scope="col">Volume</th>
+                {{#if (isdefined page "view")}}
+                <th scope="brake">Supplier</th>
+                {{else}}
+                <th scope="col">Quotation #</th>
+                {{/if}}
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#if (isdefined page "view")}}
+            {{#each consumables}}
+                <tr>
+                    <th>{{counter @index}}</th>
+                    <td>{{this.oilSpec}}</td>
+                    <td>{{this.typeOfOil}}</td>
+                    <td>{{this.volume}}</td>
+                    <td><a href="/consumables/oil/{{this.supplierId}}">{{this.supplierName}}</a></td>
+                    <td><a href="/consumables/oil/{{this.supplierId}}" style="padding-right: 25px;">View <i class="fas fa-external-link-alt"></i></a></td>
+                    
+                </tr>
+            {{/each}}
+            {{/if}}
+
+            {{#if (isdefined page "add")}}
+            {{#each consumables}}
+                 <tr>
+                    <th>{{counter @index}}</th>
+                    <td>{{this.oilSpec}}</td>
+                    <td>{{this.typeOfOil}}</td>
+                    <td>{{this.volume}}</td>
+                    <td>{{this.quotationNumber}}</td>
+                     <td>
+                        <div class="input-group-append">
+                            <a href="download/{{this.quotationNumber}}" style="padding-right: 25px;"><i class="fas fa-download"></i></a>
+                            <a href="" onclick="openPdf({{this.quotationNumber}})"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            {{/each}}
+            {{/if}}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function openPdf(fileNumber){
+        window.open('view/'+ fileNumber);
+    }
+    function updateOilPost(id){
+        document.getElementById("tableOilQuantity-" + id).name = "newQuantity";
+        document.getElementById("mainForm").action = "update-oil/add/" + id;
+    }
+
+    function deleteOilPost(id){
+        if(confirm("Are you sure to delete this Oil?")){
+            document.getElementById("mainForm").method = "POST"
+            document.getElementById("tableOilQuantity-" + id).name = "newQuantity";
+            document.getElementById("mainForm").action = "update-oil/delet/" + id;
+            
+        }else{
+            //document.getElementById("mainForm").method = "GET";
+            document.getElementById("category").value = "Oil";
+        }
+    }
+
+</script>

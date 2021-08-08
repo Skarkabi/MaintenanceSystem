@@ -1,5 +1,6 @@
 import express from 'express';
 import Consumable from '../models/Consumables';
+import MaintenanceOrder from '../models/MaintenanceOrder'
 
 const router = express.Router();
 
@@ -7,12 +8,15 @@ const router = express.Router();
  * Express Route to display all maintanence jobs
  */
 router.get('/', (req, res,next) => {
-    res.render('displayMains', {
-        title: (`Maintanence Requestds`),
-        jumbotronDescription: `All Maintantence Requests`,
-   
+    MaintenanceOrder.getOrders().then(orders => {
+        res.render('displayMains', {
+            title: (`Maintanence Requestds`),
+            jumbotronDescription: `All Maintantence Requests`,
+            orders: orders
+       
+        });
     });
-
+    
 });
 
 /**

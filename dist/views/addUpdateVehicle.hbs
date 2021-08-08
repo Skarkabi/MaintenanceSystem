@@ -1,0 +1,98 @@
+<div class="col-md-12">
+    <form action="{{action}}" method="POST">
+        {{!-- User Information --}}
+        <div class="section-wrapper">
+            <div class="section-title">
+                <h4><i class="fas fa-user-alt"></i> Vehicle Information</h4>
+                <hr class="my-3">
+            </div>
+            <div class="section-content">
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="type">Category</label>
+                        <input list="category" name="category" class="form-control" required>
+                        <datalist id="category">
+                            {{#each values.category}}
+                                <option value="{{this}}">{{this}}</option>"
+                            {{/each}}
+                        </datalist>
+                    </div>
+                    <div class="form-group col required">
+                        <label for="brand">Brand</label>
+                        <input list="brand"  name="brand" class="form-control" value="{{existingVehicle.model}}" required>
+                        <datalist id="brand">
+                            {{#each values.brands}}
+                                <option value="{{this}}">{{this}}</option>
+                            {{/each}}
+                        </datalist>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="model">Model</label>
+                        <input list="model" name="model" class="form-control" required>
+                        <datalist id="model">
+                            {{#each values.models}}
+                                <option value="{{this}}">{{this}}</option>
+                            {{/each}}
+                        </datalist>
+                    </div>
+                    <div class="form-group col required">
+                        <label for="year">Year</label>
+                        <input list="year" name="year" class="form-control" value="{{existingVehicle.year}}" required>
+                        <datalist id="year">
+                            {{#each values.years}}
+                                <option value="{{this}}">{{this}}</option>
+                            {{/each}}
+                        </datalist>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="type">Plate #</label>
+                        <input type="text" placeholder = "Vehicle Plate #" id="plate" name="plate" class="form-control" value="{{existingVehicle.plate}}" required>
+                    </div>
+                    <div class="form-group col required">
+                        <label for="brand">Chassis #</label>
+                        <input type="text" placeholder="Vehicle Chassis #" id="chassis" name="chassis" class="form-control" value="{{existingVehicle.chassis}}" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="type">Km Driven</label>
+                        <input type="text" placeholder = "Km Drivn" id="kmDrive" name="kmDrive" class="form-control" value="{{existingVehicle.kmDrive}}">
+                    </div>
+                    <div class="form-group col required">
+                        <label for="brand">Km Till Next Oil Change</label>
+                        <input type="text" placeholder="Km Till Oil Change" id="kmTillOilChange" name="kmTillOilChange" class="form-control" value="{{existingVehicle.kmTillOilChange}}" required>
+                    </div>
+                    <div class="form-group col required">
+                        <label for="brand">Oil Type</label>
+                        <input type="text" placeholder="Type of Oil" id="oilType" name="oilType" class="form-control" value="{{existingVehicle.oilType}}" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="submit" id="submit" name="submit" class="btn btn-primary justfiy-content-end"><i class="far fa-save"></i> {{submitButtonText}}</button>
+    </form>
+</div>
+
+<script>
+    /**
+    * Displays the password
+    * Retrieved from https://www.w3schools.com/howto/howto_js_toggle_password.asp
+    */
+    function showPass()
+    {
+        let paswordField = document.getElementById("password");
+
+        if (paswordField.type === "password")
+        {
+            paswordField.type = "text";
+        }
+        else
+        {
+            paswordField.type = "password";
+        }
+    }
+</script>

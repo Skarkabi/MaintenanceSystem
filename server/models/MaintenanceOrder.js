@@ -57,6 +57,10 @@ const mappings = {
 
 };
 
+function getDateWithoutTime(date) {
+    return require('moment')(date).format('DD/MM/YYYY');
+}
+
 const MaintenanceOrder = sequelize.define('maintenance_orders', mappings, {
     indexes: [
         {
@@ -116,6 +120,9 @@ MaintenanceOrder.getOrders = () => {
     return new Bluebird((resolve, reject) => {
         MaintenanceOrder.findAll().then(orders => {
            MaintenanceOrder.getVehicle(orders).then(() => {
+               orders.map(order => {
+                   order.setDataValue('createdAt', getDateWithoutTime(order.createdAt));
+               })
                console.log(orders);
                resolve(orders);
            });

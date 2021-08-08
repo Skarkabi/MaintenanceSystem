@@ -1,0 +1,151 @@
+<div class="col-md-12">
+    <form action="{{action}}" method="POST">
+        <div class="section-wrapper">
+            <div class="section-title">
+                <h4>Job Request</h4>
+                <hr class="my-3">
+            </div>
+            <div class="section-content">
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="req">Req #</label>
+                        <input type="text" name="name" class="form-control" value="TMC12243"readonly>
+                    </div>
+                     <div class="form-group col required">
+                        <label for="division">Supplier Phone #</label>
+                        <input list="division" name="division"  placeholder="Select Division" class="form-control" required>
+                            <datalist id="division">
+                                <option value="C.M.S."></option>
+                                <option value="MESH"></option>
+                                <option value="CEILING"></option>
+                                <option value="METAL DOORS"></option>
+                                <option value="SHELVING & CABINETS"></option>
+                                <option value="POWDER COATING"></option>
+                            </datalist>
+                    </div>
+                </div>
+                 <div class="form-row">
+                     <div class="form-group col required">
+                        <label for="plate">Plate #</label>
+                        <select type="text" name="plate" id="plate" class="form-control" onChange="setVehicleInfo()" required>
+                            <option value="" selected disabled>Select Plate #</option>
+                             <option value="64756">64756</option>
+                             <option value="11234">11234</option>
+                        </select>
+                    </div>
+                    <div class="form-group col required">
+                        <label for="category">Vehicle Category</label>
+                        <input type="text" name="category" id="category" class="form-control" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                     <div class="form-group col required">
+                        <label for="brand">Vehicle Brand</label>
+                        <select type="text" id="brand" name="brand" class="form-control" readonly>
+                        <option value="" selected disabled></option>
+                            <option value="FORD">FORD</option>
+                             <option value="MITSUBISHI">MITSUBISHI</option>
+                       </select>
+                    </div>
+                    <div class="form-group col required">
+                        <label for="model">Vehicle Model</label>
+                        <select type="text" id="model"name="model" class="form-control" readonly>
+                        <option value="" selected disabled></option>
+                            <option value="MUSTANG">MUSTANG</option>
+                             <option value="ASX">ASX</option>
+                        </select>
+                    </div>
+                    <div class="form-group col required">
+                        <label for="year">Vehicle Year</label>
+                        <select type="text" id="year" name="year" class="form-control" readonly>
+                      <option value="" selected disabled></option>
+                            <option value="2020">2020</option>
+                            <option value="2016">2016</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                     <div class="form-group col required">
+                        <label for="employee">Assigned Employee(s)</label>
+                        <input list="employee" name="employee" class="form-control" multiple>
+                        <datalist id="employee">
+                             <option value="Wissam"></option>
+                             <option value="Saleem"></option>
+                        </datalist>
+                    </div>
+                    <div class="form-group col required">
+                        <label for="type">Maintanence Type</label>
+                        <input list="type" name="type" class="form-control" multiple required>
+                        <datalist id="type">
+                             <option value="REPAIR"></option>
+                             <option value="PREVENTATVE"></option>
+                        </datalist>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <lable for="discription">Maintanence Discription</lable>
+                        <textarea type="text" class="form-control" name="discription" id="discription"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="submit" id="submit" name="submit" class="btn btn-primary justfiy-content-end"><i class="far fa-save"></i>Create</button>
+    </form>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const separator = ',';
+    for (const input of document.getElementsByTagName("input")) {
+        if (!input.multiple) {
+            continue;
+        }
+        if (input.list instanceof HTMLDataListElement) {
+            const optionsValues = Array.from(input.list.options).map(opt => opt.value);
+            let valueCount = input.value.split(separator).length;
+            input.addEventListener("input", () => {
+                const currentValueCount = input.value.split(separator).length;
+                if (valueCount !== currentValueCount) {
+                    const lsIndex = input.value.lastIndexOf(separator);
+                    const str = lsIndex !== -1 ? input.value.substr(0, lsIndex) + separator : "";
+                    filldatalist(input, optionsValues, str);
+                    valueCount = currentValueCount;
+                }
+            });
+        }
+    }
+    function filldatalist(input, optionValues, optionPrefix) {
+        const list = input.list;
+        if (list && optionValues.length > 0) {
+            list.innerHTML = "";
+            const usedOptions = optionPrefix.split(separator).map(value => value.trim());
+            for (const optionsValue of optionValues) {
+                if (usedOptions.indexOf(optionsValue) < 0) {
+                    const option = document.createElement("option");
+                    option.value = optionPrefix + optionsValue;
+                    list.append(option);
+                }
+            }
+        }
+    }
+});
+
+    function setVehicleInfo(){
+        console.log("In here");
+        var plate = document.getElementById("plate").value;
+        if(plate === "64756"){
+            document.getElementById("category").value = "CAR";
+            document.getElementById("brand").value = "FORD";
+            document.getElementById("model").value = "MUSTANG";
+            document.getElementById("year").value = "2020";
+        }else{
+            document.getElementById("category").value = "TRAILER";
+            document.getElementById("brand").value = "MITSUBISHI";
+            document.getElementById("model").value = "ASX";
+            document.getElementById("year").value = "2016";
+        }
+    }
+</script>

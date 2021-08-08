@@ -1,0 +1,191 @@
+<div class="col-md-12">
+    {{!-- Action Buttons --}}
+    <div class="header-action-buttons pull-right">
+        {{#if user.admin}}
+        <a href="/vehicles/delete/{{existingVehicle.plate}}/{{existingVehicle.chassis}}" role="button" class="btn btn-danger delete" id="delete" class="delete" data-confirm="Are you sure to delete {{existingVehicle.brand}} {{existingVehicle.model}} With Plate # {{existingVehicle.plate}}?"><i class="fas fa-trash" aria-hidden="true"></i> Delete</a>
+        {{/if}}
+        {{#if showPii}}
+        <a href="/users/update/{{existingUser._id}}" role="button" class="btn btn-outline-dark" id="update"><i class="far fa-edit" aria-hidden="true"></i> Update</a>
+        {{/if}}
+    </div>
+    <body onload="setTable('material');">
+    <div class="section-wrapper">
+        <div class="section-title">
+            <div class="row">
+                <div class="col">
+                    <h4><i class="fas fa-tools"></i>&nbsp;Job Details</h4>
+                </div>
+                    <div class="col"  style="font-weight:bold;">
+                        <div class="row">
+                            <h4>Status:&nbsp; </h4>
+                            <h4 style="color:red; font-weight:bold">&nbsp;{{existingMain.status}}</h4>
+                        </div>
+                    </div>
+                    
+            </div>
+           
+            <hr class="my-3">
+        </div>
+        <div class="section-content">
+            <div class="form-row">
+                <div class="form-group col display-main">
+                    <label for="dateCreated">Date Created</label>
+                    <input type="text" class="form-control" name="dateCreated" brand="dateCreated" value="{{existingMain.dateCreated}}" readonly>
+                </div>
+                <div class="form-group col display-main">
+                    <label for="dateCreated">Request #</label>
+                    <input type="text" class="form-control" name="dateCreated" brand="dateCreated" value="{{existingMain.req}}" readonly>
+                </div>
+                <div class="form-group col display-main">
+                    <label for="division">Divison</label>
+                    <input type="text" class="form-control" name="division" brand="division" value="{{existingMain.division}}" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+               <div class="form-group col display-main">
+                    <label for="plate">Plate #</label>
+                    <input type="text" class="form-control" name="plate" brand="plate" value="{{existingMain.plate}}" readonly>
+                </div>
+                 <div class="form-group col display-main">
+                    <label for="category">Vehicle Category</label>
+                    <input type="text" class="form-control" name="category" brand="category" value="{{existingMain.category}}" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+               <div class="form-group col display-main">
+                    <label for="brand">Vehicle Brand</label>
+                    <input type="text" class="form-control" name="brand" brand="brand" value="{{existingMain.brand}}" readonly>
+                </div>
+                 <div class="form-group col display-main">
+                    <label for="model">Vehicle Model</label>
+                    <input type="text" class="form-control" name="model" brand="model" value="{{existingMain.model}}" readonly>
+                </div>
+                 <div class="form-group col display-main">
+                    <label for="year">Vehicle Year</label>
+                    <input type="text" class="form-control" name="year" brand="year" value="{{existingMain.year}}" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+               <div class="form-group col display-main">
+                    <label for="hourC">Cost Per Hour</label>
+                    <input type="text" class="form-control" name="hourC" brand="hourC" value="{{existingMain.hourCost}} AED" readonly>
+                </div>
+                 <div class="form-group col display-main">
+                    <label for="materialCost">Material Cost</label>
+                    <input type="text" class="form-control" name="materialCost" brand="materialCost" value="{{existingMain.materialCost}} AED" readonly>
+                </div>
+                 <div class="form-group col display-main">
+                    <label for="totalCost">Total Cost</label>
+                    <input type="text" class="form-control" name="totalCost" brand="totalCost" value="{{existingMain.totalCost}} AED" readonly>
+                </div>
+            </div>
+             <div class="form-row">
+               <div class="form-group col display-main">
+                    <label for="discription">Discription</label>
+                    <textarea type="text" class="form-control" name="discription" brand="discription" value="{{existingMain.discription}}" readonly>{{existingMain.discription}}</textarea>
+                </div>
+                 <div class="form-group col display-main">
+                    <label for="remark">Remarks</label>
+                    <textarea type="text" class="form-control" name="remark" brand="remark" value="{{existingMain.remarks}}" readonly>{{existingMain.remarks}}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section-wrapper">
+        <div class="section-title">
+            <div class="row">
+                 <h4 class="col" style="font-weight:bold" onclick="setTable('material')"><a onmouseover="style='cursor:pointer; color:#2779F6'" onmouseout="style='color:black'"><i class="fas fa-gas-pump"></i>Materials Used</a></h4>  
+                 <h4 class="col" style="font-weight:bold" onclick="setTable('employee')"><a onmouseover="style='cursor:pointer; color:#2779F6'" onmouseout="style='color:black'"><i class="fas fa-users"></i>Assigned Employees</a></h4>
+            </div>
+           
+            <hr class="my-3">
+        </div>
+        <div class="form-row" id="tableSection">
+        </div>
+    </div>
+    </body>
+</div>
+
+
+<script>
+    function setTable(tableName){
+        console.log("in i go")
+        document.getElementById("tableSection").innerHTML = "";
+        if(tableName === "material"){
+            document.getElementById("tableSection").insertAdjacentHTML("afterbegin", `{{>mainMaterialTable}}`);
+
+        }else if(tableName === "employee"){
+            document.getElementById("tableSection").insertAdjacentHTML("afterbegin", `{{>mainEmployeeTable}}`);
+
+        }
+    }
+
+    function changeColor(elementId){
+        document.getElementById(elementId).style = "color:blue";
+    }
+
+    function test(){
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        var mContent = document.getElementById("mContent")
+        // Get the button that opens the modal
+        var btn = document.getElementById("create-new");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on the button, open the modal
+        btn.onclick = function() {
+            modal.style.display = "block";
+            mContent.insertAdjacentHTML("beforeend",`{{>mainConsumables}}`);
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+            mContent.innerHTML='';
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                mContent.innerHTML='';
+            }
+        }
+    }
+
+    function changeToNull(){
+        document.getElementById("category").value = "";
+    }
+    function setPage(){
+        var category = document.getElementById("category");
+        var stock = document.getElementById("stock");
+        document.getElementById("addSection").innerHTML = "";
+        console.log(category);
+        if(stock.value === "new"){
+            if(category.value === "battery"){
+                console.log("This");
+                document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>addBatteries}}`);
+
+            }else if(category.value === "brake"){
+                document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>addBrakes}}`);
+
+            }else if(category.value === "filter"){
+                document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>addFilters}}`);
+             
+            }else if(category.value === "grease"){
+                document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>addGrease}}`);
+             
+            }else if(category.value === "oil"){
+                document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>addOil}}`);
+             
+            }
+        }else if(stock.value === "stock"){
+           if(category.value === "battery"){
+               document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>jobBatteries}}`);
+           }
+        }
+        
+    }
+</script>

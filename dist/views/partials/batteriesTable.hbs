@@ -1,0 +1,83 @@
+<div class="col-md-12">
+    <table id="filterable-table" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Battery Spec</th>
+                <th scope="col">Car Brand</th>
+                <th scope="col">Car Year</th>
+                <th scope="col">Quantity (Boxes)</th>
+                 {{#if (isdefined page "view")}}
+                <th scope="col">Supplier</th>
+                 {{else}}
+                <th scope="col">Quotation #</th>
+                {{/if}}
+                <th scope="col">Action</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {{console consumables}}
+            {{#if (isdefined page "view")}}
+                {{#each consumables}}
+                <tr>
+                     <th>{{counter @index}}</th>
+                    <td>{{this.batSpec}}</th>
+                    <td>{{this.carBrand}}</td>
+                    <td>{{this.carYear}}</td>
+                    <td>{{this.quantity}}</td>
+                    <td><a href="/consumables/battery/{{this.supplierId}}">{{this.supplierName}}</a></td>
+                    <td><a href="/consumables/battery/{{this.supplierId}}" style="padding-right: 25px;">View <i class="fas fa-external-link-alt"></i></a></td>
+
+                </tr>
+                {{/each}}
+            {{/if}}
+
+            {{#if (isdefined page "add")}}
+                {{#each consumables}}
+                <tr>
+                    <th>{{counter @index}}</th>
+                    <td>{{this.batSpec}}</th>
+                    <td>{{this.carBrand}}</td>
+                    <td>{{this.carYear}}</td>
+                    <td>{{this.quantity}}</td>
+                     <td>{{this.quotationNumber}}</td>
+                     <td>
+                        <div class="input-group-append">
+                            <a href="download/{{this.quotationNumber}}" style="padding-right: 25px;"><i class="fas fa-download"></i></a>
+                            <a href="" onclick="openPdf({{this.quotationNumber}})"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {{/each}}
+            {{/if}}
+            
+        </tbody>
+    </table>
+</div>
+
+<script>
+     function openPdf(fileNumber){
+        window.open('view/'+ fileNumber);
+    }
+    function addBatteryPost(id){
+        console.log("In the battery");
+        document.getElementById("tableBatteryQuantity-" + id).name = "newQuantity";
+        document.getElementById("mainForm").action = "update-battery/add/" + id;
+    }
+
+     function deleteBatteryPost(id){
+        if(confirm("Are you sure to delete this Battery?")){
+            console.log("In the battery");
+            document.getElementById("mainForm").method = "POST"
+            document.getElementById("tableBatteryQuantity-" + id).name = "newQuantity";
+            document.getElementById("mainForm").action = "update-battery/delet/" + id;
+            
+        }else{
+            //document.getElementById("mainForm").method = "GET";
+            document.getElementById("category").value = "Battery";
+        }
+        
+    }
+    
+</script>

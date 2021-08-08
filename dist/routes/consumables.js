@@ -74,7 +74,15 @@ router.post('/update-battery/:action/:id', function (req, res, next) {
  */
 
 router.post('/add/battery', _Quotation["default"].uploadFile().single('upload'), function (req, res, next) {
-  //Creating new battrey variable to be added to database   
+  var quotationNumber;
+
+  if (!req.body.quotation) {
+    quotationNumber = "N/A";
+  } else {
+    quotationNumber = req.body.quotation;
+  } //Creating new battrey variable to be added to database   
+
+
   var newBattery = {
     batSpec: req.body.batSpec,
     carBrand: req.body.carBrand,
@@ -82,7 +90,7 @@ router.post('/add/battery', _Quotation["default"].uploadFile().single('upload'),
     quantity: req.body.quantityBatteries,
     minQuantity: req.body.quantityMinBatteries,
     supplierId: req.body.batteriesSupplierName,
-    quotationNumber: req.body.quotation
+    quotationNumber: quotationNumber
   }; //Declaring new quotation to be added to database
 
   var newQuotation; //Creating quotation variable quotation was selected

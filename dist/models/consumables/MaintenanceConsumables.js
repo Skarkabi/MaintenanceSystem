@@ -31,6 +31,8 @@ var _Consumables = _interopRequireDefault(require("../Consumables"));
 
 var _MaintenanceOrder = _interopRequireDefault(require("../MaintenanceOrder"));
 
+var _Supplier = _interopRequireDefault(require("../Supplier"));
+
 var mappings = {
   consumable_id: {
     type: _sequelize["default"].DataTypes.INTEGER,
@@ -47,6 +49,9 @@ var mappings = {
   consumable_quantity: {
     type: _sequelize["default"].DataTypes.INTEGER,
     allowNull: false
+  },
+  consumable_data: {
+    type: _sequelize["default"].DataTypes.VIRTUAL(_sequelize["default"].DataTypes.JSON, ['consumable_data'])
   },
   createdAt: {
     type: _sequelize["default"].DataTypes.DATE,
@@ -86,129 +91,172 @@ var MaintenanceConsumables = _mySQLDB["default"].define('maintenance_consumables
   }]
 });
 
-function logMapElements(value, key, map) {
-  console.log("m[".concat(key, "] = ").concat(value));
-}
-
-MaintenanceConsumables.setData = function (orders) {
+MaintenanceConsumables.getConsumables = function (reqNumber) {
   return new _bluebird["default"](function (resolve, reject) {
-    var values = orders.map(function (a) {
-      return a.req;
-    });
-    MaintenanceConsumables.getByReq(values).then(function (consumables) {
-      var fullArray = [];
-      consumables.forEach(function (value, key) {
-        fullArray.push({
-          key: key.req,
-          value: value
-        });
-      });
-      var consumablesMap = new Map();
+    MaintenanceConsumables.getAllConsumables(reqNumber).then( /*#__PURE__*/function () {
+      var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(found) {
+        var consumableMap, result;
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                consumableMap = [];
+                _context2.next = 3;
+                return Promise.all(found.map( /*#__PURE__*/function () {
+                  var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(consumable) {
+                    var modelType;
+                    return _regenerator["default"].wrap(function _callee$(_context) {
+                      while (1) {
+                        switch (_context.prev = _context.next) {
+                          case 0:
+                            modelType = getConsumableModel(consumable.consumable_type);
+                            _context.next = 3;
+                            return modelType.findOne({
+                              where: {
+                                id: consumable.consumable_id
+                              }
+                            }).then(function (foundConsumable) {
+                              return consumableMap.push({
+                                type: consumable,
+                                consumable: foundConsumable
+                              });
+                            });
 
-      for (var i = 0; i < fullArray.length; i++) {
-        var searchFor = JSON.stringify(fullArray[i].key);
+                          case 3:
+                          case "end":
+                            return _context.stop();
+                        }
+                      }
+                    }, _callee);
+                  }));
 
-        if (consumablesMap.get(fullArray[i].key)) {
-          console.log(consumablesMap.get(fullArray[i]));
-          var temp = consumablesMap.get(fullArray[i].key);
-          var tempArray = temp;
-          tempArray.push(fullArray[i]);
-          console.log(1);
-          console.log(tempArray);
-          consumablesMap.set(fullArray[i].key, tempArray);
-        } else {
-          consumablesMap.set(fullArray[i].key, [fullArray[i].value]);
-        }
-      }
+                  return function (_x2) {
+                    return _ref2.apply(this, arguments);
+                  };
+                }()));
 
-      console.log(consumablesMap);
-      resolve("completed");
-    });
-  });
-};
+              case 3:
+                result = {
+                  count: consumableMap.length,
+                  rows: consumableMap
+                };
 
-MaintenanceConsumables.getByReq = function (req) {
-  return new _bluebird["default"](function (resolve, reject) {
-    MaintenanceConsumables.findAll({
-      where: {
-        maintenance_req: req
-      },
-      attributes: ['maintenance_req', 'consumable_id', 'consumable_type', 'consumable_quantity']
-    }).then(function (foundConsumables) {
-      MaintenanceConsumables.getConsumables(foundConsumables).then(function (output) {
-        resolve(output);
-      });
-    })["catch"](function (err) {
+                _Supplier["default"].getSupplierNames(result).then(function () {
+                  //console.log(result.rows[0].consumable);
+                  resolve(result.rows);
+                });
+
+              case 5:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }));
+
+      return function (_x) {
+        return _ref.apply(this, arguments);
+      };
+    }())["catch"](function (err) {
       reject(err);
     });
   });
 };
 
-MaintenanceConsumables.getConsumables = function (consumables) {
-  return new _bluebird["default"]( /*#__PURE__*/function () {
-    var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(resolve, reject) {
-      var consumableMap;
-      return _regenerator["default"].wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              consumableMap = new Map();
-              _context2.next = 3;
-              return _bluebird["default"].all(consumables.map( /*#__PURE__*/function () {
-                var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(value) {
-                  var model;
-                  return _regenerator["default"].wrap(function _callee$(_context) {
-                    while (1) {
-                      switch (_context.prev = _context.next) {
-                        case 0:
-                          model = getConsumableModel(value.consumable_type);
-                          _context.next = 3;
-                          return model.findAll({
-                            where: {
-                              id: value.consumable_id
-                            }
-                          }).then(function (found) {
-                            found.map(function (values) {
-                              consumableMap.set({
-                                type: value.consumable_type,
-                                consumable_id: value.consumable_id,
-                                req: value.maintenance_req
-                              }, {
-                                item: values,
-                                quantity: value.consumable_quantity
-                              });
-                            });
-                          });
-
-                        case 3:
-                        case "end":
-                          return _context.stop();
-                      }
-                    }
-                  }, _callee);
-                }));
-
-                return function (_x3) {
-                  return _ref2.apply(this, arguments);
-                };
-              }()));
-
-            case 3:
-              resolve(consumableMap);
-
-            case 4:
-            case "end":
-              return _context2.stop();
-          }
-        }
-      }, _callee2);
-    }));
-
-    return function (_x, _x2) {
-      return _ref.apply(this, arguments);
-    };
-  }());
+MaintenanceConsumables.getAllConsumables = function (reqNumber) {
+  return new _bluebird["default"](function (resolve, reject) {
+    MaintenanceConsumables.findAll({
+      where: {
+        maintenance_req: reqNumber
+      }
+    }).then(function (found) {
+      resolve(found);
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
 };
+/** 
+function logMapElements(value, key, map) {
+    console.log(`m[${key}] = ${value}`);
+  }
+  
+MaintenanceConsumables.setData = orders => {
+    return new Bluebird((resolve, reject) => {
+        let values = orders.map(a => a.req);
+        MaintenanceConsumables.getByReq(values).then(consumables => {
+            var fullArray = [];
+            consumables.forEach((value, key) => {
+                fullArray.push({key: key.req, value: value});
+            });
+            var consumablesMap = new Map();
+            for(var i = 0; i < fullArray.length; i++){
+                var searchFor = JSON.stringify(fullArray[i].key);
+                if(consumablesMap.get(fullArray[i].key)){
+                    console.log(consumablesMap.get(fullArray[i]))
+                    var temp = consumablesMap.get(fullArray[i].key);
+                    var tempArray = temp;
+                    tempArray.push(fullArray[i]);
+                    console.log(1);
+                    console.log(tempArray);
+                    consumablesMap.set(fullArray[i].key, tempArray);
+                }else{
+                    consumablesMap.set(fullArray[i].key, [fullArray[i].value]);
+                }
+            }
+            
+            console.log(consumablesMap);
+            resolve("completed");
+        });
+    });
+}
+
+MaintenanceConsumables.getByReq = req => {
+    return new Bluebird((resolve, reject) => {
+        MaintenanceConsumables.findAll({
+            where: {
+                maintenance_req: req
+            },
+            attributes: ['maintenance_req', 'consumable_id', 'consumable_type', 'consumable_quantity']
+        }).then(foundConsumables => {
+            MaintenanceConsumables.getConsumables(foundConsumables).then(output => {
+                resolve(output);
+            });
+            
+        }).catch(err => {
+            reject(err);
+        });
+
+    });
+
+}
+
+MaintenanceConsumables.getConsumables = consumables => {
+    return new Bluebird(async (resolve, reject) => {
+        var consumableMap = new Map();
+        await Bluebird.all(consumables.map(async value => {
+            let model = getConsumableModel(value.consumable_type);
+            await model.findAll({
+                where: {
+                    id: value.consumable_id
+                }
+            }).then(found => {
+                found.map(values => {
+                    consumableMap.set({type: value.consumable_type, consumable_id: value.consumable_id, req: value.maintenance_req}, {item: values, quantity: value.consumable_quantity})
+                    
+                });
+
+            });
+
+        }));
+
+        resolve(consumableMap);
+
+    });
+
+}
+*/
+
 
 function getConsumableModel(consumableModel) {
   if (consumableModel === "Brake") {

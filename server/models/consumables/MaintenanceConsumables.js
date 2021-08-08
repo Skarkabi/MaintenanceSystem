@@ -8,6 +8,7 @@ import Filter from './Filter';
 import Grease from './Grease';
 import Consumable from '../Consumables';
 import MaintenanceOrder from '../MaintenanceOrder';
+import Supplier from '../Supplier';
 
 const mappings = {
     consumable_id:{
@@ -25,6 +26,9 @@ const mappings = {
     consumable_quantity:{
         type: Sequelize.DataTypes.INTEGER,
         allowNull: false
+    },
+    consumable_data: {
+        type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.JSON, ['consumable_data']),
     },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
@@ -71,6 +75,45 @@ const MaintenanceConsumables = sequelize.define('maintenance_consumables', mappi
     ]
 });
 
+MaintenanceConsumables.getConsumables = reqNumber => {
+    return new Bluebird((resolve, reject) => {
+        MaintenanceConsumables.getAllConsumables(reqNumber).then(async found => {
+            var consumableMap = [];
+            await Promise.all(found.map(async consumable => {
+                let modelType = getConsumableModel(consumable.consumable_type);
+                await modelType.findOne({
+                    where: {
+                        id: consumable.consumable_id
+                    }
+                }).then(foundConsumable => {
+                    return consumableMap.push({type: consumable, consumable: foundConsumable});
+                });
+            }))
+            var result = {count: consumableMap.length, rows: consumableMap}
+            Supplier.getSupplierNames(result).then(() => {
+                //console.log(result.rows[0].consumable);
+                resolve(result.rows);
+            });
+        }).catch(err => {
+            reject(err);
+        })
+    })
+}
+
+MaintenanceConsumables.getAllConsumables = reqNumber => {
+    return new Bluebird((resolve, reject) => {
+        MaintenanceConsumables.findAll({
+            where: {
+                maintenance_req: reqNumber
+            }
+        }).then(found => {
+            resolve(found);
+        }).catch(err => {
+            reject(err);
+        })
+    })
+}
+/** 
 function logMapElements(value, key, map) {
     console.log(`m[${key}] = ${value}`);
   }
@@ -149,6 +192,7 @@ MaintenanceConsumables.getConsumables = consumables => {
     });
 
 }
+*/
 
 function getConsumableModel(consumableModel) {
     if (consumableModel === "Brake"){

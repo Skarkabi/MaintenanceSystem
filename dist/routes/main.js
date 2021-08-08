@@ -58,35 +58,16 @@ router.get('/:req', function (req, res, next) {
       firstName: "Wissam",
       lastName: "Hnien"
     };
-    consumables[0] = c1;
+    var c2 = {};
+    consumables.push(c1);
     employees[0] = e1;
-    var newMain = {
-      status: "Not Started",
-      req: "TMC6938",
-      dateCreated: "24/06/2021",
-      division: "Metal Doors",
-      plate: "68734",
-      category: "CAR",
-      brand: "FORD",
-      model: "MUSTANG",
-      year: "2020",
-      discription: "This is a test maintanence job order",
-      remarks: "This is a test maintenance remark",
-      consumables: consumables,
-      employees: employees,
-      hourCost: "12",
-      materialCost: "46.4",
-      totalCost: "58.4"
-    };
 
     _MaintenanceOrder["default"].getByReq(req.params.req).then(function (found) {
-      console.log("THIS IS THE ORDER");
-      console.log(found);
       res.render('displayMain', {
         title: "Maintanence Request # ".concat(found.req),
-        jumbotronDescription: "Reques # ".concat(found.req, " for division ").concat(newMain.division),
+        jumbotronDescription: "Reques # ".concat(found.req, " for division ").concat(found.division),
         existingMain: found,
-        mainConsumable: consumables,
+        mainConsumable: found.consumable_data,
         mainEmployee: employees,
         consumableTable: consumablesToSelect
       });

@@ -46,6 +46,9 @@ var mappings = {
   vehicle_data: {
     type: _sequelize["default"].DataTypes.VIRTUAL(_sequelize["default"].DataTypes.JSON, ['vehicle_data'])
   },
+  consumable_data: {
+    type: _sequelize["default"].DataTypes.VIRTUAL(_sequelize["default"].DataTypes.JSON, ['consumable_data'])
+  },
   discription: {
     type: _sequelize["default"].DataTypes.STRING,
     allowNull: true
@@ -124,7 +127,6 @@ MaintenanceOrder.getOrders = function () {
   return new _bluebird["default"](function (resolve, reject) {
     MaintenanceOrder.findAll().then(function (orders) {
       getVehicle(orders).then(function () {
-        console.log(orders);
         resolve(orders);
       });
     })["catch"](function (err) {
@@ -140,11 +142,23 @@ MaintenanceOrder.getByReq = function (req) {
         req: req
       }
     }).then(function (found) {
-      getSingleVehicle(found);
-      resolve(found);
+      getSingleVehicle(found).then(function () {
+        getConsumables(found).then(function () {
+          resolve(found);
+        });
+      });
     });
   });
 };
+
+function getConsumables(order) {
+  return new _bluebird["default"](function (resolve, reject) {
+    _MaintenanceConsumables["default"].getConsumables(order.req).then(function (found) {
+      order.setDataValue('consumable_data', found);
+      resolve("Set All");
+    });
+  });
+}
 
 function getVehicle(orders) {
   return new _bluebird["default"](function (resolve, reject) {

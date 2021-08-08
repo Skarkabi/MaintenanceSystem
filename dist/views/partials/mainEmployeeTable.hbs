@@ -2,9 +2,7 @@
     <div class="table-buttons" id="table-buttons">
         <a href="/maintanence/add" role="button" class="btn btn-outline-dark" id="create-new"><i class="fas fa-plus"></i>Assign Employee</a>
     </div>
-    </div>
 
-    <div class="col-md-12">
     <table id="material-filterable-table" class="table table-bordered table-striped">
         <thead>
             <th scope="col">S.N.</th>
@@ -13,14 +11,14 @@
             <th scope="col">Last Name</th>
         </thead>
         <tbody>
-            <tr>
-                {{#each existingMain.employees}}
-                    <td>1</td>
+            {{#each mainEmployee}}
+                <tr>
+                    <th>{{counter @index}}</th>
                     <td>{{this.eId}}</td>
                     <td>{{this.firstName}}</td>
                     <td>{{this.lastName}}</td>
-                {{/each}}
-            </tr>
+                </tr>
+            {{/each}}
         </tbody>
     </table>
 </div>

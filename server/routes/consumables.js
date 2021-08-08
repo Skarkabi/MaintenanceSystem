@@ -65,6 +65,12 @@ router.post('/update-battery/:action/:id', (req,res,next) => {
  * Route takes battery and quotation data from user input 
  */
 router.post('/add/battery', Quotation.uploadFile().single('upload'), (req, res, next) => {
+    var quotationNumber;
+    if(!req.body.quotation){
+        quotationNumber = "N/A";
+    }else{
+        quotationNumber = req.body.quotation;
+    }
     //Creating new battrey variable to be added to database   
     const newBattery = {
         batSpec: req.body.batSpec,
@@ -73,7 +79,7 @@ router.post('/add/battery', Quotation.uploadFile().single('upload'), (req, res, 
         quantity: req.body.quantityBatteries,
         minQuantity: req.body.quantityMinBatteries,
         supplierId: req.body.batteriesSupplierName,
-        quotationNumber: req.body.quotation
+        quotationNumber: quotationNumber
 
     }
 

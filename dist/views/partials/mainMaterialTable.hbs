@@ -1,40 +1,30 @@
- <div class="col-md-12">
+<div class="col-md-12">
     <div class="table-buttons" id="table-buttons">
         <button class="btn btn-outline-dark" id="create-new" onclick="test()"><i class="fas fa-plus"></i>Add Material</button>
     </div>
-    </div>
 
-    <div class="col-md-12">
-    <table id="material-filterable-table" class="table table-bordered table-striped">
-        <thead>
-             <th scope="col">S.N.</th>
+<table id="filterable-table" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th scope="col">S.N.</th>
             <th scope="col">MR#</th>
             <th scope="col">Material</th>
             <th scope="col">Supplier</th>
             <th scope="col">Quantatiy</th>
             <th scope="col">Cost</th>
-        </thead>
-        <tbody>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each mainConsumable}}
             <tr>
-                {{#each existingMain.consumables}}
-                    <td>1</td>
-                    <td>{{this.mr}}</td>
-                    <td>{{this.material}}</td>
-                    <td>{{this.supplier}}</td>
-                    <td>{{this.quantity}}</td>
-                    <td>{{this.cost}}</td>
-                {{/each}}
+                <th>{{counter @index}}</th>
+                <td><a>{{this.consumable.quotationNumber}}</a></td>
+                <td><a>{{this.type.consumable_type}}</a></td>
+                <td><a>{{this.consumable.supplierName}}</a></td>
+                <td><a>{{this.type.consumable_quantity}}</a></td>
+                <td><a>{{this.consumable.singleCost}}</a></td>   
             </tr>
-        </tbody>
-    </table>
-</div>
-<div id="myModal" class="modal">
-
-  <!-- Modal content -->
-  <div class="modal-content">
-    <span class="close">&times;</span>
-        <div id="mContent"></div>
-        
-  </div>
-
+        {{/each}}
+    </tbody>
+</table>
 </div>

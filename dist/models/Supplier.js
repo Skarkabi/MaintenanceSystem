@@ -240,15 +240,31 @@ Supplier.getStock = function () {
 Supplier.getSupplierNames = function (consumable) {
   return new _bluebird["default"](function (resolve, reject) {
     //Initializing variable of distinct supplier IDs
-    var values = consumable.rows.map(function (a) {
-      return a.supplierId;
-    }); //Getting suppliers from the database
+    var values;
+
+    if (consumable.rows[0].type) {
+      values = consumable.rows.map(function (a) {
+        return a.consumable.supplierId;
+      });
+    } else {
+      values = consumable.rows.map(function (a) {
+        return a.supplierId;
+      });
+    } //Getting suppliers from the database
+
 
     Supplier.getById(values).then(function (supplierNames) {
       //Setting virtual datatype supplier name
-      consumable.rows.map(function (value) {
-        return value.setDataValue('supplierName', supplierNames.get(value.supplierId));
-      });
+      if (consumable.rows[0].type) {
+        consumable.rows.map(function (value) {
+          return value.consumable.setDataValue('supplierName', supplierNames.get(value.consumable.supplierId));
+        });
+      } else {
+        consumable.rows.map(function (value) {
+          return value.setDataValue('supplierName', supplierNames.get(value.supplierId));
+        });
+      }
+
       resolve("completed");
     })["catch"](function (err) {
       reject(err);

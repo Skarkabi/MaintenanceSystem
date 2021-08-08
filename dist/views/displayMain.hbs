@@ -9,18 +9,18 @@
         {{/if}}
     </div>
     <body onload="setTable('material');">
-    <div class="section-wrapper">
-        <div class="section-title">
-            <div class="row">
-                <div class="col">
-                    <h4><i class="fas fa-tools"></i>&nbsp;Job Details</h4>
-                </div>
+        <div class="section-wrapper">
+            <div class="section-title">
+                <div class="row">
+                    <div class="col">
+                        <h4><i class="fas fa-tools"></i>&nbsp;Job Details</h4>
+                    </div>
                     <div class="col"  style="font-weight:bold;">
                         <div class="row">
                             <h4>Status:&nbsp; </h4>
                             {{#if (isdefined existingMain.status "Not Started")}}
                                 <h4 style="color:red; font-weight:bold">&nbsp;NOT STARTED</h4>
-                            {{/if}}
+                                {{/if}}
                             {{#if (isdefined existingMain.status "In Progress")}}
                                 <h4 style="color:#0000FF; font-weight:bold">&nbsp;IN PROGRESS</h4>
                             {{/if}}
@@ -32,95 +32,91 @@
                             {{/if}}
                         </div>
                     </div>
-                    
+                </div>
+                <hr class="my-3">
             </div>
-           
-            <hr class="my-3">
+            <div class="section-content">
+                <div class="form-row">
+                    <div class="form-group col display-main">
+                        <label for="dateCreated">Date Created</label>
+                        <input type="text" class="form-control" name="dateCreated" brand="dateCreated" value="{{existingMain.createdAt}}" readonly>
+                    </div>
+                    <div class="form-group col display-main">
+                        <label for="dateCreated">Request #</label>
+                        <input type="text" class="form-control" name="dateCreated" brand="dateCreated" value="{{existingMain.req}}" readonly>
+                    </div>
+                    <div class="form-group col display-main">
+                        <label for="division">Divison</label>
+                        <input type="text" class="form-control" name="division" brand="division" value="{{existingMain.division}}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col display-main">
+                        <label for="plate">Plate #</label>
+                        <input type="text" class="form-control" name="plate" brand="plate" value="{{existingMain.plate}}" readonly>
+                    </div>
+                    <div class="form-group col display-main">
+                        <label for="category">Vehicle Category</label>
+                        <input type="text" class="form-control" name="category" brand="category" value="{{existingMain.vehicle_data.category}}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col display-main">
+                        <label for="brand">Vehicle Brand</label>
+                        <input type="text" class="form-control" name="brand" brand="brand" value="{{existingMain.vehicle_data.brand}}" readonly>
+                    </div>
+                    <div class="form-group col display-main">
+                        <label for="model">Vehicle Model</label>
+                        <input type="text" class="form-control" name="model" brand="model" value="{{existingMain.vehicle_data.model}}" readonly>
+                    </div>
+                    <div class="form-group col display-main">
+                        <label for="year">Vehicle Year</label>
+                        <input type="text" class="form-control" name="year" brand="year" value="{{existingMain.vehicle_data.year}}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col display-main">
+                        <label for="hourC">Cost Per Hour</label>
+                        <input type="text" class="form-control" name="hourC" brand="hourC" value="{{existingMain.hour_cost}} AED" readonly>
+                    </div>
+                    <div class="form-group col display-main">
+                        <label for="materialCost">Material Cost</label>
+                        <input type="text" class="form-control" name="materialCost" brand="materialCost" value="{{existingMain.materialCost}} AED" readonly>
+                    </div>
+                    <div class="form-group col display-main">
+                        <label for="totalCost">Total Cost</label>
+                        <input type="text" class="form-control" name="totalCost" brand="totalCost" value="{{existingMain.total_cost}} AED" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col display-main">
+                        <label for="discription">Discription</label>
+                        <textarea type="text" class="form-control" name="discription" brand="discription" value="{{existingMain.discription}}" readonly>{{existingMain.discription}}</textarea>
+                    </div>
+                    <div class="form-group col display-main">
+                        <label for="remark">Remarks</label>
+                        <textarea type="text" class="form-control" name="remark" brand="remark" value="{{existingMain.remarks}}" readonly>{{existingMain.remarks}}</textarea>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="section-content">
-            <div class="form-row">
-                <div class="form-group col display-main">
-                    <label for="dateCreated">Date Created</label>
-                    <input type="text" class="form-control" name="dateCreated" brand="dateCreated" value="{{existingMain.createdAt}}" readonly>
+        <div class="section-wrapper">
+            <div class="section-title">
+                <div class="row">
+                    <h4 class="col" style="font-weight:bold" onclick="setTable('material')"><a onmouseover="style='cursor:pointer; color:#2779F6'" onmouseout="style='color:black'"><i class="fas fa-gas-pump"></i>Materials Used</a></h4>  
+                    <h4 class="col" style="font-weight:bold" onclick="setTable('employee')"><a onmouseover="style='cursor:pointer; color:#2779F6'" onmouseout="style='color:black'"><i class="fas fa-users"></i>Assigned Employees</a></h4>
                 </div>
-                <div class="form-group col display-main">
-                    <label for="dateCreated">Request #</label>
-                    <input type="text" class="form-control" name="dateCreated" brand="dateCreated" value="{{existingMain.req}}" readonly>
-                </div>
-                <div class="form-group col display-main">
-                    <label for="division">Divison</label>
-                    <input type="text" class="form-control" name="division" brand="division" value="{{existingMain.division}}" readonly>
-                </div>
+                <hr class="my-3">
             </div>
-            <div class="form-row">
-               <div class="form-group col display-main">
-                    <label for="plate">Plate #</label>
-                    <input type="text" class="form-control" name="plate" brand="plate" value="{{existingMain.plate}}" readonly>
-                </div>
-                 <div class="form-group col display-main">
-                    <label for="category">Vehicle Category</label>
-                    <input type="text" class="form-control" name="category" brand="category" value="{{existingMain.vehicle_data.category}}" readonly>
-                </div>
-            </div>
-            <div class="form-row">
-               <div class="form-group col display-main">
-                    <label for="brand">Vehicle Brand</label>
-                    <input type="text" class="form-control" name="brand" brand="brand" value="{{existingMain.vehicle_data.brand}}" readonly>
-                </div>
-                 <div class="form-group col display-main">
-                    <label for="model">Vehicle Model</label>
-                    <input type="text" class="form-control" name="model" brand="model" value="{{existingMain.vehicle_data.model}}" readonly>
-                </div>
-                 <div class="form-group col display-main">
-                    <label for="year">Vehicle Year</label>
-                    <input type="text" class="form-control" name="year" brand="year" value="{{existingMain.vehicle_data.year}}" readonly>
-                </div>
-            </div>
-            <div class="form-row">
-               <div class="form-group col display-main">
-                    <label for="hourC">Cost Per Hour</label>
-                    <input type="text" class="form-control" name="hourC" brand="hourC" value="{{existingMain.hour_cost}} AED" readonly>
-                </div>
-                 <div class="form-group col display-main">
-                    <label for="materialCost">Material Cost</label>
-                    <input type="text" class="form-control" name="materialCost" brand="materialCost" value="{{existingMain.materialCost}} AED" readonly>
-                </div>
-                 <div class="form-group col display-main">
-                    <label for="totalCost">Total Cost</label>
-                    <input type="text" class="form-control" name="totalCost" brand="totalCost" value="{{existingMain.total_cost}} AED" readonly>
-                </div>
-            </div>
-             <div class="form-row">
-               <div class="form-group col display-main">
-                    <label for="discription">Discription</label>
-                    <textarea type="text" class="form-control" name="discription" brand="discription" value="{{existingMain.discription}}" readonly>{{existingMain.discription}}</textarea>
-                </div>
-                 <div class="form-group col display-main">
-                    <label for="remark">Remarks</label>
-                    <textarea type="text" class="form-control" name="remark" brand="remark" value="{{existingMain.remarks}}" readonly>{{existingMain.remarks}}</textarea>
-                </div>
+            <div class="section-content" id="tableSection">
             </div>
         </div>
-    </div>
-    <div class="section-wrapper">
-        <div class="section-title">
-            <div class="row">
-                 <h4 class="col" style="font-weight:bold" onclick="setTable('material')"><a onmouseover="style='cursor:pointer; color:#2779F6'" onmouseout="style='color:black'"><i class="fas fa-gas-pump"></i>Materials Used</a></h4>  
-                 <h4 class="col" style="font-weight:bold" onclick="setTable('employee')"><a onmouseover="style='cursor:pointer; color:#2779F6'" onmouseout="style='color:black'"><i class="fas fa-users"></i>Assigned Employees</a></h4>
-            </div>
-           
-            <hr class="my-3">
-        </div>
-        <div class="form-row" id="tableSection">
-        </div>
-    </div>
     </body>
 </div>
 
 
 <script>
-    function setTable(tableName){
-        console.log("in i go")
+    function setTable(tableName, tableData){
         document.getElementById("tableSection").innerHTML = "";
         if(tableName === "material"){
             document.getElementById("tableSection").insertAdjacentHTML("afterbegin", `{{>mainMaterialTable}}`);
@@ -129,6 +125,7 @@
             document.getElementById("tableSection").insertAdjacentHTML("afterbegin", `{{>mainEmployeeTable}}`);
 
         }
+        
     }
 
     function changeColor(elementId){

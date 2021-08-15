@@ -44,38 +44,52 @@
     {{!-- Courses --}}
     <div class="section-wrapper">
         <div class="section-title">
-            <h4><i class="fas fa-cogs"></i>Job Orders</h4>
+            <h4><i class="fas fa-cogs"></i>Materials in Stock</h4>
             <hr class="my-3">
         </div>
         <div class="section-content">
             <table id="filterable-table" class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th scope="col">Date Created</th>
-                        <th scope="col">Job #</th>
-                        <th scope="col">Job Type</th>
-                        <th scope="col">Assigned Employee</th> 
-                        <th scope="col">Description</th>
-                        <th scope="col">Status</th>
-                        {{#if showPii}}
-                        <th scope="col">Actions</th>
-                        {{/if}}
+                        <th scope="col">#</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Single Cost</th>
+                        <th scope="col">Total Quantity</th>
+                        <th scope="col">View Quotation</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{#each courses}}
-                    <tr>
-                        <td><a href="/courses/course/{{this._id}}" id="courseCode-{{this.code}}">{{this.code}}</a></td>
-                        <td><a href="/courses/course/{{this._id}}">{{this.section}}</a></td>
-                        <td><a href="/courses/course/{{this._id}}">{{this.instructorFullName}}</a></td>
-                        <td><a href="/courses/course/{{this._id}}">{{this.termName}}</a></td>
-                        {{#if ../showPii}}
-                        <td class="table-actions">
-                            <a href="/gradeBooks/{{this._id}}/{{../existingUser._id}}" id="viewGrade-{{this.code}}"><i class="far fa-hand-spock"></i> View Grades</a>
-                        </td>
-                        {{/if}}
-                    </tr>
-                    {{/each}}
+                    {{#each consumables}}
+                        <tr>
+                    <td><a href="/consumables/{{lowerCase this.category}}"> {{counter @index}}</a></td>
+                    <td><a href="/consumables/{{lowerCase this.category}}">{{this.category}}</a></td>
+                    <td><a href="/consumables/{{lowerCase this.category}}">{{this.quantity}} (
+                            {{#if (isdefined "Battery" this.category)}}
+                                Pieces
+                            {{/if}}
+                            {{#if (isdefined "Brake" this.category)}}
+                                Boxes
+                            {{/if}}
+                            {{#if (isdefined "Filter" this.category)}}
+                                Pieces
+                            {{/if}}
+                            {{#if (isdefined "Oil" this.category)}}
+                                Liters
+                            {{/if}}
+                            {{#if (isdefined "Grease" this.category)}}
+                                Liters
+                            {{/if}}
+                    )
+                        </a></td>
+                        <td><a>{{this.singleCost}}</a></td>
+                        <td><a>{{this.totalCost}}</a></td>
+                    <td class = "table-actions">
+                        <a href="/users/update/{{this._id}}" id="updateUser-{{this._id}}"><i class="far fa-edit"></i> Update </a>
+                        <a href="/users/delete/{{this._id}}" id="deleteUserId-{{this._id}}" class="delete" data-confirm="Are you sure to delete {{this.firstName}} {{this.lastName}}?"><i class="fas fa-trash"></i> Delete</a>
+                    </td>
+                </tr>
+            {{/each}}
                 </tbody>
             </table>
         </div>

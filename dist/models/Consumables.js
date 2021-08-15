@@ -183,6 +183,25 @@ Consumable.getFullStock = function () {
   });
 };
 
+Consumable.getFullSupplierStock = function (sId) {
+  return new _bluebird["default"](function (resolve, reject) {
+    var consumables = [];
+
+    _Battery["default"].getSupplierStock(sId).then(function (batteries) {
+      batteries.rows.map(function (battery) {
+        return consumables.push({
+          category: "Battery",
+          quantity: battery.quantity,
+          totalCost: battery.totalCost,
+          singleCost: battery.singleCost,
+          quotationNum: battery.quotationNumber
+        });
+      });
+      resolve(consumables);
+    });
+  });
+};
+
 Consumable.getDistinctConsumableValues = function () {
   return new _bluebird["default"](function (resolve, reject) {
     _Battery["default"].getBatteryStocks().then(function (batteries) {

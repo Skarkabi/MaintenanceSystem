@@ -176,6 +176,20 @@ Supplier.getById = function (id) {
     });
   });
 };
+
+Supplier.getSpecficSupplier = function (id) {
+  return new _bluebird["default"](function (resolve, reject) {
+    Supplier.findOne({
+      where: {
+        id: id
+      }
+    }).then(function (found) {
+      resolve(found);
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
+};
 /**
  * function to return distinct values in object
  * @param {*} values 

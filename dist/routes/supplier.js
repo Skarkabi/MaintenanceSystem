@@ -21,6 +21,8 @@ var _expressValidator = require("express-validator");
 
 var _Supplier = _interopRequireDefault(require("../models/Supplier"));
 
+var _Consumables = _interopRequireDefault(require("../models/Consumables"));
+
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
 var router = _express["default"].Router();
 
@@ -42,14 +44,17 @@ router.get('/display-supplier/:id', /*#__PURE__*/function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _Supplier["default"].getById(req.params.id).then(function (foundSupplier) {
-              console.log(JSON.stringify(foundSupplier));
-              res.render('displaySupplier', {
-                title: "".concat(foundSupplier.name),
-                jumbotronDesciption: "Information for Supplier ".concat(foundSupplier.name),
-                existingSupplier: foundSupplier,
-                showPii: req.user.admin,
-                msgType: req.flash()
+            _Supplier["default"].getSpecficSupplier(req.params.id).then(function (foundSupplier) {
+              _Consumables["default"].getFullSupplierStock(req.params.id).then(function (consumables) {
+                console.log(consumables);
+                res.render('displaySupplier', {
+                  title: "".concat(foundSupplier.name),
+                  jumbotronDesciption: "Information for Supplier ".concat(foundSupplier.name),
+                  existingSupplier: foundSupplier,
+                  showPii: req.user.admin,
+                  consumables: consumables,
+                  msgType: req.flash()
+                });
               });
             })["catch"](function (err) {
               console.log(err);

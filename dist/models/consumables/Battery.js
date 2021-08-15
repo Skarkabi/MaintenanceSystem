@@ -271,6 +271,25 @@ Battery.getStock = function () {
     });
   });
 };
+
+Battery.getSupplierStock = function (sId) {
+  return new _bluebird["default"](function (resolve, reject) {
+    Battery.findAndCountAll({
+      where: {
+        supplierId: sId
+      }
+    }).then(function (batteries) {
+      _Supplier["default"].getSupplierNames(batteries).then(function () {
+        //returning the batteries 
+        resolve(batteries);
+      })["catch"](function (err) {
+        reject(err);
+      });
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
+};
 /**
  * Function to return list of batteries with their supplier names, as well as unique values found within the database
  * @returns object that includes all batteries, suppliers, and unique values of each battery spec

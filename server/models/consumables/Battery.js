@@ -302,6 +302,25 @@ Battery.getStock = () => {
     
 }
 
+Battery.getSupplierStock = sId =>{
+    return new Bluebird ((resolve, reject) => {
+        Battery.findAndCountAll({
+            where: {supplierId: sId}
+        }).then(batteries => {
+            Supplier.getSupplierNames(batteries).then(() => {
+                //returning the batteries 
+                resolve(batteries);
+    
+            }).catch(err => {
+                reject(err);
+          
+            });
+        }).catch(err => {
+            reject(err);
+        });
+    })
+}
+
 /**
  * Function to return list of batteries with their supplier names, as well as unique values found within the database
  * @returns object that includes all batteries, suppliers, and unique values of each battery spec

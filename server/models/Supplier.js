@@ -198,6 +198,19 @@ Supplier.getById = id => {
 
 }
 
+Supplier.getSpecficSupplier = id => {
+    return new Bluebird((resolve, reject) => {
+        Supplier.findOne({
+            where: {id: id}
+        }).then(found => {
+            resolve(found);
+
+        }).catch(err => {
+            reject(err);
+        })
+    })
+}
+
 /**
  * function to return distinct values in object
  * @param {*} values 

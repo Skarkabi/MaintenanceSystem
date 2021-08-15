@@ -4,6 +4,7 @@ import Bluebird from 'bluebird';
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
 import { body, validationResult } from 'express-validator';
 import Supplier from '../models/Supplier';
+import Consumable from '../models/Consumables';
 
 const router = express.Router();
 
@@ -21,15 +22,19 @@ router.get('/', (req,res,next) => {
 });
 
 router.get('/display-supplier/:id', async (req,res,next) => {
-    Supplier.getById(req.params.id).then(foundSupplier => {
-        console.log(JSON.stringify(foundSupplier));
-        res.render('displaySupplier', {
-            title: (`${foundSupplier.name}`),
-            jumbotronDesciption: `Information for Supplier ${foundSupplier.name}`,
-            existingSupplier: foundSupplier,
-            showPii: req.user.admin,
-            msgType: req.flash()
-        });
+    Supplier.getSpecficSupplier(req.params.id).then(foundSupplier => {
+        Consumable.getFullSupplierStock(req.params.id).then(consumables => {
+            console.log(consumables);
+            res.render('displaySupplier', {
+                title: (`${foundSupplier.name}`),
+                jumbotronDesciption: `Information for Supplier ${foundSupplier.name}`,
+                existingSupplier: foundSupplier,
+                showPii: req.user.admin,
+                consumables: consumables,
+                msgType: req.flash()
+            });
+        })
+        
     }).catch(err => {
         console.log(err);
     });

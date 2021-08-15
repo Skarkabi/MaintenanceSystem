@@ -193,6 +193,20 @@ Consumable.getFullStock = () => {
   
 }
 
+Consumable.getFullSupplierStock = sId => {
+    return new Bluebird((resolve, reject) => {
+        var consumables = [];
+        Battery.getSupplierStock(sId).then(batteries => {
+            batteries.rows.map(battery => consumables.push(
+              {category: "Battery", quantity: battery.quantity, totalCost: battery.totalCost, singleCost: battery.singleCost, quotationNum: battery.quotationNumber}
+              )
+            );
+
+            resolve(consumables);
+        })
+    })
+}
+
 Consumable.getDistinctConsumableValues = () => {
     return new Bluebird((resolve, reject) => {
         Battery.getBatteryStocks().then(batteries =>{

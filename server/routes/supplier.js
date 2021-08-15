@@ -11,8 +11,8 @@ const router = express.Router();
 router.get('/', (req,res,next) => {
     Supplier.findAndCountAll().then(suppliers => {
         res.render("displaySuppliers", {
-            tite: "Suppliers",
-            jumbotronDesciption: "View all suppliers registered in the system",
+            title: "Suppliers",
+            jumbotronDescription: "View all suppliers registered in the system",
             suppliers: suppliers.rows,
             msgType: req.flash()
         });
@@ -26,7 +26,7 @@ router.get('/display-supplier/:id', async (req,res,next) => {
         console.log(foundSupplier);
             res.render('displaySupplier', {
                 title: (`${foundSupplier.name}`),
-                jumbotronDesciption: `Information for Supplier ${foundSupplier.name}`,
+                jumbotronDescription: `Information for Supplier ${foundSupplier.name}`,
                 existingSupplier: foundSupplier,
                 showPii: req.user.admin,
                 consumables: foundSupplier.items,

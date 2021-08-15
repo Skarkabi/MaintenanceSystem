@@ -29,8 +29,8 @@ var router = _express["default"].Router();
 router.get('/', function (req, res, next) {
   _Supplier["default"].findAndCountAll().then(function (suppliers) {
     res.render("displaySuppliers", {
-      tite: "Suppliers",
-      jumbotronDesciption: "View all suppliers registered in the system",
+      title: "Suppliers",
+      jumbotronDescription: "View all suppliers registered in the system",
       suppliers: suppliers.rows,
       msgType: req.flash()
     });
@@ -48,7 +48,7 @@ router.get('/display-supplier/:id', /*#__PURE__*/function () {
               console.log(foundSupplier);
               res.render('displaySupplier', {
                 title: "".concat(foundSupplier.name),
-                jumbotronDesciption: "Information for Supplier ".concat(foundSupplier.name),
+                jumbotronDescription: "Information for Supplier ".concat(foundSupplier.name),
                 existingSupplier: foundSupplier,
                 showPii: req.user.admin,
                 consumables: foundSupplier.items,

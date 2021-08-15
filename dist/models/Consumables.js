@@ -254,5 +254,27 @@ Consumable.getConsumableByCategory = function (category) {
   });
 };
 
+Consumable.getBattery = function () {
+  return new _bluebird["default"](function (resolve, reject) {
+    resolve(_Battery["default"]);
+  });
+};
+
+Consumable.getBrake = function () {
+  return new _Brake["default"]();
+};
+
+Consumable.getFilter = function () {
+  return new _Filter["default"]();
+};
+
+Consumable.getOil = function () {
+  return new _Oil["default"]();
+};
+
+Consumable.getGrease = function () {
+  return new _Grease["default"]();
+};
+
 var _default = Consumable;
 exports["default"] = _default;

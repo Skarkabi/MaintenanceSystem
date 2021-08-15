@@ -45,16 +45,14 @@ router.get('/display-supplier/:id', /*#__PURE__*/function () {
         switch (_context.prev = _context.next) {
           case 0:
             _Supplier["default"].getSpecficSupplier(req.params.id).then(function (foundSupplier) {
-              _Consumables["default"].getFullSupplierStock(req.params.id).then(function (consumables) {
-                console.log(consumables);
-                res.render('displaySupplier', {
-                  title: "".concat(foundSupplier.name),
-                  jumbotronDesciption: "Information for Supplier ".concat(foundSupplier.name),
-                  existingSupplier: foundSupplier,
-                  showPii: req.user.admin,
-                  consumables: consumables,
-                  msgType: req.flash()
-                });
+              console.log(foundSupplier);
+              res.render('displaySupplier', {
+                title: "".concat(foundSupplier.name),
+                jumbotronDesciption: "Information for Supplier ".concat(foundSupplier.name),
+                existingSupplier: foundSupplier,
+                showPii: req.user.admin,
+                consumables: foundSupplier.items,
+                msgType: req.flash()
               });
             })["catch"](function (err) {
               console.log(err);
@@ -72,6 +70,10 @@ router.get('/display-supplier/:id', /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }());
+router.get('/unavailable', function (req, res, next) {
+  req.flash('error_msg', "Quotation is Not Available");
+  res.redirect("back");
+});
 router.get('/register', /*#__PURE__*/function () {
   var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(req, res, next) {
     return _regenerator["default"].wrap(function _callee2$(_context2) {

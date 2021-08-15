@@ -23,22 +23,25 @@ router.get('/', (req,res,next) => {
 
 router.get('/display-supplier/:id', async (req,res,next) => {
     Supplier.getSpecficSupplier(req.params.id).then(foundSupplier => {
-        Consumable.getFullSupplierStock(req.params.id).then(consumables => {
-            console.log(consumables);
+        console.log(foundSupplier);
             res.render('displaySupplier', {
                 title: (`${foundSupplier.name}`),
                 jumbotronDesciption: `Information for Supplier ${foundSupplier.name}`,
                 existingSupplier: foundSupplier,
                 showPii: req.user.admin,
-                consumables: consumables,
+                consumables: foundSupplier.items,
                 msgType: req.flash()
             });
-        })
         
     }).catch(err => {
         console.log(err);
     });
 });
+
+router.get('/unavailable', (req, res, next) => {
+    req.flash('error_msg', "Quotation is Not Available");
+    res.redirect(`back`);
+})
 
 router.get('/register', async (req,res,next) => {
     Supplier.getStock().then(suppliers => {

@@ -74,6 +74,14 @@ var mappings = {
   updatedAt: {
     type: _sequelize["default"].DataTypes.DATE,
     allowNull: false
+  },
+  total_price: {
+    type: _sequelize["default"].DataTypes.DOUBLE,
+    allowNull: false
+  },
+  price_per_litter: {
+    type: _sequelize["default"].DataTypes.DOUBLE,
+    allowNull: false
   }
 };
 /**
@@ -125,6 +133,14 @@ var Grease = _mySQLDB["default"].define('grease_stocks', mappings, {
     name: 'grease_quotationNumber_index',
     method: 'BTREE',
     fields: ['quotationNumber']
+  }, {
+    name: 'grease_total_price_index',
+    method: 'BTREE',
+    fields: ['total_price']
+  }, {
+    name: 'grease_price_per_litter_index',
+    method: 'BTREE',
+    fields: ['price_per_litter']
   }]
 });
 /**
@@ -171,25 +187,25 @@ Grease.updateGrease = function (newGrease, action) {
         });
       } //If the new quantity is less than 0 rejects the user input
       else if (quant < 0) {
-          reject("Can Not Delete More Than Exists in Stock!"); //If quantity is > 0 the grease quantity is updated
-        } else {
-          Grease.update({
-            volume: quant
-          }, {
-            where: {
-              id: newGrease.id
-            }
-          }).then(function () {
-            //Updating the value from the consumables database
-            _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
-              resolve(newGrease.volume + " Liters of Grease Sucessfully Added to Existing Stock!");
-            })["catch"](function (err) {
-              reject("An Error Occured Grease Could not be Added " + err);
-            });
+        reject("Can Not Delete More Than Exists in Stock!"); //If quantity is > 0 the grease quantity is updated
+      } else {
+        Grease.update({
+          volume: quant
+        }, {
+          where: {
+            id: newGrease.id
+          }
+        }).then(function () {
+          //Updating the value from the consumables database
+          _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
+            resolve(newGrease.volume + " Liters of Grease Sucessfully Added to Existing Stock!");
           })["catch"](function (err) {
             reject("An Error Occured Grease Could not be Added " + err);
           });
-        }
+        })["catch"](function (err) {
+          reject("An Error Occured Grease Could not be Added " + err);
+        });
+      }
     })["catch"](function (err) {
       reject("An Error Occured Grease Could not be Added " + err);
     });

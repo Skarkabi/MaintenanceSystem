@@ -2,6 +2,7 @@ import Bluebird from 'bluebird';
 import _ from 'lodash';
 import Sequelize from 'sequelize';
 import sequelize from '../mySQLDB';
+import Consumable from './Consumables';
 
 /**
  * Declaring the datatypes used within the Battery class
@@ -32,7 +33,10 @@ const mappings = {
         type: Sequelize.STRING,
         allowNull: false
     },
+    items: {
+        type: Sequelize.VIRTUAL(Sequelize.DataTypes.JSON, ['items']),
 
+    },
     brand: {
         type: Sequelize.STRING,
         allowNull: false
@@ -203,8 +207,10 @@ Supplier.getSpecficSupplier = id => {
         Supplier.findOne({
             where: {id: id}
         }).then(found => {
-            resolve(found);
-
+            setItems(found).then(() => {
+                resolve(found);
+            });
+            
         }).catch(err => {
             reject(err);
         })
@@ -289,6 +295,53 @@ Supplier.getSupplierNames = (consumable) => {
             
     });
 
+}
+
+function settingItems (supplier) {
+    return new Bluebird((resolve, reject) => {
+        var consumables = [];
+        Consumable.getBattery().then(battery => {
+            battery.getSupplierStock(supplier.id).then(batteries => {
+                batteries.rows.map(battery => consumables.push(
+                  {category: "Battery", quantity: battery.quantity, totalCost: battery.totalCost, singleCost: battery.singleCost, quotationNum: battery.quotationNumber}
+                ));
+                    
+                console.log("Setting the items");
+                console.log(consumables);
+                supplier.setDataValue('items', consumables);
+                resolve("Set Items");
+            })
+        })
+    })
+}
+
+function setItems (supplier) {
+    return new Bluebird((resolve, reject) => {
+        var itemsToSet = [];
+        Consumable.getFullStock().then(consumables => {
+            consumables.batteries.map(battery => itemsToSet.push(
+                {category: "Battery", quantity: battery.quantity, totalCost: battery.totalCost, singleCost: battery.singleCost, quotationNum: battery.quotationNumber}
+            ));
+            consumables.brakes.map(brake => itemsToSet.push(
+                {category: "Brake", quantity: brake.quantity, totalCost: brake.totalCost, singleCost: brake.singleCost, quotationNum: brake.quotationNumber}
+            ));
+            consumables.filters.map(filter => itemsToSet.push(
+                {category: "Filter", quantity: filter.quantity, totalCost: filter.totalCost, singleCost: filter.singleCost, quotationNum: filter.quotationNumber}
+            ));
+            consumables.grease.map(grease => itemsToSet.push(
+                {category: "Grease", quantity: grease.volume, totalCost: grease.total_price, singleCost: grease.price_per_litter, quotationNum: grease.quotationNumber}
+            ));
+            consumables.oil.map(oil => itemsToSet.push(
+                {category: "Oil", quantity: oil.volume, totalCost: oil.total_price, singleCost: oil.oilPrice, quotationNum: oil.quotationNumber}
+            ));
+            
+
+            console.log("Setting the items");
+                console.log(itemsToSet);
+                supplier.setDataValue('items', itemsToSet);
+                resolve("Set Items");
+        })
+    })
 }
 
 export default Supplier;

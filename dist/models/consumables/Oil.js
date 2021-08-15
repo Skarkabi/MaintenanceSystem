@@ -56,6 +56,10 @@ var mappings = {
     type: _sequelize["default"].DataTypes.DOUBLE,
     allowNull: false
   },
+  total_price: {
+    type: _sequelize["default"].DataTypes.DOUBLE,
+    allowNull: false
+  },
   supplierId: {
     type: _sequelize["default"].DataTypes.INTEGER,
     allowNull: false
@@ -105,6 +109,10 @@ var Oil = _mySQLDB["default"].define('oil_stocks', mappings, {
     name: 'oil_oilPrice_index',
     method: 'BTREE',
     fields: ['oilPrice']
+  }, {
+    name: 'grease_total_price_index',
+    method: 'BTREE',
+    fields: ['total_price']
   }, {
     name: 'oil_createdAt_index',
     method: 'BTREE',

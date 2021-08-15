@@ -15,6 +15,8 @@ var _sequelize = _interopRequireDefault(require("sequelize"));
 
 var _mySQLDB = _interopRequireDefault(require("../mySQLDB"));
 
+var _Consumables = _interopRequireDefault(require("./Consumables"));
+
 /**
  * Declaring the datatypes used within the Battery class
  */
@@ -39,6 +41,9 @@ var mappings = {
   category: {
     type: _sequelize["default"].STRING,
     allowNull: false
+  },
+  items: {
+    type: _sequelize["default"].VIRTUAL(_sequelize["default"].DataTypes.JSON, ['items'])
   },
   brand: {
     type: _sequelize["default"].STRING,
@@ -184,7 +189,9 @@ Supplier.getSpecficSupplier = function (id) {
         id: id
       }
     }).then(function (found) {
-      resolve(found);
+      setItems(found).then(function () {
+        resolve(found);
+      });
     })["catch"](function (err) {
       reject(err);
     });
@@ -285,6 +292,88 @@ Supplier.getSupplierNames = function (consumable) {
     });
   });
 };
+
+function settingItems(supplier) {
+  return new _bluebird["default"](function (resolve, reject) {
+    var consumables = [];
+
+    _Consumables["default"].getBattery().then(function (battery) {
+      battery.getSupplierStock(supplier.id).then(function (batteries) {
+        batteries.rows.map(function (battery) {
+          return consumables.push({
+            category: "Battery",
+            quantity: battery.quantity,
+            totalCost: battery.totalCost,
+            singleCost: battery.singleCost,
+            quotationNum: battery.quotationNumber
+          });
+        });
+        console.log("Setting the items");
+        console.log(consumables);
+        supplier.setDataValue('items', consumables);
+        resolve("Set Items");
+      });
+    });
+  });
+}
+
+function setItems(supplier) {
+  return new _bluebird["default"](function (resolve, reject) {
+    var itemsToSet = [];
+
+    _Consumables["default"].getFullStock().then(function (consumables) {
+      consumables.batteries.map(function (battery) {
+        return itemsToSet.push({
+          category: "Battery",
+          quantity: battery.quantity,
+          totalCost: battery.totalCost,
+          singleCost: battery.singleCost,
+          quotationNum: battery.quotationNumber
+        });
+      });
+      consumables.brakes.map(function (brake) {
+        return itemsToSet.push({
+          category: "Brake",
+          quantity: brake.quantity,
+          totalCost: brake.totalCost,
+          singleCost: brake.singleCost,
+          quotationNum: brake.quotationNumber
+        });
+      });
+      consumables.filters.map(function (filter) {
+        return itemsToSet.push({
+          category: "Filter",
+          quantity: filter.quantity,
+          totalCost: filter.totalCost,
+          singleCost: filter.singleCost,
+          quotationNum: filter.quotationNumber
+        });
+      });
+      consumables.grease.map(function (grease) {
+        return itemsToSet.push({
+          category: "Grease",
+          quantity: grease.volume,
+          totalCost: grease.total_price,
+          singleCost: grease.price_per_litter,
+          quotationNum: grease.quotationNumber
+        });
+      });
+      consumables.oil.map(function (oil) {
+        return itemsToSet.push({
+          category: "Oil",
+          quantity: oil.volume,
+          totalCost: oil.total_price,
+          singleCost: oil.oilPrice,
+          quotationNum: oil.quotationNumber
+        });
+      });
+      console.log("Setting the items");
+      console.log(itemsToSet);
+      supplier.setDataValue('items', itemsToSet);
+      resolve("Set Items");
+    });
+  });
+}
 
 var _default = Supplier;
 exports["default"] = _default;

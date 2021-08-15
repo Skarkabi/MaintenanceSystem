@@ -58,6 +58,14 @@ const mappings = {
         type: Sequelize.DataTypes.DATE,
         allowNull: false,
     },
+    total_price: {
+        type: Sequelize.DataTypes.DOUBLE,
+        allowNull: false,
+    },
+    price_per_litter: {
+        type: Sequelize.DataTypes.DOUBLE,
+        allowNull: false,
+    }
 };
 
 /**
@@ -119,6 +127,16 @@ const Grease = sequelize.define('grease_stocks', mappings, {
         name: 'grease_quotationNumber_index',
         method: 'BTREE',
         fields: ['quotationNumber']
+    },
+    {
+        name: 'grease_total_price_index',
+        method: 'BTREE',
+        fields: ['total_price']
+    },
+    {
+        name: 'grease_price_per_litter_index',
+        method: 'BTREE',
+        fields: ['price_per_litter']
     }
   ],
 });

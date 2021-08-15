@@ -1,0 +1,32 @@
+{{#if msgType.success_msg}}
+{{!-- Flash Messages --}}
+<div class="col-md-12 top-flash-message">
+	<div class="alert alert-success alert-dismissible" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<small>{{ msgType.success_msg}}</small>
+	</div>
+</div>
+{{/if}}
+
+{{#if msgType.error_msg}}
+{{!-- Flash Messages --}}
+<div class="col-md-12 top-flash-message">
+	<div class="alert alert-danger alert-dismissible" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<small>{{ msgType.error_msg}}</small>
+	</div>
+</div>
+{{/if}}
+
+{{#if msgType.validation_error_msg}}
+{{!-- Flash Messages --}}
+<div class="col-md-12 top-flash-message">
+	<div class="alert alert-danger alert-dismissible" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		{{#each validation_error_msg}}
+		<div><small>{{this.msg}}</small></div>
+		{{/each}}
+	</div>
+</div>
+{{/if}}
+</br>

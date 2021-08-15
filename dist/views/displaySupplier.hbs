@@ -56,40 +56,51 @@
                         <th scope="col">Quantity</th>
                         <th scope="col">Single Cost</th>
                         <th scope="col">Total Quantity</th>
-                        <th scope="col">View Quotation</th>
+                        <th scope="col">Quotation Number</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {{#each consumables}}
                         <tr>
-                    <td><a href="/consumables/{{lowerCase this.category}}"> {{counter @index}}</a></td>
-                    <td><a href="/consumables/{{lowerCase this.category}}">{{this.category}}</a></td>
-                    <td><a href="/consumables/{{lowerCase this.category}}">{{this.quantity}} (
-                            {{#if (isdefined "Battery" this.category)}}
-                                Pieces
-                            {{/if}}
-                            {{#if (isdefined "Brake" this.category)}}
-                                Boxes
-                            {{/if}}
-                            {{#if (isdefined "Filter" this.category)}}
-                                Pieces
-                            {{/if}}
-                            {{#if (isdefined "Oil" this.category)}}
-                                Liters
-                            {{/if}}
-                            {{#if (isdefined "Grease" this.category)}}
-                                Liters
-                            {{/if}}
-                    )
-                        </a></td>
-                        <td><a>{{this.singleCost}}</a></td>
-                        <td><a>{{this.totalCost}}</a></td>
-                    <td class = "table-actions">
-                        <a href="/users/update/{{this._id}}" id="updateUser-{{this._id}}"><i class="far fa-edit"></i> Update </a>
-                        <a href="/users/delete/{{this._id}}" id="deleteUserId-{{this._id}}" class="delete" data-confirm="Are you sure to delete {{this.firstName}} {{this.lastName}}?"><i class="fas fa-trash"></i> Delete</a>
-                    </td>
-                </tr>
-            {{/each}}
+                            <td><a href="/consumables/{{lowerCase this.category}}"> {{counter @index}}</a></td>
+                            <td><a href="/consumables/{{lowerCase this.category}}">{{this.category}}</a></td>
+                            <td><a href="/consumables/{{lowerCase this.category}}">{{this.quantity}} (
+                                {{#if (isdefined "Battery" this.category)}}
+                                    Pieces
+                                {{/if}}
+                                {{#if (isdefined "Brake" this.category)}}
+                                    Boxes
+                                {{/if}}
+                                {{#if (isdefined "Filter" this.category)}}
+                                    Pieces
+                                {{/if}}
+                                {{#if (isdefined "Oil" this.category)}}
+                                    Liters
+                                {{/if}}
+                                {{#if (isdefined "Grease" this.category)}}
+                                    Liters
+                                {{/if}}
+                            )
+                            </a></td>
+                            <td><a>{{this.singleCost}}</a></td>
+                            <td><a>{{this.totalCost}}</a></td>
+                            <td><a>{{this.quotationNum}}</a></td>
+                            <td class = "table-actions">
+                                {{#if (isdefined "N/A" this.quotationNum)}}
+                                    <a href="/suppliers/unavailable" style="padding-right: 25px;"><i class="fas fa-download"></i>Downlaod</a>
+                                {{else}}
+                                    <a href="/consumables/{{this.category}}/download/{{this.quotationNum}}"  style="padding-right: 25px;"><i class="fas fa-download"></i>Downlaod</a>
+                                {{/if}}
+                                {{#if (isdefined "N/A" this.quotationNum)}}
+                                    <a href="/suppliers/unavailable"><i class="fas fa-external-link-alt"></i>View</a>
+                                {{else}}
+                                    <a href="" onclick="openPdf('{{this.category}}', '{{this.quotationNum}}')"><i class="fas fa-external-link-alt"></i>View</a>
+                                {{/if}}
+                                
+                            </td>
+                        </tr>
+                    {{/each}}
                 </tbody>
             </table>
         </div>
@@ -101,5 +112,11 @@
             return "fas fa-truck-pickup"
         }
         console.log("In here");
+    }
+    function openPdf(category, quotationNum){
+        if(quotationNum !== "N/A"){
+            window.open(`/consumables/${category}/view/${quotationNum}`)
+        }
+
     }
 </script>

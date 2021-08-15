@@ -266,5 +266,29 @@ Consumable.getConsumableByCategory = category => Consumable.findOne({
 
 });
 
+Consumable.getBattery = () => {
+  return new Bluebird((resolve, reject) => {
+    resolve(Battery);
+  })
+  
+}
+
+Consumable.getBrake = () => {
+  return new Brake;
+}
+
+Consumable.getFilter = () => {
+  return new Filter;
+}
+
+Consumable.getOil = () => {
+  return new Oil;
+}
+
+Consumable.getGrease = () => {
+  return new Grease;
+}
+
+
 
 export default Consumable;

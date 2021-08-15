@@ -38,6 +38,10 @@ const mappings = {
       type: Sequelize.DataTypes.DOUBLE,
       allowNull: false
     },
+    total_price: {
+      type: Sequelize.DataTypes.DOUBLE,
+      allowNull: false,
+    },
     supplierId:{
       type: Sequelize.DataTypes.INTEGER,
       allowNull: false
@@ -93,6 +97,11 @@ const Oil = sequelize.define('oil_stocks', mappings, {
       name: 'oil_oilPrice_index',
       method: 'BTREE',
       fields: ['oilPrice']
+    },
+    {
+      name: 'grease_total_price_index',
+      method: 'BTREE',
+      fields: ['total_price']
     },
     {
       name: 'oil_createdAt_index',

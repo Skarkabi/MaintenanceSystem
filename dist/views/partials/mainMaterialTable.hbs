@@ -1,9 +1,9 @@
 <div class="col-md-12">
     <div class="table-buttons" id="table-buttons">
-        <button class="btn btn-outline-dark" id="create-new" onclick="test()"><i class="fas fa-plus"></i>Add Material</button>
+        <button type="button" name="create-new" class="btn btn-outline-dark" id="create-new" onclick="test()"><i class="fas fa-plus"></i>Add Material</button>
     </div>
 
-<table id="filterable-table" class="table table-bordered table-striped">
+<table id="material-filterable-table" class="table table-bordered table-striped">
     <thead>
         <tr>
             <th scope="col">S.N.</th>
@@ -28,3 +28,11 @@
     </tbody>
 </table>
 </div>
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+        <div id="mContent"></div>
+
+  </div>

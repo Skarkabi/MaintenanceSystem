@@ -61,12 +61,8 @@ MaintenanceEmployees.getEmployees = function (reqNumber) {
     MaintenanceEmployees.getAllEmployeeId(reqNumber).then(function (employees) {
       var employeeMap = [];
       employees.map(function (e) {
-        console.log(1);
-        console.log(e.employee_id);
         employeeMap.push(e.employee_id);
       });
-      console.log(2);
-      console.log(employeeMap);
 
       _User["default"].getAllUsersById(employeeMap).then(function (found) {
         resolve(found);

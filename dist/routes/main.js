@@ -65,13 +65,34 @@ router.get('/:req', function (req, res, next) {
     _MaintenanceOrder["default"].getByReq(req.params.req).then(function (found) {
       res.render('displayMain', {
         title: "Maintanence Request # ".concat(found.req),
-        jumbotronDescription: "Reques # ".concat(found.req, " for division ").concat(found.division),
+        jumbotronDescription: "Request # ".concat(found.req, " for division ").concat(found.division),
         existingMain: found,
         mainConsumable: found.consumable_data,
         mainEmployee: found.employee_data,
-        consumableTable: consumablesToSelect
+        consumableTable: consumablesToSelect,
+        msgType: req.flash()
       });
     });
+  });
+});
+router.post('/update/:req', function (req, res, next) {
+  console.log("In Here");
+
+  _MaintenanceOrder["default"].completeOrder(req.params.req).then(function (output) {
+    req.flash('success_msg', output);
+    res.redirect("back");
+  })["catch"](function (err) {
+    req.flash('error_msg', err);
+    res.redirect("back");
+  });
+});
+router.post('/update/material_request/:req', function (req, res, next) {
+  _MaintenanceOrder["default"].updateMaterialRequest(req.params.req, req.body.materialRequest, req.body.discription, req.body.remark).then(function (output) {
+    req.flash('success_msg', output);
+    res.redirect("back");
+  })["catch"](function (err) {
+    req.flash('error_msg', err);
+    res.redirect("back");
   });
 });
 var _default = router;

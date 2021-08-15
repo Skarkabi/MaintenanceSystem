@@ -33,9 +33,7 @@ var mappings = {
     allowNull: false
   },
   status: {
-    type: _sequelize["default"].DataTypes.STRING,
-    defaultValue: "Not Started",
-    allowNull: false
+    type: _sequelize["default"].DataTypes.VIRTUAL(_sequelize["default"].DataTypes.STRING, ['status'])
   },
   division: {
     type: _sequelize["default"].DataTypes.STRING,
@@ -44,6 +42,10 @@ var mappings = {
   plate: {
     type: _sequelize["default"].DataTypes.STRING,
     allowNull: false
+  },
+  material_request: {
+    type: _sequelize["default"].DataTypes.STRING,
+    allowNull: true
   },
   vehicle_data: {
     type: _sequelize["default"].DataTypes.VIRTUAL(_sequelize["default"].DataTypes.JSON, ['vehicle_data'])
@@ -77,6 +79,10 @@ var mappings = {
   updatedAt: {
     type: _sequelize["default"].DataTypes.DATE,
     allowNull: false
+  },
+  completedAt: {
+    type: _sequelize["default"].DataTypes.DATE,
+    allowNull: false
   }
 };
 
@@ -90,10 +96,6 @@ var MaintenanceOrder = _mySQLDB["default"].define('maintenance_orders', mappings
     method: 'BTREE',
     fields: ['req']
   }, {
-    name: 'maintenance_order_status_index',
-    method: 'BTREE',
-    fields: ['status']
-  }, {
     name: 'maintenance_order_division_index',
     method: 'BTREE',
     fields: ['division']
@@ -105,6 +107,10 @@ var MaintenanceOrder = _mySQLDB["default"].define('maintenance_orders', mappings
     name: 'maintenance_order_discription_index',
     method: 'BTREE',
     fields: ['discription']
+  }, {
+    name: 'maintenance_order_material_request_index',
+    method: 'BTREE',
+    fields: ['material_request']
   }, {
     name: 'maintenance_order_remarks_index',
     method: 'BTREE',
@@ -125,13 +131,21 @@ var MaintenanceOrder = _mySQLDB["default"].define('maintenance_orders', mappings
     name: 'consumable_updatedAt_index',
     method: 'BTREE',
     fields: ['updatedAt']
+  }, {
+    name: 'consumable_completedAt_index',
+    method: 'BTREE',
+    fields: ['completedAt']
   }]
 });
 
 MaintenanceOrder.getOrders = function () {
   return new _bluebird["default"](function (resolve, reject) {
     MaintenanceOrder.findAll().then(function (orders) {
+      orders.map(function (o) {
+        setStatus(o);
+      });
       getVehicle(orders).then(function () {
+        console.log(getCurrentDate());
         resolve(orders);
       });
     })["catch"](function (err) {
@@ -150,6 +164,7 @@ MaintenanceOrder.getByReq = function (req) {
       getSingleVehicle(found).then(function () {
         getConsumables(found).then(function () {
           getEmployees(found).then(function () {
+            setStatus(found);
             resolve(found);
           });
         });
@@ -157,6 +172,58 @@ MaintenanceOrder.getByReq = function (req) {
     });
   });
 };
+
+MaintenanceOrder.completeOrder = function (reqNumber) {
+  return new _bluebird["default"](function (resolve, reject) {
+    MaintenanceOrder.update({
+      completedAt: getCurrentDate()
+    }, {
+      where: {
+        req: reqNumber
+      }
+    }).then(function () {
+      console.log("updated");
+      resolve("Order Has Been Set to Completed");
+    })["catch"](function (err) {
+      reject("Order Status Could Not Be Set " + err);
+    });
+  });
+};
+
+MaintenanceOrder.updateMaterialRequest = function (reqNumber, materialRequest, discription, remark) {
+  return new _bluebird["default"](function (resolve, reject) {
+    MaintenanceOrder.update({
+      material_request: materialRequest,
+      discription: discription,
+      remarks: remark
+    }, {
+      where: {
+        req: reqNumber
+      }
+    }).then(function () {
+      resolve("Material Request Number ".concat(materialRequest, " Successfully Updated"));
+    })["catch"](function (err) {
+      reject("Material Request Number Could not be Updated " + err);
+    });
+  });
+};
+
+function setStatus(o) {
+  if (o.material_request === null || o.material_request === "") {
+    o.setDataValue('status', "Not Started");
+  } else if (o.completedAt) {
+    o.setDataValue('status', "Completed");
+  } else {
+    getConsumables(o).then(function () {
+      if (o.material_request.substring(0, 3) === "MCM" && o.consumable_data.length === 0) {
+        o.setDataValue('status', "Pending Material");
+        console.log(o.material_request.substring(0, 3));
+      } else if (o.consumable_data.length !== 0 || o.material_request === "N/A") {
+        o.setDataValue('status', "In Progress");
+      } else {}
+    });
+  }
+}
 
 function getConsumables(order) {
   return new _bluebird["default"](function (resolve, reject) {
@@ -192,6 +259,12 @@ function getVehicle(orders) {
       reject(err);
     });
   });
+}
+
+function getCurrentDate() {
+  var d = new Date();
+  var date = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
+  return require('moment')(date).format('YYYY-MM-DD');
 }
 
 function getSingleVehicle(order) {

@@ -43,18 +43,44 @@ router.get('/:req', (req, res, next) => {
         var c2 = {};
         consumables.push(c1);
         employees[0] = e1;
+
         MaintenanceOrder.getByReq(req.params.req).then(found => {
             res.render('displayMain', {
                 title: (`Maintanence Request # ${found.req}`),
-                jumbotronDescription: `Reques # ${found.req} for division ${found.division}`,
+                jumbotronDescription: `Request # ${found.req} for division ${found.division}`,
                 existingMain: found,
                 mainConsumable: found.consumable_data,
                 mainEmployee: found.employee_data,
                 consumableTable: consumablesToSelect,
+                msgType: req.flash()
             });
         })
     });
 
 });
+
+router.post('/update/:req', (req, res,next) => {
+
+    console.log("In Here");
+    MaintenanceOrder.completeOrder(req.params.req).then(output => {
+        req.flash('success_msg', output);
+        res.redirect(`back`);
+        
+    }).catch(err => {
+        req.flash('error_msg', err);
+        res.redirect(`back`);
+    });
+});
+
+router.post('/update/material_request/:req', (req, res,next) => {
+    MaintenanceOrder.updateMaterialRequest(req.params.req, req.body.materialRequest, req.body.discription, req.body.remark).then(output => {
+        req.flash('success_msg', output);
+        res.redirect(`back`);
+        
+    }).catch(err => {
+        req.flash('error_msg', err);
+        res.redirect(`back`);
+    });
+})
 
 export default router;

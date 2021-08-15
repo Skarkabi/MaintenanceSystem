@@ -53,13 +53,9 @@ MaintenanceEmployees.getEmployees = reqNumber => {
         MaintenanceEmployees.getAllEmployeeId(reqNumber).then(employees => {
             var employeeMap = [];
             employees.map(e =>{
-                console.log(1)
-                console.log(e.employee_id);
                 employeeMap.push(e.employee_id);
               
             });
-            console.log(2);
-            console.log(employeeMap);
             User.getAllUsersById(employeeMap).then(found => {
                 
                 resolve(found);

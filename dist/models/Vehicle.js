@@ -15,6 +15,8 @@ var _sequelize = _interopRequireDefault(require("sequelize"));
 
 var _mySQLDB = _interopRequireDefault(require("../mySQLDB"));
 
+var _MaintenanceOrder = _interopRequireDefault(require("./MaintenanceOrder"));
+
 /**
  * Declaring the datatypes used within the Vehicle class
  */
@@ -60,6 +62,12 @@ var mappings = {
   oilType: {
     type: _sequelize["default"].DataTypes.STRING,
     allowNull: false
+  },
+  work_orders: {
+    type: _sequelize["default"].DataTypes.VIRTUAL(_sequelize["default"].DataTypes.JSON, ['work_orders'])
+  },
+  work_orders_cost: {
+    type: _sequelize["default"].DataTypes.VIRTUAL(_sequelize["default"].DataTypes.DOUBLE, ['work_orders_cost'])
   },
   createdAt: {
     type: _sequelize["default"].DataTypes.DATE,
@@ -174,12 +182,33 @@ Vehicle.addVehicle = function (createVehicled) {
 
 
 Vehicle.getVehicleByPlate = function (plate) {
-  return Vehicle.findOne({
-    where: {
-      plate: plate
-    }
+  return new _bluebird["default"](function (resolve, reject) {
+    Vehicle.findOne({
+      where: {
+        plate: plate
+      }
+    }).then(function (found) {
+      _MaintenanceOrder["default"].getOrdersByPlate(plate).then(function (orders) {
+        found.setDataValue('work_orders', orders);
+        found.setDataValue('work_orders_cost', maintenanceCost(orders));
+        resolve(found);
+      })["catch"](function (err) {
+        reject(err);
+      });
+    })["catch"](function (err) {
+      reject(err);
+    });
   });
 };
+
+function maintenanceCost(orders) {
+  var sum = 0;
+  orders.map(function (o) {
+    sum = sum + o.total_cost;
+  });
+  console.log(sum);
+  return sum;
+}
 /**
  * Function to delete vehicle from database by its plate and chassis number
  * @param {*} info 

@@ -139,7 +139,6 @@ MaintenanceOrder.getOrders = () => {
                 setStatus(o);
             })
            getVehicle(orders).then(() => {
-               console.log(getCurrentDate());
                resolve(orders);
            });
             
@@ -148,6 +147,27 @@ MaintenanceOrder.getOrders = () => {
         })
     })
 } 
+
+MaintenanceOrder.getOrdersByPlate = plate => {
+    return new Bluebird((resolve, reject) => {
+        MaintenanceOrder.findAll({
+            where: {
+                plate: plate
+            }
+        }).then(orders => {
+            orders.map(o => {
+                o.setDataValue('createdAt', getDateWithoutTime(o.createdAt));
+                setStatus(o);
+            })
+            resolve(orders);
+            
+        }).catch(err => {
+            reject(err);
+        })
+    })
+} 
+
+
 
 MaintenanceOrder.getByReq = req => {
     return new Bluebird((resolve, reject) => {
@@ -203,23 +223,27 @@ MaintenanceOrder.updateMaterialRequest = (reqNumber, materialRequest, discriptio
 
 }
 
-
 function setStatus(o){
+    console.log("ORDERS");
     if(o.material_request === null || o.material_request === ""){
         o.setDataValue('status', "Not Started");
-
+        console.log(1);
     }else if(o.completedAt){
         o.setDataValue('status', "Completed");
+        console.log(2);
     }else{
+        console.log(3);
         getConsumables(o).then(() => {
             if(o.material_request.substring(0,3) === "MCM" && o.consumable_data.length === 0){
                 o.setDataValue('status', "Pending Material")
-            
+                console.log(4);
             console.log(o.material_request.substring(0,3));
             }else if(o.consumable_data.length !== 0 || o.material_request === "N/A"){
                 o.setDataValue('status', "In Progress")
-            }else{
+                console.log(5);
                 
+            }else{
+                console.log(6);
             }
                
         })

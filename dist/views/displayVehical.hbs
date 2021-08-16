@@ -77,34 +77,40 @@
     <div class="section-wrapper">
         <div class="section-title">
             <h4><i class="fas fa-cogs"></i>Job Orders</h4>
+            <p>Total Maintenance Cost: {{existingVehicle.work_orders_cost}} AED</p>
             <hr class="my-3">
         </div>
         <div class="section-content">
             <table id="filterable-table" class="table table-bordered table-striped">
                 <thead>
                     <tr>
+                        <th scope="col">#</th>
                         <th scope="col">Date Created</th>
-                        <th scope="col">Job #</th>
-                        <th scope="col">Job Type</th>
-                        <th scope="col">Assigned Employee</th> 
-                        <th scope="col">Description</th>
+                        <th scope="col">Req #</th>
+                        <th scope="col">Division</th>
+                        <th scope="col">Current Job Cost</th>
                         <th scope="col">Status</th>
-                        {{#if showPii}}
-                        <th scope="col">Actions</th>
-                        {{/if}}
                     </tr>
                 </thead>
                 <tbody>
-                    {{#each courses}}
+                    {{#each existingVehicle.work_orders}}
                     <tr>
-                        <td><a href="/courses/course/{{this._id}}" id="courseCode-{{this.code}}">{{this.code}}</a></td>
-                        <td><a href="/courses/course/{{this._id}}">{{this.section}}</a></td>
-                        <td><a href="/courses/course/{{this._id}}">{{this.instructorFullName}}</a></td>
-                        <td><a href="/courses/course/{{this._id}}">{{this.termName}}</a></td>
-                        {{#if ../showPii}}
-                        <td class="table-actions">
-                            <a href="/gradeBooks/{{this._id}}/{{../existingUser._id}}" id="viewGrade-{{this.code}}"><i class="far fa-hand-spock"></i> View Grades</a>
-                        </td>
+                        <td><a href="/maintanence/{{this.req}}">{{counter @index}}</a></td>
+                        <td><a href="/maintanence/{{this.req}}">{{this.createdAt}}</a></td>
+                        <td><a href="/maintanence/{{this.req}}">{{this.req}}</a></td>
+                        <td><a href="/maintanence/{{this.req}}">{{this.division}}</a></td>
+                        <td><a href="/maintanence/{{this.req}}">{{this.total_cost}}</a></td>
+                        {{#if (isdefined this.status "Not Started")}}
+                            <td bgcolor="red" style="color:white; font-weight:bold">NOT STARTED</td>
+                        {{/if}}
+                        {{#if (isdefined this.status "In Progress")}}
+                            <td bgcolor="#7EC8E3" style="color:black; font-weight:bold">IN PROGRESS</td>
+                        {{/if}}
+                        {{#if (isdefined this.status "Pending Material")}}
+                            <td bgcolor="#FFC55C" style="color:black; font-weight:bold">PENDING MATERIAL</td>
+                        {{/if}}
+                        {{#if (isdefined this.status "Completed")}}
+                            <td bgcolor="#8AFF8A" style="color:black; font-weight:bold">COMPLETED</td>
                         {{/if}}
                     </tr>
                     {{/each}}

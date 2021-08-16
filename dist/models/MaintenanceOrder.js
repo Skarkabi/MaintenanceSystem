@@ -145,9 +145,26 @@ MaintenanceOrder.getOrders = function () {
         setStatus(o);
       });
       getVehicle(orders).then(function () {
-        console.log(getCurrentDate());
         resolve(orders);
       });
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
+};
+
+MaintenanceOrder.getOrdersByPlate = function (plate) {
+  return new _bluebird["default"](function (resolve, reject) {
+    MaintenanceOrder.findAll({
+      where: {
+        plate: plate
+      }
+    }).then(function (orders) {
+      orders.map(function (o) {
+        o.setDataValue('createdAt', getDateWithoutTime(o.createdAt));
+        setStatus(o);
+      });
+      resolve(orders);
     })["catch"](function (err) {
       reject(err);
     });
@@ -209,18 +226,27 @@ MaintenanceOrder.updateMaterialRequest = function (reqNumber, materialRequest, d
 };
 
 function setStatus(o) {
+  console.log("ORDERS");
+
   if (o.material_request === null || o.material_request === "") {
     o.setDataValue('status', "Not Started");
+    console.log(1);
   } else if (o.completedAt) {
     o.setDataValue('status', "Completed");
+    console.log(2);
   } else {
+    console.log(3);
     getConsumables(o).then(function () {
       if (o.material_request.substring(0, 3) === "MCM" && o.consumable_data.length === 0) {
         o.setDataValue('status', "Pending Material");
+        console.log(4);
         console.log(o.material_request.substring(0, 3));
       } else if (o.consumable_data.length !== 0 || o.material_request === "N/A") {
         o.setDataValue('status', "In Progress");
-      } else {}
+        console.log(5);
+      } else {
+        console.log(6);
+      }
     });
   }
 }

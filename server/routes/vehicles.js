@@ -50,7 +50,6 @@ router.get('/display-vehicle/:id', (req, res, next) => {
                 iconType = foundVehicle.category.toLowerCase();
 
             }
-            
             res.render('displayVehical', {
                 title: (`${foundVehicle.brand} ${foundVehicle.model} Plate # ${foundVehicle.plate}`),
                 jumbotronDescription: `Information for ${foundVehicle.brand} ${foundVehicle.model} Plate # ${foundVehicle.plate}.`,

@@ -3,6 +3,7 @@ import Bluebird from 'bluebird';
 import Sequelize from 'sequelize';
 
 import sequelize from '../mySQLDB';
+import MaintenanceOrder from './MaintenanceOrder';
 
 /**
  * Declaring the datatypes used within the Vehicle class
@@ -49,6 +50,12 @@ const mappings = {
   oilType: {
     type: Sequelize.DataTypes.STRING,
     allowNull: false, 
+  },
+  work_orders: {
+    type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.JSON, ['work_orders']),
+  },
+  work_orders_cost: {
+    type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.DOUBLE, ['work_orders_cost']),
   },
   createdAt: {
     type: Sequelize.DataTypes.DATE,
@@ -183,9 +190,36 @@ Vehicle.addVehicle = (createVehicled) => {
  * @param {*} plate 
  * @returns found vehicle
  */
-Vehicle.getVehicleByPlate = plate => Vehicle.findOne({
-  where:{plate}
-});
+Vehicle.getVehicleByPlate = plate => {
+  return new Bluebird((resolve, reject) => {
+    Vehicle.findOne({
+      where: {
+        plate: plate
+      }
+    }).then(found => {
+        MaintenanceOrder.getOrdersByPlate(plate).then(orders => {
+          found.setDataValue('work_orders', orders);
+          found.setDataValue('work_orders_cost', maintenanceCost(orders));
+          resolve(found);
+        }).catch(err => {
+          reject (err);
+        })
+        
+    }).catch(err => {
+      reject(err);
+    })
+  })
+}
+
+function maintenanceCost(orders){
+  var sum = 0;
+  orders.map(o => {
+      sum = sum + o.total_cost
+  });
+  console.log(sum);
+  return sum;
+}
+  
 
 /**
  * Function to delete vehicle from database by its plate and chassis number

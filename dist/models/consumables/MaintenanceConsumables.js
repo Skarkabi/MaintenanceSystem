@@ -177,6 +177,68 @@ MaintenanceConsumables.getAllConsumables = function (reqNumber) {
     });
   });
 };
+
+MaintenanceConsumables.useConsumable = function (conusmableId, consumableCategory, reqNumber, quantity, action) {
+  return new _bluebird["default"](function (resolve, reject) {
+    var newConsumable = {
+      id: conusmableId,
+      category: consumableCategory,
+      quantity: quantity
+    };
+    var newMaintenanceConsumable = {
+      consumable_id: conusmableId,
+      consumable_type: consumableCategory,
+      maintenance_req: reqNumber,
+      consumable_quantity: quantity
+    };
+
+    _Consumables["default"].updateConsumable(newConsumable, "delet").then(function () {
+      MaintenanceConsumables.findOne({
+        where: {
+          consumable_id: conusmableId,
+          consumable_type: consumableCategory,
+          maintenance_req: reqNumber
+        }
+      }).then(function (found) {
+        var quant;
+
+        if (found !== null) {
+          if (action === "add") {
+            quant = quantity + found.consumable_quantity;
+            console.log(quant);
+          } else if (action === "delet") {
+            quant = found.consumable_quantity - quantity;
+          }
+
+          MaintenanceConsumables.update({
+            consumable_quantity: quant
+          }, {
+            where: {
+              consumable_id: conusmableId,
+              consumable_type: consumableCategory,
+              maintenance_req: reqNumber
+            }
+          }).then(function () {
+            resolve("Consumable used for Work Order");
+          })["catch"](function (err) {
+            console.log("this errpr");
+            reject(err);
+          });
+        } else {
+          MaintenanceConsumables.create(newMaintenanceConsumable).then(function () {
+            resolve("Consumable used for Work Order");
+          })["catch"](function (err) {
+            reject(err);
+          });
+        }
+      })["catch"](function (err) {
+        reject(err);
+      });
+    })["catch"](function (err) {
+      reject(err);
+    });
+  });
+};
 /** 
 function logMapElements(value, key, map) {
     console.log(`m[${key}] = ${value}`);

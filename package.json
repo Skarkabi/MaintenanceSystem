@@ -28,7 +28,6 @@
     "gherkin": "^9.0.0",
     "handlebars": "^4.7.6",
     "handlebars-helpers": "^0.10.0",
-    "hapi": "^18.1.0",
     "http-errors": "^1.6.3",
     "jquery": "^3.6.0",
     "jquery-cropper": "^1.0.1",

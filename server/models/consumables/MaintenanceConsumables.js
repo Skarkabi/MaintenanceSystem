@@ -114,6 +114,75 @@ MaintenanceConsumables.getAllConsumables = reqNumber => {
     })
 }
 
+MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNumber, quantity, action) => {
+    return new Bluebird((resolve,reject) => {
+        const newConsumable = {
+            id: conusmableId,
+            category: consumableCategory,
+            quantity: quantity
+        }
+
+        const newMaintenanceConsumable = {
+            consumable_id: conusmableId,
+            consumable_type: consumableCategory,
+            maintenance_req: reqNumber,
+            consumable_quantity: quantity
+        }
+
+        Consumable.updateConsumable(newConsumable, "delet").then(() => {
+            MaintenanceConsumables.findOne({
+                where: {
+                    consumable_id: conusmableId,
+                    consumable_type: consumableCategory,
+                    maintenance_req: reqNumber
+                }
+            }).then(found => {
+                var quant;
+                if(found !== null){
+                    if(action === "add"){
+                        quant = quantity + found.consumable_quantity;
+                        console.log(quant);
+                    }else if(action === "delet"){
+                        quant = found.consumable_quantity - quantity;
+                    }
+                    MaintenanceConsumables.update({consumable_quantity: quant}, {
+                        where: {
+                            consumable_id: conusmableId,
+                            consumable_type: consumableCategory,
+                            maintenance_req: reqNumber
+                        }
+                    }).then(() => {
+                        resolve("Consumable used for Work Order");
+        
+                    }).catch(err => {
+                        console.log("this errpr");
+                        reject(err);
+    
+                    })
+                }else{
+                    MaintenanceConsumables.create(newMaintenanceConsumable).then(() => {
+                        resolve("Consumable used for Work Order");
+                    
+                    }).catch(err => {
+                        reject(err);
+                        
+                    })
+                    
+                }
+                
+            }).catch(err => {
+                reject(err);
+
+            })
+
+        }).catch(err => {
+            reject(err);
+
+        })
+       
+    })
+
+}
 /** 
 function logMapElements(value, key, map) {
     console.log(`m[${key}] = ${value}`);

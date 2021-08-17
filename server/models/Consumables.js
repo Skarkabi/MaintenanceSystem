@@ -95,6 +95,7 @@ Consumable.updateConsumable = (createConsumable, action) => {
             var quant = isCategory.quantity - newConsumable.quantity;
           }
           
+          var model = getConsumableModel(newConsumable.category.toLowerCase());
           //Updating the consumable stock value
           Consumable.update({quantity: quant}, {
             where: {
@@ -102,7 +103,30 @@ Consumable.updateConsumable = (createConsumable, action) => {
             }
 
           }).then(() => {
-            resolve("Consumable updated");
+              var consumableToUpdate;
+              if(createConsumable.category === "Grease" || createConsumable.category === "Oil"){
+                consumableToUpdate = 
+                {
+                  id: createConsumable.id,
+                  volume: newConsumable.quantity
+                }
+            
+              }else{
+                consumableToUpdate = 
+                {
+                  id: createConsumable.id,
+                  quantity: newConsumable.quantity
+                }
+              }
+
+              console.log("AAAAAAAAAAAAAAAAAAAAAA");
+              console.log(consumableToUpdate);
+              model.updateConsumable(consumableToUpdate, action).then(output => {
+                resolve(output);
+              }).catch(err => {
+                reject (err);
+              })
+            
 
           }).catch(err => {
             reject(err);
@@ -289,6 +313,24 @@ Consumable.getGrease = () => {
   return new Grease;
 }
 
+function getConsumableModel(consumableModel) {
+  if (consumableModel === "brake"){
+      return Brake;
 
+  }else if(consumableModel === "filter"){
+      return Filter;
+
+  }else if(consumableModel === "grease"){
+      return Grease;
+
+  }else if(consumableModel === "oil"){
+      return Oil;
+
+  }else if(consumableModel === "battery"){
+      return Battery;
+
+  }
+
+};
 
 export default Consumable;

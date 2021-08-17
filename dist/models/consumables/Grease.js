@@ -152,7 +152,7 @@ var Grease = _mySQLDB["default"].define('grease_stocks', mappings, {
  */
 
 
-Grease.updateGrease = function (newGrease, action) {
+Grease.updateConsumable = function (newGrease, action) {
   return new _bluebird["default"](function (resolve, reject) {
     //Creating the new Consumable value to be updated in the consumable databse
     var newConsumable = {
@@ -177,11 +177,7 @@ Grease.updateGrease = function (newGrease, action) {
 
       if (quant === 0) {
         foundGrease.destroy().then(function () {
-          _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
-            resolve(newGrease.volume + " Liters Of Grease Sucessfully Deleted from Existing Stock!");
-          })["catch"](function (err) {
-            reject("An Error Occured Grease Could not be Deleted " + err);
-          });
+          resolve(newGrease.volume + " Liters Of Grease Sucessfully Deleted from Existing Stock!");
         })["catch"](function (err) {
           reject("An Error Occured Grease Could not be Deleted " + err);
         });
@@ -196,12 +192,11 @@ Grease.updateGrease = function (newGrease, action) {
             id: newGrease.id
           }
         }).then(function () {
-          //Updating the value from the consumables database
-          _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
-            resolve(newGrease.volume + " Liters of Grease Sucessfully Added to Existing Stock!");
-          })["catch"](function (err) {
-            reject("An Error Occured Grease Could not be Added " + err);
-          });
+          if (action === "delet") {
+            resolve(newGrease.volume + " Litters of Grease Sucessfully Deleted from Existing Stock!");
+          } else if (action === "add") {
+            resolve(newGrease.volume + " Litters of Grease Sucessfully Added to Existing Stock!");
+          }
         })["catch"](function (err) {
           reject("An Error Occured Grease Could not be Added " + err);
         });

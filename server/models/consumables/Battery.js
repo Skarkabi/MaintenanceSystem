@@ -140,7 +140,7 @@ const Battery = sequelize.define('battery_stocks', mappings, {
  * @param {*} action 
  * @returns 
  */
-Battery.updateBattery = (newBattery, action) => {
+Battery.updateConsumable = (newBattery, action) => {
     return new Bluebird((resolve, reject) => {
         //Creating the new Consumable value to be updated in the consumable databse
         const newConsumable = {
@@ -186,18 +186,11 @@ Battery.updateBattery = (newBattery, action) => {
     
                 }).then(() =>{
                     //Updating the value from the consumables database
-                    Consumable.updateConsumable(newConsumable, action).then(() =>{
                         if(action === "delet"){
                             resolve(newBattery.quantity + " Batteries Sucessfully Deleted from Existing Stock!");
                         }else if(action === "add"){
                             resolve(newBattery.quantity + " Batteries Sucessfully Added to Existing Stock!");
                         }
-                        
-    
-                    }).catch(err =>{
-                        reject("An Error Occured Batteries Could not be " + action + "ed " + err);
-    
-                    });
     
                 }).catch(err => {
                     reject("An Error Occured Batteries Could not be " + action + "ed " + err);

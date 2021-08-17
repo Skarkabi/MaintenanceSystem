@@ -162,7 +162,7 @@ const Brake = sequelize.define('brake_stocks', mappings, {
  * @param {*} action 
  * @returns msg to be flashed to user
  */
-Brake.updateBrake = (newBrake, action) => {
+Brake.updateConsumable = (newBrake, action) => {
     return new Bluebird((resolve, reject) => {
         //Creating the new Consumable value to be updated in the consumable databse
         const newConsumable = {
@@ -209,17 +209,12 @@ Brake.updateBrake = (newBrake, action) => {
     
                 }).then(() => {
                     //Updating the value from the consumables database
-                    Consumable.updateConsumable(newConsumable,action).then(() => {
                         if(action === "delet"){
                             resolve(newBrake.quantity + " Brakes Sucessfully Deleted from Existing Stock!");
                         }else if(action === "add"){
                             resolve(newBrake.quantity + " Brakes Sucessfully Added to Existing Stock!");
                         }
-    
-                    }).catch(err => {
-                        reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
-    
-                    });
+
                 }).catch(err => {
                     reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
                         

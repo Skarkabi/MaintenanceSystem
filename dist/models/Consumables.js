@@ -104,8 +104,9 @@ Consumable.updateConsumable = function (createConsumable, action) {
           var quant = newConsumable.quantity + isCategory.quantity;
         } else if (action === "delet") {
           var quant = isCategory.quantity - newConsumable.quantity;
-        } //Updating the consumable stock value
+        }
 
+        var model = getConsumableModel(newConsumable.category.toLowerCase()); //Updating the consumable stock value
 
         Consumable.update({
           quantity: quant
@@ -114,7 +115,27 @@ Consumable.updateConsumable = function (createConsumable, action) {
             category: newConsumable.category
           }
         }).then(function () {
-          resolve("Consumable updated");
+          var consumableToUpdate;
+
+          if (createConsumable.category === "Grease" || createConsumable.category === "Oil") {
+            consumableToUpdate = {
+              id: createConsumable.id,
+              volume: newConsumable.quantity
+            };
+          } else {
+            consumableToUpdate = {
+              id: createConsumable.id,
+              quantity: newConsumable.quantity
+            };
+          }
+
+          console.log("AAAAAAAAAAAAAAAAAAAAAA");
+          console.log(consumableToUpdate);
+          model.updateConsumable(consumableToUpdate, action).then(function (output) {
+            resolve(output);
+          })["catch"](function (err) {
+            reject(err);
+          });
         })["catch"](function (err) {
           reject(err);
         }); //If Consumable doesn't exist create a new category in database
@@ -276,5 +297,20 @@ Consumable.getGrease = function () {
   return new _Grease["default"]();
 };
 
+function getConsumableModel(consumableModel) {
+  if (consumableModel === "brake") {
+    return _Brake["default"];
+  } else if (consumableModel === "filter") {
+    return _Filter["default"];
+  } else if (consumableModel === "grease") {
+    return _Grease["default"];
+  } else if (consumableModel === "oil") {
+    return _Oil["default"];
+  } else if (consumableModel === "battery") {
+    return _Battery["default"];
+  }
+}
+
+;
 var _default = Consumable;
 exports["default"] = _default;

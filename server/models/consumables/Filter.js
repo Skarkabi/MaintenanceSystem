@@ -184,7 +184,7 @@ const Filter = sequelize.define('filter_stocks', mappings, {
  * @param {*} action 
  * @returns msg to be flashed to user
  */
-Filter.updateFilter = (newFilter, action) => {
+Filter.updateConsumable = (newFilter, action) => {
     return new Bluebird((resolve, reject) => {
         //Creating the new Consumable value to be updated in the consumable databse
         const newConsumable = {
@@ -231,7 +231,6 @@ Filter.updateFilter = (newFilter, action) => {
     
                 }).then(() => {
                     //Updating the value from the consumables database
-                    Consumable.updateConsumable(newConsumable, action).then(() => {
                         if(action === "add"){
                             resolve(newFilter.quantity + " Fitlers Sucessfully Added to Existing Stock!");
 
@@ -239,13 +238,7 @@ Filter.updateFilter = (newFilter, action) => {
                             resolve(newFilter.quantity + " Fitlers Sucessfully Deleted from Existing Stock!");
 
                         }
-                        
-    
-                    }).catch(err => {
-                        reject("An Error Occured Filters Stock Could not be Updated (Error: " + err + ")");
-    
-                    });
-    
+
                 }).catch(err => {
                     reject("An Error Occured Filters Stock Could not be Updated (Error: " + err + ")");
     

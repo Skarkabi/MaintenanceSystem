@@ -148,7 +148,7 @@ const Grease = sequelize.define('grease_stocks', mappings, {
  * @param {*} action 
  * @returns msg to be flashed to user
  */
-Grease.updateGrease = (newGrease,action) => {
+Grease.updateConsumable = (newGrease,action) => {
     return new Bluebird((resolve, reject) => {
         //Creating the new Consumable value to be updated in the consumable databse
         const newConsumable = {
@@ -175,14 +175,7 @@ Grease.updateGrease = (newGrease,action) => {
             //If the new value is 0 the brake definition is deleted from the stock
             if(quant === 0){
                 foundGrease.destroy().then(() => {
-                    Consumable.updateConsumable(newConsumable, action).then(() => {
-                        resolve(newGrease.volume + " Liters Of Grease Sucessfully Deleted from Existing Stock!");
-
-                    }).catch(err => {
-                        reject("An Error Occured Grease Could not be Deleted " + err);
-
-                    });
-
+                    resolve(newGrease.volume + " Liters Of Grease Sucessfully Deleted from Existing Stock!");
                 }).catch(err => {
                     reject("An Error Occured Grease Could not be Deleted " + err);
                 
@@ -202,14 +195,11 @@ Grease.updateGrease = (newGrease,action) => {
                     }
         
                 }).then(() => {
-                    //Updating the value from the consumables database
-                    Consumable.updateConsumable(newConsumable, action).then(() => {
-                        resolve(newGrease.volume + " Liters of Grease Sucessfully Added to Existing Stock!");
-        
-                    }).catch(err => {
-                        reject("An Error Occured Grease Could not be Added " + err);
-        
-                    });
+                    if(action === "delet"){
+                        resolve(newGrease.volume + " Litters of Grease Sucessfully Deleted from Existing Stock!");
+                    }else if(action === "add"){
+                        resolve(newGrease.volume + " Litters of Grease Sucessfully Added to Existing Stock!");
+                    }
         
                 }).catch(err =>{
                     reject("An Error Occured Grease Could not be Added " + err);

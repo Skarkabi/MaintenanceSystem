@@ -216,14 +216,10 @@ Oil.getOilStock = function () {
  */
 
 
-Oil.updateOil = function (newOil, action) {
+Oil.updateConsumable = function (newOil, action) {
   return new _bluebird["default"](function (resolve, reject) {
     //Creating the new Consumable value to be updated in the consumable databse
-    var newConsumable = {
-      category: "Oil",
-      quantity: newOil.volume
-    }; //Checking if the oil spec exists within the stock
-
+    //Checking if the oil spec exists within the stock
     Oil.findOne({
       where: {
         id: newOil.id
@@ -241,11 +237,7 @@ Oil.updateOil = function (newOil, action) {
 
       if (quant === 0) {
         foundOil.destroy().then(function () {
-          _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
-            resolve(newOil.voulme + " liters Of Oil Successfully Deleted from Existing Stock!");
-          })["catch"](function (err) {
-            reject("An Error Occured Oil Could not be Deleted " + err);
-          });
+          resolve(newOil.voulme + " liters Of Oil Successfully Deleted from Existing Stock!");
         })["catch"](function (err) {
           reject("An Error Occured Oil Could not be Deleted " + err);
         }); //If the new quantity is less than 0 rejects the user input  
@@ -260,11 +252,11 @@ Oil.updateOil = function (newOil, action) {
           }
         }).then(function () {
           //Updating the value from the consumables database
-          _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
-            resolve(newOil.volume + " Liters of Oil Sucessfully Added to Existing Stock!");
-          })["catch"](function (err) {
-            reject("An Error Occured Oil Could not be Added " + err);
-          });
+          if (action === "delet") {
+            resolve(newOil.volume + " Litters of Oil Sucessfully Deleted from Existing Stock!");
+          } else if (action === "add") {
+            resolve(newOil.volume + " Litters of Oil Sucessfully Added to Existing Stock!");
+          }
         })["catch"](function (err) {
           reject("An Error Occured Oil Could not be Added " + err);
         });

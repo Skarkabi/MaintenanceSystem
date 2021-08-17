@@ -168,7 +168,7 @@ var Brake = _mySQLDB["default"].define('brake_stocks', mappings, {
  */
 
 
-Brake.updateBrake = function (newBrake, action) {
+Brake.updateConsumable = function (newBrake, action) {
   return new _bluebird["default"](function (resolve, reject) {
     //Creating the new Consumable value to be updated in the consumable databse
     var newConsumable = {
@@ -209,15 +209,11 @@ Brake.updateBrake = function (newBrake, action) {
           }
         }).then(function () {
           //Updating the value from the consumables database
-          _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
-            if (action === "delet") {
-              resolve(newBrake.quantity + " Brakes Sucessfully Deleted from Existing Stock!");
-            } else if (action === "add") {
-              resolve(newBrake.quantity + " Brakes Sucessfully Added to Existing Stock!");
-            }
-          })["catch"](function (err) {
-            reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
-          });
+          if (action === "delet") {
+            resolve(newBrake.quantity + " Brakes Sucessfully Deleted from Existing Stock!");
+          } else if (action === "add") {
+            resolve(newBrake.quantity + " Brakes Sucessfully Added to Existing Stock!");
+          }
         })["catch"](function (err) {
           reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
         });

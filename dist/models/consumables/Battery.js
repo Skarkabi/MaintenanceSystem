@@ -140,7 +140,7 @@ var Battery = _mySQLDB["default"].define('battery_stocks', mappings, {
  */
 
 
-Battery.updateBattery = function (newBattery, action) {
+Battery.updateConsumable = function (newBattery, action) {
   return new _bluebird["default"](function (resolve, reject) {
     //Creating the new Consumable value to be updated in the consumable databse
     var newConsumable = {
@@ -182,15 +182,11 @@ Battery.updateBattery = function (newBattery, action) {
           }
         }).then(function () {
           //Updating the value from the consumables database
-          _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
-            if (action === "delet") {
-              resolve(newBattery.quantity + " Batteries Sucessfully Deleted from Existing Stock!");
-            } else if (action === "add") {
-              resolve(newBattery.quantity + " Batteries Sucessfully Added to Existing Stock!");
-            }
-          })["catch"](function (err) {
-            reject("An Error Occured Batteries Could not be " + action + "ed " + err);
-          });
+          if (action === "delet") {
+            resolve(newBattery.quantity + " Batteries Sucessfully Deleted from Existing Stock!");
+          } else if (action === "add") {
+            resolve(newBattery.quantity + " Batteries Sucessfully Added to Existing Stock!");
+          }
         })["catch"](function (err) {
           reject("An Error Occured Batteries Could not be " + action + "ed " + err);
         });

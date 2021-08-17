@@ -113,6 +113,7 @@ MaintenanceConsumables.getAllConsumables = reqNumber => {
         })
     })
 }
+
 /** 
 function logMapElements(value, key, map) {
     console.log(`m[${key}] = ${value}`);

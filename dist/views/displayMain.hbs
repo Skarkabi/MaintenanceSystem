@@ -145,7 +145,7 @@
     function changeColor(elementId){
         document.getElementById(elementId).style = "color:blue";
     }
-    
+   
     function test(){
         // Get the modal
         var modal = document.getElementById("myModal");
@@ -155,10 +155,8 @@
         // Get the <span> element that closes the modal
         var span = document.getElementsByClassName("close")[0];
         // When the user clicks on the button, open the modal
-        btn.onclick = function() {
-            modal.style.display = "block";
-            mContent.insertAdjacentHTML("beforeend",`{{>mainConsumables}}`);
-        }
+        modal.style.display = "block";
+        mContent.insertAdjacentHTML("beforeend",`{{>mainConsumables}}`);
         // When the user clicks on <span> (x), close the modal
         span.onclick = function() {
             modal.style.display = "none";
@@ -172,7 +170,6 @@
             }
         }
     }
-    
 
     function changeToNull(){
         document.getElementById("category").value = "";
@@ -180,11 +177,11 @@
     function setPage(){
         var category = document.getElementById("category");
         var stock = document.getElementById("stock");
-        document.getElementById("addSection").innerHTML = "";
+        document.getElementById("addSection").innerHTML = '';
         console.log(category);
         if(stock.value === "new"){
+            document.getElementById("addSection").innerHTML = "";
             if(category.value === "battery"){
-                console.log("This");
                 document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>addBatteries}}`);
 
             }else if(category.value === "brake"){
@@ -200,10 +197,12 @@
                 document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>addOil}}`);
              
             }
+            document.getElementById("addSection").insertAdjacentHTML("beforeend",`<button style="float: right;" type="submit" id="submit" name="submit" class="btn btn-primary justfiy-content-end" onclick="addType()"><i class="far fa-save"></i>Add</button>`);
         }else if(stock.value === "stock"){
            if(category.value === "battery"){
                document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>jobBatteries}}`);
            }
+
         }
         
     }

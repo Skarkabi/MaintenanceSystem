@@ -176,7 +176,7 @@ var Filter = _mySQLDB["default"].define('filter_stocks', mappings, {
  */
 
 
-Filter.updateFilter = function (newFilter, action) {
+Filter.updateConsumable = function (newFilter, action) {
   return new _bluebird["default"](function (resolve, reject) {
     //Creating the new Consumable value to be updated in the consumable databse
     var newConsumable = {
@@ -217,15 +217,11 @@ Filter.updateFilter = function (newFilter, action) {
           }
         }).then(function () {
           //Updating the value from the consumables database
-          _Consumables["default"].updateConsumable(newConsumable, action).then(function () {
-            if (action === "add") {
-              resolve(newFilter.quantity + " Fitlers Sucessfully Added to Existing Stock!");
-            } else if (action === "delet") {
-              resolve(newFilter.quantity + " Fitlers Sucessfully Deleted from Existing Stock!");
-            }
-          })["catch"](function (err) {
-            reject("An Error Occured Filters Stock Could not be Updated (Error: " + err + ")");
-          });
+          if (action === "add") {
+            resolve(newFilter.quantity + " Fitlers Sucessfully Added to Existing Stock!");
+          } else if (action === "delet") {
+            resolve(newFilter.quantity + " Fitlers Sucessfully Deleted from Existing Stock!");
+          }
         })["catch"](function (err) {
           reject("An Error Occured Filters Stock Could not be Updated (Error: " + err + ")");
         });

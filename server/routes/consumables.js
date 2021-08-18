@@ -316,7 +316,8 @@ router.post('/add/grease',Quotation.uploadFile().single('upload'), (req, res, ne
         volume: req.body.quantityGrease,
         minVolume: req.body.quantityMinGrease,
         supplierId: req.body.greaseSupplierName,
-        quotationNumber: req.body.quotation
+        quotationNumber: req.body.quotation,
+        price_per_litter: req.body.greasePrice
 
     };
 

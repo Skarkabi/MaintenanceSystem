@@ -231,7 +231,7 @@ Battery.addBattery = function (newBattery) {
         newBattery.totalCost = newBattery.singleCost * newBattery.quantity;
         Battery.create(newBattery).then(function () {
           //Updating consumable stock database
-          _Consumables["default"].updateConsumable(newConsumable, "add").then(function () {
+          _Consumables["default"].updateConsumable(newConsumable, "update").then(function () {
             resolve(newBattery.quantity + " Batteries Sucessfully Added!");
           })["catch"](function (err) {
             reject("An Error Occured Batteries Could not be Added " + err);

@@ -240,6 +240,7 @@ Grease.addGrease = (newGrease) => {
                 carYear: newGrease.carYear,
                 supplierId: newGrease.supplierId,
                 quotationNumber: newGrease.quotationNumber,
+                price_per_litter: parseFloat(newGrease.price_per_litter)
             }
 
         }).then(foundGrease => {
@@ -252,9 +253,12 @@ Grease.addGrease = (newGrease) => {
                 //Converting values to appropiate number type
                 newGrease.volume = parseFloat(newGrease.volume);
                 newGrease.minVolume = parseFloat(newGrease.minVolume);
+                newGrease.price_per_litter = parseFloat(newGrease.price_per_litter)
+                newGrease.total_price = newGrease.price_per_litter * newGrease.volume;
+                newGrease.total_price = parseFloat(newGrease.total_price);
                 Grease.create(newGrease).then(() =>{
                     //Updating consumable stock database
-                    Consumable.updateConsumable(newConsumable, "add").then(() => {
+                    Consumable.updateConsumable(newConsumable, "update").then(() => {
                         resolve(newGrease.volume + " Liters of Greace Sucessfully Added!");
         
                     }).catch(err => {

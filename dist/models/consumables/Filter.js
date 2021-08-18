@@ -270,7 +270,7 @@ Filter.addFilter = function (newFilter) {
         newFilter.totalCost = parseFloat(newFilter.totalCost);
         Filter.create(newFilter).then(function () {
           //Updating consumable stock database
-          _Consumables["default"].updateConsumable(newConsumable, "add").then(function () {
+          _Consumables["default"].updateConsumable(newConsumable, "update").then(function () {
             resolve(newFilter.quantity + " Filters Sucessfully Added!");
           })["catch"](function (err) {
             reject("An Error Occured Filters Could not be Added " + err);

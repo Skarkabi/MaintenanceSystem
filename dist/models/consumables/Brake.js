@@ -262,7 +262,7 @@ Brake.addBrake = function (newBrake) {
         newBrake.totalCost = newBrake.singleCost * newBrake.quantity;
         Brake.create(newBrake).then(function () {
           //Updating consumable stock database
-          _Consumables["default"].updateConsumable(newConsumable, "add").then(function () {
+          _Consumables["default"].updateConsumable(newConsumable, "update").then(function () {
             resolve(newBrake.quantity + " Brakes Sucessfully Added!");
           })["catch"](function (err) {
             reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");

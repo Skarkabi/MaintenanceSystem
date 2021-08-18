@@ -245,7 +245,7 @@ Battery.addBattery = (newBattery) =>{
                 newBattery.totalCost = newBattery.singleCost * newBattery.quantity;
                 Battery.create(newBattery).then(()=> {
                     //Updating consumable stock database
-                    Consumable.updateConsumable(newConsumable, "add").then(() => {
+                    Consumable.updateConsumable(newConsumable, "update").then(() => {
                         resolve(newBattery.quantity + " Batteries Sucessfully Added!");
 
                     }).catch(err => {

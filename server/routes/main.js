@@ -1,5 +1,7 @@
 import express from 'express';
+import { promises } from 'stream';
 import Consumable from '../models/Consumables';
+import MaintenanceConsumables from '../models/consumables/MaintenanceConsumables';
 import MaintenanceOrder from '../models/MaintenanceOrder'
 
 const router = express.Router();
@@ -12,7 +14,8 @@ router.get('/', (req, res,next) => {
         res.render('displayMains', {
             title: (`Maintanence Requestds`),
             jumbotronDescription: `All Maintantence Requests`,
-            orders: orders
+            orders: orders,
+            msgType: req.flash()
        
         });
     });
@@ -36,14 +39,6 @@ router.get('/create', (req,res,next) => {
  */
 router.get('/:req', (req, res, next) => {
     Consumable.getFullStock().then(consumablesToSelect => {
-        var consumables = [];
-        var employees = [];
-        var c1 = {mr: "Stock", material: "Filter", cost: "23.2", supplier: "T.M.I.", quantity:"2"};
-        var e1 = {eId: "T11538", firstName: "Wissam", lastName: "Hnien"};
-        var c2 = {};
-        consumables.push(c1);
-        employees[0] = e1;
-
         MaintenanceOrder.getByReq(req.params.req).then(found => {
             res.render('displayMain', {
                 title: (`Maintanence Request # ${found.req}`),
@@ -82,5 +77,37 @@ router.post('/update/material_request/:req', (req, res,next) => {
         res.redirect(`back`);
     });
 })
+
+router.post('/update/material_request/add_consumables/:req/:category', async (req, res, next) => {
+    console.log("AAAAAAAAAAAAAAA");
+    var updateValues = [];
+    var finished;
+    for(var i = 0; i < req.body.quantityInput.length; i++){
+        if(req.body.quantityInput[i] !== "" && req.body.quantityInput[i] !== "0" && req.body.quantityInput[i] !== 0){
+            var newValue = {consumableId: req.body.consumable_id[i], quantity: req.body.quantityInput[i]};
+            updateValues.push(newValue);
+        }
+    }
+    var category = req.params.category[0].toUpperCase() + req.params.category.slice(1);
+    if(updateValues.length !== 0){
+        await Promise.all(updateValues.map(consumables => {
+            MaintenanceConsumables.useConsumable(consumables.consumableId, category, req.params.req, parseFloat(consumables.quantity), "add").then(output => {
+                finished = output;
+            }).catch(err => {
+                return returnError(err);
+            });
+        }));
+    }
+    
+    req.flash('success_msg', `${category} Succesfully Used From Stock`);
+    res.redirect(`back`);
+    
+    //MaintenanceConsumables.useConsumable(req.params.consumableId, req.params.category, req.params)
+})
+
+function returnError(er){
+    req.flash('error_msg', er);
+    res.redirect(`back`);
+}
 
 export default router;

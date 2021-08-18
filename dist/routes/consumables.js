@@ -293,7 +293,8 @@ router.post('/add/grease', _Quotation["default"].uploadFile().single('upload'), 
     volume: req.body.quantityGrease,
     minVolume: req.body.quantityMinGrease,
     supplierId: req.body.greaseSupplierName,
-    quotationNumber: req.body.quotation
+    quotationNumber: req.body.quotation,
+    price_per_litter: req.body.greasePrice
   }; //Declaring new quotation to be added to database
 
   var newQuotation; //Creating quotation variable quotation was selected

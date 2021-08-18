@@ -97,69 +97,90 @@ Consumable.updateConsumable = function (createConsumable, action) {
   };
   return new _bluebird["default"](function (resolve, reject) {
     //Checking if the consumable category already exists in stock
-    var model = getConsumableModel(newConsumable.category.toLowerCase());
-    model.findOne({
-      where: {
-        id: createConsumable.id
-      }
-    }).then(function (found) {
-      if (found === null) {
-        reject("Item does not exist in stock");
-      } else {
-        Consumable.getConsumableByCategory(newConsumable.category).then(function (isCategory) {
-          //If Consumable exists update the new vale
-          if (isCategory) {
-            if (action === "add") {
-              var quant = newConsumable.quantity + isCategory.quantity;
-            } else if (action === "delet") {
-              var quant = isCategory.quantity - newConsumable.quantity;
-            } //Updating the consumable stock value
-
-
-            Consumable.update({
-              quantity: quant
-            }, {
-              where: {
-                category: newConsumable.category
-              }
-            }).then(function () {
-              var consumableToUpdate;
-
-              if (createConsumable.category === "Grease" || createConsumable.category === "Oil") {
-                consumableToUpdate = {
-                  id: createConsumable.id,
-                  volume: newConsumable.quantity
-                };
-              } else {
-                consumableToUpdate = {
-                  id: createConsumable.id,
-                  quantity: newConsumable.quantity
-                };
-              }
-
-              console.log("AAAAAAAAAAAAAAAAAAAAAA");
-              console.log(consumableToUpdate);
-              model.updateConsumable(consumableToUpdate, action).then(function (output) {
-                resolve(output);
-              })["catch"](function (err) {
-                reject(err);
-              });
-            })["catch"](function (err) {
-              reject(err);
-            }); //If Consumable doesn't exist create a new category in database
-          } else {
-            //Creating new consumable category in database
-            Consumable.create(newConsumable).then(function () {
-              resolve("New Consumable Created");
-            })["catch"](function (err) {
-              reject(err);
-            });
+    if (action === "update") {
+      Consumable.findOne({
+        where: {
+          category: newConsumable.category
+        }
+      }).then(function (found) {
+        var newQuantity = newConsumable.quantity + found.quantity;
+        Consumable.update({
+          quantity: newQuantity
+        }, {
+          where: {
+            category: newConsumable.category
           }
+        }).then(function () {
+          resolve("Consumable Update");
         })["catch"](function (err) {
           reject(err);
         });
-      }
-    });
+      });
+    } else {
+      var model = getConsumableModel(newConsumable.category.toLowerCase());
+      model.findOne({
+        where: {
+          id: createConsumable.id
+        }
+      }).then(function (found) {
+        if (found === null) {
+          reject("Item does not exist in stock");
+        } else {
+          Consumable.getConsumableByCategory(newConsumable.category).then(function (isCategory) {
+            //If Consumable exists update the new vale
+            if (isCategory) {
+              if (action === "add") {
+                var quant = newConsumable.quantity + isCategory.quantity;
+              } else if (action === "delet") {
+                var quant = isCategory.quantity - newConsumable.quantity;
+              } //Updating the consumable stock value
+
+
+              Consumable.update({
+                quantity: quant
+              }, {
+                where: {
+                  category: newConsumable.category
+                }
+              }).then(function () {
+                var consumableToUpdate;
+
+                if (createConsumable.category === "Grease" || createConsumable.category === "Oil") {
+                  consumableToUpdate = {
+                    id: createConsumable.id,
+                    volume: newConsumable.quantity
+                  };
+                } else {
+                  consumableToUpdate = {
+                    id: createConsumable.id,
+                    quantity: newConsumable.quantity
+                  };
+                }
+
+                console.log("AAAAAAAAAAAAAAAAAAAAAA");
+                console.log(consumableToUpdate);
+                model.updateConsumable(consumableToUpdate, action).then(function (output) {
+                  resolve(output);
+                })["catch"](function (err) {
+                  reject(err);
+                });
+              })["catch"](function (err) {
+                reject(err);
+              }); //If Consumable doesn't exist create a new category in database
+            } else {
+              //Creating new consumable category in database
+              Consumable.create(newConsumable).then(function () {
+                resolve("New Consumable Created");
+              })["catch"](function (err) {
+                reject(err);
+              });
+            }
+          })["catch"](function (err) {
+            reject(err);
+          });
+        }
+      });
+    }
   });
 };
 /**

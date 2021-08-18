@@ -177,6 +177,7 @@
     function setPage(){
         var category = document.getElementById("category");
         var stock = document.getElementById("stock");
+        var requestNumber = document.getElementById("materialRequest")
         document.getElementById("addSection").innerHTML = '';
         console.log(category);
         if(stock.value === "new"){
@@ -220,6 +221,7 @@
     }
 
     function setAction(event, buttonAction, reqNumber){
+        console.log("----------------------------------------")
         if(buttonAction === "update"){
             document.getElementById("displayMainForm").action = `/maintanence/update/material_request/${reqNumber}`
             document.getElementById("displayMainForm").method = `POST`
@@ -239,10 +241,14 @@
             document.getElementById("displayMainForm").action = `/vehicles/display-vehicle/${reqNumber}`
             document.getElementById("displayMainForm").method = `GET`
             document.getElementById("displayMainForm").submit();
+        
+        }else if(buttonAction === "consumables"){
+            event.preventDefault();
+            var category = document.getElementById("category").value;
+            document.getElementById("displayMainForm").action = `/maintanence/update/material_request/add_consumables/${reqNumber}/${category}`
+            document.getElementById("displayMainForm").method = `POST`
+            document.getElementById("displayMainForm").submit();
         }
     }
 
-    function testter(){
-        
-    }
 </script>

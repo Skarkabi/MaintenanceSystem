@@ -99,7 +99,7 @@ const Oil = sequelize.define('oil_stocks', mappings, {
       fields: ['oilPrice']
     },
     {
-      name: 'grease_total_price_index',
+      name: 'oil_total_price_index',
       method: 'BTREE',
       fields: ['total_price']
     },
@@ -298,6 +298,7 @@ Oil.addOil = (newOil) => {
         preferredBrand: newOil.preferredBrand,
         supplierId: newOil.supplierId,
         quotationNumber: newOil.quotationNumber,
+        oilPrice: parseFloat(newOil.oilPrice)
 
       }
 
@@ -310,9 +311,12 @@ Oil.addOil = (newOil) => {
       }else{
         newOil.volume = parseFloat(newOil.volume);
         newOil.minVolume = parseFloat(newOil.minVolume);
+        newOil.oilPrice = parseFloat(newOil.oilPrice)
+        newOil.total_price = newOil.oilPrice * newOil.volume;
+        newOil.total_price = parseFloat(newOil.total_price);
         Oil.create(newOil).then(() => {
           //Updating consumable stock database
-          Consumable.updateConsumable(newConsumable, "add").then(() => {
+          Consumable.updateConsumable(newConsumable, "update").then(() => {
             resolve(newOil.volume + " Liters of Oil Sucessfully Added!");
 
           }).catch(err => {

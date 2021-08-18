@@ -110,7 +110,7 @@ var Oil = _mySQLDB["default"].define('oil_stocks', mappings, {
     method: 'BTREE',
     fields: ['oilPrice']
   }, {
-    name: 'grease_total_price_index',
+    name: 'oil_total_price_index',
     method: 'BTREE',
     fields: ['total_price']
   }, {
@@ -288,7 +288,8 @@ Oil.addOil = function (newOil) {
         typeOfOil: newOil.typeOfOil,
         preferredBrand: newOil.preferredBrand,
         supplierId: newOil.supplierId,
-        quotationNumber: newOil.quotationNumber
+        quotationNumber: newOil.quotationNumber,
+        oilPrice: parseFloat(newOil.oilPrice)
       }
     }).then(function (foundOil) {
       //If this oil with this quotation number exists the function rejects the creation
@@ -297,9 +298,12 @@ Oil.addOil = function (newOil) {
       } else {
         newOil.volume = parseFloat(newOil.volume);
         newOil.minVolume = parseFloat(newOil.minVolume);
+        newOil.oilPrice = parseFloat(newOil.oilPrice);
+        newOil.total_price = newOil.oilPrice * newOil.volume;
+        newOil.total_price = parseFloat(newOil.total_price);
         Oil.create(newOil).then(function () {
           //Updating consumable stock database
-          _Consumables["default"].updateConsumable(newConsumable, "add").then(function () {
+          _Consumables["default"].updateConsumable(newConsumable, "update").then(function () {
             resolve(newOil.volume + " Liters of Oil Sucessfully Added!");
           })["catch"](function (err) {
             reject("An Error Occured Oil Could not be Added " + err);

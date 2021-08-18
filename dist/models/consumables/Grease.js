@@ -229,7 +229,8 @@ Grease.addGrease = function (newGrease) {
         carBrand: newGrease.carBrand,
         carYear: newGrease.carYear,
         supplierId: newGrease.supplierId,
-        quotationNumber: newGrease.quotationNumber
+        quotationNumber: newGrease.quotationNumber,
+        price_per_litter: parseFloat(newGrease.price_per_litter)
       }
     }).then(function (foundGrease) {
       //If this grease with this quotation number exists the function rejects the creation
@@ -239,9 +240,12 @@ Grease.addGrease = function (newGrease) {
         //Converting values to appropiate number type
         newGrease.volume = parseFloat(newGrease.volume);
         newGrease.minVolume = parseFloat(newGrease.minVolume);
+        newGrease.price_per_litter = parseFloat(newGrease.price_per_litter);
+        newGrease.total_price = newGrease.price_per_litter * newGrease.volume;
+        newGrease.total_price = parseFloat(newGrease.total_price);
         Grease.create(newGrease).then(function () {
           //Updating consumable stock database
-          _Consumables["default"].updateConsumable(newConsumable, "add").then(function () {
+          _Consumables["default"].updateConsumable(newConsumable, "update").then(function () {
             resolve(newGrease.volume + " Liters of Greace Sucessfully Added!");
           })["catch"](function (err) {
             reject("An Error Occured Grease Could not be Added (Error: " + err + ")");

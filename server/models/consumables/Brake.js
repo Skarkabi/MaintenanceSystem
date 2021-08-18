@@ -270,7 +270,7 @@ Brake.addBrake = (newBrake) => {
                 newBrake.totalCost = newBrake.singleCost * newBrake.quantity;
                 Brake.create(newBrake).then(() => {
                     //Updating consumable stock database
-                    Consumable.updateConsumable(newConsumable, "add").then(() => {
+                    Consumable.updateConsumable(newConsumable, "update").then(() => {
                         resolve(newBrake.quantity + " Brakes Sucessfully Added!");
 
                     }).catch(err => {

@@ -296,7 +296,7 @@ Filter.addFilter = (newFilter) => {
                 newFilter.totalCost = parseFloat(newFilter.totalCost);
                 Filter.create(newFilter).then(() => {
                     //Updating consumable stock database
-                    Consumable.updateConsumable(newConsumable, "add").then(() => {
+                    Consumable.updateConsumable(newConsumable, "update").then(() => {
                         resolve(newFilter.quantity + " Filters Sucessfully Added!");
 
                     }).catch(err => {

@@ -1,5 +1,5 @@
 <div class="col-md-12">
-    <table id="filterable-table" class="table table-bordered table-striped">
+    <table id="filterable-table-battery" class="table table-bordered table-striped">
         <thead>
             <tr>
                 <th scope="col">#</th>
@@ -9,8 +9,7 @@
                 <th scope="col">Quantity (Boxes)</th>
                 <th scope="col">Supplier</th>
                 <th scope="col">Quotation #</th>
-                <th scope="col">Action</th>
-
+                <th scope="col" style="width: 10%;">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -23,15 +22,11 @@
                     <td>{{this.carYear}}</td>
                     <td>{{this.quantity}}</td>
                     <td>{{this.supplierName}}</td>
-                     <td>{{this.quotationNumber}}</td>
-                     <td>
-                        <div class="input-group-append">
-                            <a href="download/{{this.quotationNumber}}" style="padding-right: 25px;"><i class="fas fa-download"></i></a>
-                            <a href="" onclick="openPdf({{this.quotationNumber}})"><i class="fas fa-external-link-alt"></i></a>
-                        </div>
-                    </td>
+                    <td>{{this.quotationNumber}}</td>
+                    <td><input class="form-control form-control-sm" name="quantityInput" id="quantityInput" type="number"><input type="text" name="consumable_id" id="consumable_id" value="{{this.id}}" hidden> </td>
                 </tr>
                 {{/each}}
         </tbody>
     </table>
+    <button class="btn btn-primary" id="updateConsumables" onclick='setAction(event, "consumables", "{{existingMain.req}}")' style="float: right;" justfiy-content-end ><i class="far fa-save"></i>Add</button>
 </div>

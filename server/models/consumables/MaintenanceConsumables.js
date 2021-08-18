@@ -6,6 +6,7 @@ import Brake from './Brake';
 import Battery from './Battery';
 import Filter from './Filter';
 import Grease from './Grease';
+import Oil from './Oil';
 import Consumable from '../Consumables';
 import MaintenanceOrder from '../MaintenanceOrder';
 import Supplier from '../Supplier';

@@ -27,6 +27,8 @@ var _Filter = _interopRequireDefault(require("./Filter"));
 
 var _Grease = _interopRequireDefault(require("./Grease"));
 
+var _Oil = _interopRequireDefault(require("./Oil"));
+
 var _Consumables = _interopRequireDefault(require("../Consumables"));
 
 var _MaintenanceOrder = _interopRequireDefault(require("../MaintenanceOrder"));
@@ -329,7 +331,7 @@ function getConsumableModel(consumableModel) {
   } else if (consumableModel === "Grease") {
     return _Grease["default"];
   } else if (consumableModel === "Oil") {
-    return Oil;
+    return _Oil["default"];
   } else if (consumableModel === "Battery") {
     return _Battery["default"];
   }

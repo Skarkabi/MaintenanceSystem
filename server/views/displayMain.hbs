@@ -202,6 +202,8 @@
         }else if(stock.value === "stock"){
            if(category.value === "battery"){
                document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>jobBatteries}}`);
+           } else if(category.value === "brake"){
+               document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>jobBrakes}}`);
            }
 
         }

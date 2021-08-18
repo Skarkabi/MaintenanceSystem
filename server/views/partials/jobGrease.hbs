@@ -1,0 +1,35 @@
+<div class="col-md-12">
+    <table id="filterable-table-battery" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+               <th scope="col">#</th>
+                <th scope="col">Grease Spec</th>
+                <th scope="col">Grease Type</th>
+                <th scope="col">Car Brand</th>
+                <th scope="col">Car Year</th>
+                <th scope="col">Volume</th>
+                <th scope="col">Price Per Liter</th>
+                <th scope="col">Supplier</th>
+                <th scope="col">Quotation #</th>
+                <th scope="col" style="width: 10%;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each consumableTable.grease}}
+                <tr>
+                   <th>{{counter @index}}</th>
+                    <td>{{this.greaseSpec}}</td>
+                    <td>{{this.typeOfGrease}}</td>
+                    <td>{{this.carBrand}}</td>
+                    <td>{{this.carYear}}</td>
+                    <td>{{this.volume}}</td>
+                    <td>{{this.price_per_litter}}</td>
+                    <td>{{this.supplierName}}</td>
+                    <td>{{this.quotationNumber}}</td>
+                    <td><input class="form-control form-control-sm" name="quantityInput" id="quantityInput" type="number"><input type="text" name="consumable_id" id="consumable_id" value="{{this.id}}" hidden> </td>
+                </tr>
+                {{/each}}
+        </tbody>
+    </table>
+    <button class="btn btn-success" id="updateConsumables" onclick='setAction(event, "consumables", "{{existingMain.req}}")' style="float: right;" justfiy-content-end ><i class="fas fa-plus-circle"></i>Add</button>
+</div>

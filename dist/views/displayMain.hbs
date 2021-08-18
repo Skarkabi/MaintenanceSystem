@@ -188,6 +188,9 @@
 
         }else if(category.value === "filter"){
             document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>jobFilters}}`);
+
+        }else if(category.value === "grease"){
+            document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>jobGrease}}`);
         }
         
     }

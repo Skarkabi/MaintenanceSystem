@@ -27,6 +27,8 @@ var _Oil = _interopRequireDefault(require("./consumables/Oil"));
 
 var _Supplier = _interopRequireDefault(require("./Supplier"));
 
+var _Other = _interopRequireDefault(require("./consumables/Other"));
+
 /**
  * Setting the Datatypes for the MySQL tables
  */
@@ -181,6 +183,56 @@ Consumable.updateConsumable = function (createConsumable, action) {
         }
       });
     }
+  });
+};
+
+Consumable.updateOtherConsumable = function (createConsumable, action) {
+  var newConsumable = {
+    category: createConsumable.other_name,
+    quantity: parseFloat(createConsumable.quantity)
+  };
+  return new _bluebird["default"](function (resolve, reject) {
+    Consumable.findOne({
+      where: {
+        category: newConsumable.category
+      }
+    }).then(function (found) {
+      if (found === null) {
+        Consumable.create(newConsumable).then(function () {
+          _Other["default"].updateConsumable(createConsumable, action).then(function (output) {
+            resolve(output);
+          })["catch"](function (err) {
+            reject(err);
+          });
+        })["catch"](function (err) {
+          reject(err);
+        });
+      } else {
+        if (action === "add") {
+          var quant = newConsumable.quantity + found.quantity;
+        } else if (action === "delete") {
+          var quant = found.quantity - newConsumable.quantity;
+        }
+
+        _Other["default"].updateConsumable(createConsumable, action).then(function (output) {
+          Consumable.update({
+            quantity: quant
+          }, {
+            where: {
+              category: newConsumable.category
+            }
+          }).then(function () {
+            resolve(output);
+          })["catch"](function (err) {
+            reject(err);
+          });
+        })["catch"](function (err) {
+          reject(err);
+        });
+      }
+    })["catch"](function (err) {
+      reject(err);
+    });
   });
 };
 /**

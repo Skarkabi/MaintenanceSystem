@@ -22,18 +22,24 @@
                     <td><a href="/consumables/{{lowerCase this.category}}">{{this.quantity}} (
                             {{#if (isdefined "Battery" this.category)}}
                                 Pieces
-                            {{/if}}
-                            {{#if (isdefined "Brake" this.category)}}
-                                Boxes
-                            {{/if}}
-                            {{#if (isdefined "Filter" this.category)}}
-                                Pieces
-                            {{/if}}
-                            {{#if (isdefined "Oil" this.category)}}
-                                Liters
-                            {{/if}}
-                            {{#if (isdefined "Grease" this.category)}}
-                                Liters
+                            {{else}}
+                                {{#if (isdefined "Brake" this.category)}}
+                                    Boxes
+                                {{else}}
+                                    {{#if (isdefined "Filter" this.category)}}
+                                        Pieces
+                                    {{else}}
+                                        {{#if (isdefined "Oil" this.category)}}
+                                            Liters
+                                        {{else}}
+                                            {{#if (isdefined "Grease" this.category)}}
+                                                Liters
+                                            {{else}}
+                                                Pieces
+                                            {{/if}}
+                                        {{/if}}
+                                    {{/if}}
+                                {{/if}}
                             {{/if}}
                     )
                         </a></td>

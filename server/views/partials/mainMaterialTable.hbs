@@ -18,7 +18,11 @@
         {{#each mainConsumable}}
             <tr>
                 <th>{{counter @index}}</th>
-                <td><a>{{this.consumable.quotationNumber}}</a></td>
+                {{#if (isdefined this.type.consumable_type "Other")}}
+                    <td><a></a></td>
+                {{else}}
+                    <td><a>T.M.I. Stock</a></td>
+                {{/if}}
                 <td><a>{{this.type.consumable_type}}</a></td>
                 <td><a>{{this.consumable.supplierName}}</a></td>
                 <td><a>{{this.type.consumable_quantity}}</a></td>

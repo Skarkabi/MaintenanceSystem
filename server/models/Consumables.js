@@ -8,6 +8,7 @@ import Filter from './consumables/Filter';
 import Grease from './consumables/Grease';
 import Oil from './consumables/Oil';
 import Supplier from './Supplier';
+import Other from './consumables/Other';
 /**
  * Setting the Datatypes for the MySQL tables
  */
@@ -180,6 +181,72 @@ Consumable.updateConsumable = (createConsumable, action) => {
         })
       }
   });
+
+}
+
+Consumable.updateOtherConsumable = (createConsumable, action) => {
+  const newConsumable = 
+    {
+      category: createConsumable.other_name,
+      quantity: parseFloat(createConsumable.quantity)
+    }
+    return new Bluebird((resolve, reject) => {
+      Consumable.findOne({
+        where: {
+          category: newConsumable.category
+        }
+      }).then(found => {
+        if(found === null){
+          Consumable.create(newConsumable).then(() => {
+            Other.updateConsumable(createConsumable, action).then(output => {
+              resolve(output);
+
+            }).catch(err => {
+              reject(err);
+
+            });
+            
+          }).catch(err => {
+            reject(err);
+
+          });
+
+        }else{
+          if(action === "add"){
+            var quant = newConsumable.quantity + found.quantity;
+
+          }else if(action === "delete"){
+            var quant = found.quantity - newConsumable.quantity;
+
+          }
+
+          Other.updateConsumable(createConsumable, action).then(output => {
+            Consumable.update({quantity: quant}, {
+              where: {
+                category: newConsumable.category
+  
+              }
+  
+            }).then(() => {
+              resolve(output);
+
+            }).catch(err => {
+              reject(err);
+
+            })
+
+          }).catch(err => {
+            reject(err);
+          })
+
+        }
+
+      }).catch(err => {
+        reject(err);
+
+      });
+
+    });
 
 }
 

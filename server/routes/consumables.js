@@ -7,6 +7,7 @@ import Grease from '../models/consumables/Grease';
 import Oil from '../models/consumables/Oil';
 import Quotation from '../models/Quotation';
 import fs from 'fs';
+import Other from '../models/consumables/Other';
 
 const router = express.Router();
 
@@ -500,6 +501,7 @@ router.get('/', (req, res, next) =>
  * Express route to display specific consumable category info
  */
 router.get('/:category', (req, res, next) => {
+    console.log(req.params.category);
     //Check if a user is logged in to the system
     if(req.user){
         //Variable to set the title of page as the selected consumable category
@@ -507,19 +509,35 @@ router.get('/:category', (req, res, next) => {
         //Creating the appropriate consumable category model
         const model = getConsumableModel(req.params.category);
         //Grouping consumable category by the suppliers
-        model.groupSupplier().then(consumables => {
-            //Loading page to display consumable category info by supplier 
-            res.render("displaySpecificConsumables", {
-                title: title,
-                typeOf: req.params.category,
-                jumbotronDescription: "View all " + req.params.category + " in the system.",
-                consumables: consumables.rows,
-                page: "view",
-                msgType: req.flash()
-
+        if(model.type){
+            model.type.groupSupplier(req.params.category).then(consumables => {
+                //Loading page to display consumable category info by supplier 
+                res.render("displaySpecificConsumables", {
+                    title: title,
+                    typeOf: "other",
+                    jumbotronDescription: "View all " + req.params.category + " in the system.",
+                    consumables: consumables.rows,
+                    page: "view",
+                    msgType: req.flash()
+    
+                });
             });
 
-        });
+        }else{
+            model.groupSupplier().then(consumables => {
+                //Loading page to display consumable category info by supplier 
+                res.render("displaySpecificConsumables", {
+                    title: title,
+                    typeOf: req.params.category,
+                    jumbotronDescription: "View all " + req.params.category + " in the system.",
+                    consumables: consumables.rows,
+                    page: "view",
+                    msgType: req.flash()
+    
+                });
+    
+            });
+        }
 
     }
 
@@ -536,20 +554,40 @@ router.get('/:category/:supplier', (req, res, next) => {
         //Creating the appropriate consumable category model
         const model = getConsumableModel(req.params.category);
         //Getting consumable category info
-        model.getWithSupplier(req.params.supplier).then(foundModel => {
-            //Loading selected consumable category of selected supplier
-            res.render("displaySpecificConsumables", {
-                title: title,
-                typeOf: req.params.category,
-                jumbotronDescription: "View all " + title + " from " + foundModel[0].supplierName + " in the system.",
-                consumables: foundModel,
-                page: "add",
-                specfic: true,
-                msgType: req.flash()
+        if(model.type){
+            model.type.getWithSupplier(req.params.category, req.params.supplier).then(foundModel => {
+                console.log(foundModel);
+                //Loading selected consumable category of selected supplier
+                res.render("displaySpecificConsumables", {
+                    title: title,
+                    typeOf: "other",
+                    jumbotronDescription: "View all " + title + " from " + foundModel[0].supplierName + " in the system.",
+                    consumables: foundModel,
+                    page: "add",
+                    specfic: true,
+                    msgType: req.flash()
+    
+                });
 
             });
 
-        });
+        }else{
+            model.getWithSupplier(req.params.supplier).then(foundModel => {
+                //Loading selected consumable category of selected supplier
+                res.render("displaySpecificConsumables", {
+                    title: title,
+                    typeOf: req.params.category,
+                    jumbotronDescription: "View all " + title + " from " + foundModel[0].supplierName + " in the system.",
+                    consumables: foundModel,
+                    page: "add",
+                    specfic: true,
+                    msgType: req.flash()
+    
+                });
+    
+            });
+
+        }
         
     }
 
@@ -627,6 +665,8 @@ function getConsumableModel(consumableModel) {
     }else if(consumableModel === "battery"){
         return Battery;
 
+    }else{
+        return {type: Other, continue: true};
     }
 
 };

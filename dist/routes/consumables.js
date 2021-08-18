@@ -25,6 +25,8 @@ var _Quotation = _interopRequireDefault(require("../models/Quotation"));
 
 var _fs = _interopRequireDefault(require("fs"));
 
+var _Other = _interopRequireDefault(require("../models/consumables/Other"));
+
 var router = _express["default"].Router();
 /**
  * Express route to get add a new consumbale page
@@ -444,24 +446,39 @@ router.get('/', function (req, res, next) {
  */
 
 router.get('/:category', function (req, res, next) {
-  //Check if a user is logged in to the system
+  console.log(req.params.category); //Check if a user is logged in to the system
+
   if (req.user) {
     //Variable to set the title of page as the selected consumable category
     var title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1); //Creating the appropriate consumable category model
 
     var model = getConsumableModel(req.params.category); //Grouping consumable category by the suppliers
 
-    model.groupSupplier().then(function (consumables) {
-      //Loading page to display consumable category info by supplier 
-      res.render("displaySpecificConsumables", {
-        title: title,
-        typeOf: req.params.category,
-        jumbotronDescription: "View all " + req.params.category + " in the system.",
-        consumables: consumables.rows,
-        page: "view",
-        msgType: req.flash()
+    if (model.type) {
+      model.type.groupSupplier(req.params.category).then(function (consumables) {
+        //Loading page to display consumable category info by supplier 
+        res.render("displaySpecificConsumables", {
+          title: title,
+          typeOf: "other",
+          jumbotronDescription: "View all " + req.params.category + " in the system.",
+          consumables: consumables.rows,
+          page: "view",
+          msgType: req.flash()
+        });
       });
-    });
+    } else {
+      model.groupSupplier().then(function (consumables) {
+        //Loading page to display consumable category info by supplier 
+        res.render("displaySpecificConsumables", {
+          title: title,
+          typeOf: req.params.category,
+          jumbotronDescription: "View all " + req.params.category + " in the system.",
+          consumables: consumables.rows,
+          page: "view",
+          msgType: req.flash()
+        });
+      });
+    }
   }
 });
 /**
@@ -476,18 +493,34 @@ router.get('/:category/:supplier', function (req, res, next) {
 
     var model = getConsumableModel(req.params.category); //Getting consumable category info
 
-    model.getWithSupplier(req.params.supplier).then(function (foundModel) {
-      //Loading selected consumable category of selected supplier
-      res.render("displaySpecificConsumables", {
-        title: title,
-        typeOf: req.params.category,
-        jumbotronDescription: "View all " + title + " from " + foundModel[0].supplierName + " in the system.",
-        consumables: foundModel,
-        page: "add",
-        specfic: true,
-        msgType: req.flash()
+    if (model.type) {
+      model.type.getWithSupplier(req.params.category, req.params.supplier).then(function (foundModel) {
+        console.log(foundModel); //Loading selected consumable category of selected supplier
+
+        res.render("displaySpecificConsumables", {
+          title: title,
+          typeOf: "other",
+          jumbotronDescription: "View all " + title + " from " + foundModel[0].supplierName + " in the system.",
+          consumables: foundModel,
+          page: "add",
+          specfic: true,
+          msgType: req.flash()
+        });
       });
-    });
+    } else {
+      model.getWithSupplier(req.params.supplier).then(function (foundModel) {
+        //Loading selected consumable category of selected supplier
+        res.render("displaySpecificConsumables", {
+          title: title,
+          typeOf: req.params.category,
+          jumbotronDescription: "View all " + title + " from " + foundModel[0].supplierName + " in the system.",
+          consumables: foundModel,
+          page: "add",
+          specfic: true,
+          msgType: req.flash()
+        });
+      });
+    }
   }
 });
 /**
@@ -551,6 +584,11 @@ function getConsumableModel(consumableModel) {
     return _Oil["default"];
   } else if (consumableModel === "battery") {
     return _Battery["default"];
+  } else {
+    return {
+      type: _Other["default"],
+      "continue": true
+    };
   }
 }
 

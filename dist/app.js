@@ -57,6 +57,8 @@ var _supplier = _interopRequireDefault(require("./routes/supplier"));
 
 var _main = _interopRequireDefault(require("./routes/main"));
 
+var _NonStockConsumables = _interopRequireDefault(require("./models/consumables/NonStockConsumables"));
+
 require('./models/Session');
 
 require('./models/MaintenanceOrder');

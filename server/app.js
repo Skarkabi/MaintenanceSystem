@@ -23,6 +23,7 @@ import vehicleRouter from './routes/vehicles';
 import consumableRouter from './routes/consumables';
 import supplierRouter from './routes/supplier';
 import mainRouter from './routes/main';
+import NonStockConsumables from './models/consumables/NonStockConsumables';
 require('./models/Session');
 require('./models/MaintenanceOrder');
 

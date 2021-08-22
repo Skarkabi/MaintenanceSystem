@@ -184,6 +184,7 @@
         var stock = document.getElementById("stock");
         var requestNumber = document.getElementById("materialRequest")
         document.getElementById("addSection").innerHTML = '';
+        document.getElementById("eOrNSelect").innerHTML ='';
         console.log(category);
         if(category.value === "battery"){
             document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>jobBatteries}}`);
@@ -201,12 +202,21 @@
             document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>jobOil}}`);
             
         }else if(category.value === "other"){
-            document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>jobOthers}}`);
+            document.getElementById("eOrNSelect").insertAdjacentHTML("beforeend", `<label for="eOrN"> Existing/New </label> <select type="text" id="eOrN" name="eOrN" class="form-control" onChange='fromStockOrNew()'> <option value="new"> New </option><option value="existing"> Existing </option> </select>`);
+           
             
         }
         
     }
 
+    function fromStockOrNew(){
+        document.getElementById("addSection").innerHTML = '';
+        if(document.getElementById("eOrN").value === "existing"){
+            document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>jobOthers}}`);
+        }else if(document.getElementById("eOrN").value === "new"){
+            document.getElementById("addSection").insertAdjacentHTML("afterbegin", `{{>addOther}}`);
+        }
+    }
     function unlockInput(selectedInput){
         console.log(document.getElementById("displayMainForm").action);
         if(document.getElementById(`${selectedInput}-checkbox`).checked){
@@ -244,6 +254,7 @@
         }else if(buttonAction === "consumables"){
             event.preventDefault();
             var category = document.getElementById("category").value;
+           
             document.getElementById("displayMainForm").action = `/maintanence/update/material_request/add_consumables/${reqNumber}/${category}`
             document.getElementById("displayMainForm").method = `POST`
             document.getElementById("displayMainForm").submit();

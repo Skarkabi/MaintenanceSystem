@@ -18,8 +18,8 @@
         {{#each mainConsumable}}
             <tr>
                 <th>{{counter @index}}</th>
-                {{#if (isdefined this.type.consumable_type "Other")}}
-                    <td><a></a></td>
+                {{#if this.consumable.materialRequestNumber}}
+                    <td><a>{{this.consumable.materialRequestNumber}}</a></td>
                 {{else}}
                     <td><a>T.M.I. Stock</a></td>
                 {{/if}}

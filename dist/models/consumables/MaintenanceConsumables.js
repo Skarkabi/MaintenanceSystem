@@ -37,6 +37,8 @@ var _Supplier = _interopRequireDefault(require("../Supplier"));
 
 var _Other = _interopRequireDefault(require("./Other"));
 
+var _NonStockConsumables = _interopRequireDefault(require("./NonStockConsumables"));
+
 var mappings = {
   consumable_id: {
     type: _sequelize["default"].DataTypes.INTEGER,
@@ -64,6 +66,10 @@ var mappings = {
   updatedAt: {
     type: _sequelize["default"].DataTypes.DATE,
     allowNull: false
+  },
+  from_stock: {
+    type: _sequelize["default"].DataTypes.BOOLEAN,
+    primaryKey: true
   }
 };
 
@@ -92,6 +98,10 @@ var MaintenanceConsumables = _mySQLDB["default"].define('maintenance_consumables
     name: 'consumable_updatedAt_index',
     method: 'BTREE',
     fields: ['updatedAt']
+  }, {
+    name: 'consumable_from_stock_index',
+    method: 'BTREE',
+    fields: ['from_stock']
   }]
 });
 
@@ -113,20 +123,29 @@ MaintenanceConsumables.getConsumables = function (reqNumber) {
                       while (1) {
                         switch (_context.prev = _context.next) {
                           case 0:
-                            modelType = getConsumableModel(consumable.consumable_type);
-                            _context.next = 3;
+                            console.log(consumable.from_stock);
+
+                            if (consumable.from_stock) {
+                              modelType = getConsumableModel(consumable.consumable_type);
+                            } else {
+                              modelType = _NonStockConsumables["default"];
+                            }
+
+                            _context.next = 4;
                             return modelType.findOne({
                               where: {
                                 id: consumable.consumable_id
                               }
                             }).then(function (foundConsumable) {
-                              return consumableMap.push({
-                                type: consumable,
-                                consumable: foundConsumable
-                              });
+                              if (foundConsumable) {
+                                return consumableMap.push({
+                                  type: consumable,
+                                  consumable: foundConsumable
+                                });
+                              }
                             });
 
-                          case 3:
+                          case 4:
                           case "end":
                             return _context.stop();
                         }
@@ -147,7 +166,13 @@ MaintenanceConsumables.getConsumables = function (reqNumber) {
                 };
 
                 _Supplier["default"].getSupplierNames(result).then(function () {
+                  console.log(reqNumber);
                   resolve(result.rows);
+                })["catch"](function (err) {
+                  console.log(result);
+                  console.log("...................................");
+                  console.log(err);
+                  console.log("...................................");
                 });
 
               case 5:
@@ -174,6 +199,7 @@ MaintenanceConsumables.getAllConsumables = function (reqNumber) {
         maintenance_req: reqNumber
       }
     }).then(function (found) {
+      console.log(found.length);
       resolve(found);
     })["catch"](function (err) {
       reject(err);
@@ -181,7 +207,7 @@ MaintenanceConsumables.getAllConsumables = function (reqNumber) {
   });
 };
 
-MaintenanceConsumables.useConsumable = function (conusmableId, consumableCategory, reqNumber, quantity, action) {
+MaintenanceConsumables.useConsumable = function (conusmableId, consumableCategory, reqNumber, quantity, action, fromStock) {
   return new _bluebird["default"](function (resolve, reject) {
     var newConsumable = {
       id: conusmableId,
@@ -192,7 +218,8 @@ MaintenanceConsumables.useConsumable = function (conusmableId, consumableCategor
       consumable_id: conusmableId,
       consumable_type: consumableCategory,
       maintenance_req: reqNumber,
-      consumable_quantity: quantity
+      consumable_quantity: quantity,
+      from_stock: fromStock
     };
 
     if (newConsumable.category === "Brake" || newConsumable.category === "Battery" || newConsumable.category === "Filter" || newConsumable.category === "Grease" || newConsumable.category === "Oil") {
@@ -261,22 +288,44 @@ MaintenanceConsumables.useConsumable = function (conusmableId, consumableCategor
               quant = found.consumable_quantity - quantity;
             }
 
-            MaintenanceConsumables.update({
-              consumable_quantity: quant
-            }, {
+            MaintenanceConsumables.findOne({
               where: {
                 consumable_id: conusmableId,
                 consumable_type: consumableCategory,
                 maintenance_req: reqNumber
               }
-            }).then(function () {
-              resolve("Consumable used for Work Order");
-            })["catch"](function (err) {
-              console.log("this errpr");
-              reject(err);
+            }).then(function (foundItem) {
+              if (foundItem !== null) {
+                MaintenanceConsumables.update({
+                  consumable_quantity: quant
+                }, {
+                  where: {
+                    consumable_id: conusmableId,
+                    consumable_type: consumableCategory,
+                    maintenance_req: reqNumber
+                  }
+                }).then(function () {
+                  resolve("Consumable used for Work Order");
+                })["catch"](function (err) {
+                  console.log("this errpr");
+                  reject(err);
+                });
+              } else {
+                MaintenanceConsumables.create(newMaintenanceConsumable).then(function () {
+                  console.log("Updated list");
+                  resolve("Consumable used for Work Order");
+                })["catch"](function (err) {
+                  reject(err);
+                });
+              }
             });
           } else {
+            console.log("1*******************************");
+            newMaintenanceConsumable.from_stock = true;
+            console.log(newMaintenanceConsumable);
+            console.log("*******************************1");
             MaintenanceConsumables.create(newMaintenanceConsumable).then(function () {
+              console.log("Updated list");
               resolve("Consumable used for Work Order");
             })["catch"](function (err) {
               reject(err);
@@ -289,6 +338,30 @@ MaintenanceConsumables.useConsumable = function (conusmableId, consumableCategor
         reject(err);
       });
     }
+  });
+};
+
+MaintenanceConsumables.useNonStockConsumable = function (nonStockConsumable) {
+  return new _bluebird["default"](function (resolve, reject) {
+    var newMaintenanceConsumable = {
+      consumable_type: nonStockConsumable.other_name,
+      maintenance_req: nonStockConsumable.maintenanceReq,
+      consumable_quantity: nonStockConsumable.quantity,
+      from_stock: false
+    };
+
+    _NonStockConsumables["default"].create(nonStockConsumable).then(function (consumable) {
+      newMaintenanceConsumable.consumable_id = consumable.id;
+      MaintenanceConsumables.create(newMaintenanceConsumable).then(function () {
+        resolve("Added to");
+      })["catch"](function (err) {
+        console.log(err);
+        reject(err);
+      });
+    })["catch"](function (err) {
+      console.log(err);
+      reject(err);
+    });
   });
 };
 

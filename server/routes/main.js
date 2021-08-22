@@ -40,16 +40,31 @@ router.get('/create', (req,res,next) => {
 router.get('/:req', (req, res, next) => {
     Consumable.getFullStock().then(consumablesToSelect => {
         MaintenanceOrder.getByReq(req.params.req).then(found => {
-            res.render('displayMain', {
-                title: (`Maintanence Request # ${found.req}`),
-                jumbotronDescription: `Request # ${found.req} for division ${found.division}`,
-                existingMain: found,
-                mainConsumable: found.consumable_data,
-                mainEmployee: found.employee_data,
-                consumableTable: consumablesToSelect,
-                msgType: req.flash()
-            });
+            Consumable.getDistinctConsumableValues().then(values => {
+                res.render('displayMain', {
+                    title: (`Maintanence Request # ${found.req}`),
+                    jumbotronDescription: `Request # ${found.req} for division ${found.division}`,
+                    existingMain: found,
+                    mainConsumable: found.consumable_data,
+                    mainEmployee: found.employee_data,
+                    consumableTable: consumablesToSelect,
+                    values: values,
+                    msgType: req.flash()
+                });
+            }).catch(err =>{
+                console.log("...................................");
+                console.log(err);
+                console.log("...................................");
+            })
+        }).catch(err =>{
+            console.log("...................................");
+            console.log(err);
+            console.log("...................................");
         })
+    }).catch(err =>{
+        console.log("...................................");
+        console.log(err);
+        console.log("...................................");
     });
 
 });
@@ -80,9 +95,13 @@ router.post('/update/material_request/:req', (req, res,next) => {
 
 router.post('/update/material_request/add_consumables/:req/:category', async (req, res, next) => {
     var updateValues = [];
+    var numOfInputs = 0;
+    if(req.body.quantityInput){
+        numOfInputs = req.body.quantityInput.length
+    }
     var finished;
     var errorHappend = {error: false, msg:""};
-    for(var i = 0; i < req.body.quantityInput.length; i++){
+    for(var i = 0; i < numOfInputs; i++){
         if(req.body.quantityInput[i] !== "" && req.body.quantityInput[i] !== "0" && req.body.quantityInput[i] !== 0){
             var newValue;
             if(req.params.category === "other"){
@@ -94,21 +113,49 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
             updateValues.push(newValue);
         }
     }
+    console.log("PPPPPPPPLLLLLLLEEEEEEAAAASSSSEEE");
+    console.log(updateValues);
     var category = req.params.category[0].toUpperCase() + req.params.category.slice(1);
-    if(updateValues.length !== 0){
+    if(req.body.eOrN !== "new" && updateValues.length !== 0){
         await Promise.all(updateValues.map(consumables => {
             var usedCategory;
-            if(category = "Other"){
+            var fromStock = true;
+            if(category === "Other"){
                 usedCategory = consumables.category;
+                if(req.body.eOrN === "existing"){
+                    fromStock = true
+                }else{
+                    fromStock = false
+                }
             }else{
                 usedCategory = category;
             }
-            MaintenanceConsumables.useConsumable(consumables.consumableId, usedCategory, req.params.req, parseFloat(consumables.quantity), "add").then(output => {
-                finished = output;
+            console.log("PPPPPPPPLLLLLLLEEEEEEAAAASSSSEEE");
+            MaintenanceConsumables.useConsumable(consumables.consumableId, usedCategory, req.params.req, parseFloat(consumables.quantity), "add", fromStock).then(output => {
+                    finished = output;
             }).catch(err => {
                 errorHappend = {error:true, msg: err}
             });
+           
         }));
+    }else{
+        var testItem = {
+            other_name: "Test",
+            quantity: 12,
+            singleCost: 34,
+            totalCost: (12 * 34),
+            details: "This si a test",
+            supplierId: "1",
+            quotationNumber: "TEST10001",
+            materialRequestNumber: "TEEEST1010",
+            maintenanceReq: "TMC9912",
+        }
+        await MaintenanceConsumables.useNonStockConsumable(testItem).then(output => {
+            finished = output;
+        }).catch(err => {
+            console.log(err);
+            errorHappend = {error:true, msg: err}
+        });
     }
     
     if(errorHappend.error){

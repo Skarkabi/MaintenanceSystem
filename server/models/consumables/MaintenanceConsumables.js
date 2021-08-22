@@ -11,6 +11,7 @@ import Consumable from '../Consumables';
 import MaintenanceOrder from '../MaintenanceOrder';
 import Supplier from '../Supplier';
 import Other from './Other';
+import NonStockConsumables from './NonStockConsumables';
 
 const mappings = {
     consumable_id:{
@@ -39,7 +40,12 @@ const mappings = {
     updatedAt: {
         type: Sequelize.DataTypes.DATE,
         allowNull: false,
+    },
+    from_stock: {
+        type: Sequelize.DataTypes.BOOLEAN,
+        primaryKey: true
     }
+
 };
 
 const MaintenanceConsumables = sequelize.define('maintenance_consumables', mappings, {
@@ -73,6 +79,11 @@ const MaintenanceConsumables = sequelize.define('maintenance_consumables', mappi
             name: 'consumable_updatedAt_index',
             method: 'BTREE',
             fields: ['updatedAt'],
+        },
+        {
+            name: 'consumable_from_stock_index',
+            method: 'BTREE',
+            fields: ['from_stock'],
         }
     ]
 });
@@ -82,18 +93,34 @@ MaintenanceConsumables.getConsumables = reqNumber => {
         MaintenanceConsumables.getAllConsumables(reqNumber).then(async found => {
             var consumableMap = [];
             await Promise.all(found.map(async consumable => {
-                let modelType = getConsumableModel(consumable.consumable_type);
+                console.log(consumable.from_stock);
+                var modelType;
+                if(consumable.from_stock){
+                    modelType = getConsumableModel(consumable.consumable_type);
+                }else{
+                    modelType = NonStockConsumables;
+                }
+                
                 await modelType.findOne({
                     where: {
                         id: consumable.consumable_id
                     }
                 }).then(foundConsumable => {
-                    return consumableMap.push({type: consumable, consumable: foundConsumable});
+                    if(foundConsumable){
+                        return consumableMap.push({type: consumable, consumable: foundConsumable});
+                    }
+                    
                 });
             }))
             var result = {count: consumableMap.length, rows: consumableMap, isMain: true}
             Supplier.getSupplierNames(result).then(() => {
+                console.log(reqNumber);
                 resolve(result.rows);
+            }).catch(err =>{
+                console.log(result);
+                console.log("...................................");
+                console.log(err);
+                console.log("...................................");
             });
         }).catch(err => {
             reject(err);
@@ -108,6 +135,7 @@ MaintenanceConsumables.getAllConsumables = reqNumber => {
                 maintenance_req: reqNumber
             }
         }).then(found => {
+            console.log(found.length);
             resolve(found);
         }).catch(err => {
             reject(err);
@@ -115,7 +143,7 @@ MaintenanceConsumables.getAllConsumables = reqNumber => {
     })
 }
 
-MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNumber, quantity, action) => {
+MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNumber, quantity, action, fromStock) => {
     return new Bluebird((resolve,reject) => {
         const newConsumable = {
             id: conusmableId,
@@ -127,7 +155,8 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
             consumable_id: conusmableId,
             consumable_type: consumableCategory,
             maintenance_req: reqNumber,
-            consumable_quantity: quantity
+            consumable_quantity: quantity,
+            from_stock: fromStock
         }
         if(newConsumable.category === "Brake" || newConsumable.category === "Battery" || newConsumable.category === "Filter" || newConsumable.category === "Grease" || newConsumable.category === "Oil"){
             Consumable.updateConsumable(newConsumable, "delet").then(() => {
@@ -198,22 +227,47 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
                         }else if(action === "delet"){
                             quant = found.consumable_quantity - quantity;
                         }
-                        MaintenanceConsumables.update({consumable_quantity: quant}, {
+                        MaintenanceConsumables.findOne({
                             where: {
                                 consumable_id: conusmableId,
                                 consumable_type: consumableCategory,
                                 maintenance_req: reqNumber
                             }
-                        }).then(() => {
-                            resolve("Consumable used for Work Order");
-            
-                        }).catch(err => {
-                            console.log("this errpr");
-                            reject(err);
-        
+                        }).then(foundItem => {
+                            if(foundItem !== null){
+                                MaintenanceConsumables.update({consumable_quantity: quant}, {
+                                    where: {
+                                        consumable_id: conusmableId,
+                                        consumable_type: consumableCategory,
+                                        maintenance_req: reqNumber
+                                    }
+                                }).then(() => {
+                                    resolve("Consumable used for Work Order");
+                    
+                                }).catch(err => {
+                                    console.log("this errpr");
+                                    reject(err);
+                
+                                })
+                            }else{
+                                MaintenanceConsumables.create(newMaintenanceConsumable).then(() => {
+                                    console.log("Updated list");
+                                    resolve("Consumable used for Work Order");
+                                
+                                }).catch(err => {
+                                    reject(err);
+                                    
+                                })
+                            }
                         })
+                       
                     }else{
+                        console.log("1*******************************");
+                        newMaintenanceConsumable.from_stock = true;
+                        console.log(newMaintenanceConsumable);
+                        console.log("*******************************1");
                         MaintenanceConsumables.create(newMaintenanceConsumable).then(() => {
+                            console.log("Updated list");
                             resolve("Consumable used for Work Order");
                         
                         }).catch(err => {
@@ -237,6 +291,31 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
        
     })
 
+}
+
+MaintenanceConsumables.useNonStockConsumable = (nonStockConsumable) => {
+    return new Bluebird((resolve, reject) => {
+        const newMaintenanceConsumable = {
+            consumable_type: nonStockConsumable.other_name,
+            maintenance_req: nonStockConsumable.maintenanceReq,
+            consumable_quantity: nonStockConsumable.quantity,
+            from_stock: false
+        }
+
+        NonStockConsumables.create(nonStockConsumable).then(consumable => {
+            newMaintenanceConsumable.consumable_id = consumable.id;
+            MaintenanceConsumables.create(newMaintenanceConsumable).then(() => {
+                resolve("Added to");
+            }).catch(err => {
+                console.log(err);
+                reject(err);
+            })
+            
+        }).catch(err => {
+            console.log(err);
+            reject(err);
+        })
+    })
 }
 
 function getConsumableModel(consumableModel) {

@@ -149,7 +149,6 @@ var MaintenanceOrder = _mySQLDB["default"].define('maintenance_orders', mappings
 MaintenanceOrder.getOrders = function () {
   return new _bluebird["default"](function (resolve, reject) {
     MaintenanceOrder.findAll().then(function (orders) {
-      console.log(orders);
       orders.map(function (o) {
         setStatus(o);
       });
@@ -187,14 +186,23 @@ MaintenanceOrder.getByReq = function (req) {
         req: req
       }
     }).then(function (found) {
+      console.log(0);
       getSingleVehicle(found).then(function () {
+        console.log(1);
         getConsumables(found).then(function () {
+          console.log(2);
           getEmployees(found).then(function () {
+            console.log(3);
             getTotalMaterialCost(found).then(function () {
+              console.log(4);
               setStatus(found);
               resolve(found);
             });
           });
+        })["catch"](function (err) {
+          console.log("...................................");
+          console.log(err);
+          console.log("...................................");
         });
       });
     });
@@ -271,6 +279,10 @@ function getConsumables(order) {
     _MaintenanceConsumables["default"].getConsumables(order.req).then(function (found) {
       order.setDataValue('consumable_data', found);
       resolve("Set All");
+    })["catch"](function (err) {
+      console.log("...................................");
+      console.log(err);
+      console.log("...................................");
     });
   });
 }

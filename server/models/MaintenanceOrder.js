@@ -143,7 +143,6 @@ const MaintenanceOrder = sequelize.define('maintenance_orders', mappings, {
 MaintenanceOrder.getOrders = () => {
     return new Bluebird((resolve, reject) => {
         MaintenanceOrder.findAll().then(orders => {
-            console.log(orders);
             orders.map(o => {
                 setStatus(o);
             })
@@ -185,14 +184,23 @@ MaintenanceOrder.getByReq = req => {
                 req: req
             }
         }).then(found => {
+            console.log(0);
             getSingleVehicle(found).then(() => {
+                console.log(1);
                 getConsumables(found).then(() => {
+                    console.log(2);
                     getEmployees(found).then(() => {
+                        console.log(3);
                         getTotalMaterialCost(found).then(() => {
+                            console.log(4);
                             setStatus(found);
                             resolve(found);
                         })
                     });
+                }).catch(err =>{
+                    console.log("...................................");
+                    console.log(err);
+                    console.log("...................................");
                 });
             });
         });
@@ -272,6 +280,10 @@ function getConsumables(order){
         MaintenanceConsumables.getConsumables(order.req).then(found =>{
             order.setDataValue('consumable_data', found);
             resolve("Set All");
+        }).catch(err =>{
+            console.log("...................................");
+            console.log(err);
+            console.log("...................................");
         })
     })
 }

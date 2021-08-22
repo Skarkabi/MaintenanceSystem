@@ -313,16 +313,23 @@ Consumable.getDistinctConsumableValues = function () {
         _Filter["default"].getFilterStock().then(function (filters) {
           _Grease["default"].getGreaseStock().then(function (grease) {
             _Oil["default"].getOilStock().then(function (oil) {
-              _Supplier["default"].findAll().then(function (suppliers) {
-                var values = {
-                  batteries: batteries,
-                  brakes: brakes,
-                  filters: filters,
-                  grease: grease,
-                  oil: oil,
-                  supplier: suppliers
-                };
-                resolve(values);
+              _Other["default"].getOtherStocks().then(function (other) {
+                console.log(other);
+
+                _Supplier["default"].findAll().then(function (suppliers) {
+                  var values = {
+                    batteries: batteries,
+                    brakes: brakes,
+                    filters: filters,
+                    grease: grease,
+                    oil: oil,
+                    other: other,
+                    supplier: suppliers
+                  };
+                  resolve(values);
+                })["catch"](function (err) {
+                  reject("Error Connecting to the server " + err);
+                });
               })["catch"](function (err) {
                 reject("Error Connecting to the server " + err);
               });

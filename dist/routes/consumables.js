@@ -183,6 +183,45 @@ router.post('/update-brake/:action/:id', function (req, res, next) {
     res.redirect("back");
   });
 });
+router.post('/add/other', _Quotation["default"].uploadFile().single('upload'), function (req, res, next) {
+  var quotationNumber;
+
+  if (!req.body.quotation) {
+    quotationNumber = "N/A";
+  } else {
+    quotationNumber = req.body.quotation;
+  }
+
+  var newOther = {
+    other_name: req.body.other_category,
+    details: req.body.otherDetails,
+    quantity: req.body.quantityOther,
+    singleCost: req.body.otherPrice,
+    supplierId: req.body.otherSupplierName,
+    materialRequestNumber: req.body.otherMaterialRequest,
+    quotationNumber: quotationNumber
+  };
+  var newQuotation;
+
+  if (req.file) {
+    newQuotation = {
+      quotationNumber: req.body.quotation,
+      quotationPath: req.file.path
+    };
+  }
+
+  _Consumables["default"].updateOtherConsumable(newOther, "add").then(function (output) {
+    if (req.file) {
+      _Quotation["default"].addQuotation(newQuotation);
+    }
+
+    req.flash('success_msg', output);
+    res.redirect("/consumables/add");
+  })["catch"](function (err) {
+    req.flash('error_msg', err);
+    res.redirect("/consumables/add");
+  });
+});
 /**
  * Express route to display selected vehicle
  */
@@ -556,6 +595,8 @@ router.get('/:category/view/:quotationNumber', function (req, res, next) {
       res.redirect("back");
     }
 
+    console.log("---------------------");
+    console.log(tempFile);
     res.contentType("application/pdf");
     res.send(data);
   });

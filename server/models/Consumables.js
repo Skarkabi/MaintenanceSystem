@@ -333,17 +333,23 @@ Consumable.getDistinctConsumableValues = () => {
                 Filter.getFilterStock().then(filters =>{
                     Grease.getGreaseStock().then(grease => {
                         Oil.getOilStock().then(oil => {
+                          Other.getOtherStocks().then(other => {
+                            console.log(other);
                             Supplier.findAll().then(suppliers => {
-                                var values = {
-                                    batteries: batteries, brakes: brakes, filters: filters,
-                                    grease: grease, oil: oil, supplier: suppliers
-                                };
-                                resolve(values);
+                              var values = {
+                                  batteries: batteries, brakes: brakes, filters: filters,
+                                  grease: grease, oil: oil, other: other, supplier: suppliers
+                              };
+                              resolve(values);
 
                             }).catch(err => {
                               reject("Error Connecting to the server " + err);
 
                             });
+
+                          }).catch(err => {
+                            reject("Error Connecting to the server " + err);
+                          })
 
                         }).catch(err => {
                           reject("Error Connecting to the server " + err);

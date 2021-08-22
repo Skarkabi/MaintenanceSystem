@@ -208,12 +208,12 @@ Other.getOtherStocks = function () {
   return new _bluebird["default"](function (resolve, reject) {
     var othersC, othersS, name, details;
 
-    _Supplier["default"].findAll().other_name(function (suppliers) {
+    _Supplier["default"].findAll().then(function (suppliers) {
       othersS = suppliers;
       Other.getStock().then(function (consumables) {
         othersC = consumables;
         name = getDistinct(othersC.rows.map(function (val) {
-          return val.name;
+          return val.other_name;
         }));
         details = getDistinct(othersC.rows.map(function (val) {
           return val.details;

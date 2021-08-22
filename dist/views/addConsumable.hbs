@@ -17,6 +17,7 @@
                             <option value="filter">Filter</option>
                             <option value="grease">Grease</option>
                             <option value="oil">Oil</option>
+                            <option value="other">Other</option>
                         </select>
                     </div>
                 </div>
@@ -53,6 +54,9 @@
              
         }else if(category.value === "oil"){
              document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>addOil}}`);
+             
+        }else if(category.value === "other"){
+            document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>addOther}}`);
              
         }
     }

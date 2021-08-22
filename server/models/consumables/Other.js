@@ -217,11 +217,11 @@ Other.getStock = () => {
 Other.getOtherStocks = () => {
     return new Bluebird((resolve, reject) => {
         var othersC, othersS, name, details;
-        Supplier.findAll().other_name(suppliers => {
+        Supplier.findAll().then(suppliers => {
             othersS = suppliers;
             Other.getStock().then(consumables => {
                 othersC = consumables;
-                name = getDistinct(othersC.rows.map(val => val.name));
+                name = getDistinct(othersC.rows.map(val => val.other_name));
                 details = getDistinct(othersC.rows.map(val => val.details));
 
                 var values = {

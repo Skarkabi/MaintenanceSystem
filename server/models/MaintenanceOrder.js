@@ -50,8 +50,16 @@ const mappings = {
         type: Sequelize.DataTypes.DOUBLE,
         allowNull: false
     },
-    total_cost: {
+    work_hours: {
         type: Sequelize.DataTypes.DOUBLE,
+        allowNull: false
+    },
+    total_material_cost: {
+        type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.DOUBLE, ['total_material_cost']),
+        allowNull: false
+    },
+    total_cost: {
+        type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.DOUBLE, ['total_cost']),
         allowNull: false
     },
     createdAt: {
@@ -110,9 +118,9 @@ const MaintenanceOrder = sequelize.define('maintenance_orders', mappings, {
             fields: ['hour_cost']
         },
         {
-            name: 'maintenance_order_total_cost_index',
+            name: 'maintenance_work_hours_cost_index',
             method: 'BTREE',
-            fields: ['total_cost']
+            fields: ['work_hours']
         },
         {
             name: 'consumable_createdAt_index',
@@ -179,8 +187,11 @@ MaintenanceOrder.getByReq = req => {
             getSingleVehicle(found).then(() => {
                 getConsumables(found).then(() => {
                     getEmployees(found).then(() => {
-                        setStatus(found);
-                        resolve(found);
+                        getTotalMaterialCost(found).then(() => {
+                            console.log(found);
+                            setStatus(found);
+                            resolve(found);
+                        })
                     });
                 });
             });
@@ -205,9 +216,9 @@ MaintenanceOrder.completeOrder = reqNumber => {
     })
 }
 
-MaintenanceOrder.updateMaterialRequest = (reqNumber, materialRequest, discription, remark) => {
+MaintenanceOrder.updateMaterialRequest = (reqNumber, materialRequest, discription, remark, work_hour) => {
     return new Bluebird((resolve, reject) => {
-        MaintenanceOrder.update({material_request: materialRequest, discription: discription, remarks: remark}, {
+        MaintenanceOrder.update({material_request: materialRequest, discription: discription, remarks: remark, work_hours: work_hour}, {
             where: {
                 req: reqNumber
             }
@@ -249,6 +260,21 @@ function setStatus(o){
         })
 
     }
+}
+
+function getTotalMaterialCost(order){
+    return new Bluebird((resolve, reject) => {
+        console.log("--------------------------");
+        var totalMaterialCost = 0;
+        order.consumable_data.map(o => {
+            totalMaterialCost = totalMaterialCost + o.consumable.totalCost;
+            console.log(o.consumable);
+        }) 
+        var totalCost = (order.hour_cost * order.work_hours) + totalMaterialCost;
+        order.setDataValue('total_material_cost', totalMaterialCost);
+        order.setDataValue('total_cost', totalCost);
+        resolve("done");
+    })
 }
 
 function getConsumables(order){

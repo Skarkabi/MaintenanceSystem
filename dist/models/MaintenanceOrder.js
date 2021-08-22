@@ -68,8 +68,16 @@ var mappings = {
     type: _sequelize["default"].DataTypes.DOUBLE,
     allowNull: false
   },
-  total_cost: {
+  work_hours: {
     type: _sequelize["default"].DataTypes.DOUBLE,
+    allowNull: false
+  },
+  total_material_cost: {
+    type: _sequelize["default"].DataTypes.VIRTUAL(_sequelize["default"].DataTypes.DOUBLE, ['total_material_cost']),
+    allowNull: false
+  },
+  total_cost: {
+    type: _sequelize["default"].DataTypes.VIRTUAL(_sequelize["default"].DataTypes.DOUBLE, ['total_cost']),
     allowNull: false
   },
   createdAt: {
@@ -120,9 +128,9 @@ var MaintenanceOrder = _mySQLDB["default"].define('maintenance_orders', mappings
     method: 'BTREE',
     fields: ['hour_cost']
   }, {
-    name: 'maintenance_order_total_cost_index',
+    name: 'maintenance_work_hours_cost_index',
     method: 'BTREE',
-    fields: ['total_cost']
+    fields: ['work_hours']
   }, {
     name: 'consumable_createdAt_index',
     method: 'BTREE',
@@ -181,8 +189,11 @@ MaintenanceOrder.getByReq = function (req) {
       getSingleVehicle(found).then(function () {
         getConsumables(found).then(function () {
           getEmployees(found).then(function () {
-            setStatus(found);
-            resolve(found);
+            getTotalMaterialCost(found).then(function () {
+              console.log(found);
+              setStatus(found);
+              resolve(found);
+            });
           });
         });
       });
@@ -207,12 +218,13 @@ MaintenanceOrder.completeOrder = function (reqNumber) {
   });
 };
 
-MaintenanceOrder.updateMaterialRequest = function (reqNumber, materialRequest, discription, remark) {
+MaintenanceOrder.updateMaterialRequest = function (reqNumber, materialRequest, discription, remark, work_hour) {
   return new _bluebird["default"](function (resolve, reject) {
     MaintenanceOrder.update({
       material_request: materialRequest,
       discription: discription,
-      remarks: remark
+      remarks: remark,
+      work_hours: work_hour
     }, {
       where: {
         req: reqNumber
@@ -249,6 +261,21 @@ function setStatus(o) {
       }
     });
   }
+}
+
+function getTotalMaterialCost(order) {
+  return new _bluebird["default"](function (resolve, reject) {
+    console.log("--------------------------");
+    var totalMaterialCost = 0;
+    order.consumable_data.map(function (o) {
+      totalMaterialCost = totalMaterialCost + o.consumable.totalCost;
+      console.log(o.consumable);
+    });
+    var totalCost = order.hour_cost * order.work_hours + totalMaterialCost;
+    order.setDataValue('total_material_cost', totalMaterialCost);
+    order.setDataValue('total_cost', totalCost);
+    resolve("done");
+  });
 }
 
 function getConsumables(order) {

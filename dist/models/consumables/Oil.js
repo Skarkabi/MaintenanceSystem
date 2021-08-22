@@ -56,7 +56,7 @@ var mappings = {
     type: _sequelize["default"].DataTypes.DOUBLE,
     allowNull: false
   },
-  total_price: {
+  totalCost: {
     type: _sequelize["default"].DataTypes.DOUBLE,
     allowNull: false
   },
@@ -110,9 +110,9 @@ var Oil = _mySQLDB["default"].define('oil_stocks', mappings, {
     method: 'BTREE',
     fields: ['oilPrice']
   }, {
-    name: 'oil_total_price_index',
+    name: 'oil_totalCost_index',
     method: 'BTREE',
-    fields: ['total_price']
+    fields: ['totalCost']
   }, {
     name: 'oil_createdAt_index',
     method: 'BTREE',

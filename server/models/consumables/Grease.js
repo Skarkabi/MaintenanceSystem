@@ -58,7 +58,7 @@ const mappings = {
         type: Sequelize.DataTypes.DATE,
         allowNull: false,
     },
-    total_price: {
+    totalCost: {
         type: Sequelize.DataTypes.DOUBLE,
         allowNull: false,
     },
@@ -129,9 +129,9 @@ const Grease = sequelize.define('grease_stocks', mappings, {
         fields: ['quotationNumber']
     },
     {
-        name: 'grease_total_price_index',
+        name: 'grease_totalCost_index',
         method: 'BTREE',
-        fields: ['total_price']
+        fields: ['totalCost']
     },
     {
         name: 'grease_price_per_litter_index',

@@ -68,7 +68,7 @@ router.post('/update/:req', (req, res,next) => {
 });
 
 router.post('/update/material_request/:req', (req, res,next) => {
-    MaintenanceOrder.updateMaterialRequest(req.params.req, req.body.materialRequest, req.body.discription, req.body.remark).then(output => {
+    MaintenanceOrder.updateMaterialRequest(req.params.req, req.body.materialRequest, req.body.discription, req.body.remark, req.body.work_hour).then(output => {
         req.flash('success_msg', output);
         res.redirect(`back`);
         

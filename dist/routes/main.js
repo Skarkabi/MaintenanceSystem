@@ -78,7 +78,7 @@ router.post('/update/:req', function (req, res, next) {
   });
 });
 router.post('/update/material_request/:req', function (req, res, next) {
-  _MaintenanceOrder["default"].updateMaterialRequest(req.params.req, req.body.materialRequest, req.body.discription, req.body.remark).then(function (output) {
+  _MaintenanceOrder["default"].updateMaterialRequest(req.params.req, req.body.materialRequest, req.body.discription, req.body.remark, req.body.work_hour).then(function (output) {
     req.flash('success_msg', output);
     res.redirect("back");
   })["catch"](function (err) {

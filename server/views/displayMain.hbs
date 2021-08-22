@@ -90,8 +90,13 @@
                         <input type="text" class="form-control" name="hourC" brand="hourC" value="{{existingMain.hour_cost}} AED" readonly>
                     </div>
                     <div class="form-group col display-main">
+                        <label for="hourC">Hours of Work</label>
+                        <input type="checkbox" class="btn-check" id="work_hour-checkbox" autocomplete="off" onchange="unlockInput('work_hour')">
+                        <input type="text" class="form-control" name="work_hour" brand="work_hour" id="work_hour" disabled="" value="{{existingMain.work_hours}}">
+                    </div>
+                    <div class="form-group col display-main">
                         <label for="materialCost">Material Cost</label>
-                        <input type="text" class="form-control" name="materialCost" brand="materialCost" value="{{existingMain.materialCost}} AED" readonly>
+                        <input type="text" class="form-control" name="materialCost" brand="materialCost" value="{{existingMain.total_material_cost}} AED" readonly>
                     </div>
                     <div class="form-group col display-main">
                         <label for="totalCost">Total Cost</label>

@@ -38,7 +38,7 @@ const mappings = {
       type: Sequelize.DataTypes.DOUBLE,
       allowNull: false
     },
-    total_price: {
+    totalCost: {
       type: Sequelize.DataTypes.DOUBLE,
       allowNull: false,
     },
@@ -99,9 +99,9 @@ const Oil = sequelize.define('oil_stocks', mappings, {
       fields: ['oilPrice']
     },
     {
-      name: 'oil_total_price_index',
+      name: 'oil_totalCost_index',
       method: 'BTREE',
-      fields: ['total_price']
+      fields: ['totalCost']
     },
     {
       name: 'oil_createdAt_index',

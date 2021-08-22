@@ -147,7 +147,6 @@ Consumable.updateConsumable = (createConsumable, action) => {
                     }
     
                     console.log("AAAAAAAAAAAAAAAAAAAAAA");
-                    console.log(consumableToUpdate);
                     model.updateConsumable(consumableToUpdate, action).then(output => {
                       resolve(output);
                     }).catch(err => {
@@ -215,11 +214,15 @@ Consumable.updateOtherConsumable = (createConsumable, action) => {
           if(action === "add"){
             var quant = newConsumable.quantity + found.quantity;
 
-          }else if(action === "delete"){
+          }else if(action === "delet"){
             var quant = found.quantity - newConsumable.quantity;
 
           }
 
+          console.log("---------------------------------");
+          console.log(action);
+          console.log(createConsumable);
+          console.log("---------------------------------");
           Other.updateConsumable(createConsumable, action).then(output => {
             Consumable.update({quantity: quant}, {
               where: {
@@ -267,20 +270,25 @@ Consumable.getFullStock = () => {
                     Grease.getStock().then(grease => {
                         //Getting oil stock
                         Oil.getStock().then(oil => {
-                            //Getting all Supplier Stock
+                          Other.getStock().then(others => {
                             Supplier.findAll().then(suppliers => {
-                                //Creating variable of all need lists to return
-                                var values = {
-                                  batteries: batteries.rows, brakes: brakes.rows,
-                                  filters: filters.rows, grease: grease.rows, 
-                                  oil: oil.rows, supplier: suppliers
-                                };
+                              //Creating variable of all need lists to return
+                              var values = {
+                                batteries: batteries.rows, brakes: brakes.rows,
+                                filters: filters.rows, grease: grease.rows, 
+                                oil: oil.rows, others: others.rows, supplier: suppliers
+                              };
 
-                                resolve(values);
+                              resolve(values);
 
                             }).catch(err => {
                               reject("Error Connecting to the server " + err);
-                              
+                            
+                            });
+
+                          }).catch(err => {
+                              reject("Error Connecting to the server " + err);
+                            
                             });
 
                         }).catch(err => {
@@ -334,7 +342,6 @@ Consumable.getDistinctConsumableValues = () => {
                     Grease.getGreaseStock().then(grease => {
                         Oil.getOilStock().then(oil => {
                           Other.getOtherStocks().then(other => {
-                            console.log(other);
                             Supplier.findAll().then(suppliers => {
                               var values = {
                                   batteries: batteries, brakes: brakes, filters: filters,

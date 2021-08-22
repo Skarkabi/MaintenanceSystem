@@ -35,6 +35,8 @@ var _MaintenanceOrder = _interopRequireDefault(require("../MaintenanceOrder"));
 
 var _Supplier = _interopRequireDefault(require("../Supplier"));
 
+var _Other = _interopRequireDefault(require("./Other"));
+
 var mappings = {
   consumable_id: {
     type: _sequelize["default"].DataTypes.INTEGER,
@@ -145,7 +147,6 @@ MaintenanceConsumables.getConsumables = function (reqNumber) {
                 };
 
                 _Supplier["default"].getSupplierNames(result).then(function () {
-                  //console.log(result.rows[0].consumable);
                   resolve(result.rows);
                 });
 
@@ -194,134 +195,102 @@ MaintenanceConsumables.useConsumable = function (conusmableId, consumableCategor
       consumable_quantity: quantity
     };
 
-    _Consumables["default"].updateConsumable(newConsumable, "delet").then(function () {
-      MaintenanceConsumables.findOne({
-        where: {
-          consumable_id: conusmableId,
-          consumable_type: consumableCategory,
-          maintenance_req: reqNumber
-        }
-      }).then(function (found) {
-        var quant;
-
-        if (found !== null) {
-          if (action === "add") {
-            quant = quantity + found.consumable_quantity;
-            console.log(quant);
-          } else if (action === "delet") {
-            quant = found.consumable_quantity - quantity;
+    if (newConsumable.category === "Brake" || newConsumable.category === "Battery" || newConsumable.category === "Filter" || newConsumable.category === "Grease" || newConsumable.category === "Oil") {
+      _Consumables["default"].updateConsumable(newConsumable, "delet").then(function () {
+        MaintenanceConsumables.findOne({
+          where: {
+            consumable_id: conusmableId,
+            consumable_type: consumableCategory,
+            maintenance_req: reqNumber
           }
+        }).then(function (found) {
+          var quant;
 
-          MaintenanceConsumables.update({
-            consumable_quantity: quant
-          }, {
-            where: {
-              consumable_id: conusmableId,
-              consumable_type: consumableCategory,
-              maintenance_req: reqNumber
+          if (found !== null) {
+            if (action === "add") {
+              quant = quantity + found.consumable_quantity;
+            } else if (action === "delet") {
+              quant = found.consumable_quantity - quantity;
             }
-          }).then(function () {
-            resolve("Consumable used for Work Order");
-          })["catch"](function (err) {
-            console.log("this errpr");
-            reject(err);
-          });
-        } else {
-          MaintenanceConsumables.create(newMaintenanceConsumable).then(function () {
-            resolve("Consumable used for Work Order");
-          })["catch"](function (err) {
-            reject(err);
-          });
-        }
+
+            MaintenanceConsumables.update({
+              consumable_quantity: quant
+            }, {
+              where: {
+                consumable_id: conusmableId,
+                consumable_type: consumableCategory,
+                maintenance_req: reqNumber
+              }
+            }).then(function () {
+              resolve("Consumable used for Work Order");
+            })["catch"](function (err) {
+              console.log("this errpr");
+              reject(err);
+            });
+          } else {
+            MaintenanceConsumables.create(newMaintenanceConsumable).then(function () {
+              resolve("Consumable used for Work Order");
+            })["catch"](function (err) {
+              reject(err);
+            });
+          }
+        })["catch"](function (err) {
+          reject(err);
+        });
       })["catch"](function (err) {
         reject(err);
       });
-    })["catch"](function (err) {
-      reject(err);
-    });
+    } else {
+      newConsumable.other_name = consumableCategory;
+      console.log("Broke");
+
+      _Consumables["default"].updateOtherConsumable(newConsumable, "delet").then(function () {
+        MaintenanceConsumables.findOne({
+          where: {
+            consumable_id: conusmableId,
+            consumable_type: consumableCategory,
+            maintenance_req: reqNumber
+          }
+        }).then(function (found) {
+          var quant;
+
+          if (found !== null) {
+            if (action === "add") {
+              quant = quantity + found.consumable_quantity;
+            } else if (action === "delet") {
+              quant = found.consumable_quantity - quantity;
+            }
+
+            MaintenanceConsumables.update({
+              consumable_quantity: quant
+            }, {
+              where: {
+                consumable_id: conusmableId,
+                consumable_type: consumableCategory,
+                maintenance_req: reqNumber
+              }
+            }).then(function () {
+              resolve("Consumable used for Work Order");
+            })["catch"](function (err) {
+              console.log("this errpr");
+              reject(err);
+            });
+          } else {
+            MaintenanceConsumables.create(newMaintenanceConsumable).then(function () {
+              resolve("Consumable used for Work Order");
+            })["catch"](function (err) {
+              reject(err);
+            });
+          }
+        })["catch"](function (err) {
+          reject(err);
+        });
+      })["catch"](function (err) {
+        reject(err);
+      });
+    }
   });
 };
-/** 
-function logMapElements(value, key, map) {
-    console.log(`m[${key}] = ${value}`);
-  }
-  
-MaintenanceConsumables.setData = orders => {
-    return new Bluebird((resolve, reject) => {
-        let values = orders.map(a => a.req);
-        MaintenanceConsumables.getByReq(values).then(consumables => {
-            var fullArray = [];
-            consumables.forEach((value, key) => {
-                fullArray.push({key: key.req, value: value});
-            });
-            var consumablesMap = new Map();
-            for(var i = 0; i < fullArray.length; i++){
-                var searchFor = JSON.stringify(fullArray[i].key);
-                if(consumablesMap.get(fullArray[i].key)){
-                    console.log(consumablesMap.get(fullArray[i]))
-                    var temp = consumablesMap.get(fullArray[i].key);
-                    var tempArray = temp;
-                    tempArray.push(fullArray[i]);
-                    console.log(1);
-                    console.log(tempArray);
-                    consumablesMap.set(fullArray[i].key, tempArray);
-                }else{
-                    consumablesMap.set(fullArray[i].key, [fullArray[i].value]);
-                }
-            }
-            
-            console.log(consumablesMap);
-            resolve("completed");
-        });
-    });
-}
-
-MaintenanceConsumables.getByReq = req => {
-    return new Bluebird((resolve, reject) => {
-        MaintenanceConsumables.findAll({
-            where: {
-                maintenance_req: req
-            },
-            attributes: ['maintenance_req', 'consumable_id', 'consumable_type', 'consumable_quantity']
-        }).then(foundConsumables => {
-            MaintenanceConsumables.getConsumables(foundConsumables).then(output => {
-                resolve(output);
-            });
-            
-        }).catch(err => {
-            reject(err);
-        });
-
-    });
-
-}
-
-MaintenanceConsumables.getConsumables = consumables => {
-    return new Bluebird(async (resolve, reject) => {
-        var consumableMap = new Map();
-        await Bluebird.all(consumables.map(async value => {
-            let model = getConsumableModel(value.consumable_type);
-            await model.findAll({
-                where: {
-                    id: value.consumable_id
-                }
-            }).then(found => {
-                found.map(values => {
-                    consumableMap.set({type: value.consumable_type, consumable_id: value.consumable_id, req: value.maintenance_req}, {item: values, quantity: value.consumable_quantity})
-                    
-                });
-
-            });
-
-        }));
-
-        resolve(consumableMap);
-
-    });
-
-}
-*/
-
 
 function getConsumableModel(consumableModel) {
   if (consumableModel === "Brake") {
@@ -334,6 +303,8 @@ function getConsumableModel(consumableModel) {
     return _Oil["default"];
   } else if (consumableModel === "Battery") {
     return _Battery["default"];
+  } else {
+    return _Other["default"];
   }
 }
 

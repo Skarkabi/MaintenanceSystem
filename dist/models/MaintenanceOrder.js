@@ -149,6 +149,7 @@ var MaintenanceOrder = _mySQLDB["default"].define('maintenance_orders', mappings
 MaintenanceOrder.getOrders = function () {
   return new _bluebird["default"](function (resolve, reject) {
     MaintenanceOrder.findAll().then(function (orders) {
+      console.log(orders);
       orders.map(function (o) {
         setStatus(o);
       });
@@ -190,7 +191,6 @@ MaintenanceOrder.getByReq = function (req) {
         getConsumables(found).then(function () {
           getEmployees(found).then(function () {
             getTotalMaterialCost(found).then(function () {
-              console.log(found);
               setStatus(found);
               resolve(found);
             });
@@ -238,38 +238,26 @@ MaintenanceOrder.updateMaterialRequest = function (reqNumber, materialRequest, d
 };
 
 function setStatus(o) {
-  console.log("ORDERS");
-
   if (o.material_request === null || o.material_request === "") {
     o.setDataValue('status', "Not Started");
-    console.log(1);
   } else if (o.completedAt) {
     o.setDataValue('status', "Completed");
-    console.log(2);
   } else {
-    console.log(3);
     getConsumables(o).then(function () {
       if (o.material_request.substring(0, 3) === "MCM" && o.consumable_data.length === 0) {
         o.setDataValue('status', "Pending Material");
-        console.log(4);
-        console.log(o.material_request.substring(0, 3));
       } else if (o.consumable_data.length !== 0 || o.material_request === "N/A") {
         o.setDataValue('status', "In Progress");
-        console.log(5);
-      } else {
-        console.log(6);
-      }
+      } else {}
     });
   }
 }
 
 function getTotalMaterialCost(order) {
   return new _bluebird["default"](function (resolve, reject) {
-    console.log("--------------------------");
     var totalMaterialCost = 0;
     order.consumable_data.map(function (o) {
       totalMaterialCost = totalMaterialCost + o.consumable.totalCost;
-      console.log(o.consumable);
     });
     var totalCost = order.hour_cost * order.work_hours + totalMaterialCost;
     order.setDataValue('total_material_cost', totalMaterialCost);

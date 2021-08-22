@@ -21,6 +21,8 @@ var _Supplier = _interopRequireDefault(require("../Supplier"));
 
 var _Quotation = _interopRequireDefault(require("../Quotation"));
 
+var _express = _interopRequireDefault(require("express"));
+
 var _this = void 0;
 
 var mappings = {
@@ -124,6 +126,18 @@ var Other = _mySQLDB["default"].define('other_stocks', mappings, {
 
 Other.updateConsumable = function (newOther, action) {
   return new _bluebird["default"](function (resolve, reject) {
+    if (!newOther.details) {
+      newOther.details = "";
+    }
+
+    if (!newOther.supplierId) {
+      newOther.supplierId = 0;
+    }
+
+    if (!newOther.quotationNumber) {
+      newOther.quotationNumber = "N/A";
+    }
+
     Other.findOne({
       where: {
         other_name: newOther.other_name,
@@ -163,16 +177,40 @@ Other.updateConsumable = function (newOther, action) {
           reject(err);
         });
       } else {
-        newOther.singleCost = parseFloat(newOther.singleCost);
-        newOther.quantity = parseInt(newOther.quantity);
-        newOther.totalCost = newOther.singleCost * newOther.quantity;
-        Other.create(newOther).then(function () {
-          resolve(newOther.quantity + " " + newOther.other_name + " Successfully Added!");
-        })["catch"](function (err) {
-          reject("An Error Occured " + newOther.other_name + " Could not be Added (Error: " + err + ")");
+        Other.findOne({
+          where: {
+            id: newOther.id
+          }
+        }).then(function (newFound) {
+          var usedQuantity = 0;
+
+          if (newFound && action === "delet") {
+            usedQuantity = newFound.quantity - newOther.quantity;
+            Other.update({
+              quantity: usedQuantity
+            }, {
+              where: {
+                id: newFound.id
+              }
+            }).then(function () {
+              resolve(newOther.other_name + "Used for Order");
+            })["catch"](function (err) {
+              reject(err);
+            });
+          } else {
+            newOther.singleCost = parseFloat(newOther.singleCost);
+            newOther.quantity = parseInt(newOther.quantity);
+            newOther.totalCost = newOther.singleCost * newOther.quantity;
+            Other.create(newOther).then(function () {
+              resolve(newOther.quantity + " " + newOther.other_name + " Successfully Added!");
+            })["catch"](function (err) {
+              reject("An Error Occured " + newOther.other_name + " Could not be Added (Error: " + err + ")");
+            });
+          }
         });
       }
     })["catch"](function (err) {
+      console.log(err);
       reject("An Error Occured " + newOther.other_name + " Could not be Added (Error: " + err + ")");
     });
   });

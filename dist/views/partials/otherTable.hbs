@@ -5,6 +5,8 @@
                 <th scope="col">#</th>
                 <th scope="col">Category</th>
                 <th scope="col">Quantity</th>
+                <th scope="col">Price Per Piece</th>
+                <th scope="col">Total Cost</th>
                 {{#if (isdefined page "view")}}
                 <th scope="brake">Supplier</th>
                 {{else}}
@@ -20,6 +22,8 @@
                     <th>{{counter @index}}</th>
                     <td>{{this.other_name}}</td>
                     <td>{{this.quantity}}</td>
+                    <td>{{this.singleCost}} AED</td>
+                    <td>{{this.totalCost}} AED</td>
                     <td><a href="/consumables/{{this.other_name}}/{{this.supplierId}}">{{this.supplierName}}</a></td>
                     <td><a href="/consumables/{{this.other_name}}/{{this.supplierId}}" style="padding-right: 25px;">View <i class="fas fa-external-link-alt"></i></a></td>
                     
@@ -33,6 +37,8 @@
                     <th>{{counter @index}}</th>
                     <td>{{this.other_name}}</td>
                     <td>{{this.quantity}}</td>
+                    <td>{{this.singleCost}} AED</td>
+                    <td>{{this.totalCost}} AED</td>
                     <td>{{this.quotationNumber}}</td>
                      <td>
                         <div class="input-group-append">

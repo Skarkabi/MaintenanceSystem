@@ -160,7 +160,6 @@ Consumable.updateConsumable = function (createConsumable, action) {
                 }
 
                 console.log("AAAAAAAAAAAAAAAAAAAAAA");
-                console.log(consumableToUpdate);
                 model.updateConsumable(consumableToUpdate, action).then(function (output) {
                   resolve(output);
                 })["catch"](function (err) {
@@ -210,9 +209,14 @@ Consumable.updateOtherConsumable = function (createConsumable, action) {
       } else {
         if (action === "add") {
           var quant = newConsumable.quantity + found.quantity;
-        } else if (action === "delete") {
+        } else if (action === "delet") {
           var quant = found.quantity - newConsumable.quantity;
         }
+
+        console.log("---------------------------------");
+        console.log(action);
+        console.log(createConsumable);
+        console.log("---------------------------------");
 
         _Other["default"].updateConsumable(createConsumable, action).then(function (output) {
           Consumable.update({
@@ -254,18 +258,22 @@ Consumable.getFullStock = function () {
           _Grease["default"].getStock().then(function (grease) {
             //Getting oil stock
             _Oil["default"].getStock().then(function (oil) {
-              //Getting all Supplier Stock
-              _Supplier["default"].findAll().then(function (suppliers) {
-                //Creating variable of all need lists to return
-                var values = {
-                  batteries: batteries.rows,
-                  brakes: brakes.rows,
-                  filters: filters.rows,
-                  grease: grease.rows,
-                  oil: oil.rows,
-                  supplier: suppliers
-                };
-                resolve(values);
+              _Other["default"].getStock().then(function (others) {
+                _Supplier["default"].findAll().then(function (suppliers) {
+                  //Creating variable of all need lists to return
+                  var values = {
+                    batteries: batteries.rows,
+                    brakes: brakes.rows,
+                    filters: filters.rows,
+                    grease: grease.rows,
+                    oil: oil.rows,
+                    others: others.rows,
+                    supplier: suppliers
+                  };
+                  resolve(values);
+                })["catch"](function (err) {
+                  reject("Error Connecting to the server " + err);
+                });
               })["catch"](function (err) {
                 reject("Error Connecting to the server " + err);
               });
@@ -314,8 +322,6 @@ Consumable.getDistinctConsumableValues = function () {
           _Grease["default"].getGreaseStock().then(function (grease) {
             _Oil["default"].getOilStock().then(function (oil) {
               _Other["default"].getOtherStocks().then(function (other) {
-                console.log(other);
-
                 _Supplier["default"].findAll().then(function (suppliers) {
                   var values = {
                     batteries: batteries,

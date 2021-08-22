@@ -5,6 +5,7 @@ import sequelize from '../../mySQLDB';
 import Bluebird from 'bluebird';
 import Supplier from '../Supplier';
 import Quotation from '../Quotation';
+import e from 'express';
 
 const mappings = {
     id: {
@@ -120,6 +121,15 @@ const Other = sequelize.define('other_stocks', mappings, {
 
 Other.updateConsumable = (newOther, action) => {
     return new Bluebird((resolve, reject) => {
+        if(!newOther.details){
+            newOther.details="";
+        }
+        if(!newOther.supplierId){
+            newOther.supplierId=0;
+        }
+        if(!newOther.quotationNumber){
+            newOther.quotationNumber="N/A";
+        }
         Other.findOne({
             where: {
                 other_name: newOther.other_name,
@@ -128,6 +138,7 @@ Other.updateConsumable = (newOther, action) => {
                 quotationNumber: newOther.quotationNumber
             }
         }).then(found => {
+            
             newOther.quantity = parseInt(newOther.quantity);
             if(found && action === "delet"){
                 var newQuant = found.quantity - newOther.quantity;
@@ -163,20 +174,39 @@ Other.updateConsumable = (newOther, action) => {
 
                 });
             }else{
-                newOther.singleCost = parseFloat(newOther.singleCost);
-                newOther.quantity = parseInt(newOther.quantity);
-                newOther.totalCost = newOther.singleCost * newOther.quantity;
-                Other.create(newOther).then(() => {
-                    resolve(newOther.quantity + " " + newOther.other_name + " Successfully Added!");
+                Other.findOne({
+                    where:{
+                        id: newOther.id
+                    }
+                }).then(newFound => {
+                    var usedQuantity = 0;
+                    if(newFound && action === "delet"){
+                        usedQuantity = newFound.quantity - newOther.quantity;
+                        Other.update({quantity: usedQuantity}, {
+                            where:{id: newFound.id}
+                        }).then(() => {
+                            resolve(newOther.other_name + "Used for Order");
+                        }).catch(err => {
+                            reject(err);
+                        })
+                    }else{
+                        newOther.singleCost = parseFloat(newOther.singleCost);
+                        newOther.quantity = parseInt(newOther.quantity);
+                        newOther.totalCost = newOther.singleCost * newOther.quantity;
+                        Other.create(newOther).then(() => {
+                            resolve(newOther.quantity + " " + newOther.other_name + " Successfully Added!");
 
-                }).catch(err => {
-                    reject("An Error Occured " + newOther.other_name + " Could not be Added (Error: " + err + ")");
+                        }).catch(err => {
+                            reject("An Error Occured " + newOther.other_name + " Could not be Added (Error: " + err + ")");
 
-                });
+                        });
+                    }
+                })
 
             }
 
         }).catch(err => {
+            console.log(err);
             reject("An Error Occured " + newOther.other_name + " Could not be Added (Error: " + err + ")");
 
         });

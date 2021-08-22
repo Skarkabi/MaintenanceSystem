@@ -143,6 +143,7 @@ const MaintenanceOrder = sequelize.define('maintenance_orders', mappings, {
 MaintenanceOrder.getOrders = () => {
     return new Bluebird((resolve, reject) => {
         MaintenanceOrder.findAll().then(orders => {
+            console.log(orders);
             orders.map(o => {
                 setStatus(o);
             })
@@ -188,7 +189,6 @@ MaintenanceOrder.getByReq = req => {
                 getConsumables(found).then(() => {
                     getEmployees(found).then(() => {
                         getTotalMaterialCost(found).then(() => {
-                            console.log(found);
                             setStatus(found);
                             resolve(found);
                         })
@@ -235,26 +235,18 @@ MaintenanceOrder.updateMaterialRequest = (reqNumber, materialRequest, discriptio
 }
 
 function setStatus(o){
-    console.log("ORDERS");
     if(o.material_request === null || o.material_request === ""){
         o.setDataValue('status', "Not Started");
-        console.log(1);
     }else if(o.completedAt){
         o.setDataValue('status', "Completed");
-        console.log(2);
     }else{
-        console.log(3);
         getConsumables(o).then(() => {
             if(o.material_request.substring(0,3) === "MCM" && o.consumable_data.length === 0){
                 o.setDataValue('status', "Pending Material")
-                console.log(4);
-            console.log(o.material_request.substring(0,3));
             }else if(o.consumable_data.length !== 0 || o.material_request === "N/A"){
                 o.setDataValue('status', "In Progress")
-                console.log(5);
-                
             }else{
-                console.log(6);
+
             }
                
         })
@@ -264,11 +256,9 @@ function setStatus(o){
 
 function getTotalMaterialCost(order){
     return new Bluebird((resolve, reject) => {
-        console.log("--------------------------");
         var totalMaterialCost = 0;
         order.consumable_data.map(o => {
             totalMaterialCost = totalMaterialCost + o.consumable.totalCost;
-            console.log(o.consumable);
         }) 
         var totalCost = (order.hour_cost * order.work_hours) + totalMaterialCost;
         order.setDataValue('total_material_cost', totalMaterialCost);

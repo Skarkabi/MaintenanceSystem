@@ -88,20 +88,32 @@ router.post('/update/material_request/:req', function (req, res, next) {
 });
 router.post('/update/material_request/add_consumables/:req/:category', /*#__PURE__*/function () {
   var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(req, res, next) {
-    var updateValues, finished, i, newValue, category;
+    var updateValues, finished, errorHappend, i, newValue, category;
     return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            console.log("AAAAAAAAAAAAAAA");
             updateValues = [];
+            errorHappend = {
+              error: false,
+              msg: ""
+            };
 
             for (i = 0; i < req.body.quantityInput.length; i++) {
               if (req.body.quantityInput[i] !== "" && req.body.quantityInput[i] !== "0" && req.body.quantityInput[i] !== 0) {
-                newValue = {
-                  consumableId: req.body.consumable_id[i],
-                  quantity: req.body.quantityInput[i]
-                };
+                if (req.params.category === "other") {
+                  newValue = {
+                    consumableId: req.body.consumable_id[i],
+                    quantity: req.body.quantityInput[i],
+                    category: req.body.consumable_category[i]
+                  };
+                } else {
+                  newValue = {
+                    consumableId: req.body.consumable_id[i],
+                    quantity: req.body.quantityInput[i]
+                  };
+                }
+
                 updateValues.push(newValue);
               }
             }
@@ -115,18 +127,35 @@ router.post('/update/material_request/add_consumables/:req/:category', /*#__PURE
 
             _context.next = 7;
             return Promise.all(updateValues.map(function (consumables) {
-              _MaintenanceConsumables["default"].useConsumable(consumables.consumableId, category, req.params.req, parseFloat(consumables.quantity), "add").then(function (output) {
+              var usedCategory;
+
+              if (category = "Other") {
+                usedCategory = consumables.category;
+              } else {
+                usedCategory = category;
+              }
+
+              _MaintenanceConsumables["default"].useConsumable(consumables.consumableId, usedCategory, req.params.req, parseFloat(consumables.quantity), "add").then(function (output) {
                 finished = output;
               })["catch"](function (err) {
-                return returnError(err);
+                errorHappend = {
+                  error: true,
+                  msg: err
+                };
               });
             }));
 
           case 7:
-            req.flash('success_msg', "".concat(category, " Succesfully Used From Stock"));
-            res.redirect("back"); //MaintenanceConsumables.useConsumable(req.params.consumableId, req.params.category, req.params)
+            if (errorHappend.error) {
+              req.flash('error_msg', errorHappend.msg);
+              res.redirect("back");
+            } else {
+              req.flash('success_msg', "".concat(category, " Succesfully Used From Stock"));
+              res.redirect("back");
+            } //MaintenanceConsumables.useConsumable(req.params.consumableId, req.params.category, req.params)
 
-          case 9:
+
+          case 8:
           case "end":
             return _context.stop();
         }
@@ -139,7 +168,7 @@ router.post('/update/material_request/add_consumables/:req/:category', /*#__PURE
   };
 }());
 
-function returnError(er) {
+function returnError(er, req, res) {
   req.flash('error_msg', er);
   res.redirect("back");
 }

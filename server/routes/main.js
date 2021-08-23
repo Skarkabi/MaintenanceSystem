@@ -3,6 +3,7 @@ import { promises } from 'stream';
 import Consumable from '../models/Consumables';
 import MaintenanceConsumables from '../models/consumables/MaintenanceConsumables';
 import MaintenanceOrder from '../models/MaintenanceOrder'
+import Vehicle from '../models/Vehicle';
 
 const router = express.Router();
 
@@ -26,14 +27,41 @@ router.get('/', (req, res,next) => {
  * Express Route to load create new maintenace request page
  */
 router.get('/create', (req,res,next) => {
-    res.render('createUpdateMain', {
-        title: (`New Maintanence Request`),
-        jumbotronDescription: `Create a New Maintanence Request`,
-    
-    });
+    MaintenanceOrder.findOne({
+        order: [ [ 'createdAt', 'DESC' ]],
+    }).then(result => {
+        var str = result.req;
+        var matches = str.match(/(\d+)/);
+        Vehicle.getMappedStock().then(vehicles => {
+            res.render('createUpdateMain', {
+                title: (`New Maintanence Request`),
+                jumbotronDescription: `Create a New Maintanence Request`,
+                newReqNumber: "TMC" + JSON.stringify(parseInt(matches[0]) + 1),
+                vehicles: vehicles,
+                action: "/maintanence/create",
+                msgType: req.flash()
+        
+            });
+        })
+        
+    })
+   
 
 });
 
+router.post('/create', (req, res, next) => {
+    console.log(req.body);
+    var newOrder = {
+        req: req.body.reqNumber,
+        division: req.body.division,
+        plate: req.body.plate,
+        discription: req.body.discription
+    }
+    MaintenanceOrder.addOrder(newOrder).then(output => {
+        req.flash('success_msg', output);
+        res.redirect(`back`);
+    })
+})
 /**
  * Express Route to get selected maintenance job details
  */

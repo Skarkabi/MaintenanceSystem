@@ -24,6 +24,7 @@ import consumableRouter from './routes/consumables';
 import supplierRouter from './routes/supplier';
 import mainRouter from './routes/main';
 import NonStockConsumables from './models/consumables/NonStockConsumables';
+import Vehicle from './models/Vehicle';
 require('./models/Session');
 require('./models/MaintenanceOrder');
 
@@ -66,6 +67,10 @@ handlebars.registerHelper('convertToString', function (value){
 
 handlebars.registerDecorator('checkOption', function(){
     return console.log(document.getElementById("category").value)
+})
+
+handlebars.registerHelper('getVehicles', function(vehicles, plate){
+    return console.log(plate.get('15204'));
 })
 
 const app = express();

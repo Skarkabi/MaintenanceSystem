@@ -59,6 +59,8 @@ var _main = _interopRequireDefault(require("./routes/main"));
 
 var _NonStockConsumables = _interopRequireDefault(require("./models/consumables/NonStockConsumables"));
 
+var _Vehicle = _interopRequireDefault(require("./models/Vehicle"));
+
 require('./models/Session');
 
 require('./models/MaintenanceOrder');
@@ -105,6 +107,10 @@ _handlebars["default"].registerHelper('convertToString', function (value) {
 
 _handlebars["default"].registerDecorator('checkOption', function () {
   return console.log(document.getElementById("category").value);
+});
+
+_handlebars["default"].registerHelper('getVehicles', function (vehicles, plate) {
+  return console.log(plate.get('15204'));
 });
 
 var app = (0, _express["default"])();

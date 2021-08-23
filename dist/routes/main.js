@@ -21,6 +21,8 @@ var _MaintenanceConsumables = _interopRequireDefault(require("../models/consumab
 
 var _MaintenanceOrder = _interopRequireDefault(require("../models/MaintenanceOrder"));
 
+var _Vehicle = _interopRequireDefault(require("../models/Vehicle"));
+
 var router = _express["default"].Router();
 /**
  * Express Route to display all maintanence jobs
@@ -42,9 +44,36 @@ router.get('/', function (req, res, next) {
  */
 
 router.get('/create', function (req, res, next) {
-  res.render('createUpdateMain', {
-    title: "New Maintanence Request",
-    jumbotronDescription: "Create a New Maintanence Request"
+  _MaintenanceOrder["default"].findOne({
+    order: [['createdAt', 'DESC']]
+  }).then(function (result) {
+    var str = result.req;
+    var matches = str.match(/(\d+)/);
+
+    _Vehicle["default"].getMappedStock().then(function (vehicles) {
+      res.render('createUpdateMain', {
+        title: "New Maintanence Request",
+        jumbotronDescription: "Create a New Maintanence Request",
+        newReqNumber: "TMC" + JSON.stringify(parseInt(matches[0]) + 1),
+        vehicles: vehicles,
+        action: "/maintanence/create",
+        msgType: req.flash()
+      });
+    });
+  });
+});
+router.post('/create', function (req, res, next) {
+  console.log(req.body);
+  var newOrder = {
+    req: req.body.reqNumber,
+    division: req.body.division,
+    plate: req.body.plate,
+    discription: req.body.discription
+  };
+
+  _MaintenanceOrder["default"].addOrder(newOrder).then(function (output) {
+    req.flash('success_msg', output);
+    res.redirect("back");
   });
 });
 /**

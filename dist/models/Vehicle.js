@@ -7,6 +7,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
 var _lodash = _interopRequireDefault(require("lodash"));
 
 var _bluebird = _interopRequireDefault(require("bluebird"));
@@ -243,6 +247,39 @@ Vehicle.getStock = function () {
     })["catch"](function (err) {
       reject(err);
     });
+  });
+};
+
+Vehicle.getMappedStock = function () {
+  return new _bluebird["default"](function (resolve, reject) {
+    Vehicle.getStock().then( /*#__PURE__*/function () {
+      var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(vehicles) {
+        var vehicleMap;
+        return _regenerator["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                vehicleMap = [];
+                _context.next = 3;
+                return Promise.all(vehicles.rows.map(function (vehicle) {
+                  vehicleMap.push(vehicle);
+                }));
+
+              case 3:
+                resolve(vehicleMap);
+
+              case 4:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
+
+      return function (_x) {
+        return _ref.apply(this, arguments);
+      };
+    }());
   });
 };
 /**

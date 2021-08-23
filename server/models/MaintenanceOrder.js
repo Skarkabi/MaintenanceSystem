@@ -48,19 +48,19 @@ const mappings = {
     },
     hour_cost: {
         type: Sequelize.DataTypes.DOUBLE,
-        allowNull: false
+        allowNull: true
     },
     work_hours: {
         type: Sequelize.DataTypes.DOUBLE,
-        allowNull: false
+        allowNull: true
     },
     total_material_cost: {
         type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.DOUBLE, ['total_material_cost']),
-        allowNull: false
+
     },
     total_cost: {
         type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.DOUBLE, ['total_cost']),
-        allowNull: false
+
     },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
@@ -71,7 +71,7 @@ const mappings = {
         allowNull: false,
     },completedAt: {
         type: Sequelize.DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
     },
 
 };
@@ -242,17 +242,27 @@ MaintenanceOrder.updateMaterialRequest = (reqNumber, materialRequest, discriptio
 
 }
 
+MaintenanceOrder.addOrder = order => {
+    return new Bluebird((resolve, reject) => {
+        MaintenanceOrder.create(order).then(() => {
+            resolve("New Order added");
+        })
+    })
+}
+
 function setStatus(o){
-    if(o.material_request === null || o.material_request === ""){
+    console.log(o.consumable_data);
+    if((o.material_request === null || o.material_request === "") && (o.consumable_data === undefined || o.consumable_data.length === 0)){
         o.setDataValue('status', "Not Started");
     }else if(o.completedAt){
         o.setDataValue('status', "Completed");
     }else{
         getConsumables(o).then(() => {
-            if(o.material_request.substring(0,3) === "MCM" && o.consumable_data.length === 0){
-                o.setDataValue('status', "Pending Material")
-            }else if(o.consumable_data.length !== 0 || o.material_request === "N/A"){
+            if(o.consumable_data.length !== 0 || o.material_request === "N/A"){
                 o.setDataValue('status', "In Progress")
+               
+            }else if(o.material_request.substring(0,3) === "MCM" && o.consumable_data.length === 0){
+                o.setDataValue('status', "Pending Material")
             }else{
 
             }

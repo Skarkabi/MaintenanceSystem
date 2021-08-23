@@ -263,6 +263,18 @@ Vehicle.getStock =() => {
 
 }
 
+Vehicle.getMappedStock = () => {
+  return new Bluebird((resolve, reject) => {
+    Vehicle.getStock().then(async vehicles => {
+      var vehicleMap = [];
+        await Promise.all(vehicles.rows.map(vehicle => {
+          vehicleMap.push(vehicle);
+        }));
+        resolve(vehicleMap);
+    })
+  })
+}
+
 /**
  * function to return distinct values in object
  * @param {*} values 

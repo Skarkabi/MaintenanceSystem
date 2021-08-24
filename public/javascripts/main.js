@@ -10,6 +10,7 @@ $(document).ready(function () {
     });
 });
 
+
 /**
  * Replaces due date format.
  */
@@ -81,3 +82,4 @@ $(document).ready(() => {
         terms[0].classList.add("show");
     }
 });
+

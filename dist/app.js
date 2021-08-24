@@ -61,6 +61,10 @@ var _NonStockConsumables = _interopRequireDefault(require("./models/consumables/
 
 var _Vehicle = _interopRequireDefault(require("./models/Vehicle"));
 
+var _xlsx = _interopRequireDefault(require("xlsx"));
+
+global.Blob = require('blob');
+
 require('./models/Session');
 
 require('./models/MaintenanceOrder');
@@ -186,6 +190,8 @@ app.use(_expressBreadcrumbs["default"].setHome({
 }));
 app.use('/bootstrap', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/bootstrap/dist')));
 app.use('/jquery', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/jquery/dist')));
+app.use('/file-saver', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/file-saver/dist')));
+app.use('/xlsx', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/xlsx/dist')));
 app.use(function (req, res, next) {
   next((0, _httpErrors["default"])(404));
 });

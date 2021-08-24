@@ -23,10 +23,6 @@ import vehicleRouter from './routes/vehicles';
 import consumableRouter from './routes/consumables';
 import supplierRouter from './routes/supplier';
 import mainRouter from './routes/main';
-import NonStockConsumables from './models/consumables/NonStockConsumables';
-import Vehicle from './models/Vehicle';
-import XLSX from 'xlsx';
-global.Blob = require('blob'); 
 require('./models/Session');
 require('./models/MaintenanceOrder');
 
@@ -147,6 +143,7 @@ app.use('/bootstrap', express.static(path.join(__dirname, '../node_modules/boots
 app.use('/jquery', express.static(path.join(__dirname, '../node_modules/jquery/dist')));
 app.use('/file-saver', express.static(path.join(__dirname,'../node_modules/file-saver/dist')));
 app.use('/xlsx', express.static(path.join(__dirname,'../node_modules/xlsx/dist')));
+app.use('/exceljs', express.static(path.join(__dirname,'../node_modules/exceljs/dist')));
 
 app.use((req, res, next) =>
 {
@@ -167,6 +164,5 @@ app.use((err, req, res, next) =>
     res.status(err.status || 500);
     res.render('error');
 });
-
 
 export default app;

@@ -57,14 +57,6 @@ var _supplier = _interopRequireDefault(require("./routes/supplier"));
 
 var _main = _interopRequireDefault(require("./routes/main"));
 
-var _NonStockConsumables = _interopRequireDefault(require("./models/consumables/NonStockConsumables"));
-
-var _Vehicle = _interopRequireDefault(require("./models/Vehicle"));
-
-var _xlsx = _interopRequireDefault(require("xlsx"));
-
-global.Blob = require('blob');
-
 require('./models/Session');
 
 require('./models/MaintenanceOrder');
@@ -192,6 +184,7 @@ app.use('/bootstrap', _express["default"]["static"](_path["default"].join(__dirn
 app.use('/jquery', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/jquery/dist')));
 app.use('/file-saver', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/file-saver/dist')));
 app.use('/xlsx', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/xlsx/dist')));
+app.use('/exceljs', _express["default"]["static"](_path["default"].join(__dirname, '../node_modules/exceljs/dist')));
 app.use(function (req, res, next) {
   next((0, _httpErrors["default"])(404));
 });

@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
+    "@aternus/csv-to-xlsx": "^1.0.19",
     "@handlebars/allow-prototype-access": "^1.0.3",
     "bcrypt": "^5.0.1",
     "blob": "^0.1.0",
@@ -18,6 +19,7 @@
     "debug": "~2.6.9",
     "dotenv": "~6.1.0",
     "excel": "^1.0.1",
+    "exceljs": "^4.3.0",
     "express": "~4.16.1",
     "express-breadcrumbs": "0.0.2",
     "express-fileupload": "^1.2.1",

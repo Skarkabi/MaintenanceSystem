@@ -1,12 +1,10 @@
 {
-  "name": "connectsql",
+  "name": "maintenancesystem",
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@aternus/csv-to-xlsx": "^1.0.19",
     "@handlebars/allow-prototype-access": "^1.0.3",
     "bcrypt": "^5.0.1",
-    "blob": "^0.1.0",
     "bluebird": "~3.5.1",
     "bootstrap": "^4.5.3",
     "canvas": "^2.8.0",
@@ -29,7 +27,6 @@
     "express-session": "^1.17.1",
     "express-session-sequelize": "^2.3.0",
     "express-validator": "^6.8.0",
-    "file-saver": "^2.0.5",
     "generate-password": "^1.5.1",
     "gherkin": "^9.0.0",
     "handlebars": "^4.7.6",
@@ -45,15 +42,10 @@
     "nodemailer": "^6.4.16",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "php-node": "0.0.2",
     "popper.js": "^1.16.1",
     "sequelize": "^6.6.2",
     "sequelize-cli": "^6.2.0",
-    "sharp": "^0.28.3",
-    "sheetjs": "^2.0.0",
-    "sheetjs-style": "^0.15.7",
-    "sqlite3": "^5.0.2",
-    "xlsx": "^0.17.1"
+    "sqlite3": "^5.0.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.1",
@@ -98,13 +90,6 @@
   },
   "scripts": {
     "start": "nodemon",
-    "db:seed": "md-seed run --dropdb",
-    "db:seed:users": "md-seed run users",
-    "db:seed:faculties": "md-seed run facultys",
-    "db:seed:terms": "md-seed run terms",
-    "db:seed:courses": "md-seed run courses",
-    "db:seed:course:instances": "md-seed run course-instances",
-    "db:seed:assignments": "md-seed run assignments",
     "test": "npx cypress open",
     "build": "npm-run-all clean transpile",
     "server": "node ./dist/bin/www",

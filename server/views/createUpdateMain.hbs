@@ -11,21 +11,7 @@
                         <label for="req">Req #</label>
                         <input type="text" id="reqNumber" name="reqNumber" class="form-control" value={{newReqNumber}}>
                     </div>
-                     <div class="form-group col required">
-                        <label for="division">Division</label>
-                        <input list="division" name="division"  placeholder="Select Division" class="form-control" required >
-                            <datalist id="division">
-                                <option value="C.M.S."></option>
-                                <option value="MESH"></option>
-                                <option value="CEILING"></option>
-                                <option value="METAL DOORS"></option>
-                                <option value="SHELVING & CABINETS"></option>
-                                <option value="POWDER COATING"></option>
-                            </datalist>
-                    </div>
-                </div>
-                 <div class="form-row">
-                     <div class="form-group col">
+                    <div class="form-group col">
                         <label for="plate">Plate #</label>
                         <input list="plate" id="plateValue" name="plate" placeholder="Select Plate #" class="form-control" onChange="setVehicleInfo()" required>
                            <datalist id="plate">
@@ -34,7 +20,9 @@
                                 {{/each}}
                            </datalist>
                     </div>
-                    <div class="form-group col ">
+                </div>
+                <div class="form-row">
+                     <div class="form-group col ">
                         <label for="category">Vehicle Category</label>
                         <select type="text" name="category" id="category" class="form-control" disabled>
                              <option value="" selected disabled></option>
@@ -45,8 +33,6 @@
                         </select>
                         
                     </div>
-                </div>
-                <div class="form-row">
                      <div class="form-group col ">
                         <label for="brand">Vehicle Brand</label>
                         <select type="text" id="brand" name="brand" class="form-control" disabled>

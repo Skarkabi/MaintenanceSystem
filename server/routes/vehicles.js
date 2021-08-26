@@ -1,5 +1,6 @@
 import express from 'express';
 import Vehicle from '../models/Vehicle';
+import ExcelExporter from '../ExcelExporter';
 
 const router = express.Router();
 
@@ -101,6 +102,34 @@ router.get('/', (req, res, next) => {
 
     }
 
+});
+
+router.get('/exportExcel/newTable', (req,res,next) => {
+    Vehicle.getStock().then(vehicles => {
+        var headerValues = [["#", "Category", "Brand", "Model", "Year", "Plate#", "Chassis#", "Driven", "Change"]]
+        var tableValues = []
+        var count = 1
+        vehicles.rows.map(values => {
+            tableValues.push([
+                count, values.category, values.brand, values.model, values.year,
+                values.plate, values.chassis, values.kmDriven, values.kmForOilChange
+            ]);
+            count++;
+        });
+        ExcelExporter.getExcelTable(headerValues, tableValues).then( output => {
+            const fileData = output;
+            const fileName = `Vehicles (${new Date().toISOString().slice(0,10)}).xlsx`
+            const fileType = 'application/octet-stream'
+
+            res.writeHead(200, {
+                'Content-Disposition': `attachment; filename="${fileName}"`,
+                'Content-Type': fileType,
+            })
+
+            const download = Buffer.from(fileData, 'base64')
+            res.end(download);    
+        })
+    })
 });
 
 export default router;

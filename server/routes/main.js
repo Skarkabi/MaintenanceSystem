@@ -1,9 +1,13 @@
 import express from 'express';
-import { promises } from 'stream';
+import stream from 'stream';
 import Consumable from '../models/Consumables';
 import MaintenanceConsumables from '../models/consumables/MaintenanceConsumables';
 import MaintenanceOrder from '../models/MaintenanceOrder'
 import Vehicle from '../models/Vehicle';
+import ExcelExporter from '../ExcelExporter';
+import ExcelJS from 'exceljs';
+const fs = require('fs');
+const https = require('https')
 
 const router = express.Router();
 
@@ -19,9 +23,10 @@ router.get('/', (req, res,next) => {
             msgType: req.flash()
        
         });
-    });
+    }).catch(err => {console.log(err);});
     
 });
+
 
 /**
  * Express Route to load create new maintenace request page
@@ -50,10 +55,9 @@ router.get('/create', (req,res,next) => {
 });
 
 router.post('/create', (req, res, next) => {
-    console.log(req.body);
     var newOrder = {
         req: req.body.reqNumber,
-        division: req.body.division,
+        division: "OPERATIONS",
         plate: req.body.plate,
         discription: req.body.discription
     }
@@ -80,26 +84,18 @@ router.get('/:req', (req, res, next) => {
                     msgType: req.flash()
                 });
             }).catch(err =>{
-                console.log("...................................");
                 console.log(err);
-                console.log("...................................");
             })
         }).catch(err =>{
-            console.log("...................................");
             console.log(err);
-            console.log("...................................");
         })
     }).catch(err =>{
-        console.log("...................................");
         console.log(err);
-        console.log("...................................");
     });
 
 });
 
 router.post('/update/:req', (req, res,next) => {
-
-    console.log("In Here");
     MaintenanceOrder.completeOrder(req.params.req).then(output => {
         req.flash('success_msg', output);
         res.redirect(`back`);
@@ -109,6 +105,36 @@ router.post('/update/:req', (req, res,next) => {
         res.redirect(`back`);
     });
 });
+
+router.get('/exportExcel/newTable', (req,res,next) => {
+     MaintenanceOrder.getOrders().then(orders => {
+        var headerValues = [["#","Date", "Req#", "Division", "Vehicle", "Status"],["Plate#", "Category", "Brand", "Model", "Year"]]
+        var tableValues = []
+        var count = 1
+        orders.map(values => {
+            tableValues.push([
+                count, values.createdAt, values.req, values.division, values.vehicle_data.plate,
+                values.vehicle_data.category, values.vehicle_data.brand, values.vehicle_data.model,
+                values.vehicle_data.year, values.status
+            ]);
+            count++;
+        });
+        
+        ExcelExporter.getExcelTable(headerValues, tableValues).then( output => {
+            const fileData = output;
+            const fileName = `Maintenance Requests (${new Date().toISOString().slice(0,10)}).xlsx`
+            const fileType = 'application/octet-stream'
+
+            res.writeHead(200, {
+                'Content-Disposition': `attachment; filename="${fileName}"`,
+                'Content-Type': fileType,
+            })
+
+            const download = Buffer.from(fileData, 'base64')
+            res.end(download);    
+        })
+    })
+})
 
 router.post('/update/material_request/:req', (req, res,next) => {
     MaintenanceOrder.updateMaterialRequest(req.params.req, req.body.materialRequest, req.body.discription, req.body.remark, req.body.work_hour).then(output => {
@@ -141,8 +167,6 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
             updateValues.push(newValue);
         }
     }
-    console.log("PPPPPPPPLLLLLLLEEEEEEAAAASSSSEEE");
-    console.log(updateValues);
     var category = req.params.category[0].toUpperCase() + req.params.category.slice(1);
     if(req.body.eOrN !== "new" && updateValues.length !== 0){
         await Promise.all(updateValues.map(consumables => {
@@ -158,7 +182,6 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
             }else{
                 usedCategory = category;
             }
-            console.log("PPPPPPPPLLLLLLLEEEEEEAAAASSSSEEE");
             MaintenanceConsumables.useConsumable(consumables.consumableId, usedCategory, req.params.req, parseFloat(consumables.quantity), "add", fromStock).then(output => {
                     finished = output;
             }).catch(err => {
@@ -181,7 +204,6 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
         await MaintenanceConsumables.useNonStockConsumable(testItem).then(output => {
             finished = output;
         }).catch(err => {
-            console.log(err);
             errorHappend = {error:true, msg: err}
         });
     }

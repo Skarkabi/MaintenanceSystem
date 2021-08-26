@@ -1,14 +1,15 @@
 <div class="col-md-12">
     <div class="table-buttons" id="table-buttons">
         <a href="/maintanence/create" role="button" class="btn btn-outline-dark" id="create-new"><i class="fas fa-plus"></i>New Job</a>
-        <button type="button" id="button-a" class="btn btn-outline-dark" name="button-a"><i class="fas fa-file-download"></i>Export</button>
+        <a href="/maintanence/exportExcel/newTable" role="button" id="excel-export" name="excel-export" class="btn btn-outline-dark"><i class="fas fa-file-download"></i>Export</a>
+        <button type="button" id="button-a" class="btn btn-outline-dark" name="button-a"><i class="fas fa-file-download"></i>Export (TEST)</button>
     </div>
 </div>
 
 <div class="col-md-12">
-    <table id="filterable-table" class="table table-bordered table-striped">
+    <table id="filterable-table" name="table"class="table table-bordered table-striped">
         <thead>
-            <tr>
+            <tr name="tableHead">
                 <th scope="col" rowspan="2">#</th>
                 <th scope="col" rowspan="2">Date</th>
                 <th scope="col" rowspan="2">Req#</th>
@@ -54,3 +55,7 @@
         </tbody>
     </table>
 </div>
+
+<script>
+  
+</script>

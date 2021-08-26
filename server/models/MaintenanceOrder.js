@@ -142,14 +142,15 @@ const MaintenanceOrder = sequelize.define('maintenance_orders', mappings, {
 
 MaintenanceOrder.getOrders = () => {
     return new Bluebird((resolve, reject) => {
+        console.log(1);
         MaintenanceOrder.findAll().then(orders => {
-            orders.map(o => {
-                setStatus(o);
-            })
-           getVehicle(orders).then(() => {
-               resolve(orders);
-           });
-            
+            getVehicle(orders).then( () => {
+                console.log("First");
+                setAllStatus(orders).then(() => {
+                    resolve(orders);
+                })
+                
+            });
         }).catch(err => {
             reject(err);
         })
@@ -162,7 +163,7 @@ MaintenanceOrder.getOrdersByPlate = plate => {
             where: {
                 plate: plate
             }
-        }).then(orders => {
+        }).then(async orders => {
             orders.map(o => {
                 o.setDataValue('createdAt', getDateWithoutTime(o.createdAt));
                 setStatus(o);
@@ -184,23 +185,16 @@ MaintenanceOrder.getByReq = req => {
                 req: req
             }
         }).then(found => {
-            console.log(0);
             getSingleVehicle(found).then(() => {
-                console.log(1);
                 getConsumables(found).then(() => {
-                    console.log(2);
                     getEmployees(found).then(() => {
-                        console.log(3);
                         getTotalMaterialCost(found).then(() => {
-                            console.log(4);
                             setStatus(found);
                             resolve(found);
                         })
                     });
                 }).catch(err =>{
-                    console.log("...................................");
-                    console.log(err);
-                    console.log("...................................");
+                    reject(err);
                 });
             });
         });
@@ -215,7 +209,6 @@ MaintenanceOrder.completeOrder = reqNumber => {
                 req: reqNumber
             }
          }).then(() =>{
-             console.log("updated");
              resolve("Order Has Been Set to Completed");
     
          }).catch(err => {
@@ -251,25 +244,58 @@ MaintenanceOrder.addOrder = order => {
 }
 
 function setStatus(o){
-    console.log(o.consumable_data);
+    getConsumables(o).then(output => {
+        console.log("Third");
     if((o.material_request === null || o.material_request === "") && (o.consumable_data === undefined || o.consumable_data.length === 0)){
+        console.log("Third Not Started");
         o.setDataValue('status', "Not Started");
     }else if(o.completedAt){
+        console.log("Third Complete");
         o.setDataValue('status', "Completed");
     }else{
-        getConsumables(o).then(() => {
             if(o.consumable_data.length !== 0 || o.material_request === "N/A"){
+                console.log("Third In PRogress");
                 o.setDataValue('status', "In Progress")
                
             }else if(o.material_request.substring(0,3) === "MCM" && o.consumable_data.length === 0){
+                console.log("Third Pending");
                 o.setDataValue('status', "Pending Material")
             }else{
 
             }
                
-        })
+        }
 
-    }
+    })
+}
+
+function setAllStatus(orders){
+    return new Bluebird((resolve, reject) => {
+        getAllConsumables(orders).then(async output => {
+            await Promise.all(orders.map(o => {
+                if((o.material_request === null || o.material_request === "") && (o.consumable_data === undefined || o.consumable_data.length === 0)){
+                    console.log("Third Not Started");
+                    o.setDataValue('status', "Not Started");
+                }else if(o.completedAt){
+                    console.log("Third Complete");
+                    o.setDataValue('status', "Completed");
+                }else{
+                        if(o.consumable_data.length !== 0 || o.material_request === "N/A"){
+                            console.log("Third In PRogress");
+                            o.setDataValue('status', "In Progress")
+                           
+                        }else if(o.material_request.substring(0,3) === "MCM" && o.consumable_data.length === 0){
+                            console.log("Third Pending");
+                            o.setDataValue('status', "Pending Material")
+                        }else{
+            
+                        }
+                           
+                    }
+            }))
+            resolve("Done");
+        })
+    })
 }
 
 function getTotalMaterialCost(order){
@@ -285,15 +311,30 @@ function getTotalMaterialCost(order){
     })
 }
 
+function getAllConsumables(orders){
+    return new Bluebird(async (resolve, reject) => {
+        var count = 0;
+        await Promise.all(orders.map(o => {
+            MaintenanceConsumables.getConsumables(o.req).then(found => {
+                o.setDataValue('consumable_data', found);
+                count++;
+                console.log(`${count} : ${orders.length}`);
+                if(count === orders.length){
+                    resolve("done");
+                }
+            })
+        }))
+       
+    })
+}
+
 function getConsumables(order){
-    return new Bluebird((resolve, reject) => {
+    return new Bluebird(async (resolve, reject) => {
         MaintenanceConsumables.getConsumables(order.req).then(found =>{
             order.setDataValue('consumable_data', found);
             resolve("Set All");
         }).catch(err =>{
-            console.log("...................................");
-            console.log(err);
-            console.log("...................................");
+           reject(err);
         })
     })
 }

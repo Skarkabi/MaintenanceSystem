@@ -93,7 +93,6 @@ MaintenanceConsumables.getConsumables = reqNumber => {
         MaintenanceConsumables.getAllConsumables(reqNumber).then(async found => {
             var consumableMap = [];
             await Promise.all(found.map(async consumable => {
-                console.log(consumable.from_stock);
                 var modelType;
                 if(consumable.from_stock){
                     modelType = getConsumableModel(consumable.consumable_type);
@@ -114,13 +113,9 @@ MaintenanceConsumables.getConsumables = reqNumber => {
             }))
             var result = {count: consumableMap.length, rows: consumableMap, isMain: true}
             Supplier.getSupplierNames(result).then(() => {
-                console.log(reqNumber);
                 resolve(result.rows);
             }).catch(err =>{
-                console.log(result);
-                console.log("...................................");
-                console.log(err);
-                console.log("...................................");
+               reject(err);
             });
         }).catch(err => {
             reject(err);
@@ -135,7 +130,6 @@ MaintenanceConsumables.getAllConsumables = reqNumber => {
                 maintenance_req: reqNumber
             }
         }).then(found => {
-            console.log(found.length);
             resolve(found);
         }).catch(err => {
             reject(err);
@@ -184,7 +178,6 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
                             resolve("Consumable used for Work Order");
             
                         }).catch(err => {
-                            console.log("this errpr");
                             reject(err);
         
                         })
@@ -211,7 +204,6 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
 
         }else{
             newConsumable.other_name = consumableCategory
-            console.log("Broke");
             Consumable.updateOtherConsumable(newConsumable, "delet").then(() => {
                 MaintenanceConsumables.findOne({
                     where: {
@@ -245,13 +237,11 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
                                     resolve("Consumable used for Work Order");
                     
                                 }).catch(err => {
-                                    console.log("this errpr");
                                     reject(err);
                 
                                 })
                             }else{
                                 MaintenanceConsumables.create(newMaintenanceConsumable).then(() => {
-                                    console.log("Updated list");
                                     resolve("Consumable used for Work Order");
                                 
                                 }).catch(err => {
@@ -262,12 +252,8 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
                         })
                        
                     }else{
-                        console.log("1*******************************");
                         newMaintenanceConsumable.from_stock = true;
-                        console.log(newMaintenanceConsumable);
-                        console.log("*******************************1");
                         MaintenanceConsumables.create(newMaintenanceConsumable).then(() => {
-                            console.log("Updated list");
                             resolve("Consumable used for Work Order");
                         
                         }).catch(err => {
@@ -307,12 +293,10 @@ MaintenanceConsumables.useNonStockConsumable = (nonStockConsumable) => {
             MaintenanceConsumables.create(newMaintenanceConsumable).then(() => {
                 resolve("Added to");
             }).catch(err => {
-                console.log(err);
                 reject(err);
             })
             
         }).catch(err => {
-            console.log(err);
             reject(err);
         })
     })

@@ -37,7 +37,6 @@ router.get('/display-user/:id', (req,res,next) => {
 
 router.get('/display-user/', (req,res,next) =>
 {
-    console.log(req.user.id)
     if(req.user.id == req.params.id || req.user.admin)
     {
         let msg = req.flash();
@@ -64,7 +63,6 @@ router.get('/', async (req, res, next) =>
     if (req.user.admin)
     {
         User.findAndCountAll().then(users => {
-            console.log("here: " + JSON.stringify(users.count));
             var entriesNum = []; 
             for(var i = 0; i < users.count; i++){
                 entriesNum[0] = i + 1;

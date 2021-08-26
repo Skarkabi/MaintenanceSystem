@@ -165,7 +165,6 @@ Battery.updateConsumable = (newBattery, action) => {
 
             //If the new value is 0 the battery definition is deleted from the stock
             if(quant === 0){
-                console.log("About to destroy " + (foundBattery));
                 foundBattery.destroy().then(() => {
                     resolve("Battery Completly removed from stock!");
                 }).catch(err => {

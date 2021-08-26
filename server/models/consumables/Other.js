@@ -206,7 +206,6 @@ Other.updateConsumable = (newOther, action) => {
             }
 
         }).catch(err => {
-            console.log(err);
             reject("An Error Occured " + newOther.other_name + " Could not be Added (Error: " + err + ")");
 
         });

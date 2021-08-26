@@ -71,8 +71,6 @@ Quotation.uploadFile = () => {
         },
         //Setting the upload name
         filename: function (req, file, cb) {
-          console.log("FILE");
-          console.log(req)
           cb(null, req.body.quotation + ".pdf")
 
         }

@@ -142,10 +142,8 @@ const MaintenanceOrder = sequelize.define('maintenance_orders', mappings, {
 
 MaintenanceOrder.getOrders = () => {
     return new Bluebird((resolve, reject) => {
-        console.log(1);
         MaintenanceOrder.findAll().then(orders => {
             getVehicle(orders).then( () => {
-                console.log("First");
                 setAllStatus(orders).then(() => {
                     resolve(orders);
                 })
@@ -245,20 +243,19 @@ MaintenanceOrder.addOrder = order => {
 
 function setStatus(o){
     getConsumables(o).then(output => {
-        console.log("Third");
     if((o.material_request === null || o.material_request === "") && (o.consumable_data === undefined || o.consumable_data.length === 0)){
-        console.log("Third Not Started");
+
         o.setDataValue('status', "Not Started");
     }else if(o.completedAt){
-        console.log("Third Complete");
+      
         o.setDataValue('status', "Completed");
     }else{
             if(o.consumable_data.length !== 0 || o.material_request === "N/A"){
-                console.log("Third In PRogress");
+               
                 o.setDataValue('status', "In Progress")
                
             }else if(o.material_request.substring(0,3) === "MCM" && o.consumable_data.length === 0){
-                console.log("Third Pending");
+   
                 o.setDataValue('status', "Pending Material")
             }else{
 
@@ -274,18 +271,18 @@ function setAllStatus(orders){
         getAllConsumables(orders).then(async output => {
             await Promise.all(orders.map(o => {
                 if((o.material_request === null || o.material_request === "") && (o.consumable_data === undefined || o.consumable_data.length === 0)){
-                    console.log("Third Not Started");
+                  
                     o.setDataValue('status', "Not Started");
                 }else if(o.completedAt){
-                    console.log("Third Complete");
+                 
                     o.setDataValue('status', "Completed");
                 }else{
                         if(o.consumable_data.length !== 0 || o.material_request === "N/A"){
-                            console.log("Third In PRogress");
+                          
                             o.setDataValue('status', "In Progress")
                            
                         }else if(o.material_request.substring(0,3) === "MCM" && o.consumable_data.length === 0){
-                            console.log("Third Pending");
+                          
                             o.setDataValue('status', "Pending Material")
                         }else{
             
@@ -318,7 +315,7 @@ function getAllConsumables(orders){
             MaintenanceConsumables.getConsumables(o.req).then(found => {
                 o.setDataValue('consumable_data', found);
                 count++;
-                console.log(`${count} : ${orders.length}`);
+              
                 if(count === orders.length){
                     resolve("done");
                 }

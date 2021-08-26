@@ -216,7 +216,7 @@ function maintenanceCost(orders){
   orders.map(o => {
       sum = sum + o.total_cost
   });
-  console.log(sum);
+ 
   return sum;
 }
   
@@ -341,7 +341,7 @@ function taskDate() {
   } 
 
   today = dd+'/'+mm+'/'+yyyy;
-  console.log(today);
+ 
   return today;
 }
 

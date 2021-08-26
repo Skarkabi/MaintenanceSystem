@@ -146,7 +146,6 @@ Consumable.updateConsumable = (createConsumable, action) => {
                       }
                     }
     
-                    console.log("AAAAAAAAAAAAAAAAAAAAAA");
                     model.updateConsumable(consumableToUpdate, action).then(output => {
                       resolve(output);
                     }).catch(err => {
@@ -219,10 +218,6 @@ Consumable.updateOtherConsumable = (createConsumable, action) => {
 
           }
 
-          console.log("---------------------------------");
-          console.log(action);
-          console.log(createConsumable);
-          console.log("---------------------------------");
           Other.updateConsumable(createConsumable, action).then(output => {
             Consumable.update({quantity: quant}, {
               where: {

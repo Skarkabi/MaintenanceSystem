@@ -29,8 +29,6 @@ exports.Login = (req, user) => new Bluebird((resolve, reject) => {
     if (err) {
       return reject(err);
     }
-    console.log("hete");
-    console.log(req.user);
     return resolve();
   });
 });

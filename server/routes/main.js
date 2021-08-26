@@ -35,8 +35,13 @@ router.get('/create', (req,res,next) => {
     MaintenanceOrder.findOne({
         order: [ [ 'createdAt', 'DESC' ]],
     }).then(result => {
-        var str = result.req;
-        var matches = str.match(/(\d+)/);
+        var  matches="TMC000001";
+        if(result){
+            var str = result.req;
+            
+        }
+        var matches = matches.match(/(\d+)/);
+       
         Vehicle.getMappedStock().then(vehicles => {
             res.render('createUpdateMain', {
                 title: (`New Maintanence Request`),

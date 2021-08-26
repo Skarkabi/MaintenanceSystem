@@ -306,8 +306,6 @@ function settingItems (supplier) {
                   {category: "Battery", quantity: battery.quantity, totalCost: battery.totalCost, singleCost: battery.singleCost, quotationNum: battery.quotationNumber}
                 ));
                     
-                console.log("Setting the items");
-                console.log(consumables);
                 supplier.setDataValue('items', consumables);
                 resolve("Set Items");
             })
@@ -336,8 +334,7 @@ function setItems (supplier) {
             ));
             
 
-            console.log("Setting the items");
-                console.log(itemsToSet);
+         
                 supplier.setDataValue('items', itemsToSet);
                 resolve("Set Items");
         })

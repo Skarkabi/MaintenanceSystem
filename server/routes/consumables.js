@@ -545,7 +545,7 @@ router.get('/', (req, res, next) =>
  * Express route to display specific consumable category info
  */
 router.get('/:category', (req, res, next) => {
-    console.log(req.params.category);
+  
     //Check if a user is logged in to the system
     if(req.user){
         //Variable to set the title of page as the selected consumable category
@@ -600,7 +600,7 @@ router.get('/:category/:supplier', (req, res, next) => {
         //Getting consumable category info
         if(model.type){
             model.type.getWithSupplier(req.params.category, req.params.supplier).then(foundModel => {
-                console.log(foundModel);
+              
                 //Loading selected consumable category of selected supplier
                 res.render("displaySpecificConsumables", {
                     title: title,
@@ -672,8 +672,7 @@ router.get('/:category/view/:quotationNumber', (req,res,next) => {
             res.redirect("back");
 
         }
-        console.log("---------------------");
-        console.log(tempFile);
+      
         res.contentType("application/pdf");
         
         res.send(data);

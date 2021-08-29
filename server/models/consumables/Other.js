@@ -142,7 +142,7 @@ Other.updateConsumable = (newOther, action) => {
             newOther.quantity = parseInt(newOther.quantity);
             if(found && action === "delet"){
                 var newQuant = found.quantity - newOther.quantity;
-                Other.update({quantity: newQuant}, {
+                Other.update({quantity: newQuant, totalCost: (newQuant * found.singleCost)}, {
                     where: {
                         id: found.id
 
@@ -160,7 +160,7 @@ Other.updateConsumable = (newOther, action) => {
             
             }else if(found){
                 var newQuant = found.quantity + newOther.quantity;
-                Other.update({quantity: newQuant}, {
+                Other.update({quantity: newQuant, totalCost: (newQuant * found.singleCost)}, {
                     where: {
                         id: found.id
 
@@ -174,9 +174,13 @@ Other.updateConsumable = (newOther, action) => {
 
                 });
             }else{
+                var newId = newOther.id;
+                if(!newOther.id){
+                    newId=0;
+                }
                 Other.findOne({
                     where:{
-                        id: newOther.id
+                        id: newId
                     }
                 }).then(newFound => {
                     var usedQuantity = 0;

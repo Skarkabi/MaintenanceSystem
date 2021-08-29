@@ -175,57 +175,62 @@ Brake.updateConsumable = (newBrake, action) => {
             where: {id: newBrake.id}
 
         }).then(foundBrake => {
-             //If the brake exists in the databse the function sets the new quantity to the new value
-            var quant;
-            if(action === "add"){
-                quant = parseInt(newBrake.quantity) + foundBrake.quantity;
+            if(foundBrake){
+                var quant;
+                if(action === "add"){
+                    quant = parseInt(newBrake.quantity) + foundBrake.quantity;
             
-            }else if(action ==="delet"){
-                quant = foundBrake.quantity - parseInt(newBrake.quantity);
+                }else if(action ==="delet"){
+                    quant = foundBrake.quantity - parseInt(newBrake.quantity);
 
-            } 
+                } 
 
-            //If the new value is 0 the brake definition is deleted from the stock
-            if(quant === 0){
-                foundBrake.destroy().then(() => {
-                    resolve("Brake Completly Removed From Stock!");
+                //If the new value is 0 the brake definition is deleted from the stock
+               if(quant < 0){
+                    reject("Can Not Delete More Than Exists in Stock");
 
-                }).catch(err => {
-                    reject("An Error Occured Brakes Could not be Deleted");
-
-                });
-
-            //If the new quantity is less than 0 rejects the user input
-            }else if(quant < 0){
-                reject("Can Not Delete More Than Exists in Stock");
-
-            //If quantity is > 0 the brake quantity is updated
-            }else{
-                //looking for the brake to update and setting the new quantity
-                Brake.update({quantity:quant}, {
-                    where: {
-                        id: newBrake.id
-                    }
-    
-                }).then(() => {
-                    //Updating the value from the consumables database
-                        if(action === "delet"){
-                            resolve(newBrake.quantity + " Brakes Sucessfully Deleted from Existing Stock!");
-                        }else if(action === "add"){
-                            resolve(newBrake.quantity + " Brakes Sucessfully Added to Existing Stock!");
+                //If quantity is > 0 the brake quantity is updated
+                }else{
+                    //looking for the brake to update and setting the new quantity
+                    Brake.update({quantity:quant}, {
+                        where: {
+                            id: newBrake.id
                         }
+    
+                    }).then(() => {
+                        //Updating the value from the consumables database
+                            if(action === "delet"){
+                                resolve(newBrake.quantity + " Brakes Sucessfully Deleted from Existing Stock!");
+                            }else if(action === "add"){
+                                resolve(newBrake.quantity + " Brakes Sucessfully Added to Existing Stock!");
+                            }
 
-                }).catch(err => {
-                    reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
+                    }).catch(err => {
+                        reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
                         
+                    });
+                }
+            }else{
+                newBrake.singleCost = parseFloat(newBrake.singleCost);
+                newBrake.quantity = parseInt(newBrake.quantity);
+                newBrake.minQuantity = parseInt(newBrake.minQuantity);
+                newBrake.totalCost = newBrake.singleCost * newBrake.quantity;
+                Brake.create(newBrake).then(() => {
+                    resolve(newBrake.quantity + " Brakes Sucessfully Added!");
+                    
+                }).catch(err =>{
+                    reject(err);
+
                 });
             }
+             //If the brake exists in the databse the function sets the new quantity to the new value
+            
                         
         }).catch(err => {
             reject("An Error Occured Brakes Could not be Added (Error: " + err + ")");
 
         }); 
-    
+        
     });
 
 }

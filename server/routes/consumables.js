@@ -8,6 +8,7 @@ import Oil from '../models/consumables/Oil';
 import Quotation from '../models/Quotation';
 import fs from 'fs';
 import Other from '../models/consumables/Other';
+import { Console } from 'console';
 
 const router = express.Router();
 
@@ -16,8 +17,11 @@ const router = express.Router();
  */
 router.get('/add', (req, res, next) =>
 {
+    console.log(2);
     //Check if a user is loged in
     if(req.user){
+        var flash = req.flash();
+        console.log(flash);
         //If User exists get all distinct consumable and supplier values and load add new consumable page
         Consumable.getDistinctConsumableValues().then(values =>{
             res.render('addConsumable', {
@@ -27,7 +31,7 @@ router.get('/add', (req, res, next) =>
                 action: "/upload/single",
                 values: values,
                 page: "add",
-                msgType: req.flash()
+                msgType: flash
                 
             });
 
@@ -72,12 +76,12 @@ router.post('/add/battery', Quotation.uploadFile().single('upload'), (req, res, 
     }else{
         quotationNumber = req.body.quotation;
     }
+
     //Creating new battrey variable to be added to database   
     const newBattery = {
         batSpec: req.body.batSpec,
         carBrand: req.body.carBrand,
         carYear: req.body.carYear,
-        quantity: req.body.quantityBatteries,
         minQuantity: req.body.quantityMinBatteries,
         supplierId: req.body.batteriesSupplierName,
         singleCost: req.body.batteryPrice,
@@ -85,33 +89,56 @@ router.post('/add/battery', Quotation.uploadFile().single('upload'), (req, res, 
 
     }
 
-    //Declaring new quotation to be added to database
-    var newQuotation;
-    //Creating quotation variable quotation was selected
-    if(req.file){
-        newQuotation = {
-            quotationNumber: req.body.quotation,
-            quotationPath: req.file.path
+    Battery.findOne({where:newBattery}).then(found => {
+        newBattery.consumanbleCategory = "battery";
+        newBattery.quantity = req.body.quantityBatteries
+        if(found){
+            newBattery.id = found.id
+
+        }else{
+            newBattery.id = 0
         }
-    }
-    
-    //Adding new battery to database
-    Battery.addBattery(newBattery).then(output =>{
-        //Add quotation info to database if quotation was uploaded
+         //Declaring new quotation to be added to database
+        var newQuotation;
+        //Creating quotation variable quotation was selected
         if(req.file){
-            Quotation.addQuotation(newQuotation);
-
+            newQuotation = {
+                quotationNumber: req.body.quotation,
+                quotationPath: req.file.path
+            }
         }
-
-        req.flash('success_msg',  output);
-        res.redirect("/consumables/add");
-           
-    }).catch(err =>{
-        req.flash('error_msg', JSON.stringify(err));
-        res.redirect("/consumables/add");
     
+        //Adding new battery to database
+        Consumable.updateConsumable(newBattery, "add").then(output =>{
+            //Add quotation info to database if quotation was uploaded
+            if(req.file){
+                Quotation.addQuotation(newQuotation);
+
+            }
+
+            console.log("Because");
+        
+            console.log(1);
+            req.flash("success_msg", output);
+            req.session.save(function() {
+                res.redirect("/consumables/add");
+            });
+        
+           
+        }).catch(err =>{
+            console.log("Forst Error");
+            req.flash('error_msg', JSON.stringify(err));
+            req.session.save(function() {
+                res.redirect("/consumables/add");
+            });
+    
+        });
+        
+    }).catch(err => {
+        console.log("Second Error");
+        console.log(`Thsi is why ${err}` )
     })
-   
+
 });
 
 /**
@@ -120,6 +147,13 @@ router.post('/add/battery', Quotation.uploadFile().single('upload'), (req, res, 
  */
 router.post('/add/brake', Quotation.uploadFile().single('upload'), (req,res,next) => {
     //Creating new brake variable to be added to database
+    var quotationNumber;
+    if(!req.body.quotation || req.body.quotation === ""){
+        quotationNumber = "N/A";
+    }else{
+        quotationNumber = req.body.quotation;
+    }
+
     const newBrake = {
         category: req.body.brakeCategory,
         carBrand: req.body.brakeCBrand,
@@ -128,42 +162,73 @@ router.post('/add/brake', Quotation.uploadFile().single('upload'), (req,res,next
         preferredBrand: req.body.brakePBrand,
         chassis: req.body.brakeChassis,
         singleCost: req.body.brakePrice,
-        quantity: req.body.quantityBrakes,
         minQuantity: req.body.minQuantityBrakes,
         supplierId: req.body.brakeSupplierName,
         quotationNumber: req.body.quotation
         
     }
+    console.log(1);
+    Brake.findOne({where: newBrake}).then(found => {
+       
+        newBrake.consumanbleCategory = "brake";
+        newBrake.quantity = req.body.quantityBrakes;
 
-    //Declaring new quotation to be added to database
-    var newQuotation;
-    //Creating quotation variable quotation was selected
-    if(req.file){
-        newQuotation = {
-            quotationNumber: req.body.quotation,
-            quotationPath: req.file.path
+        if(found){
+            newBrake.id = found.id
+
+        }else{
+            newBrake.id = 0;
         }
-    
-    }
-    
-    //Adding new brake to database
-    Brake.addBrake(newBrake).then(output =>{
-        //Add quotation info to database if quotation was uploaded
+        //Declaring new quotation to be added to database
+        var newQuotation;
+        //Creating quotation variable quotation was selected
         if(req.file){
-            Quotation.addQuotation(newQuotation);
-        
+            newQuotation = {
+                quotationNumber: req.body.quotation,
+                quotationPath: req.file.path
+            }
+    
         }
+
+        console.log(2);
+        Consumable.updateConsumable(newBrake, "add").then(output =>{
+            console.log(3);
+            //Add quotation info to database if quotation was uploaded
+            if(req.file){
+                Quotation.addQuotation(newQuotation);
+    
+            }
+            
+            console.log(output);
+            req.flash('success_msg',  output);
+            req.session.save(function() {
+            res.redirect("/consumables/add");
+        });
+               
+        }).catch(err =>{
+            req.flash('error_msg', JSON.stringify(err));
+            req.session.save(function() {
+            res.redirect("/consumables/add");
+        });
         
-        req.flash('success_msg', output);
-        res.redirect("/consumables/add");
-
-    }).catch(err =>{
-        req.flash('error_msg', err);
-        res.redirect("/consumables/add");
-
-    });
+        })
+            
+        }).catch(err => {
+            req.flash('error_msg', JSON.stringify(err));
+            req.session.save(function() {
+            res.redirect("/consumables/add");
+        });
+        })
             
  });
+
+ router.get('/test', (req,res,next) => {
+    req.flash('success_msg', 'This Please')
+    req.session.save(function() {
+        res.redirect("/consumables/add");
+    });
+    
+ })
 
 /**
  * Express route to update brake data
@@ -179,11 +244,15 @@ router.post('/update-brake/:action/:id', (req,res,next) => {
     //Updating brake in database
     Brake.updateBrake(newBrake, req.params.action).then(output => {
         req.flash('success_msg', output);
-        res.redirect("back");
+        req.session.save(function() {
+            res.redirect("back");
+        });
     
     }).catch(err => {
         req.flash('error_msg', "Error " + err);
-        res.redirect("back");
+        req.session.save(function() {
+            res.redirect("back");
+        });
     
     });
 
@@ -223,11 +292,15 @@ router.post('/add/other', Quotation.uploadFile().single('upload'), (req,res,next
         }
 
         req.flash('success_msg', output);
-        res.redirect("/consumables/add");
+        req.session.save(function() {
+            res.redirect("/consumables/add");
+        });
 
     }).catch(err =>{
         req.flash('error_msg', err);
-        res.redirect("/consumables/add");
+        req.session.save(function() {
+            res.redirect("/consumables/add");
+        });
 
     });
 
@@ -277,6 +350,12 @@ router.get('/display-vehicle/:id', (req, res, next) => {
  * Route takes filter and quotation data from user input 
  */
 router.post('/add/filter', Quotation.uploadFile().single('upload'), (req, res, next) => { 
+    var quotationNumber;
+    if(!req.body.quotation){
+        quotationNumber = "N/A";
+    }else{
+        quotationNumber = req.body.quotation;
+    }
     //Creating new filter variable to be added to database   
     const newFilter = {
         carBrand: req.body.filterCarBrand,
@@ -287,37 +366,56 @@ router.post('/add/filter', Quotation.uploadFile().single('upload'), (req, res, n
         preferredBrand: req.body.filterPBrand,
         actualBrand: req.body.filterABrand,
         singleCost: req.body.filterPrice,
-        quantity: req.body.quantityFilters,
         minQuantity: req.body.minFilterQuantity,
         supplierId: req.body.filterSupplierName,
         quotationNumber: req.body.quotation
 
     };
 
-    //Declaring new quotation to be added to database
-    var newQuotation;
-    //Creating quotation variable quotation was selected
-    if(req.file){
-        newQuotation = {
-            quotationNumber: req.body.quotation,
-            quotationPath: req.file.path
+    Filter.findOne({where: newFilter}).then(found => {
+        newFilter.consumanbleCategory = "filter";
+        newFilter.quantity = req.body.quantityFilters;
+        if(found){
+            newFilter.id = found.id;
+
+        }else{
+            newFilter.id = 0;
+
         }
-    }
-    
-    //Adding new filter to database
-    Filter.addFilter(newFilter).then(output => {    
-        //Add quotation info to database if quotation was uploaded
+        //Declaring new quotation to be added to database
+        var newQuotation;
+        //Creating quotation variable quotation was selected
         if(req.file){
-            Quotation.addQuotation(newQuotation);
-        
+            newQuotation = {
+                quotationNumber: req.body.quotation,
+                quotationPath: req.file.path
+            }
         }
-        
-        req.flash('success_msg', output);
-        res.redirect("/consumables/add");
+
+        Consumable.updateConsumable(newFilter, "add").then(output => {
+            if(req.file){
+                Quotation.addQuotation(newQuotation);
+            
+            }
+            
+            req.flash('success_msg', output);
+            req.session.save(function() {
+                res.redirect("/consumables/add");
+            });
+
+        }).catch(err =>{
+            req.flash('error_msg', err);
+            req.session.save(function() {
+                res.redirect("/consumables/add");
+            });
+
+        });
 
     }).catch(err =>{
         req.flash('error_msg', err);
-        res.redirect("/consumables/add");
+        req.session.save(function() {
+            res.redirect("/consumables/add");
+        });
 
     });
 
@@ -337,11 +435,15 @@ router.post('/update-filter/:action/:id', (req,res,next) => {
     //Updating filter in database
     Filter.updateFilter(newFilter, req.params.action).then(output => {
         req.flash('success_msg', output);
-        res.redirect("back");
+        req.session.save(function() {
+            res.redirect("back");
+        });
 
     }).catch(err => {
         req.flash('error_msg', err);
-        res.redirect("back");
+        req.session.save(function() {
+            res.redirect("back");
+        });
 
     });
 
@@ -352,46 +454,71 @@ router.post('/update-filter/:action/:id', (req,res,next) => {
  * Route takes grease and quotation data from user input 
  */
 router.post('/add/grease',Quotation.uploadFile().single('upload'), (req, res, next) => {
+    var quotationNumber;
+    if(!req.body.quotation){
+        quotationNumber = "N/A";
+    }else{
+        quotationNumber = req.body.quotation;
+    }
+
     //Creating new grease variable to be added to database
     const newGrease = {
         greaseSpec: req.body.greaseSpec,
         typeOfGrease: req.body.greaseType,
         carBrand: req.body.greaseCarBrand,
         carYear: req.body.greaseCarYear,
-        volume: req.body.quantityGrease,
         minVolume: req.body.quantityMinGrease,
         supplierId: req.body.greaseSupplierName,
-        quotationNumber: req.body.quotation,
+        quotationNumber: quotationNumber,
         price_per_litter: req.body.greasePrice
 
     };
 
-    //Declaring new quotation to be added to database
-    var newQuotation;
-    //Creating quotation variable quotation was selected
-    if(req.file){
-        newQuotation = {
-            quotationNumber: req.body.quotation,
-            quotationPath: req.file.path
+    Grease.findOne({where:newGrease}).then(found => {
+        newGrease.consumanbleCategory = "grease";
+        newGrease.volume = req.body.quantityGrease
+        if(found){
+            newGrease.id = found.id;
+
+        }else{
+            newGrease.id = 0;
 
         }
-
-    }
-
-    //Adding new grease to database
-    Grease.addGrease(newGrease).then(output => {
-        //Add quotation info to database if quotation was uploaded
+        //Declaring new quotation to be added to database
+        var newQuotation;
+        //Creating quotation variable quotation was selected
         if(req.file){
-            Quotation.addQuotation(newQuotation);
+            newQuotation = {
+                quotationNumber: req.body.quotation,
+                quotationPath: req.file.path
+
+            }
 
         }
+        //Adding new battery to database
+        Consumable.updateConsumable(newGrease, "add").then(output =>{
+            //Add quotation info to database if quotation was uploaded
+            if(req.file){
+                Quotation.addQuotation(newQuotation);
 
-        req.flash('success_msg', output);
-        res.redirect("/consumables/add");
+            }
+
+            req.flash("success_msg", output);
+            req.session.save(function() {
+                res.redirect("/consumables/add");
+            });
         
-    }).catch(err =>{
-        req.flash('error_msg', err);
-        res.redirect("/consumables/add");
+           
+        }).catch(err =>{
+            req.flash('error_msg', JSON.stringify(err));
+            req.session.save(function() {
+                res.redirect("/consumables/add");
+            });
+    
+        });
+        
+    }).catch(err => {
+        console.log(`Thsi is why ${err}` );
 
     });
 
@@ -411,11 +538,15 @@ router.post('/update-grease/:action/:id', (req,res,next) =>{
     //Updating grease in database
     Grease.updateGrease(newGrease, req.params.action).then(output => {
         req.flash('success_msg', output);
-        res.redirect("back");
+        req.session.save(function() {
+            res.redirect("back");
+        });
         
     }).catch(err =>{
         req.flash('error_msg', err);
-        res.redirect("back");
+        req.session.save(function() {
+            res.redirect("back");
+        });
 
     });
 
@@ -426,6 +557,12 @@ router.post('/update-grease/:action/:id', (req,res,next) =>{
  * Route takes oil and quotation data from user input 
  */
 router.post('/add/oil', Quotation.uploadFile().single('upload'), (req, res, next) => {
+    var quotationNumber;
+    if(!req.body.quotation){
+        quotationNumber = "N/A";
+    }else{
+        quotationNumber = req.body.quotation;
+    }
     //Creating new oil variable to be added to database   
     const newOil = { 
         oilSpec: req.body.oilSpec,
@@ -435,35 +572,53 @@ router.post('/add/oil', Quotation.uploadFile().single('upload'), (req, res, next
         minVolume: req.body.quantityMinOil,
         oilPrice: req.body.oilPrice,
         supplierId: req.body.oilSupplierName,
-        quotationNumber: req.body.quotation
+        quotationNumber: quotationNumber
     };
 
-    //Declaring new quotation to be added to database
-    var newQuotation;
-    //Creating quotation variable quotation was selected
-    if(req.file){
-        newQuotation = {
-            quotationNumber: req.body.quotation,
-            quotationPath: req.file.path
+    Oil.findOne({where:newOil}).then(found => {
+        newOil.consumanbleCategory = "oil";
+        newOil.volume = req.body.quantityOil;
+        if(found){
+            newOil.id = found.id;
+
+        }else{
+            newOil.id = 0;
 
         }
 
-    }
-
-    //Adding new oil to database
-    Oil.addOil(newOil).then(output => {
-        //Add quotation info to database if quotation was uploaded
+        var newQuotation;
+        //Creating quotation variable quotation was selected
         if(req.file){
-            Quotation.addQuotation(newQuotation);
+            newQuotation = {
+                quotationNumber: req.body.quotation,
+                quotationPath: req.file.path
+
+            }
 
         }
+       //Adding new battery to database
+       Consumable.updateConsumable(newOil, "add").then(output =>{
+            //Add quotation info to database if quotation was uploaded
+            if(req.file){
+                Quotation.addQuotation(newQuotation);
 
-        req.flash('success_msg', output);
-        res.redirect("/consumables/add");
+            }
 
-    }).catch(err =>{
-        req.flash('error_msg', err);
-        res.redirect("/consumables/add");
+            req.flash("success_msg", output);
+            req.session.save(function() {
+                res.redirect("/consumables/add");
+            });
+    
+        }).catch(err =>{
+            req.flash('error_msg', JSON.stringify(err));
+            req.session.save(function() {
+                res.redirect("/consumables/add");
+            });
+
+        });
+    
+    }).catch(err => {
+        console.log(`Thsi is why ${err}` );
 
     });
 
@@ -483,11 +638,15 @@ router.post('/update-oil/:action/:id', (req,res,next) => {
     //Updating oil in database
     Oil.updateOil(newOil, req.params.action).then(output => {
         req.flash('success_msg', output);
-        res.redirect("back");
+        req.session.save(function() {
+            res.redirect("back");
+        });
 
     }).catch(err =>{
         req.flash('error_msg', err +  " could not be added to");
-        res.redirect("back");
+        req.session.save(function() {
+            res.redirect("back");
+        });
 
     });
     
@@ -649,7 +808,9 @@ router.get('/:category/download/:quotationNumber', (req,res,next) => {
     res.download(tempFile, function(err){
         if(err) {
             req.flash("error_msg", "File Does Not Exist!");
+            req.session.save(function() {
             res.redirect("back");
+        });
 
         }
 
@@ -669,7 +830,9 @@ router.get('/:category/view/:quotationNumber', (req,res,next) => {
     fs.readFile(tempFile, function (err,data){
         if(err) {
             req.flash("error_msg", "File Does Not Exist!");
+            req.session.save(function() {
             res.redirect("back");
+        });
 
         }
       

@@ -78,106 +78,70 @@ const Consumable = sequelize.define('consumable_stocks', mappings, {
  */
 Consumable.updateConsumable = (createConsumable, action) => {
     //Creating the new Consumable value to be updated in the consumable databse
+    var cQuantity;
+    if(createConsumable.volume){
+      cQuantity = createConsumable.volume;
+    }else{
+      cQuantity = createConsumable.quantity
+    }
     const newConsumable = 
     {
-      category: createConsumable.category,
-      quantity: parseFloat(createConsumable.quantity)
+      category: createConsumable.consumanbleCategory.toUpperCase(),
+      quantity: parseFloat(cQuantity)
     }
 
     return new Bluebird((resolve, reject) => {
+      console.log(createConsumable.consumanbleCategory)
       //Checking if the consumable category already exists in stock
-      if(action === "update"){
         Consumable.findOne({where: {
           category: newConsumable.category
-        }}).then(found => {
-          var newQuantity = newConsumable.quantity + found.quantity;
-          Consumable.update({quantity: newQuantity}, {
-            where: {
-              category: newConsumable.category
-            }
-  
-          }).then(() => {
-            resolve("Consumable Update");
-          }).catch(err => {
-            reject(err);
-          })
-        })
-        
-      }else{
-        var model = getConsumableModel(newConsumable.category.toLowerCase());
-        model.findOne({
-          where: {
-            id: createConsumable.id
-          }
-        }).then(found => {
-          if(found === null){
-            reject("Item does not exist in stock");
-          }else{
-            Consumable.getConsumableByCategory(newConsumable.category).then(isCategory => {
-              //If Consumable exists update the new vale
-              if (isCategory){
-                if(action === "add"){
-                  var quant = newConsumable.quantity + isCategory.quantity;
-              
-                }else if(action === "delet"){
-                  var quant = isCategory.quantity - newConsumable.quantity;
-                }
-              
-                //Updating the consumable stock value
-                Consumable.update({quantity: quant}, {
-                  where: {
-                    category: newConsumable.category
-                  }
-    
-                }).then(() => {
-                    var consumableToUpdate;
-                    if(createConsumable.category === "Grease" || createConsumable.category === "Oil"){
-                      consumableToUpdate = 
-                      {
-                        id: createConsumable.id,
-                        volume: newConsumable.quantity
-                      }
+        }}).then(isCategory => {
+          console.log(isCategory);
+          console.log("Find me");
+          const model = getConsumableModel(newConsumable.category.toLowerCase());
+            console.log("In here");
+            console.log(model);
+              console.log("This Point")
+              model.updateConsumable(createConsumable, action).then(output => {
+                if(isCategory){
+                  var quant;
+                  if(action === "add"){
+                    quant = newConsumable.quantity + isCategory.quantity;
                 
-                    }else{
-                      consumableToUpdate = 
-                      {
-                        id: createConsumable.id,
-                        quantity: newConsumable.quantity
-                      }
+                  }else if(action === "delet"){
+                    quant = isCategory.quantity - newConsumable.quantity;
+                  }
+
+                  Consumable.update({quantity: quant}, {
+                    where: {
+                      category: newConsumable.category
                     }
-    
-                    model.updateConsumable(consumableToUpdate, action).then(output => {
-                      resolve(output);
-                    }).catch(err => {
-                      reject (err);
-                    })
-    
-                }).catch(err => {
-                  reject(err);
-    
-                });
-    
-              //If Consumable doesn't exist create a new category in database
-              }else{
-                //Creating new consumable category in database
-                Consumable.create(newConsumable).then(() => {
-                  resolve("New Consumable Created");
-    
-                }).catch(err => {
-                  reject (err);
-    
-                });
-    
-              }
-    
-            }).catch(err =>{
-                reject(err);
-    
-            });  
-          }
+                  }).then(() => {
+                    resolve(output);
+  
+                  }).catch(err => {
+                    reject(err);
+  
+                  })
+
+                }else{
+                  Consumable.create(newConsumable).then(() => {
+                    resolve(output);
       
+                  }).catch(err => {
+                    reject (err);
+      
+                  });
+                }
+                
+              }).catch(err => {
+                reject(err);
+
+              })
+
+    
         })
-      }
+
   });
 
 }
@@ -430,6 +394,7 @@ function getConsumableModel(consumableModel) {
       return Oil;
 
   }else if(consumableModel === "battery"){
+    console.log(new Battery);
       return Battery;
 
   }

@@ -61,6 +61,7 @@ const mappings = {
     totalCost: {
         type: Sequelize.DataTypes.DOUBLE,
         allowNull: false,
+        
     },
     price_per_litter: {
         type: Sequelize.DataTypes.DOUBLE,
@@ -141,6 +142,16 @@ const Grease = sequelize.define('grease_stocks', mappings, {
   ],
 });
 
+Grease.beforeCreate((grease, options) => {
+    console.log("NEW BEFORE");
+    grease.totalCost = grease.price_per_litter * grease.volume;
+});
+
+Grease.afterUpdate((grease, options) => {
+    console.log("UPDAET");
+    grease.totalCost = grease.price_per_litter * grease.volume;
+});
+
 /**
  * Function to update Grease stock
  * Takes in the grease object and if the value should be deleted or added
@@ -162,54 +173,62 @@ Grease.updateConsumable = (newGrease,action) => {
             where: {id: newGrease.id}
 
         }).then(foundGrease =>{
-            //If the grease exists in the databse the function sets the new quantity to the new value
-            var quant;
-            if(action === "add"){
-                quant = parseFloat(newGrease.volume) + foundGrease.volume;
+            if(foundGrease){
+                //If the grease exists in the databse the function sets the new quantity to the new value
+                var quant;
+                if(action === "add"){
+                    quant = parseFloat(newGrease.volume) + foundGrease.volume;
             
-            }else if(action === "delet"){
-                quant = foundGrease.volume - parseFloat(newGrease.volume);
+                }else if(action === "delet"){
+                    quant = foundGrease.volume - parseFloat(newGrease.volume);
             
-            }
-          
-            //If the new value is 0 the brake definition is deleted from the stock
-            if(quant === 0){
-                foundGrease.destroy().then(() => {
-                    resolve(newGrease.volume + " Liters Of Grease Sucessfully Deleted from Existing Stock!");
-                }).catch(err => {
-                    reject("An Error Occured Grease Could not be Deleted " + err);
-                
-                });
+                }
+                var totalCost = quant * foundGrease.price_per_litter;
+                //If the new value is 0 the brake definition is deleted from the stock
+                if(quant < 0){
+                    reject("Can Not Delete More Than Exists in Stock!");
+            
+                //If quantity is > 0 the grease quantity is updated
+                }else{
+                    Grease.update({volume: quant, totalCost: totalCost}, {
+                        where: {
+                            id: newGrease.id
+                        }
+        
+                    }).then(() => {
+                        if(action === "delet"){
+                            resolve(newGrease.volume + " Litters of Grease Sucessfully Deleted from Existing Stock!");
+                        }else if(action === "add"){
+                            resolve(newGrease.volume + " Litters of Grease Sucessfully Added to Existing Stock!");
+                        }
+        
+                    }).catch(err =>{
+                        reject("An Error Occured Grease Could not be Added " + err);
+        
+                    });
 
-            }
+                }
 
-            //If the new quantity is less than 0 rejects the user input
-            else if(quant < 0){
-                reject("Can Not Delete More Than Exists in Stock!");
-            
-            //If quantity is > 0 the grease quantity is updated
             }else{
-                Grease.update({volume: quant}, {
-                    where: {
-                        id: newGrease.id
-                    }
+                newGrease.volume = parseFloat(newGrease.volume);
+                newGrease.minVolume = parseFloat(newGrease.minVolume);
+                newGrease.price_per_litter = parseFloat(newGrease.price_per_litter)
+                newGrease.total_price = newGrease.price_per_litter * newGrease.volume;
+                newGrease.total_price = parseFloat(newGrease.total_price);
+                Grease.create(newGrease).then(() =>{
+                    //Updating consumable stock database
+                    resolve(newGrease.volume + " Liters of Greace Sucessfully Added!");
         
-                }).then(() => {
-                    if(action === "delet"){
-                        resolve(newGrease.volume + " Litters of Grease Sucessfully Deleted from Existing Stock!");
-                    }else if(action === "add"){
-                        resolve(newGrease.volume + " Litters of Grease Sucessfully Added to Existing Stock!");
-                    }
-        
-                }).catch(err =>{
-                    reject("An Error Occured Grease Could not be Added " + err);
-        
+                }).catch(err => {
+                    reject("An Error Occured Grease Could not be Added (Error: " + err + ")");
+                    
                 });
 
             }
+            
         
         }).catch(err => {
-             reject("An Error Occured Grease Could not be Added " + err);
+            reject("An Error Occured Grease Could not be Added " + err);
     
         });
 

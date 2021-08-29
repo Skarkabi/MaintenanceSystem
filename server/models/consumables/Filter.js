@@ -197,54 +197,62 @@ Filter.updateConsumable = (newFilter, action) => {
             where: {id: newFilter.id}
 
         }).then(foundFilter => {
-            //If the filter exists in the databse the function sets the new quantity to the new value
-            var quant;
-            if(action === "add"){
-               quant = parseInt(newFilter.quantity) + foundFilter.quantity;
+            if(foundFilter){
+                //If the filter exists in the databse the function sets the new quantity to the new value
+                var quant;
+                if(action === "add"){
+                quant = parseInt(newFilter.quantity) + foundFilter.quantity;
 
-            }else if(action === "delet"){
-                quant = foundFilter.quantity - parseInt(newFilter.quantity);
+                }else if(action === "delet"){
+                    quant = foundFilter.quantity - parseInt(newFilter.quantity);
 
-            }
+                }
 
-            //If the new value is 0 the filter definition is deleted from the stock
-            if(quant === 0){
-                foundFilter.destroy().then(() => {
-                    resolve("Filter Completly Removed From Stock!");
-
-                }).catch(err => {
-                    reject("An Error Occured Filters Could not be Deleted");
-
-                });
-
-            //If the new quantity is less than 0 rejects the user input
-            }else if(quant < 0){
-                reject("Can Not Delete More Than Exists in Stock!");
+                //If the new value is 0 the filter definition is deleted from the stock
+                if(quant < 0){
+                    reject("Can Not Delete More Than Exists in Stock!");
     
-            //If quantity is > 0 the brake quantity is updated
-            }else{
-                //looking for the filter to update and setting the new quantity
-                Filter.update({quantity:quant}, {
-                    where: {
-                        id: newFilter.id
-                    }
-    
-                }).then(() => {
-                    //Updating the value from the consumables database
-                        if(action === "add"){
-                            resolve(newFilter.quantity + " Fitlers Sucessfully Added to Existing Stock!");
-
-                        }else if(action === "delet"){
-                            resolve(newFilter.quantity + " Fitlers Sucessfully Deleted from Existing Stock!");
-
+                //If quantity is > 0 the brake quantity is updated
+                }else{
+                    //looking for the filter to update and setting the new quantity
+                    Filter.update({quantity:quant}, {
+                        where: {
+                            id: newFilter.id
                         }
+    
+                    }).then(() => {
+                        //Updating the value from the consumables database
+                            if(action === "add"){
+                                resolve(newFilter.quantity + " Fitlers Sucessfully Added to Existing Stock!");
+
+                            }else if(action === "delet"){
+                                resolve(newFilter.quantity + " Fitlers Sucessfully Deleted from Existing Stock!");
+
+                            }
+
+                    }).catch(err => {
+                        reject("An Error Occured Filters Stock Could not be Updated (Error: " + err + ")");
+    
+                    });
+
+                }
+            }else{
+                newFilter.quantity = parseInt(newFilter.quantity);
+                newFilter.minQuantity = parseInt(newFilter.minQuantity);
+                newFilter.singleCost = parseFloat(newFilter.singleCost);
+                newFilter.totalCost = newFilter.singleCost * newFilter.quantity;
+                newFilter.totalCost = parseFloat(newFilter.totalCost);
+                Filter.create(newFilter).then(() => {
+                    //Updating consumable stock database
+                        resolve(newFilter.quantity + " Filters Sucessfully Added!");
 
                 }).catch(err => {
-                    reject("An Error Occured Filters Stock Could not be Updated (Error: " + err + ")");
-    
+                    reject("An Error Occured Filters Could not be Added " + err);
+
                 });
 
             }
+            
             
         }).catch(err => {
             reject("An Error Occured Filters Stock Could not be Updated (Error: " + err + ")");

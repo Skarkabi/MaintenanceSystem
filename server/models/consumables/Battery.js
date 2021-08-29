@@ -141,6 +141,7 @@ const Battery = sequelize.define('battery_stocks', mappings, {
  * @returns 
  */
 Battery.updateConsumable = (newBattery, action) => {
+    console.log("battery");
     return new Bluebird((resolve, reject) => {
         //Creating the new Consumable value to be updated in the consumable databse
         const newConsumable = {
@@ -153,50 +154,60 @@ Battery.updateConsumable = (newBattery, action) => {
             where: {id: newBattery.id} 
 
         }).then(foundBattery =>{
-            //If the battery exists in the databse the function sets the new quantity to the new value
-            var quant;
-            if(action === "add"){
-                quant = parseInt(newBattery.quantity) + foundBattery.quantity;
+            if(foundBattery){
+                //If the battery exists in the databse the function sets the new quantity to the new value
+                var quant;
+                if(action === "add"){
+                    quant = parseInt(newBattery.quantity) + foundBattery.quantity;
 
-            } else if(action === "delet"){
-                quant = foundBattery.quantity - parseInt(newBattery.quantity);
+                } else if(action === "delet"){
+                    quant = foundBattery.quantity - parseInt(newBattery.quantity);
 
-            }
+                }
 
-            //If the new value is 0 the battery definition is deleted from the stock
-            if(quant === 0){
-                foundBattery.destroy().then(() => {
-                    resolve("Battery Completly removed from stock!");
-                }).catch(err => {
-                    reject("An Error Occured Batteries Could not be deleted " + err + " ");
-                });
+                //If the new value is 0 the battery definition is deleted from the stock
+                //If the new quantity is less than 0 rejects the user input
+                if(quant < 0){
+                    reject ("Can not Delete More Than Exists in Stock");
 
-            //If the new quantity is less than 0 rejects the user input
-            }else if(quant < 0){
-                reject ("Can not Delete More Than Exists in Stock");
-
-            //If quantity is > 0 the battery quantity is updated
-            }else{
-                //looking for the battery to update and setting the new quantity
-                Battery.update({quantity: quant}, {
-                    where: {
-                        id: newBattery.id
-                    }
+                //If quantity is > 0 the battery quantity is updated
+                }else{
+                    //looking for the battery to update and setting the new quantity
+                    Battery.update({quantity: quant}, {
+                        where: {
+                            id: newBattery.id
+                        }
     
-                }).then(() =>{
-                    //Updating the value from the consumables database
+                    }).then(() =>{
+                        //Updating the value from the consumables database
                         if(action === "delet"){
                             resolve(newBattery.quantity + " Batteries Sucessfully Deleted from Existing Stock!");
                         }else if(action === "add"){
                             resolve(newBattery.quantity + " Batteries Sucessfully Added to Existing Stock!");
                         }
     
-                }).catch(err => {
-                    reject("An Error Occured Batteries Could not be " + action + "ed " + err);
+                    }).catch(err => {
+                        reject("An Error Occured Batteries Could not be " + action + "ed " + err);
     
+                    });
+
+                }
+            }else{
+                newBattery.singleCost = parseFloat(newBattery.singleCost);
+                newBattery.quantity = parseInt(newBattery.quantity);
+                newBattery.minQuantity = parseInt(newBattery.minQuantity);
+                newBattery.totalCost = newBattery.singleCost * newBattery.quantity;
+                Battery.create(newBattery).then(()=> {
+                    //Updating consumable stock database
+                    resolve(newBattery.quantity + " Batteries Sucessfully Added!");
+
+                }).catch(err =>{
+                    reject("An Error Occured Batteries Could not be Added " + err);
+
                 });
 
             }
+            
 
         }).catch(err=>{
             reject("An Error Occured Batteries Could not be " + action + "ed " + err);
@@ -238,25 +249,7 @@ Battery.addBattery = (newBattery) =>{
 
             //If the battery is not found the function creates a battery and updates the consumable stock
             }else{
-                newBattery.singleCost = parseFloat(newBattery.singleCost);
-                newBattery.quantity = parseInt(newBattery.quantity);
-                newBattery.minQuantity = parseInt(newBattery.minQuantity);
-                newBattery.totalCost = newBattery.singleCost * newBattery.quantity;
-                Battery.create(newBattery).then(()=> {
-                    //Updating consumable stock database
-                    Consumable.updateConsumable(newConsumable, "update").then(() => {
-                        resolve(newBattery.quantity + " Batteries Sucessfully Added!");
-
-                    }).catch(err => {
-                        reject("An Error Occured Batteries Could not be Added " + err);
-
-                    });
-
-                }).catch(err =>{
-                    reject("An Error Occured Batteries Could not be Added " + err);
-
-                });
-
+                
             }
 
         }).catch(err =>{

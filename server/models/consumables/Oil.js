@@ -126,6 +126,11 @@ const Oil = sequelize.define('oil_stocks', mappings, {
   ],
 });
 
+Oil.beforeCreate((oil, options) => {
+  console.log("NEW BEFORE");
+  oil.totalCost = oil.oilPrice * oil.volume;
+});
+
 /**
  * Function to set virtual datatype supplier name using supplier ids in oil
  * @returns List of oil with their supplier names
@@ -221,52 +226,58 @@ Oil.updateConsumable = (newOil,action) => {
 
     }).then(foundOil => {
       //If the oil exists in the databse the function sets the new quantity to the new value
-      var quant;
-      if(action === "add"){
+      if(foundOil){
+        var quant;
+        if(action === "add"){
           quant = parseFloat(newOil.volume) + foundOil.volume;
       
-      }else if(action === "delet"){
+        }else if(action === "delet"){
           quant = foundOil.volume - parseFloat(newOil.volume);
       
-      }
-
-      //If the new value is 0 the oil definition is deleted from the stock
-      if(quant === 0){
-        foundOil.destroy().then(() => {
-            resolve(newOil.voulme + " liters Of Oil Successfully Deleted from Existing Stock!");
-        
-        }).catch(err => {
-          reject("An Error Occured Oil Could not be Deleted " + err);
-
-        });
-
-      //If the new quantity is less than 0 rejects the user input  
-      }else if(quant < 0){
-        reject("Can not Delete more than exists in stock");
-        
-      //If quantity is > 0 the grease quantity is updated
-      }else{
-        
-        Oil.update({volume: quant}, {
-          where: {
-            id: newOil.id
-          }
-  
-        }).then(() => {
-          //Updating the value from the consumables database
-          if(action === "delet"){
-            resolve(newOil.volume + " Litters of Oil Sucessfully Deleted from Existing Stock!");
-        }else if(action === "add"){
-            resolve(newOil.volume + " Litters of Oil Sucessfully Added to Existing Stock!");
         }
+
+        if(quant < 0){
+          reject("Can not Delete more than exists in stock");
+        
+        //If quantity is > 0 the grease quantity is updated
+        }else{
+        
+          Oil.update({volume: quant}, {
+            where: {
+              id: newOil.id
+            }
   
+          }).then(() => {
+            //Updating the value from the consumables database
+            if(action === "delet"){
+              resolve(newOil.volume + " Litters of Oil Sucessfully Deleted from Existing Stock!");
+            }else if(action === "add"){
+              resolve(newOil.volume + " Litters of Oil Sucessfully Added to Existing Stock!");
+            }
+  
+          }).catch(err => {
+            reject("An Error Occured Oil Could not be Added " + err);
+  
+          });
+
+        }
+
+      }else{
+        newOil.volume = parseFloat(newOil.volume);
+        newOil.minVolume = parseFloat(newOil.minVolume);
+        newOil.oilPrice = parseFloat(newOil.oilPrice)
+        newOil.totalCost = newOil.oilPrice * newOil.volume;
+        newOil.totalCost = parseFloat(newOil.total_price);
+        Oil.create(newOil).then(() => {
+          resolve(newOil.volume + " Liters of Oil Sucessfully Added!");
+        
         }).catch(err => {
           reject("An Error Occured Oil Could not be Added " + err);
-  
+
         });
 
       }
-
+      
     }).catch(err => {
       reject("An Error Occured Oil Could not be Added " + err);
 
@@ -309,25 +320,7 @@ Oil.addOil = (newOil) => {
 
       //If the oil is not found the function creates a oil and updates the consumable stock
       }else{
-        newOil.volume = parseFloat(newOil.volume);
-        newOil.minVolume = parseFloat(newOil.minVolume);
-        newOil.oilPrice = parseFloat(newOil.oilPrice)
-        newOil.total_price = newOil.oilPrice * newOil.volume;
-        newOil.total_price = parseFloat(newOil.total_price);
-        Oil.create(newOil).then(() => {
-          //Updating consumable stock database
-          Consumable.updateConsumable(newConsumable, "update").then(() => {
-            resolve(newOil.volume + " Liters of Oil Sucessfully Added!");
-
-          }).catch(err => {
-            reject("An Error Occured Oil Could not be Added " + err);
-
-          });
-
-        }).catch(err => {
-          reject("An Error Occured Oil Could not be Added " + err);
-
-        });
+       
 
       }
 

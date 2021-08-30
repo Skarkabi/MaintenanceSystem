@@ -162,11 +162,17 @@ MaintenanceOrder.getOrdersByPlate = plate => {
                 plate: plate
             }
         }).then(async orders => {
-            orders.map(o => {
-                o.setDataValue('createdAt', getDateWithoutTime(o.createdAt));
-                setStatus(o);
+            await Promise.all(orders.map(o => {
+                getConsumables(o).then(() => {
+                    getTotalMaterialCost(o).then(() => {
+                        o.setDataValue('createdAt', getDateWithoutTime(o.createdAt));
+                    })
+                })
+            }));
+            setAllStatus(orders).then(() => {
+                resolve(orders);
             })
-            resolve(orders);
+            
             
         }).catch(err => {
             reject(err);

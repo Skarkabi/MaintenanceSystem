@@ -78,20 +78,41 @@ const Consumable = sequelize.define('consumable_stocks', mappings, {
  */
 Consumable.updateConsumable = (createConsumable, action) => {
     //Creating the new Consumable value to be updated in the consumable databse
+   
     var cQuantity;
+    console.log("------------------------------------------------");
+    console.log(8);
+    console.log("------------------------------------------------");
+
     if(createConsumable.volume){
       cQuantity = createConsumable.volume;
+      console.log("------------------------------------------------");
+      console.log(9);
+      console.log("------------------------------------------------");
+
     }else{
       cQuantity = createConsumable.quantity
+      console.log("------------------------------------------------");
+      console.log(10);
+      console.log("------------------------------------------------");
+
     }
+    console.log("------------------------------------------------");
+    console.log(7);
+    console.log("------------------------------------------------");
+
     const newConsumable = 
     {
-      category: createConsumable.consumanbleCategory.toUpperCase(),
+      category: createConsumable.consumanbleCategory,
       quantity: parseFloat(cQuantity)
     }
+    console.log("------------------------------------------------");
+    console.log(5);
+    console.log("------------------------------------------------");
 
     return new Bluebird((resolve, reject) => {
-      console.log(createConsumable.consumanbleCategory)
+      console.log(createConsumable)
+      console.log(newConsumable)
       //Checking if the consumable category already exists in stock
         Consumable.findOne({where: {
           category: newConsumable.category
@@ -99,10 +120,11 @@ Consumable.updateConsumable = (createConsumable, action) => {
           console.log(isCategory);
           console.log("Find me");
           const model = getConsumableModel(newConsumable.category.toLowerCase());
-            console.log("In here");
-            console.log(model);
-              console.log("This Point")
+           
               model.updateConsumable(createConsumable, action).then(output => {
+                console.log("In here");
+                console.log(output);
+                  console.log("This Point")
                 if(isCategory){
                   var quant;
                   if(action === "add"){

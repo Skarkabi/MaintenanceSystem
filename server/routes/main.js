@@ -215,15 +215,15 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
         }));
     }else{
         var testItem = {
-            other_name: "Test",
-            quantity: 12,
-            singleCost: 34,
-            totalCost: (12 * 34),
-            details: "This si a test",
-            supplierId: "1",
-            quotationNumber: "TEST10001",
-            materialRequestNumber: "TEEEST1010",
-            maintenanceReq: "TMC9912",
+            other_name: req.body.other_category,
+            quantity: req.body.quantityOther,
+            singleCost: req.body.otherPrice ,
+            totalCost: req.body.quantityOther * req.body.otherPrice,
+            details: req.body.otherDetails,
+            supplierId: req.body.otherSupplierName,
+            quotationNumber: req.body.quotation,
+            materialRequestNumber: req.body.otherMaterialRequest,
+            maintenanceReq: req.params.req,
         }
         await MaintenanceConsumables.useNonStockConsumable(testItem).then(output => {
             finished = output;

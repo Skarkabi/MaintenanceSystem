@@ -100,11 +100,14 @@ MaintenanceConsumables.getConsumables = reqNumber => {
                     modelType = NonStockConsumables;
                 }
                 
+                console.log(modelType);
+                console.log(consumable);
                 await modelType.findOne({
                     where: {
                         id: consumable.consumable_id
                     }
                 }).then(foundConsumable => {
+                   
                     if(foundConsumable){
                         return consumableMap.push({type: consumable, consumable: foundConsumable});
                     }
@@ -141,7 +144,7 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
     return new Bluebird((resolve,reject) => {
         const newConsumable = {
             id: conusmableId,
-            category: consumableCategory,
+            consumanbleCategory: consumableCategory,
             quantity: quantity
         }
 
@@ -152,8 +155,14 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
             consumable_quantity: quantity,
             from_stock: fromStock
         }
-        if(newConsumable.category === "BRAKE" || newConsumable.category === "Battery" || newConsumable.category === "Filter" || newConsumable.category === "Grease" || newConsumable.category === "OIL"){
+        if(newConsumable.consumanbleCategory === "BRAKE" || newConsumable.consumanbleCategory === "BATTERY" || newConsumable.consumanbleCategory === "FILTER" || newConsumable.consumanbleCategory === "GREASE" || newConsumable.consumanbleCategory === "OIL"){
+            console.log("------------------------------------------------");
+            console.log(1);
+            console.log("------------------------------------------------");
             Consumable.updateConsumable(newConsumable, "delet").then(() => {
+                console.log("------------------------------------------------");
+            console.log(2);
+            console.log("------------------------------------------------");
                 MaintenanceConsumables.findOne({
                     where: {
                         consumable_id: conusmableId,
@@ -161,8 +170,9 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
                         maintenance_req: reqNumber
                     }
                 }).then(found => {
-                console.log("FOUND YOU")
-                console.log(found);
+                    console.log("------------------------------------------------");
+                    console.log(3);
+                    console.log("------------------------------------------------");
                     var quant;
                     if(found !== null){
                         if(action === "add"){
@@ -307,19 +317,19 @@ MaintenanceConsumables.useNonStockConsumable = (nonStockConsumable) => {
 function getConsumableModel(consumableModel) {
 console.log("----------------------------");
 console.log(consumableModel);
-    if (consumableModel === "Brake"){
+    if (consumableModel === "BRAKE"){
         return Brake;
 
-    }else if(consumableModel === "Filter"){
+    }else if(consumableModel === "FILTER"){
         return Filter;
 
-    }else if(consumableModel === "Grease"){
+    }else if(consumableModel === "GREASE"){
         return Grease;
 
     }else if(consumableModel === "OIL"){
         return Oil;
 
-    }else if(consumableModel === "Battery"){
+    }else if(consumableModel === "BATTERY"){
         return Battery;
 
     }else{

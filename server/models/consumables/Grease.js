@@ -175,12 +175,18 @@ Grease.updateConsumable = (newGrease,action) => {
         }).then(foundGrease =>{
             if(foundGrease){
                 //If the grease exists in the databse the function sets the new quantity to the new value
+                var newVolume;
+                if(newGrease.voluem){
+                  newVoulme = newGrease.volume;
+                }else{
+                  newVolume = newGrease.quantity
+                }
                 var quant;
                 if(action === "add"){
-                    quant = parseFloat(newGrease.volume) + foundGrease.volume;
+                    quant = parseFloat(newVolume) + foundGrease.volume;
             
                 }else if(action === "delet"){
-                    quant = foundGrease.volume - parseFloat(newGrease.volume);
+                    quant = foundGrease.volume - parseFloat(newVolume);
             
                 }
                 var totalCost = quant * foundGrease.price_per_litter;
@@ -213,8 +219,7 @@ Grease.updateConsumable = (newGrease,action) => {
                 newGrease.volume = parseFloat(newGrease.volume);
                 newGrease.minVolume = parseFloat(newGrease.minVolume);
                 newGrease.price_per_litter = parseFloat(newGrease.price_per_litter)
-                newGrease.total_price = newGrease.price_per_litter * newGrease.volume;
-                newGrease.total_price = parseFloat(newGrease.total_price);
+                newGrease.totalCost = newGrease.price_per_litter * newGrease.volume;
                 Grease.create(newGrease).then(() =>{
                     //Updating consumable stock database
                     resolve(newGrease.volume + " Liters of Greace Sucessfully Added!");

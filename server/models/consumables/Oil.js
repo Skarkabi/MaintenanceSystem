@@ -217,6 +217,7 @@ Oil.getOilStock = () => {
  */
 Oil.updateConsumable = (newOil,action) => {
   return new Bluebird((resolve, reject) => {
+    
     //Creating the new Consumable value to be updated in the consumable databse
     //Checking if the oil spec exists within the stock
     Oil.findOne({
@@ -225,29 +226,39 @@ Oil.updateConsumable = (newOil,action) => {
       }
 
     }).then(foundOil => {
+     
       //If the oil exists in the databse the function sets the new quantity to the new value
       if(foundOil){
+        var newVolume;
+        if(newOil.voluem){
+          newVoulme = newOil.volume;
+        }else{
+          newVolume = newOil.quantity
+        }
         var quant;
         if(action === "add"){
-          quant = parseFloat(newOil.volume) + foundOil.volume;
+          quant = parseFloat(newVolume) + foundOil.volume;
       
         }else if(action === "delet"){
-          quant = foundOil.volume - parseFloat(newOil.volume);
+          quant = foundOil.volume - parseFloat(newVolume);
       
         }
-
+        console.log("------------------------------------------");
+        console.log(quant);
         if(quant < 0){
           reject("Can not Delete more than exists in stock");
         
         //If quantity is > 0 the grease quantity is updated
         }else{
-        
+          
           Oil.update({volume: quant}, {
             where: {
               id: newOil.id
             }
   
           }).then(() => {
+            console.log("------------------------------------------");
+            console.log("What");
             //Updating the value from the consumables database
             if(action === "delet"){
               resolve(newOil.volume + " Litters of Oil Sucessfully Deleted from Existing Stock!");

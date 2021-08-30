@@ -26,13 +26,13 @@
                 <td><a>{{this.type.consumable_type}}</a></td>
                 <td><a>{{this.consumable.supplierName}}</a></td>
                 <td><a>{{this.type.consumable_quantity}}</a></td>
-                {{#if (isdefined this.type.consumable_type "Grease")}}
+                {{#if (isdefined this.type.consumable_type "GREASE")}}
                     <td><a>{{this.consumable.price_per_litter}} AED (Per Liter)</a></td>
                 {{else}}
-                    {{#if (isdefined this.type.consumable_type "Oil")}}
+                    {{#if (isdefined this.type.consumable_type "OIL")}}
                         <td><a>{{this.consumable.oilPrice}} AED (Per Liter)</a></td>
                     {{else}}
-                        <td><a>{{this.consumable.singleCost}} {{#if (isdefined this.type.consumable_type "Brake") }} AED (Per Boxes){{else}} AED (Per Pieces){{/if}}</a></td>  
+                        <td><a>{{this.consumable.singleCost}} {{#if (isdefined this.type.consumable_type "BRAKE") }} AED (Per Boxes){{else}} AED (Per Pieces){{/if}}</a></td>  
                     {{/if}}
                 {{/if}}
                 

@@ -3,8 +3,8 @@ import Sequelize from 'sequelize';
 
 const dbName = 'maintanence';
 const dbUserName = 'root';
-const dbPassword = '199Sk2018';
-const dbHost = '192.168.0.95';
+const dbPassword = 'mosjsfskmo';
+const dbHost = 'localhost';
 const dbPort = '3306';
 
 const mySQLDB = new Sequelize(dbName, dbUserName, dbPassword, {

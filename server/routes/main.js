@@ -6,6 +6,7 @@ import MaintenanceOrder from '../models/MaintenanceOrder'
 import Vehicle from '../models/Vehicle';
 import ExcelExporter from '../ExcelExporter';
 import ExcelJS from 'exceljs';
+import User from '../models/User';
 const fs = require('fs');
 const https = require('https')
 
@@ -37,11 +38,26 @@ router.get('/create', (req,res,next) => {
     }).then(result => {
         var  matches="TMC000001";
         if(result){
-            var str = result.req;
+            var matches = result.req;
             
         }
         var matches = matches.match(/(\d+)/);
        
+       User.getUserById(req.user.id).then(mainUser => {
+             Vehicle.getMappedStock().then(vehicles => {
+            res.render('createUpdateMain', {
+                title: (`New Maintanence Request`),
+                jumbotronDescription: `Create a New Maintanence Request`,
+                newReqNumber: "TMC" + JSON.stringify(parseInt(matches[0]) + 1),
+                vehicles: vehicles,
+                action: "/maintanence/create",
+                msgType: req.flash(),
+                mainUser: (mainUser.firstName + " " + mainUser.lastName)
+        
+            });
+        })
+       })
+       /*
         Vehicle.getMappedStock().then(vehicles => {
             res.render('createUpdateMain', {
                 title: (`New Maintanence Request`),
@@ -52,7 +68,7 @@ router.get('/create', (req,res,next) => {
                 msgType: req.flash()
         
             });
-        })
+        })*/
         
     })
    
@@ -113,14 +129,14 @@ router.post('/update/:req', (req, res,next) => {
 
 router.get('/exportExcel/newTable', (req,res,next) => {
      MaintenanceOrder.getOrders().then(orders => {
-        var headerValues = [["#","Date", "Req#", "Division", "Vehicle", "Status"],["Plate#", "Category", "Brand", "Model", "Year"]]
+        var headerValues = [["#","Date", "Req#", "Material Req#", "Vehicle", "Status", "Purchase Department Remarks"],["Plate#", "Category", "Brand", "Model", "Year"]]
         var tableValues = []
         var count = 1
         orders.map(values => {
             tableValues.push([
-                count, values.createdAt, values.req, values.division, values.vehicle_data.plate,
+                count, values.createdAt, values.req, values.material_request, values.vehicle_data.plate,
                 values.vehicle_data.category, values.vehicle_data.brand, values.vehicle_data.model,
-                values.vehicle_data.year, values.status
+                values.vehicle_data.year, values.status, "N/A"
             ]);
             count++;
         });

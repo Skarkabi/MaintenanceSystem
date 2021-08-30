@@ -4,13 +4,14 @@ import ExcelJS from 'exceljs';
 function styeSheet(ws, header_data, table_data){
     var numberOfHeaders = header_data[0].length;
     if(header_data.length === 2){
-        numberOfHeaders = numberOfHeaders + header_data[1].length - 1;
+        numberOfHeaders = numberOfHeaders + header_data[1].length;
         ws.mergeCells('E1:I1');
         ws.mergeCells('A1:A2');
         ws.mergeCells('B1:B2');
         ws.mergeCells('C1:C2');
         ws.mergeCells('D1:D2');
         ws.mergeCells('J1:J2');
+        ws.mergeCells('K1:K2');
         ws.getRow(2).alignment = { vertical: 'middle', horizontal: 'center' };
         ws.getRow(2).eachCell(function(cell) {
             cell.fill = {
@@ -65,10 +66,10 @@ function styeSheet(ws, header_data, table_data){
                     color: {}
                 };
                 cell.border = {
-                    top: {style:'thin'},
-                    bottom: {style:'thin'},
-                    left: {},
-                    right: {}
+                     top: {style:'thin'},
+                left: {style:'thin'},
+                bottom: {style:'thin'},
+                right: {style:'thin'}
                 };
 
                 if(rowNumber%2 !==0){
@@ -78,7 +79,7 @@ function styeSheet(ws, header_data, table_data){
                 if(colNumber === 1){
                     cell.border.left = {style: 'thin'}
     
-                }else if (colNumber === numberOfHeaders){
+                }else if (colNumber === numberOfHeaders - 1){
                     cell.border.right =  {style: 'thin'}
                     if(header_data.length === 2){
                         cell.font.bold = true;
@@ -110,15 +111,19 @@ function styeSheet(ws, header_data, table_data){
     var endPoint = (numberOfHeaders + 9).toString(36).toUpperCase();
     ws.autoFilter = `A1:${endPoint}1`;
     var largest_values = [];
+    console.log(1);
     for (var i = 0; i < header_data.length + table_data.length; i++){
         largest_values.push(0);
     }
+    console.log(2)
 
     ws.eachRow(function(row){
         row.eachCell(function(cell, colNumber){
-            if(cell.value.length > largest_values[colNumber - 1]){
+        console.log(3)
+            if(cell.value && cell.value.length > largest_values[colNumber - 1]){
                 largest_values[colNumber - 1] = cell.value.length + 10;
             }
+            console.log(4)
         })
     })
 

@@ -9,7 +9,7 @@
                 <div class="form-row">
                     <div class="form-group col">
                         <label for="req">Req #</label>
-                        <input type="text" id="reqNumber" name="reqNumber" class="form-control" value={{newReqNumber}}>
+                        <input type="text" id="reqNumber" name="reqNumber" class="form-control" value={{newReqNumber}} readonly>
                     </div>
                     <div class="form-group col">
                         <label for="plate">Plate #</label>
@@ -63,12 +63,8 @@
                 </div>
                 <div class="form-row">
                      <div class="form-group col ">
-                        <label for="employee">Assigned Employee(s)</label>
-                        <input list="employee" name="employee" class="form-control" multiple>
-                        <datalist id="employee">
-                             <option value="Wissam"></option>
-                             <option value="Saleem"></option>
-                        </datalist>
+                        <label for="employee">Created By</label>
+                        <input list="employee" name="employee" value="{{mainUser}}" class="form-control" readonly>
                     </div>
                     <div class="form-group col ">
                         <label for="type">Maintanence Type</label>

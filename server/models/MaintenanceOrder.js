@@ -241,6 +241,7 @@ MaintenanceOrder.updateMaterialRequest = (reqNumber, materialRequest, discriptio
 
 MaintenanceOrder.addOrder = order => {
     return new Bluebird((resolve, reject) => {
+        order.hour_cost = 65;
         MaintenanceOrder.create(order).then(() => {
             resolve("New Order added");
         })

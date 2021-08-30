@@ -37,7 +37,7 @@ router.get('/create', (req,res,next) => {
     }).then(result => {
         var  matches="TMC000001";
         if(result){
-            var str = result.req;
+            var matches = result.req;
             
         }
         var matches = matches.match(/(\d+)/);

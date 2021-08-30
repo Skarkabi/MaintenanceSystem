@@ -152,7 +152,7 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
             consumable_quantity: quantity,
             from_stock: fromStock
         }
-        if(newConsumable.category === "Brake" || newConsumable.category === "Battery" || newConsumable.category === "Filter" || newConsumable.category === "Grease" || newConsumable.category === "Oil"){
+        if(newConsumable.category === "BRAKE" || newConsumable.category === "Battery" || newConsumable.category === "Filter" || newConsumable.category === "Grease" || newConsumable.category === "OIL"){
             Consumable.updateConsumable(newConsumable, "delet").then(() => {
                 MaintenanceConsumables.findOne({
                     where: {
@@ -161,6 +161,8 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
                         maintenance_req: reqNumber
                     }
                 }).then(found => {
+                console.log("FOUND YOU")
+                console.log(found);
                     var quant;
                     if(found !== null){
                         if(action === "add"){
@@ -303,6 +305,8 @@ MaintenanceConsumables.useNonStockConsumable = (nonStockConsumable) => {
 }
 
 function getConsumableModel(consumableModel) {
+console.log("----------------------------");
+console.log(consumableModel);
     if (consumableModel === "Brake"){
         return Brake;
 
@@ -312,7 +316,7 @@ function getConsumableModel(consumableModel) {
     }else if(consumableModel === "Grease"){
         return Grease;
 
-    }else if(consumableModel === "Oil"){
+    }else if(consumableModel === "OIL"){
         return Oil;
 
     }else if(consumableModel === "Battery"){

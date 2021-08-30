@@ -6,6 +6,7 @@ import MaintenanceOrder from '../models/MaintenanceOrder'
 import Vehicle from '../models/Vehicle';
 import ExcelExporter from '../ExcelExporter';
 import ExcelJS from 'exceljs';
+import User from '../models/User';
 const fs = require('fs');
 const https = require('https')
 
@@ -42,6 +43,21 @@ router.get('/create', (req,res,next) => {
         }
         var matches = matches.match(/(\d+)/);
        
+       User.getUserById(req.user.id).then(mainUser => {
+             Vehicle.getMappedStock().then(vehicles => {
+            res.render('createUpdateMain', {
+                title: (`New Maintanence Request`),
+                jumbotronDescription: `Create a New Maintanence Request`,
+                newReqNumber: "TMC" + JSON.stringify(parseInt(matches[0]) + 1),
+                vehicles: vehicles,
+                action: "/maintanence/create",
+                msgType: req.flash(),
+                mainUser: (mainUser.firstName + " " + mainUser.lastName)
+        
+            });
+        })
+       })
+       /*
         Vehicle.getMappedStock().then(vehicles => {
             res.render('createUpdateMain', {
                 title: (`New Maintanence Request`),
@@ -52,7 +68,7 @@ router.get('/create', (req,res,next) => {
                 msgType: req.flash()
         
             });
-        })
+        })*/
         
     })
    
@@ -78,6 +94,7 @@ router.get('/:req', (req, res, next) => {
     Consumable.getFullStock().then(consumablesToSelect => {
         MaintenanceOrder.getByReq(req.params.req).then(found => {
             Consumable.getDistinctConsumableValues().then(values => {
+            console.log(found.consumable_data);
                 res.render('displayMain', {
                     title: (`Maintanence Request # ${found.req}`),
                     jumbotronDescription: `Request # ${found.req} for division ${found.division}`,
@@ -113,14 +130,14 @@ router.post('/update/:req', (req, res,next) => {
 
 router.get('/exportExcel/newTable', (req,res,next) => {
      MaintenanceOrder.getOrders().then(orders => {
-        var headerValues = [["#","Date", "Req#", "Division", "Vehicle", "Status"],["Plate#", "Category", "Brand", "Model", "Year"]]
+        var headerValues = [["#","Date", "Req#", "Material Req#", "Vehicle", "Status", "LPO#", "LPO Amount", "Purchase Department Remarks"],["Plate#", "Category", "Brand", "Model", "Year"]]
         var tableValues = []
         var count = 1
         orders.map(values => {
             tableValues.push([
-                count, values.createdAt, values.req, values.division, values.vehicle_data.plate,
+                count, values.createdAt, values.req, values.material_request, values.vehicle_data.plate,
                 values.vehicle_data.category, values.vehicle_data.brand, values.vehicle_data.model,
-                values.vehicle_data.year, values.status
+                values.vehicle_data.year, values.status, " ", " ", " "
             ]);
             count++;
         });
@@ -172,7 +189,7 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
             updateValues.push(newValue);
         }
     }
-    var category = req.params.category[0].toUpperCase() + req.params.category.slice(1);
+    var category = req.params.category.toUpperCase();
     if(req.body.eOrN !== "new" && updateValues.length !== 0){
         await Promise.all(updateValues.map(consumables => {
             var usedCategory;
@@ -187,6 +204,8 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
             }else{
                 usedCategory = category;
             }
+            console.log("This Ones");
+            console.log(usedCategory);
             MaintenanceConsumables.useConsumable(consumables.consumableId, usedCategory, req.params.req, parseFloat(consumables.quantity), "add", fromStock).then(output => {
                     finished = output;
             }).catch(err => {

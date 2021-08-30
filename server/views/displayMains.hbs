@@ -16,6 +16,7 @@
                 <th scope="col" rowspan="2">Division</th>
                 <th scope="col" colspan="5">Vehicle</th>
                 <th scope="col" rowspan="2">Status</th>
+                <th scope="col" rowspan="2">Maintenance Discription</th>
                 
             </tr>
             <tr>
@@ -28,29 +29,30 @@
         </thead>
         <tbody>
             {{#each orders}}
-                <tr>
-                    <td><a href="/maintanence/{{this.req}}">{{counter @index}}</a></td>
-                    <td><a href="/maintanence/{{this.req}}">{{this.createdAt}}</a></td>
-                    <td><a href="/maintanence/{{this.req}}">{{this.req}}</a></td>
-                    <td><a href="/maintanence/{{this.req}}">{{this.division}}</a></td>
-                    <td><a href="/maintanence/{{this.req}}">{{this.plate}}</a></td>
-                    <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.category}}</a></td>
-                    <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.brand}}</a></td>
-                    <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.model}}</a></td>
-                    <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.year}}</a></td>
-                    {{#if (isdefined this.status "Not Started")}}
-                        <td bgcolor="red" style="color:white; font-weight:bold">NOT STARTED</td>
-                    {{/if}}
-                    {{#if (isdefined this.status "In Progress")}}
-                        <td bgcolor="#7EC8E3" style="color:black; font-weight:bold">IN PROGRESS</td>
-                    {{/if}}
-                    {{#if (isdefined this.status "Pending Material")}}
-                        <td bgcolor="#FFC55C" style="color:black; font-weight:bold">PENDING MATERIAL</td>
-                    {{/if}}
-                    {{#if (isdefined this.status "Completed")}}
-                        <td bgcolor="#8AFF8A" style="color:black; font-weight:bold">COMPLETED</td>
-                    {{/if}}
-                </tr>
+            <tr>
+                <td><a href="/maintanence/{{this.req}}">{{counter @index}}</a></td>
+                <td><a href="/maintanence/{{this.req}}">{{this.createdAt}}</a></td>
+                <td><a href="/maintanence/{{this.req}}">{{this.req}}</a></td>
+                <td><a href="/maintanence/{{this.req}}">{{this.division}}</a></td>
+                <td><a href="/maintanence/{{this.req}}">{{this.plate}}</a></td>
+                <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.category}}</a></td>
+                <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.brand}}</a></td>
+                <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.model}}</a></td>
+                <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.year}}</a></td>
+                {{#if (isdefined this.status "Not Started")}}
+                <td bgcolor="red" style="color:white; font-weight:bold">NOT STARTED</td>
+                {{/if}}
+                {{#if (isdefined this.status "In Progress")}}
+                <td bgcolor="#7EC8E3" style="color:black; font-weight:bold">IN PROGRESS</td>
+                {{/if}}
+                {{#if (isdefined this.status "Pending Material")}}
+                <td bgcolor="#FFC55C" style="color:black; font-weight:bold">PENDING MATERIAL</td>
+                {{/if}}
+                {{#if (isdefined this.status "Completed")}}
+                <td bgcolor="#8AFF8A" style="color:black; font-weight:bold">COMPLETED</td>
+                {{/if}}]
+                <td><a href="/maintanence/{{this.req}}">{{this.discription}}</a></td>
+            </tr>
             {{/each}}
         </tbody>
     </table>

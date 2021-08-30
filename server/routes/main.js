@@ -94,6 +94,7 @@ router.get('/:req', (req, res, next) => {
     Consumable.getFullStock().then(consumablesToSelect => {
         MaintenanceOrder.getByReq(req.params.req).then(found => {
             Consumable.getDistinctConsumableValues().then(values => {
+            console.log(found.consumable_data);
                 res.render('displayMain', {
                     title: (`Maintanence Request # ${found.req}`),
                     jumbotronDescription: `Request # ${found.req} for division ${found.division}`,
@@ -129,14 +130,14 @@ router.post('/update/:req', (req, res,next) => {
 
 router.get('/exportExcel/newTable', (req,res,next) => {
      MaintenanceOrder.getOrders().then(orders => {
-        var headerValues = [["#","Date", "Req#", "Material Req#", "Vehicle", "Status", "Purchase Department Remarks"],["Plate#", "Category", "Brand", "Model", "Year"]]
+        var headerValues = [["#","Date", "Req#", "Material Req#", "Vehicle", "Status", "LPO#", "LPO Amount", "Purchase Department Remarks"],["Plate#", "Category", "Brand", "Model", "Year"]]
         var tableValues = []
         var count = 1
         orders.map(values => {
             tableValues.push([
                 count, values.createdAt, values.req, values.material_request, values.vehicle_data.plate,
                 values.vehicle_data.category, values.vehicle_data.brand, values.vehicle_data.model,
-                values.vehicle_data.year, values.status, "N/A"
+                values.vehicle_data.year, values.status, " ", " ", " "
             ]);
             count++;
         });
@@ -188,7 +189,7 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
             updateValues.push(newValue);
         }
     }
-    var category = req.params.category[0].toUpperCase() + req.params.category.slice(1);
+    var category = req.params.category.toUpperCase();
     if(req.body.eOrN !== "new" && updateValues.length !== 0){
         await Promise.all(updateValues.map(consumables => {
             var usedCategory;
@@ -203,6 +204,8 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
             }else{
                 usedCategory = category;
             }
+            console.log("This Ones");
+            console.log(usedCategory);
             MaintenanceConsumables.useConsumable(consumables.consumableId, usedCategory, req.params.req, parseFloat(consumables.quantity), "add", fromStock).then(output => {
                     finished = output;
             }).catch(err => {

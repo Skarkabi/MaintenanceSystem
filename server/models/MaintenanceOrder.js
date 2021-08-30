@@ -254,7 +254,7 @@ function setStatus(o){
                
                 o.setDataValue('status', "In Progress")
                
-            }else if(o.material_request.substring(0,3) === "MCM" && o.consumable_data.length === 0){
+            }else if(o.material_request.substring(0,3) === "MWS" && o.consumable_data.length === 0){
    
                 o.setDataValue('status', "Pending Material")
             }else{

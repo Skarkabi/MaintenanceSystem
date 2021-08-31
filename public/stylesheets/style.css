@@ -257,6 +257,11 @@ td:empty:after {
   background: #666666;
 }
 
+#vehcileMaintenanceValue {
+  color: blue;
+  font-weight: bold;
+}
+
 p {
   font-family: 'Poppins', sans-serif;
   font-size: 1.1em;

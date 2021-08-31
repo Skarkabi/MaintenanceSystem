@@ -12,6 +12,8 @@ function styeSheet(ws, header_data, table_data){
         ws.mergeCells('D1:D2');
         ws.mergeCells('J1:J2');
         ws.mergeCells('K1:K2');
+        ws.mergeCells('L1:L2');
+        ws.mergeCells('M1:M2');
         ws.getRow(2).alignment = { vertical: 'middle', horizontal: 'center' };
         ws.getRow(2).eachCell(function(cell) {
             cell.fill = {
@@ -136,6 +138,7 @@ function styeSheet(ws, header_data, table_data){
 function getHeaders(values){
     var header_data = [];
     values[0].map(headers => {
+        console.log(headers);
         header_data.push(headers);
     })
     if(values.length === 2){
@@ -145,12 +148,14 @@ function getHeaders(values){
             second_header.push(headers);
         })
         var size = header_data.length;
-        for(var i = 5; i < size + 3; i ++){
+        for(var i = 5; i < size - 3; i ++){
             header_data[i] = ""
         };
         var extra_data = [];
         for(var i = 0; i < 5; i++){
+            console.log(extra_data[i+5])
             extra_data[i+5] = second_header[i];
+            console.log(extra_data[i+5])
         }
 
         header_data.push(last);
@@ -170,6 +175,17 @@ function setTableData(workbook, tableValues){
     }
 
     tableValues.tableData.map(values => {
+       for(var k = 0; k < values.length; k++){
+        if(values[k] === null){
+            console.log(values[k]);
+            values[k] = ""
+            console.log(values[k]);
+        }
+       }
+            
+            
+        
+        console.log(values);
         ws.addRow(values);
     });
 

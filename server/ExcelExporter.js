@@ -81,7 +81,7 @@ function styeSheet(ws, header_data, table_data){
                 if(colNumber === 1){
                     cell.border.left = {style: 'thin'}
     
-                }else if (colNumber === numberOfHeaders - 1){
+                }else if (colNumber === 10){
                     cell.border.right =  {style: 'thin'}
                     if(header_data.length === 2){
                         cell.font.bold = true;
@@ -94,7 +94,7 @@ function styeSheet(ws, header_data, table_data){
                             cell.fill.fgColor = {argb:'7EC8E3'};
 
                         }else if(cell.value === "PENDING MATERIAL"){
-                            cell.fill.fgColor = {argb:'FFC55C'};
+                            cell.fill.fgColor = {argb:'D396FF'};
 
                         }else if(cell.value === "COMPLETED"){
                             cell.fill.fgColor = {argb:'8AFF8A'}
@@ -110,22 +110,19 @@ function styeSheet(ws, header_data, table_data){
         }
            
     });
-    var endPoint = (numberOfHeaders + 9).toString(36).toUpperCase();
+    var endPoint = (numberOfHeaders + 8).toString(36).toUpperCase();
+
     ws.autoFilter = `A1:${endPoint}1`;
     var largest_values = [];
-    console.log(1);
-    for (var i = 0; i < header_data.length + table_data.length; i++){
+    for (var i = 0; i < 13; i++){
         largest_values.push(0);
     }
-    console.log(2)
 
     ws.eachRow(function(row){
         row.eachCell(function(cell, colNumber){
-        console.log(3)
-            if(cell.value && cell.value.length > largest_values[colNumber - 1]){
+            if(cell.value && cell.value.length >= largest_values[colNumber - 1]){
                 largest_values[colNumber - 1] = cell.value.length + 10;
             }
-            console.log(4)
         })
     })
 
@@ -138,27 +135,35 @@ function styeSheet(ws, header_data, table_data){
 function getHeaders(values){
     var header_data = [];
     values[0].map(headers => {
-        console.log(headers);
         header_data.push(headers);
     })
     if(values.length === 2){
-        var last = header_data[header_data.length - 1];
+        var last =[];
+        var count = 0;
+        for(var i = header_data.length - 1; i > header_data.length - 5; i--){
+            last.push(header_data[i]);
+  
+        }
+
         var second_header =[];
         values[1].map(headers => {
             second_header.push(headers);
         })
-        var size = header_data.length;
-        for(var i = 5; i < size - 3; i ++){
+
+        for(var i = 5; i < 9; i ++){
             header_data[i] = ""
         };
-        var extra_data = [];
-        for(var i = 0; i < 5; i++){
-            console.log(extra_data[i+5])
-            extra_data[i+5] = second_header[i];
-            console.log(extra_data[i+5])
+
+        for(var i = last.length - 1; i >= 0; i--){
+            header_data.push(last[i]);
+
         }
 
-        header_data.push(last);
+        var extra_data = [];
+        for(var i = 0; i < 5; i++){
+            extra_data[i+5] = second_header[i];
+        }
+       
         return ([header_data, extra_data]);
     }
     return header_data;
@@ -177,15 +182,10 @@ function setTableData(workbook, tableValues){
     tableValues.tableData.map(values => {
        for(var k = 0; k < values.length; k++){
         if(values[k] === null){
-            console.log(values[k]);
             values[k] = ""
-            console.log(values[k]);
         }
        }
             
-            
-        
-        console.log(values);
         ws.addRow(values);
     });
 

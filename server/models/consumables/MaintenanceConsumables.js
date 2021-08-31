@@ -99,9 +99,6 @@ MaintenanceConsumables.getConsumables = reqNumber => {
                 }else{
                     modelType = NonStockConsumables;
                 }
-                
-                console.log(modelType);
-                console.log(consumable);
                 await modelType.findOne({
                     where: {
                         id: consumable.consumable_id
@@ -156,13 +153,7 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
             from_stock: fromStock
         }
         if(newConsumable.consumanbleCategory === "BRAKE" || newConsumable.consumanbleCategory === "BATTERY" || newConsumable.consumanbleCategory === "FILTER" || newConsumable.consumanbleCategory === "GREASE" || newConsumable.consumanbleCategory === "OIL"){
-            console.log("------------------------------------------------");
-            console.log(1);
-            console.log("------------------------------------------------");
             Consumable.updateConsumable(newConsumable, "delet").then(() => {
-                console.log("------------------------------------------------");
-            console.log(2);
-            console.log("------------------------------------------------");
                 MaintenanceConsumables.findOne({
                     where: {
                         consumable_id: conusmableId,
@@ -170,9 +161,6 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
                         maintenance_req: reqNumber
                     }
                 }).then(found => {
-                    console.log("------------------------------------------------");
-                    console.log(3);
-                    console.log("------------------------------------------------");
                     var quant;
                     if(found !== null){
                         if(action === "add"){
@@ -315,8 +303,6 @@ MaintenanceConsumables.useNonStockConsumable = (nonStockConsumable) => {
 }
 
 function getConsumableModel(consumableModel) {
-console.log("----------------------------");
-console.log(consumableModel);
     if (consumableModel === "BRAKE"){
         return Brake;
 

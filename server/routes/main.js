@@ -94,7 +94,6 @@ router.get('/:req', (req, res, next) => {
     Consumable.getFullStock().then(consumablesToSelect => {
         MaintenanceOrder.getByReq(req.params.req).then(found => {
             Consumable.getDistinctConsumableValues().then(values => {
-            console.log(found.consumable_data);
                 res.render('displayMain', {
                     title: (`Maintanence Request # ${found.req}`),
                     jumbotronDescription: `Request # ${found.req} for division ${found.division}`,
@@ -204,8 +203,6 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
             }else{
                 usedCategory = category;
             }
-            console.log("This Ones");
-            console.log(usedCategory);
             MaintenanceConsumables.useConsumable(consumables.consumableId, usedCategory, req.params.req, parseFloat(consumables.quantity), "add", fromStock).then(output => {
                     finished = output;
             }).catch(err => {

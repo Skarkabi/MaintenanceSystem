@@ -80,51 +80,27 @@ Consumable.updateConsumable = (createConsumable, action) => {
     //Creating the new Consumable value to be updated in the consumable databse
    
     var cQuantity;
-    console.log("------------------------------------------------");
-    console.log(8);
-    console.log("------------------------------------------------");
-
     if(createConsumable.volume){
       cQuantity = createConsumable.volume;
-      console.log("------------------------------------------------");
-      console.log(9);
-      console.log("------------------------------------------------");
 
     }else{
       cQuantity = createConsumable.quantity
-      console.log("------------------------------------------------");
-      console.log(10);
-      console.log("------------------------------------------------");
 
     }
-    console.log("------------------------------------------------");
-    console.log(7);
-    console.log("------------------------------------------------");
 
     const newConsumable = 
     {
       category: createConsumable.consumanbleCategory,
       quantity: parseFloat(cQuantity)
     }
-    console.log("------------------------------------------------");
-    console.log(5);
-    console.log("------------------------------------------------");
 
     return new Bluebird((resolve, reject) => {
-      console.log(createConsumable)
-      console.log(newConsumable)
       //Checking if the consumable category already exists in stock
         Consumable.findOne({where: {
           category: newConsumable.category
         }}).then(isCategory => {
-          console.log(isCategory);
-          console.log("Find me");
           const model = getConsumableModel(newConsumable.category.toLowerCase());
-           
               model.updateConsumable(createConsumable, action).then(output => {
-                console.log("In here");
-                console.log(output);
-                  console.log("This Point")
                 if(isCategory){
                   var quant;
                   if(action === "add"){
@@ -416,7 +392,6 @@ function getConsumableModel(consumableModel) {
       return Oil;
 
   }else if(consumableModel === "battery"){
-    console.log(new Battery);
       return Battery;
 
   }

@@ -25,9 +25,15 @@ import supplierRouter from './routes/supplier';
 import mainRouter from './routes/main';
 require('./models/Session');
 import MaintenancOrder from './models/MaintenanceOrder';
+import MaterialRequest from './models/consumables/MaterialRequest';
 
 handlebars.registerHelper("counter", function (index){
     return index + 1;
+});
+
+handlebars.registerHelper("getElement", function (array, index, property){
+    console.log(array);
+    return array[parseInt(index)][property];
 });
 
 handlebars.registerHelper("makeObject", function (id, action){
@@ -40,6 +46,13 @@ handlebars.registerHelper('isdefined', function (value, compare) {
     console.log("I am in this function " + value + " " + compare);
     return value === compare;
   });
+
+handlebars.registerHelper('ifOr', function (item){
+    console.log(JSON.stringify(item));
+    if(item.singleCost || item.price_per_litter || item.oilPrice){
+        return true
+    }
+})
 
 handlebars.registerHelper('lowerCase', function (value){
     return value.toLowerCase();
@@ -71,6 +84,9 @@ handlebars.registerHelper('getVehicles', function(vehicles, plate){
     return console.log(plate.get('15204'));
 })
 
+handlebars.registerHelper('moreThanOne', function(items){
+    return parseInt(items.length) > 1;
+})
 const app = express();
 
 const multiHelpers = hbshelpers()

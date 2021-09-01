@@ -7,6 +7,7 @@ import Vehicle from '../models/Vehicle';
 import ExcelExporter from '../ExcelExporter';
 import ExcelJS from 'exceljs';
 import User from '../models/User';
+import MaterialRequest from '../models/consumables/MaterialRequest';
 const fs = require('fs');
 const https = require('https')
 
@@ -91,8 +92,25 @@ router.post('/create', (req, res, next) => {
  * Express Route to get selected maintenance job details
  */
 router.get('/:req', (req, res, next) => {
+    
     Consumable.getFullStock().then(consumablesToSelect => {
+        console.log("------------------------------");
+        console.log("Going In");
+        
         MaintenanceOrder.getByReq(req.params.req).then(found => {
+            
+            var materialRequests = "";
+            if(found.material_request_data !== ""){
+                found.material_request_data.map(materialRequest => {
+                    if(materialRequests === ""){
+                        materialRequests = `${materialRequest.material_request}`
+                    }else{
+                        materialRequests = materialRequests + `, ${materialRequest.material_request}`
+                    }
+                })
+            }
+            
+            console.log(found);
             Consumable.getDistinctConsumableValues().then(values => {
                 res.render('displayMain', {
                     title: (`Maintanence Request # ${found.req}`),
@@ -101,6 +119,7 @@ router.get('/:req', (req, res, next) => {
                     mainConsumable: found.consumable_data,
                     mainEmployee: found.employee_data,
                     consumableTable: consumablesToSelect,
+                    materialRequest: materialRequests,
                     values: values,
                     msgType: req.flash()
                 });
@@ -239,6 +258,48 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
    
     
     //MaintenanceConsumables.useConsumable(req.params.consumableId, req.params.category, req.params)
+})
+
+router.post('/update/material_request/add_material/:req', (req, res, next) => {
+    var items = [];
+    console.log("-----------------------------");
+    if(req.body.numberOfItems < 2){
+        var materialRequestItem = {
+            other_name: req.body.other_category,
+            quantity: req.body.quantityOther,
+            details: req.body.otherDetails,
+            quotationNumber: "N/A",
+            materialRequestNumber: req.body.otherMaterialRequest,
+            maintenanceReq: req.params.req,
+        }
+        items.push(materialRequestItem);
+        console.log(items);
+    }else{
+        for(var i = 0; i < req.body.numberOfItems; i++){
+            var materialRequestItem = {
+                other_name: req.body.other_category[i],
+                quantity: req.body.quantityOther[i],
+                details: req.body.otherDetails[i],
+                quotationNumber: "N/A",
+                materialRequestNumber: req.body.otherMaterialRequest,
+                maintenanceReq: req.params.req,
+            }
+            items.push(materialRequestItem);
+        }
+    }
+    
+    for(var i = 0; i < items.length; i++){
+        MaterialRequest.addMaterialRequest(items[i]).then(output => {
+            if(i === items.length){
+                req.flash('success_msg', `${req.body.otherMaterialRequest} Succesfully Updated For Order`);
+                res.redirect(`back`);
+            }
+            
+        }).catch(err => {
+            console.log(err);
+        })
+    }
+    
 })
 
 function returnError(er, req, res){

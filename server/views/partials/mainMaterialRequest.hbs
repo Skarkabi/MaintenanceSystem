@@ -1,0 +1,23 @@
+<div class="section-content">
+    <div class="form-row">
+        <div class="form-group col required">
+            <label for="otherMaterialRequest">Material Request Number</label>
+            <input type="text" placeholder = "0" id="otherMaterialRequest" name="otherMaterialRequest" class="form-control" required>
+        </div>
+        <div class="form-group col required">
+            <label for="numberOfItems">Number of Items</label>
+            <div class="input-group">
+                <input type="number" placeholder = "0" id="numberOfItems" name="numberOfItems" class="form-control" required>
+                <div class="input-group-append">
+                   <button type="button" name="create-new" class="btn btn-outline-dark" id="create-new" onclick="setItems()"><i class="fas fa-plus"></i></button>
+                </div>
+                
+            </div>
+            
+        </div>
+
+    </div>
+    <div>
+        <div id="startSpot" name="startSpot"></div>
+    
+</div>

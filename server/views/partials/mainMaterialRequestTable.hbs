@@ -1,0 +1,41 @@
+<div class="col-md-12">
+    <div class="table-buttons" id="table-buttons">
+        <button type="button" name="create-new" class="btn btn-outline-dark" id="create-new" onclick="test('request')"><i class="fas fa-plus"></i>Add Material Request</button>
+    </div>
+
+<table id="filterable-table" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th scope="col">MR#</th>
+            <th scope="col">Item</th>
+            <th scope="col">Cost</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each existingMain.material_request_data}}
+                <tr>
+                    <th rowspan={{this.items.length}} style="vertical-align: middle;"><a>{{this.material_request}}</a></th>
+                    <td><a>{{getElement this.items 0 "other_name"}}</a></td>
+                    <td><a></a></td>   
+                </tr>
+                {{#each this.items}}
+                    {{#unless (isdefined @index 0)}}
+                     <tr>
+                        <td><a>{{this.other_name}}</a></td>
+                        <td><a></a></td>
+                    </tr>
+                    {{/unless}}
+                
+                {{/each}}
+        {{/each}}
+    </tbody>
+</table>
+</div>
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+        <div id="mContent"></div>
+
+  </div>

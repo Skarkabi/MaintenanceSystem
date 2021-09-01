@@ -1,0 +1,25 @@
+    
+        <div class="form-row">
+            <div class="form-group col required">
+                <label for="oilSpec">Category</label>
+                <input list="other_category"  name="other_category" class="form-control" required>
+                <datalist id="other_category">
+                    {{#each values.other.names}}
+                        <option value="{{this}}"></option>
+                    {{/each}}
+                </datalist>
+            </div>
+            <div class="form-group col required">
+                <label for="quantityOther">Quantity</label>
+                <input type="number" placeholder = "0" id="quantityOther" name="quantityOther" class="form-control" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col">
+                <label for="otherDetails">Details</label>
+                <textarea type="text" id="otherDetails" name="otherDetails" class="form-control" required></textarea>
+            </div>
+        </div>
+
+
+    

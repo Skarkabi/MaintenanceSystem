@@ -1,11 +1,13 @@
 <div class="col-md-12">
     <div class="table-buttons" id="table-buttons">
-        <button type="button" name="create-new" class="btn btn-outline-dark" id="create-new" onclick="test()"><i class="fas fa-plus"></i>Add Material</button>
+        <button type="button" name="create-new" class="btn btn-outline-dark" id="create-new" onclick="test('consumable')"><i class="fas fa-plus"></i>Add Material</button>
     </div>
+</div>
 
-<table id="material-filterable-table" class="table table-bordered table-striped">
+<div class="col-md-12">
+<table id="filterable-table" name="table" class="table table-bordered table-striped">
     <thead>
-        <tr>
+        <tr name="tableHead">
             <th scope="col">S.N.</th>
             <th scope="col">MR#</th>
             <th scope="col">Material</th>
@@ -16,8 +18,9 @@
     </thead>
     <tbody>
         {{#each mainConsumable}}
+         {{#if (ifOr this.consumable)}}
             <tr>
-                <th>{{counter @index}}</th>
+                <td>{{counter @index}}</td>
                 {{#if this.consumable.materialRequestNumber}}
                     <td><a>{{this.consumable.materialRequestNumber}}</a></td>
                 {{else}}
@@ -35,8 +38,8 @@
                         <td><a>{{this.consumable.singleCost}} {{#if (isdefined this.type.consumable_type "BRAKE") }} AED (Per Boxes){{else}} AED (Per Pieces){{/if}}</a></td>  
                     {{/if}}
                 {{/if}}
-                
             </tr>
+            {{/if}}
         {{/each}}
     </tbody>
 </table>

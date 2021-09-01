@@ -41,7 +41,7 @@ const mappings = {
     },
     supplierId:{
         type: Sequelize.DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     },
     supplierName:{
         type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.STRING, ['supplierName']),
@@ -143,6 +143,21 @@ NonStockConsumables.addNewConsumable = newConsumable => {
         })
     })
     
+}
+
+NonStockConsumables.getForMaterialRequest = reqNumber => {
+    return new Bluebird((resolve, reject) => {
+        NonStockConsumables.findAll({
+            where: {
+                singleCost: null,
+                materialRequestNumber: reqNumber
+            }
+        }).then(found => {
+            resolve(found);
+        }).catch(err => {
+            reject(err);
+        })
+    })
 }
 
 export default NonStockConsumables;

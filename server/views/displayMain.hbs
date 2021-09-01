@@ -52,8 +52,7 @@
                     </div>
                     <div class="form-group col display-main">
                         <label for="dateCreated">Material Request #</label>
-                        <input type="checkbox" class="btn-check" id="materialRequest-checkbox" autocomplete="off" onchange="unlockInput('materialRequest')">
-                        <input type="text" class="form-control" id="materialRequest" name="materialRequest" brand="materialRequest" disabled="" value="{{existingMain.material_request}}">
+                        <input type="text" class="form-control" id="materialRequest" name="materialRequest" brand="materialRequest" disabled="" value = "{{materialRequest}}">
                     </div>
                     <div class="form-group col display-main">
                         <label for="division">Divison</label>
@@ -121,7 +120,7 @@
             <div class="section-title">
                 <div class="row">
                     <h4 class="col" style="font-weight:bold" onclick="setTable('material')"><a onmouseover="style='cursor:pointer; color:#2779F6'" onmouseout="style='color:black'"><i class="fas fa-gas-pump"></i>Materials Used</a></h4>  
-                    <h4 class="col" style="font-weight:bold" onclick="setTable('employee')"><a onmouseover="style='cursor:pointer; color:#2779F6'" onmouseout="style='color:black'"><i class="fas fa-users"></i>Assigned Employees</a></h4>
+                    <h4 class="col" style="font-weight:bold" onclick="setTable('materialRequest')"><a onmouseover="style='cursor:pointer; color:#2779F6'" onmouseout="style='color:black'"><i class="fas fa-users"></i>Material Requests</a></h4>
                 </div>
                 <hr class="my-3">
             </div>
@@ -132,16 +131,14 @@
 </div>
 </form>
 
-
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>  
 <script>
-    function setTable(tableName, tableData){
+    function setTable(tableName){
         document.getElementById("tableSection").innerHTML = "";
         if(tableName === "material"){
             document.getElementById("tableSection").insertAdjacentHTML("afterbegin", `{{>mainMaterialTable}}`);
 
-        }else if(tableName === "employee"){
-            document.getElementById("tableSection").insertAdjacentHTML("afterbegin", `{{>mainEmployeeTable}}`);
+        }else if(tableName === "materialRequest"){
+            document.getElementById("tableSection").insertAdjacentHTML("afterbegin", `{{>mainMaterialRequestTable}}`);
 
         }
         
@@ -151,7 +148,7 @@
         document.getElementById(elementId).style = "color:blue";
     }
    
-    function test(){
+    function test(tableName){
         // Get the modal
         var modal = document.getElementById("myModal");
         var mContent = document.getElementById("mContent")
@@ -161,7 +158,11 @@
         var span = document.getElementsByClassName("close")[0];
         // When the user clicks on the button, open the modal
         modal.style.display = "block";
-        mContent.insertAdjacentHTML("beforeend",`{{>mainConsumables}}`);
+        if(tableName === "consumable"){
+            mContent.insertAdjacentHTML("beforeend",`{{>mainConsumables}}`);
+        }else if(tableName === "request"){
+            mContent.insertAdjacentHTML("beforeend",`{{>mainMaterialRequest}}`);
+        }
         // When the user clicks on <span> (x), close the modal
         span.onclick = function() {
             modal.style.display = "none";
@@ -202,6 +203,7 @@
             document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>jobOil}}`);
             
         }else if(category.value === "other"){
+            document.getElementById("addSection").insertAdjacentHTML("afterbegin", `{{>addOther}}`);
             document.getElementById("eOrNSelect").insertAdjacentHTML("beforeend", `<label for="eOrN"> Existing/New </label> <select type="text" id="eOrN" name="eOrN" class="form-control" onChange='fromStockOrNew()'> <option value="new"> New </option><option value="existing"> Existing </option> </select>`);
            
             
@@ -228,6 +230,29 @@
         }
         
     }
+
+    function setItems(){
+        
+        document.getElementById("numberOfItems").innerHTML = '';
+        document.getElementById("startSpot").innerHTML = `<hr class="my-3"><div id="addItemsSection-0" class="form-row"></div>`
+        var addButton = true;
+        var count = 0;
+            for(var i=0; i < document.getElementById("numberOfItems").value; i++){
+                if(i % 2 === 0){
+                    count = i;
+                    console.log(count);
+                    document.getElementById("startSpot").insertAdjacentHTML("beforeend",`<div id="addItemsSection-${count}" class="form-row"></div>`);
+                }
+                console.log(count);
+                document.getElementById(`addItemsSection-${count}`).insertAdjacentHTML("beforeend", `<div class="form-group col required" style=""><p>item ${i+1}<p> {{>addMaterialRequest}}<div>`);
+
+            }
+            if(addButton){
+            document.getElementById("startSpot").insertAdjacentHTML("beforeend",`<button class="btn btn-success" id="addMaterialRequest" onclick='setAction(event, "material", "{{existingMain.req}}")' style="float: right;" justfiy-content-end ><i class="fas fa-plus-circle"></i>Add</button>`);
+            addButton = false;
+        }
+        }
+
 
     function setAction(event, buttonAction, reqNumber){
         console.log("----------------------------------------")
@@ -258,7 +283,14 @@
             document.getElementById("displayMainForm").action = `/maintanence/update/material_request/add_consumables/${reqNumber}/${category}`
             document.getElementById("displayMainForm").method = `POST`
             document.getElementById("displayMainForm").submit();
+        }else if(buttonAction === "material"){
+            event.preventDefault();
+            document.getElementById("displayMainForm").action = `/maintanence/update/material_request/add_material`
+            document.getElementById("displayMainForm").method = `POST`
+            document.getElementById("displayMainForm").submit();
         }
     }
+
+    
 
 </script>

@@ -90,6 +90,7 @@
                         <th scope="col">Division</th>
                         <th scope="col">Current Job Cost</th>
                         <th scope="col">Status</th>
+                        <th scope="col">Maintenance Discription</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -112,6 +113,7 @@
                         {{#if (isdefined this.status "Completed")}}
                             <td bgcolor="#8AFF8A" style="color:black; font-weight:bold">COMPLETED</td>
                         {{/if}}
+                        <td><a href="/maintanence/{{this.req}}">{{this.discription}}</a></td>
                     </tr>
                     {{/each}}
                 </tbody>

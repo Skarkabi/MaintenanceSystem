@@ -23,7 +23,7 @@ router.get('/', (req,res,next) => {
 
 router.get('/display-supplier/:id', async (req,res,next) => {
     Supplier.getSpecficSupplier(req.params.id).then(foundSupplier => {
-      
+            console.log(foundSupplier.items);
             res.render('displaySupplier', {
                 title: (`${foundSupplier.name}`),
                 jumbotronDescription: `Information for Supplier ${foundSupplier.name}`,

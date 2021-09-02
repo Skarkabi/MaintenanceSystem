@@ -38,17 +38,14 @@ handlebars.registerHelper("getElement", function (array, index, property){
 
 handlebars.registerHelper("makeObject", function (id, action){
     var value = {id: id, action: action};
-    console.log("Returning " + JSON.stringify(value));
     return value;
 })
 
 handlebars.registerHelper('isdefined', function (value, compare) {
-    console.log("I am in this function " + value + " " + compare);
     return value === compare;
   });
 
 handlebars.registerHelper('ifOr', function (item){
-    console.log(JSON.stringify(item));
     if(item.singleCost || item.price_per_litter || item.oilPrice){
         return true
     }
@@ -60,7 +57,6 @@ handlebars.registerHelper('lowerCase', function (value){
 
 handlebars.registerHelper('changeValue', function(variable, value){
     variable = value;
-    console.log("Value is now " + variable)
     return variable = value;
 })
 
@@ -89,7 +85,15 @@ handlebars.registerHelper('moreThanOne', function(items){
 })
 
 handlebars.registerHelper('multiply', function (x, y){
-    return parseFloat(x*y);
+    if(!x){
+        x = 0;
+    }
+    if(!y){
+        y = 0;
+    }
+    console.log(x)
+    console.log(y)
+    return x;
 })
 const app = express();
 

@@ -85,15 +85,7 @@ handlebars.registerHelper('moreThanOne', function(items){
 })
 
 handlebars.registerHelper('multiply', function (x, y){
-    if(!x){
-        x = 0;
-    }
-    if(!y){
-        y = 0;
-    }
-    console.log(x)
-    console.log(y)
-    return x;
+    return parseFloat(x*y);
 })
 const app = express();
 

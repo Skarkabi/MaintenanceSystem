@@ -174,19 +174,29 @@ MaintenanceOrder.getOrdersByPlate = plate => {
                 plate: plate
             }
         }).then(async orders => {
+            var count = 0;
             await Promise.all(orders.map(o => {
                 getConsumables(o).then(() => {
                     getMaterialRequests(o).then(() => {
                         getTotalMaterialCost(o).then(() => {
+                            setStatus(o)
                             o.setDataValue('createdAt', getDateWithoutTime(o.createdAt));
+                            count++;
+                            if(count === orders.length){
+                                resolve(orders);
+                            }
+                            
+                        }).catch(err => {
+                            reject(err);
                         })
+                    }).catch(err => {
+                        reject(err);
                     })
                     
+                }).catch(err => {
+                    reject(err);
                 })
             }));
-            setAllStatus(orders).then(() => {
-                resolve(orders);
-            })
             
             
         }).catch(err => {
@@ -204,17 +214,11 @@ MaintenanceOrder.getByReq = req => {
                 req: req
             }
         }).then(found => {
-            console.log(1);
             getSingleVehicle(found).then(() => {
-                console.log(2);
                 getConsumables(found).then(() => {
-                    console.log(3);
                     getEmployees(found).then(() => {
-                        console.log(4);
                         getMaterialRequests(found).then(() => {
-                            console.log(5);
                             getTotalMaterialCost(found).then(() => {
-                                console.log(6);
                                 setStatus(found);
                                 resolve(found);
                             }).catch(err =>{
@@ -284,7 +288,6 @@ MaintenanceOrder.addOrder = order => {
 
 function setStatus(o){
     getConsumables(o).then(output => {
-        console.log(o);
         if((o.material_request_data === null || o.material_request_data === "") && (o.consumable_data === undefined || o.consumable_data.length === 0)){
             o.setDataValue('status', "NOT STARTED");
         }else if(o.completedAt){
@@ -446,7 +449,6 @@ function getCurrentDate(){
 function getSingleVehicle(order){
     return new Bluebird((resolve, reject) => {
         Vehicle.getVehicleByPlate(order.plate).then(foundVehicle => {
-            console.log(3);
             order.setDataValue('createdAt', getDateWithoutTime(order.createdAt));
             order.setDataValue('vehicle_data', foundVehicle);
             resolve("Set Vehicle");

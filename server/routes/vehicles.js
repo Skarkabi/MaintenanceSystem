@@ -54,6 +54,9 @@ router.get('/display-vehicle/:id', (req, res, next) => {
                 iconType = foundVehicle.category.toLowerCase();
 
             }
+            if(!foundVehicle.work_orders_cost){
+                foundVehicle.work_orders_cost = 0;
+            }
             res.render('displayVehical', {
                 title: (`${foundVehicle.brand} ${foundVehicle.model} Plate # ${foundVehicle.plate}`),
                 jumbotronDescription: `Information for ${foundVehicle.brand} ${foundVehicle.model} Plate # ${foundVehicle.plate}.`,

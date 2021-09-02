@@ -50,7 +50,9 @@ handlebars.registerHelper('ifOr', function (item){
         return true
     }
 })
-
+ handlebars.registerHelper('formatDisctiption', function(values){
+    return values.replace(",", "\n-");
+ })
 handlebars.registerHelper('lowerCase', function (value){
     return value.toLowerCase();
 })

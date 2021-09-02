@@ -201,8 +201,11 @@ Vehicle.getVehicleByPlate = plate => {
       }
     }).then(found => {
         MaintenanceOrder.getOrdersByPlate(plate).then(orders => {
-          found.setDataValue('work_orders', orders);
-          found.setDataValue('work_orders_cost', maintenanceCost(orders));
+          if(orders){
+            found.setDataValue('work_orders', orders);
+            found.setDataValue('work_orders_cost', maintenanceCost(orders));
+          }
+         
           resolve(found);
         }).catch(err => {
           reject (err);

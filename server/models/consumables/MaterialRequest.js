@@ -90,18 +90,12 @@ MaterialRequest.getMaterialRequest = maintenance_req => {
         var count = 0;
         
         MaterialRequest.findAll({where: {maintenance_req: maintenance_req, cost: null}}).then(async found => {
-            console.log("------------------------------");
-            console.log(`Looking for Material Requests ${found}`);
             if(found.length){
-                console.log("In Found");
                 await Promise.all(found.map(request => {
                     NonStockConsumables.getForMaterialRequest(request.material_request).then(items => {
-                        console.log(items);
                         request.setDataValue('items', items);
                         count++;
                         if(count === found.length){
-                            console.log("Finding");
-                            console.log(found);
                             resolve(found);
                         }
                     })

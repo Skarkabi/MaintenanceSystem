@@ -96,11 +96,9 @@ router.post('/create', (req, res, next) => {
 router.get('/:req', (req, res, next) => {
     
     Consumable.getFullStock().then(consumablesToSelect => {
-        console.log("------------------------------");
-        console.log("Going In");
         
         MaintenanceOrder.getByReq(req.params.req).then(found => {
-            
+           
             var materialRequests = "";
             if(found.material_request_data !== ""){
                 found.material_request_data.map(materialRequest => {
@@ -111,8 +109,7 @@ router.get('/:req', (req, res, next) => {
                     }
                 })
             }
-            
-            console.log(found);
+        
             Consumable.getDistinctConsumableValues().then(values => {
                 res.render('displayMain', {
                     title: (`Maintanence Request # ${found.req}`),
@@ -129,6 +126,8 @@ router.get('/:req', (req, res, next) => {
                 console.log(err);
             })
         }).catch(err =>{
+            console.log("--------------------------------");
+            console.log("This is where i broke");
             console.log(err);
         })
     }).catch(err =>{
@@ -242,7 +241,6 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
            
         }));
     }else{
-        console.log("Check ***********************");
         var quotationNumber;
         if(!req.body.quotation){
             quotationNumber = "N/A";
@@ -290,7 +288,6 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
 
 router.post('/update/material_request/add_material/:req', (req, res, next) => {
     var items = [];
-    console.log("-----------------------------");
     if(req.body.numberOfItems < 2){
         var materialRequestItem = {
             other_name: req.body.other_category,
@@ -301,7 +298,6 @@ router.post('/update/material_request/add_material/:req', (req, res, next) => {
             maintenanceReq: req.params.req,
         }
         items.push(materialRequestItem);
-        console.log(items);
     }else{
         for(var i = 0; i < req.body.numberOfItems; i++){
             var materialRequestItem = {

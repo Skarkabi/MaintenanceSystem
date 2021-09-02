@@ -22,16 +22,16 @@
                     <div class="col"  style="font-weight:bold;">
                         <div class="row">
                             <h4>Status:&nbsp; </h4>
-                            {{#if (isdefined existingMain.status "Not Started")}}
+                            {{#if (isdefined existingMain.status "NOT STARTED")}}
                                 <h4 style="color:red; font-weight:bold">&nbsp;NOT STARTED</h4>
                                 {{/if}}
-                            {{#if (isdefined existingMain.status "In Progress")}}
+                            {{#if (isdefined existingMain.status "IN PROGRESS")}}
                                 <h4 style="color:#0000FF; font-weight:bold">&nbsp;IN PROGRESS</h4>
                             {{/if}}
-                            {{#if (isdefined existingMain.status "Pending Material")}}
+                            {{#if (isdefined existingMain.status "PENDING MATERIAL")}}
                                 <h4 style="color:#980DFF; font-weight:bold">&nbsp;PENDING MATERIAL</h4>
                             {{/if}}
-                            {{#if (isdefined existingMain.status "Completed")}}
+                            {{#if (isdefined existingMain.status "COMPLETED")}}
                                 <h4 style="color:#00D100; font-weight:bold">&nbsp;COMPLETED</h4>
                             {{/if}}
                         </div>
@@ -96,8 +96,16 @@
                     </div>
                     <div class="form-group col display-main">
                         <label for="hourC">Total Labour Cost</label>
-                        
-                        <input type="text" class="form-control" name="total_work_hour" brand="total_work_hour" id="total_work_hour" disabled="" value="{{multiply existingMain.work_hours existingMain.hour_cost}} AED">
+                        {{#if existingMain.hour_cost}}
+                            {{#if existingMain.work_hours}}
+                                <input type="text" class="form-control" name="total_work_hour" brand="total_work_hour" id="total_work_hour" disabled="" value="{{multiply existingMain.hour_cost existingMain.work_hours}} AED">
+                            {{else}}
+                                <input type="text" class="form-control" name="total_work_hour" brand="total_work_hour" id="total_work_hour" disabled="" value="0 AED">
+                            {{/if}}
+                        {{else}}
+                            <input type="text" class="form-control" name="total_work_hour" brand="total_work_hour" id="total_work_hour" disabled="" value="0 AED">
+                        {{/if}}
+                       
                     </div>
                     <div class="form-group col display-main">
                         <label for="materialCost">Material Cost</label>
@@ -301,7 +309,7 @@
             document.getElementById("displayMainForm").submit();
         }else if(buttonAction === "material"){
             event.preventDefault();
-            document.getElementById("displayMainForm").action = `/maintanence/update/material_request/add_material`
+            document.getElementById("displayMainForm").action = `/maintanence/update/material_request/add_material/${reqNumber}`
             document.getElementById("displayMainForm").method = `POST`
             document.getElementById("displayMainForm").submit();
         }

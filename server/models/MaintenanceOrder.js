@@ -139,15 +139,32 @@ MaintenanceOrder.getOrders = () => {
     return new Bluebird((resolve, reject) => {
         MaintenanceOrder.findAll().then(orders => {
             getVehicle(orders).then( () => {
-                setAllStatus(orders).then(() => {
-                    resolve(orders);
+                getAllMaterialRequests(orders).then(() => {
+                    setAllStatus(orders).then(() => {
+                        resolve(orders);
+
+                    }).catch(err => {
+                        reject(err);
+
+                    })
+
+                }).catch(err => {
+                    reject(err);
+
                 })
                 
+            }).catch(err =>{ 
+                reject(err);
+
             });
+
         }).catch(err => {
             reject(err);
+
         })
+
     })
+
 } 
 
 MaintenanceOrder.getOrdersByPlate = plate => {
@@ -159,9 +176,12 @@ MaintenanceOrder.getOrdersByPlate = plate => {
         }).then(async orders => {
             await Promise.all(orders.map(o => {
                 getConsumables(o).then(() => {
-                    getTotalMaterialCost(o).then(() => {
-                        o.setDataValue('createdAt', getDateWithoutTime(o.createdAt));
+                    getMaterialRequests(o).then(() => {
+                        getTotalMaterialCost(o).then(() => {
+                            o.setDataValue('createdAt', getDateWithoutTime(o.createdAt));
+                        })
                     })
+                    
                 })
             }));
             setAllStatus(orders).then(() => {
@@ -184,27 +204,40 @@ MaintenanceOrder.getByReq = req => {
                 req: req
             }
         }).then(found => {
+            console.log(1);
             getSingleVehicle(found).then(() => {
+                console.log(2);
                 getConsumables(found).then(() => {
+                    console.log(3);
                     getEmployees(found).then(() => {
-                        console.log("------------------------------");
-                        console.log("Getting Material");
+                        console.log(4);
                         getMaterialRequests(found).then(() => {
-                            console.log("------------------------------");
-                            console.log("Material Found");
+                            console.log(5);
                             getTotalMaterialCost(found).then(() => {
+                                console.log(6);
                                 setStatus(found);
                                 resolve(found);
-                            })
+                            }).catch(err =>{
+                                reject(err);
                         })
                         
-                    });
+                    }).catch(err =>{
+                        reject(err);
+                    })
+
                 }).catch(err =>{
                     reject(err);
                 });
-            });
+
+            }).catch(err =>{
+                reject(err);
+            })
+
+        }).catch(err =>{
+            reject(err);
         });
     });
+})
 }
 
 
@@ -251,30 +284,21 @@ MaintenanceOrder.addOrder = order => {
 
 function setStatus(o){
     getConsumables(o).then(output => {
-    if(o.material_request){
-        if((o.material_request === null || o.material_request === "") && (o.consumable_data === undefined || o.consumable_data.length === 0)){
-
-            o.setDataValue('status', "Not Started");
+        console.log(o);
+        if((o.material_request_data === null || o.material_request_data === "") && (o.consumable_data === undefined || o.consumable_data.length === 0)){
+            o.setDataValue('status', "NOT STARTED");
         }else if(o.completedAt){
-          
-            o.setDataValue('status', "Completed");
+            o.setDataValue('status', "COMPLETED");
         }else{
-                if(o.consumable_data.length !== 0 || o.material_request === "N/A"){
-                   
-                    o.setDataValue('status', "In Progress")
-                   
-                }else if(o.material_request.substring(0,3) === "MWS" && o.consumable_data.length === 0){
-       
-                    o.setDataValue('status', "Pending Material")
-                }else{
-    
-                }
-                   
+            if(o.consumable_data.length !== 0 && o.material_request_data.length === 0){
+                o.setDataValue('status', "IN PROGRESS")
+            }else if(o.material_request_data.length !== 0){
+                o.setDataValue('status', "PENDING MATERIAL")
+            }else{
+                
             }
-    }else{
-        o.setDataValue('status', "Not Started");
-    }
-    
+                               
+        }
 
     })
 }
@@ -283,29 +307,26 @@ function setAllStatus(orders){
     return new Bluebird((resolve, reject) => {
         getAllConsumables(orders).then(async output => {
             await Promise.all(orders.map(o => {
-                if(o.material_request){
-                    if((o.material_request === null || o.material_request === "") && (o.consumable_data === undefined || o.consumable_data.length === 0)){
+                    if((o.material_request_data === null || o.material_request_data === "") && (o.consumable_data === undefined || o.consumable_data.length === 0)){
                   
-                        o.setDataValue('status', "Not Started");
+                        o.setDataValue('status', "NOT STARTED");
                     }else if(o.completedAt){
                      
-                        o.setDataValue('status', "Completed");
+                        o.setDataValue('status', "COMPLETED");
+                        
                     }else{
-                            if(o.consumable_data.length !== 0 || o.material_request === "N/A"){
+                        if(o.consumable_data.length !== 0 && !o.material_request_data){
                               
-                                o.setDataValue('status', "In Progress")
+                                o.setDataValue('status', "IN PROGRESS")
                                
-                            }else if(o.material_request.substring(0,3) === "MWS" && o.consumable_data.length === 0){
+                            }else if(o.material_request_data.length !== 0){
                               
-                                o.setDataValue('status', "Pending Material")
+                                o.setDataValue('status', "PENDING MATERIAL")
                             }else{
                 
                             }
                                
                         }
-                }else{
-                    o.setDataValue('status', "Not Started");
-                }
                 
             }))
             resolve("Done");
@@ -343,10 +364,30 @@ function getAllConsumables(orders){
     })
 }
 
+function getAllMaterialRequests(orders){
+    return new Bluebird(async (resolve, reject) => {
+        var count = 1;
+        await Promise.all(orders.map(o =>{
+            MaterialRequest.getMaterialRequest(o.req).then(found => {
+                o.setDataValue('material_request_data', found);
+                count++;
+
+                if(count === orders.length){
+                    resolve("done");
+                }
+
+            }).catch(err => {
+                reject(err);
+
+            });
+
+        }));
+
+    });
+}
+
 function getMaterialRequests(order){
     return new Bluebird(async (resolve, reject) => {
-        console.log("------------------------------");
-        console.log(`Looking for Material ${order.req}`);
         MaterialRequest.getMaterialRequest(order.req).then(found => {
             order.setDataValue('material_request_data', found);
             resolve("Done");
@@ -405,6 +446,7 @@ function getCurrentDate(){
 function getSingleVehicle(order){
     return new Bluebird((resolve, reject) => {
         Vehicle.getVehicleByPlate(order.plate).then(foundVehicle => {
+            console.log(3);
             order.setDataValue('createdAt', getDateWithoutTime(order.createdAt));
             order.setDataValue('vehicle_data', foundVehicle);
             resolve("Set Vehicle");

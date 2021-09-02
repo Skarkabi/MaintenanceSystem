@@ -171,4 +171,25 @@ NonStockConsumables.getForMaterialRequest = reqNumber => {
     })
 }
 
+NonStockConsumables.getSupplierStock = sId => {
+    return new Bluebird((resolve, reject) => {
+        NonStockConsumables.findAndCountAll({
+            where: {supplierId: sId}
+        }).then(others => {
+            Supplier.getSupplierNames(others).then(() => {
+                resolve(others);
+
+            }).catch(err => {
+                reject(err);
+            
+            })
+        
+        }).catch(err => {
+            reject(err);
+
+        });
+
+    });
+}
+
 export default NonStockConsumables;

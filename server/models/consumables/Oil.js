@@ -157,6 +157,30 @@ Oil.getStock = () => {
 
 }
 
+Oil.getSupplierStock = sId => {
+  return new Bluebird((resolve, reject) => {
+    //Getting all the oil found in the database
+    Oil.findAndCountAll({
+      where: {supplierId: sId}
+    }).then(oil => {
+      //Calling supplier function to add supplier name to oil objects
+      Supplier.getSupplierNames(oil).then(() => {
+        resolve(oil);
+
+      }).catch(err => {
+        reject(err);
+
+      });
+
+    }).catch(err => {
+        reject(err);
+
+    });
+
+  });
+
+}
+
 /**
  * function to return distinct values in object
  * @param {*} values 

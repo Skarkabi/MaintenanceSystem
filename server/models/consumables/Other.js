@@ -238,6 +238,28 @@ Other.getStock = () => {
 
 }
 
+Other.getSupplierStock = sId => {
+    return new Bluebird((resolve, reject) => {
+        Other.findAndCountAll({
+            where: {supplierId: sId}
+        }).then(others => {
+            Supplier.getSupplierNames(others).then(() => {
+                resolve(others);
+
+            }).catch(err => {
+                reject(err);
+            
+            })
+        
+        }).catch(err => {
+            reject(err);
+
+        });
+
+    });
+
+}
+
 /**
  * function to return distinct values in object
  * @param {*} values 

@@ -332,6 +332,30 @@ Grease.getStock = () => {
 
 }
 
+Grease.getSupplierStock = sId => {
+    return new Bluebird ((resolve, reject) => {
+        //Getting all the grease found in the database
+        Grease.findAndCountAll({
+            where: {supplierId: sId}
+        }).then(grease => {
+            //Calling supplier function to add supplier name to grease objects
+            Supplier.getSupplierNames(grease).then(() => {
+                resolve(grease);
+
+            }).catch(err => {
+                reject(err);
+
+            });
+
+        }).catch(err => {
+            reject(err);
+
+        });
+
+    });
+
+}
+
 /**
  * function to return distinct values in object
  * @param {*} values 

@@ -27,6 +27,10 @@ const mappings = {
         type: Sequelize.INTEGER,
         allowNull: false
     },
+    pendingQuantity: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
     singleCost:{
         type: Sequelize.DataTypes.DOUBLE,
         allowNull: true
@@ -135,6 +139,9 @@ const NonStockConsumables = sequelize.define('non_stock_others', mappings, {
 
 NonStockConsumables.addNewConsumable = newConsumable => {
     return new Bluebird((resolve, reject) => {
+        if(!newConsumable.pendingQuantity){
+            newConsumable.pendingQuantity = 0;
+        }
         NonStockConsumables.create(newConsumable).then(consumable => {
             newConsumable.id = consumable.id;
             MaintenanceConsumables.useNonStockConsumable(newConsumable) .then(() => {
@@ -160,7 +167,7 @@ NonStockConsumables.getForMaterialRequest = reqNumber => {
     return new Bluebird((resolve, reject) => {
         NonStockConsumables.findAll({
             where: {
-                singleCost: null,
+                pendingQuantity: {[Sequelize.Op.ne] : 0 },
                 materialRequestNumber: reqNumber
             }
         }).then(found => {

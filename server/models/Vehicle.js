@@ -142,6 +142,7 @@ const Vehicle = sequelize.define('vehicle_stocks', mappings, {
  * @returns msg to be flashed to user
  */
 Vehicle.addVehicle = (createVehicled) => {
+  console.log("adding");
   const newVehicle = 
   //Creating the vehicle to be added in the database
   {
@@ -159,12 +160,14 @@ Vehicle.addVehicle = (createVehicled) => {
 
   return new Bluebird ((resolve, reject) => {
     //Check if the vehicle plate number already exists in database
-    Vehicle.getVehicleByPlate(newVehicle.plate).then(isVehicle => {
+    Vehicle.findOne({where: {plate: newVehicle.plate}}).then(isVehicle => {
+      console.log(isVehicle)
       //If vehicle plate number exists reject user input
       if (isVehicle){
         reject("Vehicle With Plate# " + newVehicle.plate + " Already Exists");
 
       }else{
+        console.log(newVehicle);
         //If vehicle plate number doesn't exist add to database
         Vehicle.create(newVehicle).then(() => {
           resolve("Vehicle With Plate# " + newVehicle.plate + " Was Sucessfully Added!");
@@ -251,7 +254,9 @@ Vehicle.deleteVehicleByPlateAndChassis = info => {
 Vehicle.getStock =() => {
   return new Bluebird((resolve, reject) => {
     //Getting all vehicles from database
-    Vehicle.findAndCountAll().then(vehicle => {
+    Vehicle.findAndCountAll({order: [
+      ['year', 'ASC'],
+  ],}).then(vehicle => {
       resolve(vehicle);
 
     }).catch(err => {

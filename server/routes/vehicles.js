@@ -31,7 +31,10 @@ router.post('/add', (req, res, next) => {
 
     }).catch(err => {
         req.flash('error_msg', "Vehicle could not be add (Error: " + err+ ") ");
-        res.redirect('/vehicles/add')
+        req.session.save(function() {
+            res.redirect("back");
+        });
+       
 
     });
 

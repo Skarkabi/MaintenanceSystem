@@ -260,11 +260,6 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
         }
        
         
-            newQuotation = {
-                quotationNumber: req.body.quotation,
-                quotationPath: req.file.path
-            }
-        
         await MaintenanceConsumables.useNonStockConsumable(testItem).then(output => {
 
             
@@ -302,7 +297,8 @@ router.post('/update/material_request/add_material/:req', (req, res, next) => {
         for(var i = 0; i < req.body.numberOfItems; i++){
             var materialRequestItem = {
                 other_name: req.body.other_category[i],
-                quantity: req.body.quantityOther[i],
+                quantity: 0,
+                pendingQuantity: req.body.quantityOther[i],
                 details: req.body.otherDetails[i],
                 quotationNumber: "N/A",
                 materialRequestNumber: req.body.otherMaterialRequest,

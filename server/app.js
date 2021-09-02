@@ -87,6 +87,10 @@ handlebars.registerHelper('moreThanOne', function(items){
 handlebars.registerHelper('multiply', function (x, y){
     return parseFloat(x*y);
 })
+
+handlebars.registerHelper('add', function (x, y){
+    return parseFloat(x + y);
+})
 const app = express();
 
 const multiHelpers = hbshelpers()

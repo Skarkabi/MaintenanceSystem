@@ -14,7 +14,8 @@
             <th scope="col">Material</th>
             <th scope="col">Supplier</th>
             <th scope="col">Quantatiy</th>
-            <th scope="col">Cost</th>
+            <th scope="col">Unit Cost</th>
+            <th scope="col">Total work_orders_cost</th>
             <th scope = "col">Details</th>
             <th scope="col">Action</th>
         </tr>
@@ -42,6 +43,7 @@
                         <td><a>{{this.consumable.singleCost}} {{#if (isdefined this.type.consumable_type "BRAKE") }} AED (Per Boxes){{else}} AED (Per Pieces){{/if}}</a></td>  
                     {{/if}}
                 {{/if}}
+                <td><a>{{this.consumable.totalCost}} AED</a></td>
                 {{#if this.consumable.details}}
                      <td><a>{{this.consumable.details}}</a></td>
                 {{else}}

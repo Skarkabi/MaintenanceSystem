@@ -175,6 +175,8 @@ MaintenanceOrder.getOrdersByPlate = plate => {
             }
         }).then(async orders => {
             var count = 0;
+            console.log(orders);
+            if(orders.length !== 0){
             await Promise.all(orders.map(o => {
                 getConsumables(o).then(() => {
                     getMaterialRequests(o).then(() => {
@@ -197,6 +199,9 @@ MaintenanceOrder.getOrdersByPlate = plate => {
                     reject(err);
                 })
             }));
+        }else{
+            resolve(null);
+        }
             
             
         }).catch(err => {

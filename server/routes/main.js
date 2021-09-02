@@ -100,8 +100,13 @@ router.get('/:req', (req, res, next) => {
         MaintenanceOrder.getByReq(req.params.req).then(found => {
            
             var materialRequests = "";
+            var itemsCount = 0;
             if(found.material_request_data !== ""){
+                
                 found.material_request_data.map(materialRequest => {
+                    materialRequest.items.map(item => {
+                        itemsCount += parseInt(item.pendingQuantity);
+                    })
                     if(materialRequests === ""){
                         materialRequests = `${materialRequest.material_request}`
                     }else{
@@ -120,6 +125,7 @@ router.get('/:req', (req, res, next) => {
                     consumableTable: consumablesToSelect,
                     materialRequest: materialRequests,
                     values: values,
+                    pendingItems: JSON.stringify(itemsCount),
                     msgType: req.flash()
                 });
             }).catch(err =>{
@@ -286,7 +292,8 @@ router.post('/update/material_request/add_material/:req', (req, res, next) => {
     if(req.body.numberOfItems < 2){
         var materialRequestItem = {
             other_name: req.body.other_category,
-            quantity: req.body.quantityOther,
+            quantity:0,
+            pendingQuantity: req.body.quantityOther,
             details: req.body.otherDetails,
             quotationNumber: "N/A",
             materialRequestNumber: req.body.otherMaterialRequest,

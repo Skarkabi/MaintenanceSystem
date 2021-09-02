@@ -21,7 +21,7 @@
                     </div>
                     <div class="col"  style="font-weight:bold;">
                         <div class="row">
-                            <h4>Status:&nbsp; </h4>
+                            <h4>Status:&nbsp; </h4> <input type="text" id="jobStatus" value="{{existingMain.status}}" hidden>
                             {{#if (isdefined existingMain.status "NOT STARTED")}}
                                 <h4 style="color:red; font-weight:bold">&nbsp;NOT STARTED</h4>
                                 {{/if}}
@@ -120,7 +120,7 @@
                     <div class="form-group col display-main">
                         <label for="discription">Maintenance Description</label>
                         <input type="checkbox" class="btn-check" id="discription-checkbox" autocomplete="off" onchange="unlockInput('discription')">
-                        <textarea type="text" class="form-control" id="discription" name="discription" brand="discription" disabled="" value="{{existingMain.discription}}">{{existingMain.discription}}</textarea>
+                        <textarea type="text" class="form-control" id="discription" name="discription" brand="discription" disabled="" value="{{existingMain.discription}}">{{formatDisctiption existingMain.discription}}</textarea>
                     </div>
                     <div class="form-group col display-main">
                         <label for="remark">Remarks/Maintenance That Has Been Done</label>
@@ -134,7 +134,7 @@
             <div class="section-title">
                 <div class="row">
                     <h4 class="col" style="font-weight:bold" onclick="setTable('material')"><a onmouseover="style='cursor:pointer; color:#2779F6'" onmouseout="style='color:black'"><i class="fas fa-gas-pump"></i>Materials Used</a></h4>  
-                    <h4 class="col" style="font-weight:bold" onclick="setTable('materialRequest')"><a onmouseover="style='cursor:pointer; color:#2779F6'" onmouseout="style='color:black'"><i class="fas fa-users"></i>Material Requests</a></h4>
+                    <h4 class="col" style="font-weight:bold" onclick="setTable('materialRequest')"><a onmouseover="style='cursor:pointer; color:#2779F6'" onmouseout="style='color:black'"><i class="fas fa-users"></i>Material Requests</a>{{#unless (isdefined pendingItems "0")}}<a>: Waiting For </a><a style="color:red;">{{pendingItems}}</a> <a> Items</a>{{/unless}}</h4>  
                 </div>
                 <hr class="my-3">
             </div>
@@ -284,6 +284,47 @@
             document.getElementById("displayMainForm").action = `/maintanence/update/material_request/${reqNumber}`
             document.getElementById("displayMainForm").method = `POST`
         }else if(buttonAction === "complete"){
+            var remarks, workHours, costPerHour, stauts;
+            var rbool = false;
+            var wbool = false;
+            var cbool = false;
+            var sbool = false;
+            var rout ="";
+            var wout="";
+            var cout="";
+            var sout="";
+            remarks=document.getElementById("remark").value;
+            workHours = document.getElementById("work_hour").value;
+            costPerHour = document.getElementById("hour_cost").value;
+            status = document.getElementById("jobStatus").value;
+            if(remarks === ""){
+                rbool = true;
+                rout = "- Input Remarks\n"
+            }
+                if(workHours === "" ||  workHours === "0" ){
+                    wbool = true;
+                    wout = "- Input Work Hours\n";
+                }
+                    if(costPerHour === " AED" || costPerHour === "0 AED"){
+                        cbool = true;
+                        cout = "- Input LabourCost Pet Hour\n";
+                    }
+                        if( status === "PENDING MATERIAL"){
+                            sbool = true;
+                            sout = "- Waitng For Materials (Send Reminder to Purchasing Department)\n";
+                        }
+
+                    
+                
+            
+
+            if(rbool || wbool || cbool || sbool){
+
+                event.preventDefault();
+                var outputAlert = `${rout}${wout}${cout}${sout}`
+                alert(`Please Fill All Necessary Information\n${outputAlert}\nOR WISSAM WILL KILL YOU!!!!!`);
+               
+            }else{
             if(confirm("Confirm This Job is Completed?")){
                 document.getElementById("displayMainForm").action = `/maintanence/update/${reqNumber}`
                 document.getElementById("displayMainForm").method = `POST`
@@ -292,6 +333,7 @@
                 event.preventDefault();
                 document.getElementById("displayMainForm").method = `GET`
                 
+            }
             }
             
         }else if(buttonAction === "vehicle"){

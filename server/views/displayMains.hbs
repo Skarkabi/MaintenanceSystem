@@ -17,6 +17,7 @@
                 <th scope="col" colspan="5">Vehicle</th>
                 <th scope="col" rowspan="2">Status</th>
                 <th scope="col" rowspan="2">Maintenance Discription</th>
+                <th scope="col" rowspan="2">Remarks/Maintenace Completed</th>
                 
             </tr>
             <tr>
@@ -53,6 +54,7 @@
                 <td bgcolor="#8AFF8A" style="color:black; font-weight:bold">COMPLETED</td>
                 {{/if}}
                 <td><a href="/maintanence/{{this.req}}">{{this.discription}}</a></td>
+                <td><a href="/maintanence/{{this.req}}">{{this.remarks}}</a></td>
             </tr>
             {{/each}}
         </tbody>

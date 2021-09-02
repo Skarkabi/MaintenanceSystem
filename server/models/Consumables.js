@@ -9,6 +9,7 @@ import Grease from './consumables/Grease';
 import Oil from './consumables/Oil';
 import Supplier from './Supplier';
 import Other from './consumables/Other';
+import NonStockConsumables from './consumables/NonStockConsumables';
 /**
  * Setting the Datatypes for the MySQL tables
  */
@@ -278,17 +279,58 @@ Consumable.getFullStock = () => {
 }
 
 Consumable.getFullSupplierStock = sId => {
-    return new Bluebird((resolve, reject) => {
-        var consumables = [];
-        Battery.getSupplierStock(sId).then(batteries => {
-            batteries.rows.map(battery => consumables.push(
-              {category: "Battery", quantity: battery.quantity, totalCost: battery.totalCost, singleCost: battery.singleCost, quotationNum: battery.quotationNumber}
-              )
-            );
+  return new Bluebird((resolve, reject) => {
+    Battery.getSupplierStock(sId).then(batteries => {
+      Brake.getSupplierStock(sId).then(brakes => {
+        Filter.getSupplierStock(sId).then(filters => {
+          Grease.getSupplierStock(sId).then(grease => {
+            Oil.getSupplierStock(sId).then(oil => {
+              Other.getSupplierStock(sId).then(others => {
+                NonStockConsumables.getSupplierStock(sId).then(nonStockConsumables => {
+                  var values = {
+                    batteries: batteries.rows, brakes: brakes.rows, filters: filters.rows,
+                    grease: grease.rows, oil: oil.rows, others: others.rows, nonStockConsumables: nonStockConsumables.rows
+                  };
+        
+                  resolve(values);
+  
+                }).catch(err => {
+                  reject(err);
+  
+                });
+               
+              }).catch(err => {
+                reject(err);
 
-            resolve(consumables);
-        })
-    })
+              });
+
+            }).catch(err => {
+              reject(err);
+
+            });
+
+          }).catch(err => {
+            reject(err);
+
+          });
+
+        }).catch(err => {
+          reject(err);
+
+        });
+
+      }).catch(err => {
+        reject(err);
+
+      });
+
+    }).catch(err => {
+      reject(err);
+
+    });
+
+  })
+
 }
 
 Consumable.getDistinctConsumableValues = () => {

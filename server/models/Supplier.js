@@ -316,7 +316,7 @@ function settingItems (supplier) {
 function setItems (supplier) {
     return new Bluebird((resolve, reject) => {
         var itemsToSet = [];
-        Consumable.getFullStock().then(consumables => {
+        Consumable.getFullSupplierStock(supplier.id).then(consumables => {
             consumables.batteries.map(battery => itemsToSet.push(
                 {category: "Battery", quantity: battery.quantity, totalCost: battery.totalCost, singleCost: battery.singleCost, quotationNum: battery.quotationNumber}
             ));
@@ -327,18 +327,27 @@ function setItems (supplier) {
                 {category: "Filter", quantity: filter.quantity, totalCost: filter.totalCost, singleCost: filter.singleCost, quotationNum: filter.quotationNumber}
             ));
             consumables.grease.map(grease => itemsToSet.push(
-                {category: "Grease", quantity: grease.volume, totalCost: grease.total_price, singleCost: grease.price_per_litter, quotationNum: grease.quotationNumber}
+                {category: "Grease", quantity: grease.volume, totalCost: grease.totalCost, singleCost: grease.price_per_litter, quotationNum: grease.quotationNumber}
             ));
             consumables.oil.map(oil => itemsToSet.push(
-                {category: "Oil", quantity: oil.volume, totalCost: oil.total_price, singleCost: oil.oilPrice, quotationNum: oil.quotationNumber}
+                {category: "Oil", quantity: oil.volume, totalCost: oil.totalCost, singleCost: oil.oilPrice, quotationNum: oil.quotationNumber}
             ));
-            
-
+            consumables.others.map(other => itemsToSet.push(
+                {category: other.other_name, quantity: other.quantity, totalCost: other.totalCost, singleCost: other.singleCost, quotationNum: other.quotationNumber}
+            ));
+            consumables.nonStockConsumables.map(nonStockConsumables => itemsToSet.push(
+                {category: nonStockConsumables.other_name, quantity: nonStockConsumables.quantity, totalCost: nonStockConsumables.totalCost, singleCost: nonStockConsumables.singleCost, quotationNum: nonStockConsumables.quotationNumber}
+            ));
          
-                supplier.setDataValue('items', itemsToSet);
-                resolve("Set Items");
-        })
-    })
+            supplier.setDataValue('items', itemsToSet);
+            resolve("Set Items");
+
+        }).catch(err => {
+            reject(err);
+        });
+
+    });
+
 }
 
 export default Supplier;

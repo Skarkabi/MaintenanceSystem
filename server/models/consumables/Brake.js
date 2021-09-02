@@ -321,6 +321,29 @@ Brake.getStock = () => {
     })
 }
 
+Brake.getSupplierStock = sId => {
+    return new Bluebird ((resolve, reject) => {
+        //Getting all the brakes found in the database
+        Brake.findAndCountAll({
+            where: {supplierId: sId}
+        }).then(breakes => {
+            //Calling supplier function to add supplier name to brake objects
+            Supplier.getSupplierNames(breakes).then(() => {
+                //returning the brakes 
+                resolve(breakes);
+    
+            }).catch(err => {
+                reject(err);
+          
+            });
+            
+          }).catch(err => {
+              reject(err);
+        
+          });
+    })
+}
+
 /**
  * function to return distinct values in object
  * @param {*} values 

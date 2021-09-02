@@ -145,6 +145,17 @@ NonStockConsumables.addNewConsumable = newConsumable => {
     
 }
 
+NonStockConsumables.removeConsumable = id => {
+    return new Bluebird((resolve, reject) => {
+        NonStockConsumables.findOne({where: {id: id}}).then(found =>{
+            resolve(found.destroy());
+        }).catch(err => {
+            reject(err);
+        })
+    })
+    
+}
+
 NonStockConsumables.getForMaterialRequest = reqNumber => {
     return new Bluebird((resolve, reject) => {
         NonStockConsumables.findAll({

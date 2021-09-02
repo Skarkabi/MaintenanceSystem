@@ -87,6 +87,10 @@ handlebars.registerHelper('getVehicles', function(vehicles, plate){
 handlebars.registerHelper('moreThanOne', function(items){
     return parseInt(items.length) > 1;
 })
+
+handlebars.registerHelper('multiply', function (x, y){
+    return parseFloat(x*y);
+})
 const app = express();
 
 const multiHelpers = hbshelpers()

@@ -86,12 +86,18 @@
                 <div class="form-row">
                     <div class="form-group col display-main">
                         <label for="hourC">Cost Per Hour</label>
-                        <input type="text" class="form-control" name="hourC" brand="hourC" value="{{existingMain.hour_cost}} AED" readonly>
+                         <input type="checkbox" class="btn-check" id="hour_cost-checkbox" autocomplete="off" onchange="unlockInput('hour_cost')">
+                        <input type="text" class="form-control" name="hour_cost" id="hour_cost" disabled="" brand="hour_cost" value="{{existingMain.hour_cost}} AED">
                     </div>
                     <div class="form-group col display-main">
                         <label for="hourC">Hours of Work</label>
                         <input type="checkbox" class="btn-check" id="work_hour-checkbox" autocomplete="off" onchange="unlockInput('work_hour')">
                         <input type="text" class="form-control" name="work_hour" brand="work_hour" id="work_hour" disabled="" value="{{existingMain.work_hours}}">
+                    </div>
+                    <div class="form-group col display-main">
+                        <label for="hourC">Total Labour Cost</label>
+                        
+                        <input type="text" class="form-control" name="total_work_hour" brand="total_work_hour" id="total_work_hour" disabled="" value="{{multiply existingMain.work_hours existingMain.hour_cost}} AED">
                     </div>
                     <div class="form-group col display-main">
                         <label for="materialCost">Material Cost</label>
@@ -148,6 +154,9 @@
         document.getElementById(elementId).style = "color:blue";
     }
    
+   function multiplyTable(x, y){
+       return x*y;
+   }
     function test(tableName){
         // Get the modal
         var modal = document.getElementById("myModal");
@@ -223,13 +232,20 @@
         console.log(document.getElementById("displayMainForm").action);
         if(document.getElementById(`${selectedInput}-checkbox`).checked){
             document.getElementById(`${selectedInput}`).removeAttribute("disabled");
-            document.getElementById("materialReques-update").removeAttribute("disabled");;
+            document.getElementById("materialReques-update").removeAttribute("disabled");
+            if(selectedInput === "hour_cost"){
+                document.getElementById(`${selectedInput}`).value =  document.getElementById(`${selectedInput}`).value.replace('AED', '');
+            }
         }else{
             document.getElementById(`${selectedInput}`).setAttribute("disabled", "true");
             document.getElementById("materialReques-update").setAttribute("disabled", "true");
+            if(selectedInput === "hour_cost"){
+                document.getElementById(`${selectedInput}`).value =  `${document.getElementById(`${selectedInput}`).value} AED`;
+            }
         }
         
     }
+
 
     function setItems(){
         

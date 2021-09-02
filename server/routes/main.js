@@ -6,8 +6,10 @@ import MaintenanceOrder from '../models/MaintenanceOrder'
 import Vehicle from '../models/Vehicle';
 import ExcelExporter from '../ExcelExporter';
 import ExcelJS from 'exceljs';
+import Quotation from '../models/Quotation';
 import User from '../models/User';
 import MaterialRequest from '../models/consumables/MaterialRequest';
+import NonStockConsumables from '../models/consumables/NonStockConsumables';
 const fs = require('fs');
 const https = require('https')
 
@@ -177,7 +179,7 @@ router.get('/exportExcel/newTable', (req,res,next) => {
 })
 
 router.post('/update/material_request/:req', (req, res,next) => {
-    MaintenanceOrder.updateMaterialRequest(req.params.req, req.body.materialRequest, req.body.discription, req.body.remark, req.body.work_hour).then(output => {
+    MaintenanceOrder.updateMaterialRequest(req.params.req, req.body.materialRequest, req.body.discription, req.body.remark, req.body.work_hour, req.body.hour_cost).then(output => {
         req.flash('success_msg', output);
         res.redirect(`back`);
         
@@ -185,6 +187,16 @@ router.post('/update/material_request/:req', (req, res,next) => {
         req.flash('error_msg', err);
         res.redirect(`back`);
     });
+})
+
+router.get('/delete/:id', (req, res, next) => {
+    NonStockConsumables.removeConsumable(req.params.id).then(() => {
+        req.flash('success_msg', "Item Deleted");
+        res.redirect(`back`);
+    }).catch(err => {
+        req.flash('error_msg', err);
+        res.redirect(`back`);
+    })
 })
 
 router.post('/update/material_request/add_consumables/:req/:category', async (req, res, next) => {
@@ -230,6 +242,13 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
            
         }));
     }else{
+        console.log("Check ***********************");
+        var quotationNumber;
+        if(!req.body.quotation){
+            quotationNumber = "N/A";
+        }else{
+            quotationNumber = req.body.quotation;
+        }
         var testItem = {
             other_name: req.body.other_category,
             quantity: req.body.quantityOther,
@@ -237,11 +256,20 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
             totalCost: req.body.quantityOther * req.body.otherPrice,
             details: req.body.otherDetails,
             supplierId: req.body.otherSupplierName,
-            quotationNumber: req.body.quotation,
+            quotationNumber: quotationNumber,
             materialRequestNumber: req.body.otherMaterialRequest,
             maintenanceReq: req.params.req,
         }
+       
+        
+            newQuotation = {
+                quotationNumber: req.body.quotation,
+                quotationPath: req.file.path
+            }
+        
         await MaintenanceConsumables.useNonStockConsumable(testItem).then(output => {
+
+            
             finished = output;
         }).catch(err => {
             errorHappend = {error:true, msg: err}

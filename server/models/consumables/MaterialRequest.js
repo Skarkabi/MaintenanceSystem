@@ -64,6 +64,7 @@ const MaterialRequest = sequelize.define('material_request', mappings, {
 
 MaterialRequest.addMaterialRequest = newMaterialRequest => {
     return new Bluebird((resolve, reject) => {
+        console.log("-------------AHHHHHHHHHHH------------");
         var materialRequest = {
             material_request: newMaterialRequest.materialRequestNumber,
             maintenance_req: newMaterialRequest.maintenanceReq,

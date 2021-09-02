@@ -10,10 +10,13 @@
         <tr name="tableHead">
             <th scope="col">S.N.</th>
             <th scope="col">MR#</th>
+            <th scope="col">Invoice#</th>
             <th scope="col">Material</th>
             <th scope="col">Supplier</th>
             <th scope="col">Quantatiy</th>
             <th scope="col">Cost</th>
+            <th scope = "col">Details</th>
+            <th scope="col">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -26,6 +29,7 @@
                 {{else}}
                     <td><a>T.M.I. Stock</a></td>
                 {{/if}}
+                <td><a>{{this.consumable.quotationNumber}}</a></td>
                 <td><a>{{this.type.consumable_type}}</a></td>
                 <td><a>{{this.consumable.supplierName}}</a></td>
                 <td><a>{{this.type.consumable_quantity}}</a></td>
@@ -38,6 +42,12 @@
                         <td><a>{{this.consumable.singleCost}} {{#if (isdefined this.type.consumable_type "BRAKE") }} AED (Per Boxes){{else}} AED (Per Pieces){{/if}}</a></td>  
                     {{/if}}
                 {{/if}}
+                {{#if this.consumable.details}}
+                     <td><a>{{this.consumable.details}}</a></td>
+                {{else}}
+                    <td><a>N/A</a></td>
+                {{/if}}
+                 <td><a href="/maintanence/delete/{{this.consumable.id}}"><i class="fas fa-trash"></i></a></td>
             </tr>
             {{/if}}
         {{/each}}

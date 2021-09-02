@@ -63,6 +63,9 @@ const Quotation = sequelize.define('Quotations', mappings, {
  */
 Quotation.uploadFile = () => {
     //Declating the multer storage variable
+    console.log("--------------------------------------------");
+    console.log("Trying to upload");
+    console.log("--------------------------------------------");
     var storage = multer.diskStorage({
         //Setting the upload destination
         destination: function (req, file, cb) {

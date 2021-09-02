@@ -39,16 +39,16 @@
                 <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.brand}}</a></td>
                 <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.model}}</a></td>
                 <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.year}}</a></td>
-                {{#if (isdefined this.status "Not Started")}}
+                {{#if (isdefined this.status "NOT STARTED")}}
                 <td bgcolor="red" style="color:white; font-weight:bold">NOT STARTED</td>
                 {{/if}}
-                {{#if (isdefined this.status "In Progress")}}
+                {{#if (isdefined this.status "IN PROGRESS")}}
                 <td bgcolor="#7EC8E3" style="color:black; font-weight:bold">IN PROGRESS</td>
                 {{/if}}
-                {{#if (isdefined this.status "Pending Material")}}
+                {{#if (isdefined this.status "PENDING MATERIAL")}}
                 <td bgcolor="#D396FF" style="color:black; font-weight:bold">PENDING MATERIAL</td>
                 {{/if}}
-                {{#if (isdefined this.status "Completed")}}
+                {{#if (isdefined this.status "COMPLETED")}}
                 <td bgcolor="#8AFF8A" style="color:black; font-weight:bold">COMPLETED</td>
                 {{/if}}
                 <td><a href="/maintanence/{{this.req}}">{{this.discription}}</a></td>

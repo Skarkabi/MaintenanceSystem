@@ -3,12 +3,16 @@ import Sequelize from 'sequelize';
 
 const dbName = 'maintanence';
 const dbUserName = 'root';
-const dbPassword = '199Sk2018';
-const dbHost = 'localhost';
 const dbPort = '3306';
 
-const mySQLDB = new Sequelize(dbName, dbUserName, dbPassword, {
-    host: dbHost,
+const readline = require("readline");
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+const mySQLDB = new Sequelize(dbName, dbUserName, process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST,
     port: dbPort,
     dialect: 'mysql',
 });
@@ -16,6 +20,8 @@ const mySQLDB = new Sequelize(dbName, dbUserName, dbPassword, {
 mySQLDB.sync().then(() => {
     console.log(`Database & tables created!`)
 }).catch(err => {
+    console.log("TESTT IS");
+console.log(process.env.TESTTTT);
     console.log(`Could not connect to database ${err}`);
 });
 

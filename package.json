@@ -47,6 +47,7 @@
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "popper.js": "^1.16.1",
+    "readline": "^1.3.0",
     "sequelize": "^6.6.2",
     "sequelize-cli": "^6.2.0",
     "sqlite3": "^5.0.2",
@@ -95,7 +96,8 @@
     ]
   },
   "scripts": {
-    "start": "nodemon",
+    "startMyComputer": "DB_PASSWORD=mosjsfskmo DB_HOST=localhost nodemon",
+    "startServerComputer": "DB_PASSWORD=199Sk2018 DB_HOST=192.168.0.95 nodemon",
     "test": "npx cypress open",
     "build": "npm-run-all clean transpile",
     "server": "node ./dist/bin/www",

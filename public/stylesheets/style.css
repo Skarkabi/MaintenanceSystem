@@ -102,8 +102,15 @@ section#login {
 
 /* Filterable table */
 
+td.table-actions {
+  text-align: center;
+  
+}
+
 td.table-actions > a {
-  margin-right: 1rem;
+  padding: 6px;
+  text-align: center;
+  
 }
 
 .table-buttons {

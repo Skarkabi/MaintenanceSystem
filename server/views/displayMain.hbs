@@ -357,6 +357,13 @@
         }
     }
 
+    function openPdf(category, quotationNum){
+        if(quotationNum !== "N/A"){
+            window.open(`/consumables/${category}/view/${quotationNum}`)
+        }
+
+    }
+
     
 
 </script>

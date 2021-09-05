@@ -49,7 +49,11 @@
                 {{else}}
                     <td><a>N/A</a></td>
                 {{/if}}
-                 <td><a href="/maintanence/delete/{{this.consumable.id}}"><i class="fas fa-trash"></i></a></td>
+                <td class="table-actions">
+                    <a href="/consumables/{{this.type.consumable_type}}/download/{{this.consumable.quotationNumber}}"><i class="fas fa-download"></i></a>
+                    <a href="/consumables/{{this.type.consumable_type}}/view/{{this.consumable.quotationNumber}}"><i class="fas fa-external-link-alt"></i></a>                    
+                    <a href="/maintanence/delete/{{this.consumable.id}}"><i class="fas fa-trash"></i></a>
+                </td>
             </tr>
             {{/if}}
         {{/each}}

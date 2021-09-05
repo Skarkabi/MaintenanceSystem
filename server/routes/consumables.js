@@ -8,6 +8,7 @@ import Oil from '../models/consumables/Oil';
 import Quotation from '../models/Quotation';
 import fs from 'fs';
 import Other from '../models/consumables/Other';
+import open from 'open';
 import { Console } from 'console';
 
 const router = express.Router();
@@ -831,19 +832,27 @@ router.get('/:category/view/:quotationNumber', (req,res,next) => {
         if(err) {
             req.flash("error_msg", "File Does Not Exist!");
             req.session.save(function() {
-            res.redirect("back");
-        });
+                res.redirect("back");
+            });
 
+        }else{
+            //res.contentType("application/pdf");
+            //res.send(data);
+            console.log(tempFile)
+            open(tempFile, {app: {name: 'google chrome'}}, function (err) {
+                if ( err ) throw err;    
+            }).then(() => {
+                res.redirect("back");
+            });
         }
-      
-        res.contentType("application/pdf");
-        
-        res.send(data);
 
     });
     
 });
 
+router.get('/view_file/:req', (req,res,next) =>{
+
+})
 /**
  * Express Route to close the current window
  */

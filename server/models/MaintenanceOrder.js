@@ -138,6 +138,7 @@ const MaintenanceOrder = sequelize.define('maintenance_orders', mappings, {
 MaintenanceOrder.getOrders = () => {
     return new Bluebird((resolve, reject) => {
         MaintenanceOrder.findAll().then(orders => {
+            if(orders.length !== 0){
             getVehicle(orders).then( () => {
                 getAllMaterialRequests(orders).then(() => {
                     setAllStatus(orders).then(() => {
@@ -157,6 +158,9 @@ MaintenanceOrder.getOrders = () => {
                 reject(err);
 
             });
+        }else{
+            resolve(null);
+        }
 
         }).catch(err => {
             reject(err);
@@ -293,7 +297,7 @@ MaintenanceOrder.addOrder = order => {
 
 function setStatus(o){
     getConsumables(o).then(output => {
-        if((o.material_request_data === null || o.material_request_data === "") && (o.consumable_data === undefined || o.consumable_data.length === 0)){
+        if((!o.material_request_data  || o.material_request_data === "") && (o.consumable_data === undefined || o.consumable_data.length === 0)){
             o.setDataValue('status', "NOT STARTED");
         }else if(o.completedAt){
             o.setDataValue('status', "COMPLETED");
@@ -315,7 +319,7 @@ function setAllStatus(orders){
     return new Bluebird((resolve, reject) => {
         getAllConsumables(orders).then(async output => {
             await Promise.all(orders.map(o => {
-                    if((o.material_request_data === null || o.material_request_data === "") && (o.consumable_data === undefined || o.consumable_data.length === 0)){
+                    if((!o.material_request_data || o.material_request_data === "") && (o.consumable_data === undefined || o.consumable_data.length === 0)){
                   
                         o.setDataValue('status', "NOT STARTED");
                     }else if(o.completedAt){
@@ -374,7 +378,7 @@ function getAllConsumables(orders){
 
 function getAllMaterialRequests(orders){
     return new Bluebird(async (resolve, reject) => {
-        var count = 1;
+        var count = 0;
         await Promise.all(orders.map(o =>{
             MaterialRequest.getMaterialRequest(o.req).then(found => {
                 o.setDataValue('material_request_data', found);

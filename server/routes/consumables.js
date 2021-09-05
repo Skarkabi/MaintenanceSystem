@@ -69,7 +69,7 @@ router.post('/update-battery/:action/:id', (req,res,next) => {
  * Express route to add a new battery in database
  * Route takes battery and quotation data from user input 
  */
-router.post('/add/battery', Quotation.uploadFile().single('upload'), (req, res, next) => {
+router.post('/add/battery', Quotation.uploadFile().single('uploadOther'), (req, res, next) => {
     var quotationNumber;
     if(!req.body.quotation){
         quotationNumber = "N/A";

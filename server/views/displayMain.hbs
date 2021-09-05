@@ -1,4 +1,4 @@
-<form action="/" method="GET" id="displayMainForm">
+<form action="/" method="GET" id="displayMainForm" enctype="multipart/form-data">
 <div class="col-md-12">
     {{!-- Action Buttons --}}
     <div class="header-action-buttons pull-right">
@@ -345,7 +345,7 @@
         }else if(buttonAction === "consumables"){
             event.preventDefault();
             var category = document.getElementById("category").value;
-           
+            
             document.getElementById("displayMainForm").action = `/maintanence/update/material_request/add_consumables/${reqNumber}/${category}`
             document.getElementById("displayMainForm").method = `POST`
             document.getElementById("displayMainForm").submit();

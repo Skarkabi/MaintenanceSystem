@@ -281,15 +281,14 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
 
 MaintenanceConsumables.useNonStockConsumable = (nonStockConsumable) => {
     return new Bluebird((resolve, reject) => {
-        const newMaintenanceConsumable = {
-            consumable_type: nonStockConsumable.other_name,
-            maintenance_req: nonStockConsumable.maintenanceReq,
-            consumable_quantity: nonStockConsumable.quantity,
-            from_stock: false
-        }
-
-        NonStockConsumables.create(nonStockConsumable).then(consumable => {
-            newMaintenanceConsumable.consumable_id = consumable.id;
+        NonStockConsumables.addNewConsumable(nonStockConsumable).then(consumable => {
+            const newMaintenanceConsumable = {
+                consumable_id: consumable.id,
+                consumable_type: nonStockConsumable.other_name,
+                maintenance_req: nonStockConsumable.maintenanceReq,
+                consumable_quantity: nonStockConsumable.quantity,
+                from_stock: false
+            }
             MaintenanceConsumables.create(newMaintenanceConsumable).then(() => {
                 resolve("Added to");
             }).catch(err => {

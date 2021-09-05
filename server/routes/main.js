@@ -39,19 +39,19 @@ router.get('/create', (req,res,next) => {
     MaintenanceOrder.findOne({
         order: [ [ 'createdAt', 'DESC' ]],
     }).then(result => {
-        var  matches="TMC000001";
+        var  matches="000001";
         if(result){
-            var matches = result.req;
+            var matches = result.req.match(/(\d+)/);
+            var matches = parseInt(matches[0]) + 1;
             
         }
-        var matches = matches.match(/(\d+)/);
        
        User.getUserById(req.user.id).then(mainUser => {
              Vehicle.getMappedStock().then(vehicles => {
             res.render('createUpdateMain', {
                 title: (`New Maintanence Request`),
                 jumbotronDescription: `Create a New Maintanence Request`,
-                newReqNumber: "TMC" + JSON.stringify(parseInt(matches[0]) + 1),
+                newReqNumber: `TMC${matches}`,
                 vehicles: vehicles,
                 action: "/maintanence/create",
                 msgType: req.flash(),
@@ -204,7 +204,7 @@ router.get('/delete/:id', (req, res, next) => {
     })
 })
 
-router.post('/update/material_request/add_consumables/:req/:category', async (req, res, next) => {
+router.post('/update/material_request/add_consumables/:req/:category',  Quotation.uploadFile().single('uploadOther'), async (req, res, next) => {
     var updateValues = [];
     var numOfInputs = 0;
     if(req.body.quantityInput){
@@ -264,15 +264,28 @@ router.post('/update/material_request/add_consumables/:req/:category', async (re
             materialRequestNumber: req.body.otherMaterialRequest,
             maintenanceReq: req.params.req,
         }
-       
+
+         //Declaring new quotation to be added to database
+         var newQuotation;
+         //Creating quotation variable quotation was selected
+         if(req.file){
+             newQuotation = {
+                 quotationNumber: req.body.quotation,
+                 quotationPath: req.file.path
+             }
+         }
         
         await MaintenanceConsumables.useNonStockConsumable(testItem).then(output => {
+            if(req.file){
+                Quotation.addQuotation(newQuotation);
 
-            
+            }
             finished = output;
         }).catch(err => {
+            console.log(err);
             errorHappend = {error:true, msg: err}
         });
+        
     }
     
     if(errorHappend.error){

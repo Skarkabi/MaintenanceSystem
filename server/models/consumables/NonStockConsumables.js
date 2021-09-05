@@ -2,15 +2,7 @@ import _ from 'lodash';
 import Bluebird from 'bluebird';
 import Sequelize from 'sequelize';
 import sequelize from '../../mySQLDB';
-import Brake from './Brake';
-import Battery from './Battery';
-import Filter from './Filter';
-import Grease from './Grease';
-import Oil from './Oil';
-import Consumable from '../Consumables';
-import MaintenanceOrder from '../MaintenanceOrder';
 import Supplier from '../Supplier';
-import Other from './Other';
 import MaintenanceConsumables from './MaintenanceConsumables';
 
 const mappings = {
@@ -139,14 +131,14 @@ const NonStockConsumables = sequelize.define('non_stock_others', mappings, {
 
 NonStockConsumables.addNewConsumable = newConsumable => {
     return new Bluebird((resolve, reject) => {
+        console.log(newConsumable);
         if(newConsumable.pendingQuantity === null || !newConsumable.pendingQuantity){
             newConsumable.pendingQuantity = 0;
         }
         NonStockConsumables.create(newConsumable).then(consumable => {
             newConsumable.id = consumable.id;
-            MaintenanceConsumables.useNonStockConsumable(newConsumable) .then(() => {
-                resolve("Added to Database");
-            })
+            resolve(consumable);
+            
         })
     })
     

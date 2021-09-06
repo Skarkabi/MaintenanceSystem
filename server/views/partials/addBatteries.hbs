@@ -1,7 +1,7 @@
 <div class="form-row">
     <div class="form-group col required">
         <label for="batSpec">Battery Specs</label>
-         <input list="batSpec"  name="batSpec" class="form-control" required>
+         <input list="batSpec" id="batterySpec" name="batSpec" class="form-control" required="required">
          <datalist id="batSpec">
             {{#each values.batteries.specs}}
                 <option value="{{this}}"></option>
@@ -15,26 +15,6 @@
                 <option value="{{this.id}}">{{this.name}}</option>
              {{/each}}       
         </select>
-    </div>
-</div>
-<div class="form-row ">
-    <div class="form-group col required">
-        <label for="carBrand">Car Brand</label>
-         <input list="carBrand" name="carBrand" class="form-control" required>
-         <datalist id="carBrand">
-             {{#each values.batteries.brands}}
-                <option value="{{this}}">{{this.spec}}</option>
-            {{/each}}
-        </datalist>
-    </div>
-    <div class="form-group col required">
-        <label for="carBrand">Car Year</label>
-         <input list="carYear" name="carYear" class="form-control" required>
-         <datalist id="carYear">
-             {{#each values.batteries.years}}
-            <option value={{this}}>{{this.spec}}</option>
-            {{/each}}
-        </datalist>
     </div>
 </div>
 <div class="form-row ">
@@ -53,7 +33,7 @@
 </div>    
 <div class="form-row">
     <div class="for-group col ">
-        <label for="quotation">Quotation Number</label>
+        <label for="quotation">Invoice Number</label>
         <input type="text" placeholder = "0" id="quotation" name="quotation" class="form-control">
     </div>
     <div class="form-group col">
@@ -61,6 +41,19 @@
         <div class="custom-file">
             <input type="file" class="custom-file-input" id="upload" name="upload" accept="application/pdf, application/pdf">
             <label for="upload" class="custom-file-label">No File Choosen</label>
+        </div>
+    </div>
+</div>
+<div class="form-row">
+    <div class="for-group col required">
+        <label for="quotation">Serial Number</label>
+        <input type="text" placeholder = "0" id="serialNumber" name="serialNumber" class="form-control" required>
+    </div>
+    <div class="form-group col">
+        <label for="quotation">Select a File</label>
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" id="warantiyCard" name="warantiyCard" accept="application/pdf, application/pdf">
+            <label for="warantiyCard" class="custom-file-label">No File Choosen</label>
         </div>
     </div>
 </div>

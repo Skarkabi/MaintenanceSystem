@@ -66,13 +66,19 @@ router.post('/update-battery/:action/:id', (req,res,next) => {
 
 });
 
+router.get('/add/sucess/:q', (req, res, next) => {
+    req.flash("success_msg", `${req.params.q} Batteries Sucessfully Added!`);
+    req.session.save(function() {
+        res.redirect("/consumables/add");
+    });
+})
 /**
  * Express route to add a new battery in database
  * Route takes battery and quotation data from user input 
  */
-router.post('/add/battery', Quotation.uploadFile().single('uploadOther'), (req, res, next) => {
+router.post('/add/battery', (req, res, next) => {
     var quotationNumber;
-    if(!req.body.quotation){
+    if(!req.body.quotation || req.body.quotation === ""){
         quotationNumber = "N/A";
     }else{
         quotationNumber = req.body.quotation;
@@ -81,14 +87,15 @@ router.post('/add/battery', Quotation.uploadFile().single('uploadOther'), (req, 
     //Creating new battrey variable to be added to database   
     const newBattery = {
         batSpec: req.body.batSpec,
-        carBrand: req.body.carBrand,
-        carYear: req.body.carYear,
         minQuantity: req.body.quantityMinBatteries,
         supplierId: req.body.batteriesSupplierName,
         singleCost: req.body.batteryPrice,
-        quotationNumber: quotationNumber
+        quotationNumber: quotationNumber,
+        serialNumber: req.body.serialNumber
 
     }
+
+   
 
     Battery.findOne({where:newBattery}).then(found => {
         newBattery.consumanbleCategory = "battery";
@@ -99,27 +106,23 @@ router.post('/add/battery', Quotation.uploadFile().single('uploadOther'), (req, 
         }else{
             newBattery.id = 0
         }
-         //Declaring new quotation to be added to database
-        var newQuotation;
-        //Creating quotation variable quotation was selected
-        if(req.file){
-            newQuotation = {
-                quotationNumber: req.body.quotation,
-                quotationPath: req.file.path
-            }
-        }
-    
         //Adding new battery to database
         Consumable.updateConsumable(newBattery, "add").then(output =>{
+            console.log("truing to add");
             //Add quotation info to database if quotation was uploaded
-            if(req.file){
-                Quotation.addQuotation(newQuotation);
-
+            if(req.body.warantiyCard){
+                var output =req.body.warantiyCard;
+                output = output.replace("data:application/pdf;base64,", "");
+                fs.writeFileSync(`./server/uploads/warantityCards/${req.body.serialNumber}.pdf`, output, 'base64')
+            
             }
-
-            console.log("Because");
+            if(req.body.invoiceFile){
+                var invoice =req.body.invoiceFile;
+                invoice = invoice.replace("data:application/pdf;base64,", "");
+                fs.writeFileSync(`./server/uploads/${req.body.quotation}.pdf`, invoice, 'base64')
+                Quotation.addQuotation(newQuotation);
+            }
         
-            console.log(1);
             req.flash("success_msg", output);
             req.session.save(function() {
                 res.redirect("/consumables/add");
@@ -127,16 +130,15 @@ router.post('/add/battery', Quotation.uploadFile().single('uploadOther'), (req, 
         
            
         }).catch(err =>{
-            console.log("Forst Error");
+            console.log(`failed to add ${err}`);
             req.flash('error_msg', JSON.stringify(err));
             req.session.save(function() {
                 res.redirect("/consumables/add");
             });
     
         });
-        
+
     }).catch(err => {
-        console.log("Second Error");
         console.log(`Thsi is why ${err}` )
     })
 
@@ -819,6 +821,25 @@ router.get('/:category/download/:quotationNumber', (req,res,next) => {
     
 });
 
+router.get('/:category/warantiy/:serialNumber', (req,res,next) => {
+    //Setting directory location of selected quotation
+    const path = `${__dirname}`;
+    //Setting the location of the selected quotation
+    var tempFile = path.replace('/dist/routes', `/server/uploads/warantityCards/${req.params.serialNumber}.pdf`);
+    //Downloading selected quotation
+    res.download(tempFile, function(err){
+        if(err) {
+            req.flash("error_msg", "File Does Not Exist!");
+            req.session.save(function() {
+            res.redirect("back");
+        });
+
+        }
+
+    });
+    
+});
+
 /**
  * Express Route to view consumable quotation
  */
@@ -829,7 +850,35 @@ router.get('/:category/view/:quotationNumber', (req,res,next) => {
     var tempFile=path.replace('/dist/routes', `/server/uploads/${req.params.quotationNumber}.pdf`);
     //Opening selected quotation
     fs.readFile(tempFile, function (err,data){
-        if(err) {
+        if(err || req.params.quotationNumber === "N/A") {
+            req.flash("error_msg", "File Does Not Exist!");
+            req.session.save(function() {
+                res.redirect("back");
+            });
+
+        }else{
+            //res.contentType("application/pdf");
+            //res.send(data);
+            console.log(tempFile)
+            open(tempFile, {app: {name: 'google chrome'}}, function (err) {
+                if ( err ) throw err;    
+            }).then(() => {
+                res.redirect("back");
+            });
+        }
+
+    });
+    
+});
+
+router.get('/:category/viewWarantiy/:serialNumber', (req,res,next) => {
+    //Setting directory location of selected quotation
+    const path = `${__dirname}`;
+    //Setting the location of the selected quotation
+    var tempFile=path.replace('/dist/routes', `/server/uploads/warantityCards/${req.params.serialNumber}.pdf`);
+    //Opening selected quotation
+    fs.readFile(tempFile, function (err,data){
+        if(err || req.params.serialNumber === "N/A") {
             req.flash("error_msg", "File Does Not Exist!");
             req.session.save(function() {
                 res.redirect("back");

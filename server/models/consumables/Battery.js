@@ -18,14 +18,6 @@ const mappings = {
         type: Sequelize.DataTypes.STRING,
         allowNull: false,
     },
-    carBrand:{
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
-    },
-    carYear:{
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
-    },
     minQuantity:{
         type: Sequelize.DataTypes.STRING,
         allowNull:false,
@@ -51,6 +43,10 @@ const mappings = {
        
     },
     quotationNumber:{
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false
+    },
+    serialNumber:{
         type: Sequelize.DataTypes.STRING,
         allowNull: false
     },
@@ -86,16 +82,6 @@ const Battery = sequelize.define('battery_stocks', mappings, {
         fields: ['batSpec']
     },
     {
-        name: 'battery_carBrand_index',
-        method: 'BTREE',
-        fields: ['carBrand']
-    },
-    {
-        name: 'battery_carYear_index',
-        method: 'BTREE',
-        fields: ['carYear']
-    },
-    {
         name: 'battery_minQuantity_index',
         method: 'BTREE',
         fields: ['minQuantity']
@@ -124,6 +110,11 @@ const Battery = sequelize.define('battery_stocks', mappings, {
         name: 'battery_supplierId_index',
         method: 'BTREE',
         fields: ['supplierId']
+    },
+    {
+        name: 'battery_serialNumber_index',
+        method: 'BTREE',
+        fields: ['serialNumber']
     },
     {
         name: 'battery_quotationNumber_index',
@@ -235,10 +226,9 @@ Battery.addBattery = (newBattery) =>{
         Battery.findOne({
             where: {
                 batSpec: newBattery.batSpec,
-                carBrand: newBattery.carBrand,
-                carYear: newBattery.carYear,
                 supplierId: newBattery.supplierId,
-                quotationNumber: newBattery.quotationNumber
+                quotationNumber: newBattery.quotationNumber,
+                serialNumber: newBattery.serialNumber
 
             }
             
@@ -322,12 +312,9 @@ Battery.getBatteryStocks = () => {
                 batteriesC = consumables
                 //Mapping battery values to not return double values
                 batSpecs =  batteriesC.rows.map(val => val.batSpec).filter((value, index, self) => self.indexOf(value) === index)
-                carBrands =  batteriesC.rows.map(val => val.carBrand).filter((value, index, self) => self.indexOf(value) === index)
-                carYears =  batteriesC.rows.map(val => val.carYear).filter((value, index, self) => self.indexOf(value) === index)
-                
                 //Creating variable of all need variables to return
                 var values = {consumable: batteriesC.rows, suppliers: batteriesS, 
-                    specs: batSpecs, brands: carBrands, years:carYears}
+                    specs: batSpecs}
     
                 resolve(values);
     
@@ -383,12 +370,12 @@ Battery.groupSupplier = () => {
         Battery.findAll({
             //Declating attributes to return from database
             attributes:
-              ['batSpec', 'carBrand', 'carYear', 'supplierId',
+              ['batSpec', 'supplierId',
               [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
             ],
 
             //Declaring how to group return values
-            group: ["batSpec", "carBrand", "carYear", "supplierId"]
+            group: ["batSpec","supplierId"]
             
         }).then((values) => { 
             //Setting variable to return batteries with their supplier names

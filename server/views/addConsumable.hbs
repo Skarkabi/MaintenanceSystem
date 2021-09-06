@@ -1,5 +1,5 @@
 <div class="col-md-12" onload="showAddPage()">
-    <form action="{{action}}" method="POST" id="mainForm" enctype="multipart/form-data">
+    <form action="{{action}}" method="POST" id="mainForm">
         {{!-- User Information --}}
         <div class="section-wrapper">
             <div class="section-title">
@@ -24,7 +24,7 @@
             </div>
             <div class="section-content" id="addSection">
             </div>
-             <button type="submit" id="submit" name="submit" class="btn btn-primary justfiy-content-end" onclick="addType()"><i class="far fa-save"></i> {{submitButtonText}}</button>
+             <button type="submit" id="submit" name="submit" class="btn btn-primary justfiy-content-end"><i class="far fa-save"></i> {{submitButtonText}}</button>
     </form>
 </div>
 
@@ -101,4 +101,67 @@
         }
         
     }
+
+    $('#submit').click(function(e){
+        let valid = true;
+        $('[required]').each(function() {
+            if ($(this).is(':invalid') || !$(this).val()) valid = false;
+        })
+        if(valid){
+            document.getElementById("mainForm").action = "/consumables/add/" + document.getElementById("category").value;
+            if(document.getElementById("category").value === "battery"){
+                e.preventDefault();
+                var firstReader = new FileReader();
+                var reader = new FileReader();
+                var invoiceFile = null, warantiyCardFile = null;
+                var iFile = new Blob();
+                var wFile = new Blob();
+                if(document.getElementById('upload').files.length > 0){
+                    iFile = document.getElementById('upload').files[0];
+                }
+                if(document.getElementById('warantiyCard').files.length > 0){
+                    wFile = document.getElementById('warantiyCard').files[0];
+                }
+                firstReader.readAsDataURL(iFile);
+                reader.readAsDataURL(wFile);
+                firstReader.onloadend = function(){
+                    reader.onloadend = function(){
+                        if(document.getElementById('upload').files.length > 0){
+                            invoiceFile = firstReader.result
+                        }
+                        if(document.getElementById('warantiyCard').files.length > 0){
+                            warantiyCardFile = reader.result
+                        }
+                        $.ajax({
+                            url: `/consumables/add/${document.getElementById("category").value}`,
+                            type: 'POST',
+                            data: {
+                                "batSpec": document.getElementById('batterySpec').value,
+                                "batteriesSupplierName": document.getElementById('batteriesSupplierName').value,
+                                "quantityBatteries": document.getElementById('quantityBatteries').value,
+                                "quantityMinBatteries": document.getElementById('quantityMinBatteries').value,
+                                "batteryPrice": document.getElementById('batteryPrice').value,
+                                "quotation": document.getElementById('quotation').value,
+                                "invoiceFile": invoiceFile,
+                                "serialNumber": document.getElementById('serialNumber').value,
+                                "warantiyCard": warantiyCardFile
+                            },
+                            success: function(data) {
+                                window.location.href = `/consumables/add/sucess/${document.getElementById('quantityBatteries').value}`;
+                            },
+                            error: function(err){
+                                console.log('error happened:' + JSON.stringify(err));
+                            }
+                
+                        })
+                        
+                    }
+                
+                }
+            
+            }
+
+        } 
+        
+    })
 </script>

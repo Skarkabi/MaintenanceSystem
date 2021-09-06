@@ -63,9 +63,9 @@
                 <tbody>
                     {{#each consumables}}
                         <tr>
-                            <td><a href="/consumables/{{lowerCase this.category}}"> {{counter @index}}</a></td>
-                            <td><a href="/consumables/{{lowerCase this.category}}">{{this.category}}</a></td>
-                            <td><a href="/consumables/{{lowerCase this.category}}">{{this.quantity}} (
+                            <td><a href="/consumables/{{lowerCase this.category}}/1"> {{counter @index}}</a></td>
+                            <td><a href="/consumables/{{lowerCase this.category}}/{{this.supplierId}}">{{this.category}}</a></td>
+                            <td><a href="/consumables/{{lowerCase this.category}}/{{this.supplierId}}">{{this.quantity}} (
                                 {{#if (isdefined "Oil" this.category)}}
                                     Liters
                                     {{else}}

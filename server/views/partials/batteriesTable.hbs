@@ -1,20 +1,31 @@
 <div class="col-md-12">
     <table id="filterable-table" class="table table-bordered table-striped">
         <thead>
-            <tr>
+            
+                {{#if (isdefined page "view")}}
+                <tr>
                 <th scope="col">#</th>
                 <th scope="col">Battery Spec</th>
-                <th scope="col">Car Brand</th>
-                <th scope="col">Car Year</th>
                 <th scope="col">Quantity (Boxes)</th>
-                 {{#if (isdefined page "view")}}
                 <th scope="col">Supplier</th>
-                 {{else}}
-                <th scope="col">Quotation #</th>
-                {{/if}}
                 <th scope="col">Action</th>
+                </tr>
+                {{else}}
+                <tr>
+                <th scope="col" rowspan="2">#</th>
+                <th scope="col" rowspan="2">Battery Spec</th>
+                <th scope="col" rowspan="2">Serial #</th>
+                <th scope="col" rowspan="2">Invoice #</th>
+                <th scope="col" colspan="2">Action</th>
+                </tr>
+                <tr>
+                <td scope="col">Warantiy</td>
+                <td scope="col">Invoice</td>
+                </tr>
+                {{/if}}
+                
 
-            </tr>
+            
         </thead>
         <tbody>
             {{console consumables}}
@@ -23,8 +34,6 @@
                 <tr>
                      <th>{{counter @index}}</th>
                     <td>{{this.batSpec}}</th>
-                    <td>{{this.carBrand}}</td>
-                    <td>{{this.carYear}}</td>
                     <td>{{this.quantity}}</td>
                     <td><a href="/consumables/battery/{{this.supplierId}}">{{this.supplierName}}</a></td>
                     <td><a href="/consumables/battery/{{this.supplierId}}" style="padding-right: 25px;">View <i class="fas fa-external-link-alt"></i></a></td>
@@ -38,15 +47,24 @@
                 <tr>
                     <th>{{counter @index}}</th>
                     <td>{{this.batSpec}}</th>
-                    <td>{{this.carBrand}}</td>
-                    <td>{{this.carYear}}</td>
-                    <td>{{this.quantity}}</td>
-                     <td>{{this.quotationNumber}}</td>
-                     <td>
-                        <div class="input-group-append">
-                            <a href="download/{{this.quotationNumber}}" style="padding-right: 25px;"><i class="fas fa-download"></i></a>
-                            <a href="" onclick="openPdf({{this.quotationNumber}})"><i class="fas fa-external-link-alt"></i></a>
-                        </div>
+                    <td>{{this.serialNumber}}</td>
+                    <td>{{this.quotationNumber}}</td>
+                    <td class="table-actions">
+                        <a href="warantiy/{{this.serialNumber}}" style="padding-right: 25px;"><i class="fas fa-download"></i></a>
+                        {{#if (isdefined this.serialNumber "N/A")}}
+                            <a href="/consumables/battery/viewWarantiy/NotAvilable"><i class="fas fa-external-link-alt"></i></a>
+                        {{else}}
+                            <a href="/consumables/battery/viewWarantiy/{{this.serialNumber}}"><i class="fas fa-external-link-alt"></i></a>
+                        {{/if}}
+                    </td>
+                    <td class="table-actions">
+                        <a href="download/{{this.quotationNumber}}" style="padding-right: 25px;"><i class="fas fa-download"></i></a>
+                        {{#if (isdefined this.quotationNumber "N/A")}}
+                            <a href="/consumables/battery/view/NotAvilable"><i class="fas fa-external-link-alt"></i></a>
+                        {{else}}
+                            <a href="/consumables/battery/view/{{this.quotationNumber}}"><i class="fas fa-external-link-alt"></i></a>
+                        {{/if}}
+                        
                     </td>
                 </tr>
                 {{/each}}
@@ -58,7 +76,9 @@
 
 <script>
      function openPdf(fileNumber){
-        window.open('view/'+ fileNumber);
+        if(fileNumber !== "N/A"){
+            window.open(`/consumables/battery/view/${fileNumber}`)
+        }
     }
     function addBatteryPost(id){
         console.log("In the battery");

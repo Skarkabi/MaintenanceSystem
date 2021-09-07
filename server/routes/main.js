@@ -1,18 +1,13 @@
 import express from 'express';
-import stream from 'stream';
 import Consumable from '../models/Consumables';
 import MaintenanceConsumables from '../models/consumables/MaintenanceConsumables';
 import MaintenanceOrder from '../models/MaintenanceOrder'
 import Vehicle from '../models/Vehicle';
 import ExcelExporter from '../ExcelExporter';
-import ExcelJS from 'exceljs';
 import Quotation from '../models/Quotation';
 import User from '../models/User';
 import MaterialRequest from '../models/consumables/MaterialRequest';
 import NonStockConsumables from '../models/consumables/NonStockConsumables';
-const fs = require('fs');
-const https = require('https')
-
 const router = express.Router();
 
 /**

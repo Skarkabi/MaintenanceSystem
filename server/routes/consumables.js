@@ -9,7 +9,6 @@ import Quotation from '../models/Quotation';
 import fs from 'fs';
 import Other from '../models/consumables/Other';
 import open from 'open';
-import { Console } from 'console';
 
 const router = express.Router();
 

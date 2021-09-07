@@ -5,7 +5,6 @@ import sequelize from '../../mySQLDB';
 import Bluebird from 'bluebird';
 import Supplier from '../Supplier';
 import Quotation from '../Quotation';
-import e from 'express';
 
 const mappings = {
     id: {

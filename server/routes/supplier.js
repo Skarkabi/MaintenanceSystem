@@ -1,10 +1,7 @@
 import express from 'express';
-import passport from 'passport';
-import Bluebird from 'bluebird';
 //import { Authenticated, IsAdmin, IsStudent, IsOwnPage } from '../authentication';
-import { body, validationResult } from 'express-validator';
+import { body } from 'express-validator';
 import Supplier from '../models/Supplier';
-import Consumable from '../models/Consumables';
 
 const router = express.Router();
 

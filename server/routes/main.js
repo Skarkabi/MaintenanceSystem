@@ -184,7 +184,6 @@ router.get('/exportExcel/newTable', (req,res,next) => {
 })
 
 router.post('/update/material_request/:req', (req, res,next) => {
-    console.log(req.body);
     MaintenanceOrder.updateMaterialRequest(req.params.req, req.body.materialRequest, req.body.discription, req.body.remark, req.body.work_hour, req.body.hour_cost).then(output => {
         req.flash('success_msg', output);
         res.redirect(`back`);

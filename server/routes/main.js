@@ -304,13 +304,21 @@ router.post('/update/material_request/add_consumables/:req/:category',  Quotatio
 })
 
 router.post('/update/material_request/use_material/:req', (req, res, next) => {
-    console.log(req.body);
     MaterialRequest.useItem(req.body.materialRequestNumber, req.body.itemId, req.body.receivedQuantity, req.body.receivedSupplier, req.body.receivedPrice, req.body.receivedQuotation).then(output => {
         req.flash('success_msg', output);
         res.redirect(`back`);
+        
     })
+    res.send(req.body);
 
 });
+
+router.get('/update/sucess/material_request/use_material/:req', (req, res, next) => {
+    req.flash("success_msg", `Material Received!!!`);
+    req.session.save(function() {
+        res.redirect(`/maintanence/${req.params.req}`);
+    });
+})
 router.post('/update/material_request/add_material/:req', (req, res, next) => {
     var items = [];
     if(req.body.numberOfItems < 2){

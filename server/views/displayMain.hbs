@@ -326,39 +326,36 @@
                 rbool = true;
                 rout = "- Input Remarks\n"
             }
-                if(workHours === "" ||  workHours === "0" ){
-                    wbool = true;
-                    wout = "- Input Work Hours\n";
-                }
-                    if(costPerHour === " AED" || costPerHour === "0 AED"){
-                        cbool = true;
-                        cout = "- Input LabourCost Pet Hour\n";
-                    }
-                        if( status === "PENDING MATERIAL"){
-                            sbool = true;
-                            sout = "- Waitng For Materials (Send Reminder to Purchasing Department)\n";
-                        }
-
-                    
-                
-            
+            if(workHours === "" ||  workHours === "0" ){
+                wbool = true;
+                wout = "- Input Work Hours\n";
+            }
+            if(costPerHour === " AED" || costPerHour === "0 AED"){
+                cbool = true;
+                cout = "- Input LabourCost Pet Hour\n";
+            }
+            if( status === "PENDING MATERIAL"){
+                sbool = true;
+                sout = "- Waitng For Materials (Send Reminder to Purchasing Department)\n";
+            }
 
             if(rbool || wbool || cbool || sbool){
-
                 event.preventDefault();
                 var outputAlert = `${rout}${wout}${cout}${sout}`
                 alert(`Please Fill All Necessary Information\n${outputAlert}\nOR WISSAM WILL KILL YOU!!!!!`);
                
             }else{
-            if(confirm("Confirm This Job is Completed?")){
-                document.getElementById("displayMainForm").action = `/maintanence/update/${reqNumber}`
-                document.getElementById("displayMainForm").method = `POST`
-                document.getElementById("displayMainForm").submit();
-            }else{
-                event.preventDefault();
-                document.getElementById("displayMainForm").method = `GET`
+                if(confirm("Confirm This Job is Completed?")){
+                    document.getElementById("displayMainForm").action = `/maintanence/update/${reqNumber}`
+                    document.getElementById("displayMainForm").method = `POST`
+                    document.getElementById("displayMainForm").submit();
+
+                }else{
+                    event.preventDefault();
+                    document.getElementById("displayMainForm").method = `GET`
                 
-            }
+                }
+
             }
             
         }else if(buttonAction === "vehicle"){
@@ -370,16 +367,18 @@
         }else if(buttonAction === "consumables"){
             event.preventDefault();
             var category = document.getElementById("category").value;
-            
             document.getElementById("displayMainForm").action = `/maintanence/update/material_request/add_consumables/${reqNumber}/${category}`
             document.getElementById("displayMainForm").method = `POST`
             document.getElementById("displayMainForm").submit();
+
         }else if(buttonAction === "material"){
             event.preventDefault();
             document.getElementById("displayMainForm").action = `/maintanence/update/material_request/add_material/${reqNumber}`
             document.getElementById("displayMainForm").method = `POST`
             document.getElementById("displayMainForm").submit();
+
         }
+
     }
 
     function openPdf(category, quotationNum){
@@ -407,17 +406,17 @@
 
                 },
                 success: function(data) {
-                    window.location.href = `/maintanence/${document.getElementById('mainId').value}`;
+                   console.log("next");
+                    window.location.href = `/maintanence/update/sucess/material_request/use_material/${document.getElementById('mainId').value}`;
                 },
                 error: function(err){
                     console.log('error happened:' + JSON.stringify(err));
                 }
             })
+
+
         })
         
     })
-    
-
-    
 
 </script>

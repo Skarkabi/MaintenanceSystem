@@ -26,6 +26,7 @@ import mainRouter from './routes/main';
 require('./models/Session');
 import MaintenancOrder from './models/MaintenanceOrder';
 import MaterialRequest from './models/consumables/MaterialRequest';
+require('dotenv').config
 
 handlebars.registerHelper("counter", function (index){
     return index + 1;

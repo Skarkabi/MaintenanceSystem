@@ -17,7 +17,7 @@
     "cross-blob": "^3.0.0",
     "debug": "~2.6.9",
     "detect-file-encoding-and-language": "^2.1.0",
-    "dotenv": "~6.1.0",
+    "dotenv": "^6.1.0",
     "excel": "^1.0.1",
     "exceljs": "^4.3.0",
     "express": "~4.16.1",
@@ -100,7 +100,8 @@
   },
   "scripts": {
     "startMyComputer": "DB_PASSWORD=mosjsfskmo DB_HOST=localhost nodemon",
-    "startServerComputer": "DB_PASSWORD=199Sk2018 DB_HOST=192.168.0.95 nodemon",
+    "startServerComputer": "DB_PASSWORD=199Sk2018 nodemon",
+    "start": "nodemon",
     "test": "npx cypress open",
     "build": "npm-run-all clean transpile",
     "server": "node ./dist/bin/www",
@@ -124,5 +125,8 @@
   "bugs": {
     "url": "https://github.com/Skarkabi/ConnectSQL/issues"
   },
-  "homepage": "https://github.com/Skarkabi/ConnectSQL#readme"
+  "homepage": "https://github.com/Skarkabi/ConnectSQL#readme",
+  "env": {
+    "DB_PASSWORD": "199Sk2018"
+  }
 }

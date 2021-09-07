@@ -275,7 +275,8 @@ MaintenanceOrder.updateMaterialRequest = (reqNumber, materialRequest, discriptio
             where: {
                 req: reqNumber
             }
-        }).then(() => {
+        }).then(found => {
+            console.log(found)
             resolve(`Material Request Number ${materialRequest} Successfully Updated`);
 
         }).catch(err => {
@@ -350,7 +351,16 @@ function getTotalMaterialCost(order){
     return new Bluebird((resolve, reject) => {
         var totalMaterialCost = 0;
         order.consumable_data.map(o => {
-            totalMaterialCost = totalMaterialCost + o.consumable.totalCost;
+            console.log("--------------------------");
+            console.log(o);
+            if(o.type.consumable_type === "OIL"){
+                totalMaterialCost = totalMaterialCost + (o.consumable.oilPrice * o.type.consumable_quantity);
+            }else if(o.type.consumable_type === "GREASE"){
+                totalMaterialCost = totalMaterialCost + (o.consumable.price_per_litter * o.type.consumable_quantity);
+            
+            }else{
+            totalMaterialCost = totalMaterialCost + (o.consumable.singleCost * o.type.consumable_quantity);
+            }
         }) 
         var totalCost = (order.hour_cost * order.work_hours) + totalMaterialCost;
         order.setDataValue('total_material_cost', totalMaterialCost);

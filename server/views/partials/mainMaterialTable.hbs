@@ -15,7 +15,7 @@
             <th scope="col">Supplier</th>
             <th scope="col">Quantatiy</th>
             <th scope="col">Unit Cost</th>
-            <th scope="col">Total work_orders_cost</th>
+            <th scope="col">Total Material Cost</th>
             <th scope = "col">Details</th>
             <th scope="col">Action</th>
         </tr>
@@ -43,7 +43,15 @@
                         <td><a>{{this.consumable.singleCost}} {{#if (isdefined this.type.consumable_type "BRAKE") }} AED (Per Boxes){{else}} AED (Per Pieces){{/if}}</a></td>  
                     {{/if}}
                 {{/if}}
-                <td><a>{{this.consumable.totalCost}} AED</a></td>
+                {{#if (isdefined this.type.consumable_type "GREASE")}}
+                    <td><a>{{multipy this.consumable.price_per_litter this.type.consumable_quantity}} AED (Per Liter)</a></td>
+                {{else}}
+                    {{#if (isdefined this.type.consumable_type "OIL")}}
+                        <td><a>{{multiply this.consumable.oilPrice this.type.consumable_quantity}} AED (Per Liter)</a></td>
+                    {{else}}
+                        <td><a>{{multiply this.consumable.singleCost this.type.consumable_quantity}} {{#if (isdefined this.type.consumable_type "BRAKE") }} AED (Per Boxes){{else}} AED (Per Pieces){{/if}}</a></td>  
+                    {{/if}}
+                {{/if}}
                 {{#if this.consumable.details}}
                      <td><a>{{this.consumable.details}}</a></td>
                 {{else}}

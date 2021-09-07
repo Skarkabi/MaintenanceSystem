@@ -40,7 +40,11 @@
                      <td>
                         <div class="input-group-append">
                             <a href="download/{{this.quotationNumber}}" style="padding-right: 25px;"><i class="fas fa-download"></i></a>
-                            <a href="" onclick="openPdf({{this.quotationNumber}})"><i class="fas fa-external-link-alt"></i></a>
+                            {{#if (isdefined this.quotationNumber "N/A")}}
+                            <a href="/consumables/oil/view/NotAvilable"><i class="fas fa-external-link-alt"></i></a>
+                            {{else}}
+                            <a href="/consumables/oil/view/{{this.quotationNumber}}"><i class="fas fa-external-link-alt"></i></a>
+                            {{/if}}
                         </div>
                     </td>
                 </tr>

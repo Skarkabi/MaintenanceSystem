@@ -101,6 +101,7 @@
   "scripts": {
     "startMyComputer": "DB_PASSWORD=mosjsfskmo DB_HOST=localhost nodemon",
     "startServerComputer": "DB_PASSWORD=199Sk2018 nodemon",
+    "startComputerServer": "sudo /usr/local/mysql/support-files/mysql.server start",
     "start": "nodemon",
     "test": "npx cypress open",
     "build": "npm-run-all clean transpile",

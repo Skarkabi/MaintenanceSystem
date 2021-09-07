@@ -131,14 +131,16 @@ const NonStockConsumables = sequelize.define('non_stock_others', mappings, {
 
 NonStockConsumables.addNewConsumable = newConsumable => {
     return new Bluebird((resolve, reject) => {
-        console.log(newConsumable);
         if(newConsumable.pendingQuantity === null || !newConsumable.pendingQuantity){
             newConsumable.pendingQuantity = 0;
         }
+        //console.log(newConsumable);
         NonStockConsumables.create(newConsumable).then(consumable => {
             newConsumable.id = consumable.id;
             resolve(consumable);
             
+        }).catch(err => {
+            console.log(err);
         })
     })
     

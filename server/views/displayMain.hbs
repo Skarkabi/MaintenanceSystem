@@ -203,7 +203,6 @@
         var requestNumber = document.getElementById("materialRequest")
         document.getElementById("addSection").innerHTML = '';
         document.getElementById("eOrNSelect").innerHTML ='';
-        console.log(category);
         if(category.value === "battery"){
             document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>jobBatteries}}`);
 
@@ -237,7 +236,6 @@
         }
     }
     function unlockInput(selectedInput){
-        console.log(document.getElementById("displayMainForm").action);
         if(document.getElementById(`${selectedInput}-checkbox`).checked){
             document.getElementById(`${selectedInput}`).removeAttribute("disabled");
             document.getElementById("materialReques-update").removeAttribute("disabled");
@@ -264,10 +262,8 @@
             for(var i=0; i < document.getElementById("numberOfItems").value; i++){
                 if(i % 2 === 0){
                     count = i;
-                    console.log(count);
                     document.getElementById("startSpot").insertAdjacentHTML("beforeend",`<div id="addItemsSection-${count}" class="form-row"></div>`);
                 }
-                console.log(count);
                 document.getElementById(`addItemsSection-${count}`).insertAdjacentHTML("beforeend", `<div class="form-group col required" style=""><p>item ${i+1}<p> {{>addMaterialRequest}}<div>`);
 
             }
@@ -279,7 +275,6 @@
 
 
     function setAction(event, buttonAction, reqNumber){
-        console.log("----------------------------------------")
         if(buttonAction === "update"){
             document.getElementById("displayMainForm").action = `/maintanence/update/material_request/${reqNumber}`
             document.getElementById("displayMainForm").method = `POST`

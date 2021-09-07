@@ -289,6 +289,7 @@ MaintenanceConsumables.useNonStockConsumable = (nonStockConsumable) => {
                 consumable_quantity: nonStockConsumable.quantity,
                 from_stock: false
             }
+            
             MaintenanceConsumables.create(newMaintenanceConsumable).then(() => {
                 resolve("Added to");
             }).catch(err => {

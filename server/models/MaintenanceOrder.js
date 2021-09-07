@@ -179,7 +179,6 @@ MaintenanceOrder.getOrdersByPlate = plate => {
             }
         }).then(async orders => {
             var count = 0;
-            console.log(orders);
             if(orders.length !== 0){
             await Promise.all(orders.map(o => {
                 getConsumables(o).then(() => {
@@ -276,7 +275,6 @@ MaintenanceOrder.updateMaterialRequest = (reqNumber, materialRequest, discriptio
                 req: reqNumber
             }
         }).then(found => {
-            console.log(found)
             resolve(`Material Request Number ${materialRequest} Successfully Updated`);
 
         }).catch(err => {
@@ -351,8 +349,6 @@ function getTotalMaterialCost(order){
     return new Bluebird((resolve, reject) => {
         var totalMaterialCost = 0;
         order.consumable_data.map(o => {
-            console.log("--------------------------");
-            console.log(o);
             if(o.type.consumable_type === "OIL"){
                 totalMaterialCost = totalMaterialCost + (o.consumable.oilPrice * o.type.consumable_quantity);
             }else if(o.type.consumable_type === "GREASE"){

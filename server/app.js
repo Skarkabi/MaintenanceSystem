@@ -33,7 +33,6 @@ handlebars.registerHelper("counter", function (index){
 });
 
 handlebars.registerHelper("getElement", function (array, index, property){
-    console.log(array);
     return array[parseInt(index)][property];
 });
 
@@ -187,5 +186,6 @@ app.use((err, req, res, next) =>
     res.status(err.status || 500);
     res.render('error');
 });
+
 
 export default app;

@@ -132,8 +132,6 @@ router.get('/:req', (req, res, next) => {
                 console.log(err);
             })
         }).catch(err =>{
-            console.log("--------------------------------");
-            console.log("This is where i broke");
             console.log(err);
         })
     }).catch(err =>{

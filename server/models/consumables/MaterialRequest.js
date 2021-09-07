@@ -64,7 +64,6 @@ const MaterialRequest = sequelize.define('material_request', mappings, {
 
 MaterialRequest.addMaterialRequest = newMaterialRequest => {
     return new Bluebird((resolve, reject) => {
-        console.log("-------------AHHHHHHHHHHH------------");
         var materialRequest = {
             material_request: newMaterialRequest.materialRequestNumber,
             maintenance_req: newMaterialRequest.maintenanceReq,
@@ -108,6 +107,94 @@ MaterialRequest.getMaterialRequest = maintenance_req => {
         }).catch(err => {
             reject(err);
         });
+    })
+}
+
+MaterialRequest.useItem = (materialRequest, item, quantity, supplierId, price, quotationNumber) => {
+    return new Bluebird((resolve, reject) => {
+        MaterialRequest.findOne({
+            where: {material_request: materialRequest}
+        }).then(found => {
+            if(found){
+                NonStockConsumables.findOne({
+                    where: {id: item.id}
+                }).then(foundItem => {
+                    if(foundItem){
+                        if((foundItem.supplierId !== supplierId && foundItem.supplierId !== null) || (foundItem.singleCost !== price && foundItem.singleCost !== null)){
+                            var newItem = {
+                                other_name: foundItem.other_name,
+                                quantity: quantity,
+                                singleCost: price,
+                                pendingQuantity: 0,
+                                totalCost: quantity * price,
+                                details: foundItem.details,
+                                supplierId: supplierId,
+                                quotationNumber: quotationNumber,
+                                materialRequestNumber: foundItem.materialRequestNumber,
+                                maintenanceReq: foundItem.maintenanceReq,
+                            }
+                            console.log(newItem);
+                            MaintenanceConsumables.useNonStockConsumable(newItem).then(() => {
+                                foundItem.pendingQuantity = foundItem.pendingQuantity - quantity;
+                                foundItem.quantity = foundItem.quantity + quantity;
+                                foundItem.save().then(() => {
+                                    resolve("Material Recieved!!");
+                                }).catch(err => {
+                                    reject(`Server Error ${err}`);
+                                })
+                                
+                            }).catch(err => {
+                                reject(`Server Error ${err}`);
+                            });
+                        }else{
+                            foundItem.pendingQuantity = foundItem.pendingQuantity - quantity;
+                            foundItem.quantity = foundItem.quantity + quantity;
+                            foundItem.singleCost = price;
+                            foundItem.totalCost = foundItem.singleCost * foundItem.quantity;
+                            foundItem.supplierId = supplierId;
+                            MaintenanceConsumables.findOne({where: {consumable_id: foundItem.id}}).then(foundConsumable => {
+                                foundItem.save().then(() => {
+                                    foundConsumable.consumable_quantity = foundConsumable.consumable_quantity + quantity;
+                                    foundConsumable.save().then(() => {
+                                        resolve("Material Recieved!!");
+
+                                    }).catch(err => {
+                                        reject(`Server Error ${err}`);
+
+                                    }); 
+                                    
+
+                                }).catch(err => {
+                                    reject(`Server Error ${err}`);
+
+                                });
+
+                            }).catch(err => {
+                                reject(`Server Error ${err}`);
+                                    
+                            });
+
+                        }
+                       
+                    }else{
+                        reject("No Item To Update");
+
+                    }
+                
+                }).catch(err => {
+                    reject(`Item Could Not Be Updated ${err}`);
+
+                })
+
+            }else{
+                reject("No Request To Update");
+
+            }
+
+        }).catch(err => {
+            reject(`Request Could Not Be Updated ${err}`);
+            
+        })
     })
 }
 

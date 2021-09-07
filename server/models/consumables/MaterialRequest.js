@@ -117,10 +117,15 @@ MaterialRequest.useItem = (materialRequest, item, quantity, supplierId, price, q
         }).then(found => {
             if(found){
                 NonStockConsumables.findOne({
-                    where: {id: item.id}
+                    where: {
+                        id: item
+                    }
                 }).then(foundItem => {
                     if(foundItem){
-                        if((foundItem.supplierId !== supplierId && foundItem.supplierId !== null) || (foundItem.singleCost !== price && foundItem.singleCost !== null)){
+                        console.log(foundItem.supplierId);
+                        console.log(foundItem.singleCost);
+                        console.log(price)
+                        if((foundItem.supplierId !== parseInt(supplierId) && foundItem.supplierId !== null) || (parseFloat(foundItem.singleCost) !== parseFloat(price) && foundItem.singleCost !== null)){
                             var newItem = {
                                 other_name: foundItem.other_name,
                                 quantity: quantity,
@@ -133,12 +138,38 @@ MaterialRequest.useItem = (materialRequest, item, quantity, supplierId, price, q
                                 materialRequestNumber: foundItem.materialRequestNumber,
                                 maintenanceReq: foundItem.maintenanceReq,
                             }
-                            console.log(newItem);
                             MaintenanceConsumables.useNonStockConsumable(newItem).then(() => {
-                                foundItem.pendingQuantity = foundItem.pendingQuantity - quantity;
-                                foundItem.quantity = foundItem.quantity + quantity;
+                                foundItem.pendingQuantity = parseInt(foundItem.pendingQuantity) - parseInt(quantity);
+                                foundItem.quantity = parseInt(foundItem.quantity) + parseInt(quantity);
                                 foundItem.save().then(() => {
-                                    resolve("Material Recieved!!");
+                                    NonStockConsumables.findAll({
+                                        where: {
+                                            materialRequestNumber: materialRequest,
+                                        }
+                                    }).then(foundMaterials => {
+                                       if(foundMaterials){
+                                           var count = 0;
+                                           var numberOfMaterials = foundMaterials.length;
+                                           foundMaterials.map(materials => {
+                                               if(materials.pendingQuantity === parseInt(0)){
+                                                   numberOfMaterials -= 1;
+                                               }
+                                               if(numberOfMaterials === 0){
+                                                    found.destroy().then(() => {
+                                                        resolve("Material Recieved!!");
+                                                    }).catch(err => {
+                                                        reject(err);
+                                                    });
+                                                }
+                                                if(count === foundMaterials.length){
+                                                    resolve("Material Recieved!!");
+                                                }
+                                           }) 
+
+                                        }    
+
+                                    })
+                                    
                                 }).catch(err => {
                                     reject(`Server Error ${err}`);
                                 })
@@ -147,16 +178,46 @@ MaterialRequest.useItem = (materialRequest, item, quantity, supplierId, price, q
                                 reject(`Server Error ${err}`);
                             });
                         }else{
-                            foundItem.pendingQuantity = foundItem.pendingQuantity - quantity;
-                            foundItem.quantity = foundItem.quantity + quantity;
-                            foundItem.singleCost = price;
+                            console.log(foundItem);
+                            foundItem.pendingQuantity = parseInt(foundItem.pendingQuantity) - parseInt(quantity);
+                            foundItem.quantity = parseInt(foundItem.quantity) + parseInt(quantity);
+                            foundItem.singleCost = parseInt(price);
                             foundItem.totalCost = foundItem.singleCost * foundItem.quantity;
                             foundItem.supplierId = supplierId;
+                            console.log(foundItem);
                             MaintenanceConsumables.findOne({where: {consumable_id: foundItem.id}}).then(foundConsumable => {
                                 foundItem.save().then(() => {
-                                    foundConsumable.consumable_quantity = foundConsumable.consumable_quantity + quantity;
+                                    foundConsumable.consumable_quantity = parseInt(foundConsumable.consumable_quantity) + parseInt(quantity);
                                     foundConsumable.save().then(() => {
-                                        resolve("Material Recieved!!");
+                                        NonStockConsumables.findAll({
+                                            where: {
+                                                materialRequestNumber: materialRequest,
+                                            }
+                                        }).then(foundMaterials => {
+                                           if(foundMaterials){
+                                               var count = 0;
+                                               var numberOfMaterials = foundMaterials.length;
+                                               foundMaterials.map(materials => {
+                                                   if(materials.pendingQuantity === parseInt(0)){
+                                                       numberOfMaterials -= 1;
+                                                   }
+                                                   if(numberOfMaterials === 0){
+                                                        found.destroy().then(() => {
+                                                            resolve("Material Recieved!!");
+                                                        }).catch(err => {
+                                                            reject(err);
+                                                        });
+                                                    }
+                                                    if(count === foundMaterials.length){
+                                                        resolve("Material Recieved!!");
+                                                    }
+                                               }) 
+    
+                                            }    
+    
+                                        }).catch(err => {
+                                            reject(err);
+                                        })
 
                                     }).catch(err => {
                                         reject(`Server Error ${err}`);

@@ -2,7 +2,6 @@
     <div class="table-buttons" id="table-buttons">
         <button type="button" name="create-new" class="btn btn-outline-dark" id="create-new" onclick="test('request')"><i class="fas fa-plus"></i>Add Material Request</button>
     </div>
-
 <table id="filterable-table" class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -22,7 +21,8 @@
                     <td><a>{{add (getElement this.items 0 "quantity") (getElement this.items 0 "pendingQuantity")}}</a></td>
                     <td><a>{{getElement this.items 0 "pendingQuantity"}}</a></td>
                     <td><a>{{getElement this.items 0 "details"}}</a></td>
-                    <td><a></a></td>   
+                    
+                    <td><a onmouseover="style='cursor:pointer';"><i class="fas fa-exchange-alt" onclick="requestModel('{{this.material_request}}', '{{getElement this.items 0 "id"}}', '{{this.maintenance_req}}')"></i></a></td>   
                 </tr>
                 {{#each this.items}}
                     {{#unless (isdefined @index 0)}}
@@ -31,7 +31,8 @@
                         <td><a>{{add this.pendingQuantity this.quantity}}</a></td>
                         <td><a>{{this.pendingQuantity}}</a></td>
                         <td><a>{{this.details}}</a></td>
-                        <td><a></a></td>
+                        
+                        <td><a onmouseover="style='cursor:pointer';"><i class="fas fa-exchange-alt" onclick="requestModel('{{this.materialRequestNumber}}', '{{this.id}}', '{{this.maintenanceReq}}')"></i></a></td>
                     </tr>
                     {{/unless}}
                 

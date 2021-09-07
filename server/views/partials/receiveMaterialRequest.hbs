@@ -1,0 +1,35 @@
+<div class="form-row">
+    <div class="form-group col required">
+        <label for="receivedQuantity">Quantity</label>
+        <input type="number" id="receivedQuantity" name="receivedQuantity" class="form-control" required>
+    </div>
+    <div class="form-group col required">
+        <label for="receivedPrice">Price</label>
+        <input type="number" id="receivedPrice" name="receivedPrice" class="form-control" required>     
+    </div>
+    <div class="form-group col required">
+        <label for="receivedSupplier">Supplier</label>
+        <select type="text" id="receivedSupplier" name="receivedSupplier" class="form-control" required>
+            <option value="1">1</option> 
+        </select>    
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col">
+        <label for="receivedQuotation">Invoice Number</label>
+        <input type="text" placeholder = "0" id="receivedQuotation" name="receivedQuotation" class="form-control">
+    </div>
+    <div class="form-group col">
+        <label for="quotation">Select a File</label>
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" id="upload" name="upload" accept="application/pdf, application/pdf">
+            <label for="upload" class="custom-file-label">No File Choosen</label>
+        </div>
+    </div>
+</div>
+<button type="submit" id="updateItem" name="updateItem" class="btn btn-primary justfiy-content-end"><i class="far fa-save"></i> Confirm</button>
+
+
+
+
+    

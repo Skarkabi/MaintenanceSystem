@@ -99,7 +99,7 @@ router.get('/:req', (req, res, next) => {
         
         MaintenanceOrder.getByReq(req.params.req).then(found => {
            
-            var materialRequests = "";
+            var materialRequests = [];
             var itemsCount = 0;
             if(found.material_request_data !== ""){
                 
@@ -107,13 +107,23 @@ router.get('/:req', (req, res, next) => {
                     materialRequest.items.map(item => {
                         itemsCount += parseInt(item.pendingQuantity);
                     })
-                    if(materialRequests === ""){
-                        materialRequests = `${materialRequest.material_request}`
-                    }else{
-                        materialRequests = materialRequests + `, ${materialRequest.material_request}`
-                    }
+                    materialRequests.push(materialRequest.material_request)
+                    
                 })
+               
+                
             }
+            console.log(found.consumable_data);
+            found.consumable_data.map(materialRequest => {
+                if(materialRequest.consumable.materialRequestNumber && materialRequest.consumable.materialRequestNumber.search("MWS") === 0){
+
+                        materialRequests.push(materialRequest.consumable.materialRequestNumber)
+                    
+                }
+               
+            })
+            let x = (materialRequests) => materialRequests.filter((v,i) => materialRequests.indexOf(v) === i)
+            console.log(x(materialRequests));
         
             Consumable.getDistinctConsumableValues().then(values => {
                 res.render('displayMain', {
@@ -123,7 +133,7 @@ router.get('/:req', (req, res, next) => {
                     mainConsumable: found.consumable_data,
                     mainEmployee: found.employee_data,
                     consumableTable: consumablesToSelect,
-                    materialRequest: materialRequests,
+                    materialRequest: x(materialRequests),
                     values: values,
                     pendingItems: JSON.stringify(itemsCount),
                     msgType: req.flash()
@@ -298,6 +308,14 @@ router.post('/update/material_request/add_consumables/:req/:category',  Quotatio
     //MaintenanceConsumables.useConsumable(req.params.consumableId, req.params.category, req.params)
 })
 
+router.post('/update/material_request/use_material/:req', (req, res, next) => {
+    console.log(req.body);
+    MaterialRequest.useItem(req.body.materialRequestNumber, req.body.itemId, req.body.receivedQuantity, req.body.receivedSupplier, req.body.receivedPrice, req.body.receivedQuotation).then(output => {
+        req.flash('success_msg', output);
+        res.redirect(`back`);
+    })
+
+});
 router.post('/update/material_request/add_material/:req', (req, res, next) => {
     var items = [];
     if(req.body.numberOfItems < 2){

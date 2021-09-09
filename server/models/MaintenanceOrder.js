@@ -134,7 +134,10 @@ const MaintenanceOrder = sequelize.define('maintenance_orders', mappings, {
 
 MaintenanceOrder.getOrders = () => {
     return new Bluebird((resolve, reject) => {
-        MaintenanceOrder.findAll().then(orders => {
+        MaintenanceOrder.findAll({
+            order: [
+            ['createdAt', 'DESC']
+            ]}).then(orders => {
             if(orders.length !== 0){
             getVehicle(orders).then( () => {
                 getAllMaterialRequests(orders).then(() => {

@@ -9,19 +9,19 @@
         </select>
     </div>
     <div class="form-group col required">
-        <label for="oilSpec">Oil Specs</label>
-         <input list="oilSpec"  name="oilSpec" class="form-control" required>
-         <datalist id="oilSpec">
-            {{#each values.oil.specs}}
+        <label for="oilType">Oil Type</label>
+         <input list="oilType" name="oilType" class="form-control"  required>
+         <datalist id="oilType">
+             {{#each values.oil.typeOfOils}}
                 <option value="{{this}}"></option>
             {{/each}}
         </datalist>
     </div>
     <div class="form-group col required">
-        <label for="oilType">Oil Type</label>
-         <input list="oilType" name="oilType" class="form-control"  required>
-         <datalist id="oilType">
-             {{#each values.oil.typeOfOils}}
+        <label for="oilSpec">Oil Specs</label>
+         <input list="oilSpec"  name="oilSpec" class="form-control" required>
+         <datalist id="oilSpec">
+            {{#each values.oil.specs}}
                 <option value="{{this}}"></option>
             {{/each}}
         </datalist>
@@ -38,17 +38,21 @@
         </datalist>
     </div>
     <div class="for-group col required">
-        <label for="oilPrice">Price</label>
-        <input type="number" placeholder = "0" id="oilPrice" name="oilPrice" class="form-control" step="0.01"required>
+        <label for="oilPrice">Price Per Liter</label>
+        <input type="number" placeholder = "0" id="oilPrice" name="oilPrice" class="form-control" step="0.01" readonly required>
     </div>
 </div>
 <div class="form-row">
-    <div class="form-group col required">
-        <label for="quantityOil">Quantity</label>
-        <input type="number" placeholder = "0" id="quantityOil" name="quantityOil" class="form-control"step="0.01" required>
+    <div class="for-group col required">
+        <label for="oilBillPrice" >Total Price (VAT)</label>
+        <input type="number" placeholder = "0" id="oilBillPrice" name="oilBillPrice" class="form-control" step="0.01" required="required" onchange="getUnitPrice('oilBillPrice', 'quantityOil', 'oilPrice')">
     </div>
     <div class="form-group col required">
-        <label for="quantityMinOil">Minimum Quantity</label>
+        <label for="quantityOil">Quantity (L)</label>
+        <input type="number" placeholder = "0" id="quantityOil" name="quantityOil" class="form-control"step="0.01" required onchange="getUnitPrice('oilBillPrice', 'quantityOil', 'oilPrice')">
+    </div>
+    <div class="form-group col required">
+        <label for="quantityMinOil">Minimum Quantity (L)</label>
         <input type="number" placeholder = "0" id="quantityMinOil" name="quantityMinOil" class="form-control"step="0.01" required>
     </div>
 </div>

@@ -49,16 +49,20 @@
 </div>
 <div class="form-row">
     <div class="for-group col required">
-        <label for="quantityGrease">Quantity</label>
-        <input type="number" placeholder = "0" id="quantityGrease" name="quantityGrease" class="form-control" step="0.01" required>
+        <label for="greaseBillPrice" >Total Price (VAT)</label>
+        <input type="number" placeholder = "0" id="greaseBillPrice" name="greaseBillPrice" class="form-control" step="0.01" required="required" onchange="getUnitPrice('greaseBillPrice', 'quantityGrease', 'greasePrice')">
     </div>
-    <div class="form-group col required">
-        <label for="quantityMinGrease">Minimum Quantity</label>
-        <input type="number" placeholder = "0" id="quantityMinGrease" name="quantityMinGrease" class="form-control"step="0.01" required>
+    <div class="for-group col required">
+        <label for="quantityGrease">Quantity (L)</label>
+        <input type="number" placeholder = "0" id="quantityGrease" name="quantityGrease" class="form-control" step="0.01" onchange="getUnitPrice('greaseBillPrice', 'quantityGrease', 'greasePrice')" required>
     </div>
     <div class="form-group col required">
         <label for="quantityMinGrease">Grease Price Per Liter</label>
-        <input type="number" placeholder = "0" id="greasePrice" name="greasePrice" class="form-control" step="0.01" required>
+        <input type="number" placeholder = "0" id="greasePrice" name="greasePrice" class="form-control" step="0.01" required readonly>
+    </div>
+    <div class="form-group col required">
+        <label for="quantityMinGrease">Minimum Quantity (L)</label>
+        <input type="number" placeholder = "0" id="quantityMinGrease" name="quantityMinGrease" class="form-control"step="0.01" required>
     </div>
 </div>
 <div class="form-row">

@@ -11,8 +11,8 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-const mySQLDB = new Sequelize(dbName, dbUserName, process.env.DB_PASSWORD, {
-    host: process.env.DB_HOST,
+const mySQLDB = new Sequelize(dbName, dbUserName, "199Sk2018", {
+    host: "localhost",
     port: dbPort,
     dialect: 'mysql',
 });

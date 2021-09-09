@@ -3,16 +3,16 @@
         <thead>
             <tr>
                <th scope="col">#</th>
-                <th scope="col">Category</th>
+                <th scope="col">Vehicle Category</th>
+                 <th scope="col">Vehicle Brand</th>
+                 <th scope="col">Vehicle Model</th>
+                <th scope="col">Vehicle Year</th>
                 <th scope="col">Filter Type</th>
                 <th scope="col">Filter Brand</th>
-                <th scope="col">Car Brand</th>
-                <th scope="col">Car Model</th>
-                <th scope="col">Car Year</th>
-                <th scope="col">Quantity (Boxes)</th>
+                <th scope="col">Quantity (Pieces)</th>
                 <th scope="col">Single Cost</th>
                 <th scope="col">Supplier</th>
-                <th scope="col">Quotation #</th>
+                <th scope="col">Invoice #</th>
                 <th scope="col" style="width: 10%;">Action</th>
             </tr>
         </thead>
@@ -21,11 +21,11 @@
                 <tr>
                   <th>{{counter @index}}</th>
                     <td>{{this.category}}</td>
-                    <td>{{this.fType}}</td>
-                    <td>{{this.actualBrand}}</td>
                     <td>{{this.carBrand}}</td>
                     <td>{{this.carModel}}</td>
                     <td>{{this.carYear}}</td>
+                    <td>{{this.fType}}</td>
+                    <td>{{this.actualBrand}}</td>
                     <td>{{this.quantity}}</td>
                     <td>{{this.singleCost}}</td>
                     <td>{{this.supplierName}}</td>

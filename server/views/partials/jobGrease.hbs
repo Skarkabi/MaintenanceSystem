@@ -3,14 +3,14 @@
         <thead>
             <tr>
                <th scope="col">#</th>
-                <th scope="col">Grease Spec</th>
+               <th scope="col">Vehicle Brand</th>
+                <th scope="col">Vehicle Year</th>
                 <th scope="col">Grease Type</th>
-                <th scope="col">Car Brand</th>
-                <th scope="col">Car Year</th>
-                <th scope="col">Volume</th>
-                <th scope="col">Price Per Liter</th>
+                <th scope="col">Grease Spec</th>
+                <th scope="col">Quantity (Oz)</th>
+                <th scope="col">Price (Per Oz)</th>
                 <th scope="col">Supplier</th>
-                <th scope="col">Quotation #</th>
+                <th scope="col">Invoice #</th>
                 <th scope="col" style="width: 10%;">Action</th>
             </tr>
         </thead>
@@ -18,10 +18,10 @@
             {{#each consumableTable.grease}}
                 <tr>
                    <th>{{counter @index}}</th>
-                    <td>{{this.greaseSpec}}</td>
-                    <td>{{this.typeOfGrease}}</td>
-                    <td>{{this.carBrand}}</td>
+                   <td>{{this.carBrand}}</td>
                     <td>{{this.carYear}}</td>
+                    <td>{{this.typeOfGrease}}</td>
+                    <td>{{this.greaseSpec}}</td>
                     <td>{{this.volume}}</td>
                     <td>{{this.price_per_litter}}</td>
                     <td>{{this.supplierName}}</td>

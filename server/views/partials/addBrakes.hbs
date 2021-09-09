@@ -1,15 +1,5 @@
 <form>
 <div class="form-row">
-    <div class="form-group col required">
-        <label for="brakeCategory">Vehicle Category</label>
-        <select type="text" name="brakeCategory" id ="brakeCategory"  class="form-control" disabled required="required">
-            <option value="" selected disabled></option>
-                {{#each vehicles}}
-                    <option value="{{this.plate}}">{{this.category}}</option>
-                {{/each}}
-                             
-        </select>
-    </div>
      <div class="form-group col required">
         <label for="brakeSupplierName">Supplier Name</label>
          <select type="text" id="brakeSupplierName" name="brakeSupplierName" class="form-control" required="required">
@@ -24,10 +14,62 @@
         <input list="brakePlate" id="brakePlateValue" name="brakePlate" placeholder="Select Plate #" class="form-control" onChange="setVehicleInfo()" required>
             <datalist id="brakePlate">
                 {{#each vehicles}}
-                    <option value="{{this.plate}}">{{this.plate}}</option>
+                    <option value="{{this.vehicleData}}" data-value="{{this.plate.plate}}"></option>
                 {{/each}}
             </datalist>
+            <input type="text" id="realPlateValue" name="realPlateValue" class="form-control" hidden>
         </div>
+</div>
+<div class="form-row">
+    <div class="form-group col required">
+        <label for="brakeCategory">Vehicle Category</label>
+        <select type="text" name="brakeCategory" id ="brakeCategory"  class="form-control" disabled required="required">
+            <option value="" selected disabled></option>
+                {{#each vehicles}}
+                    <option value="{{this.plate.plate}}">{{this.plate.category}}</option>
+                {{/each}}
+                             
+        </select>
+    </div>
+    <div class="form-group col required">
+        <label for="brakeCBrand">Car Brand</label>
+         <select type="text" id="brakeCBrand"  name="brakeCBrand" class="form-control" disabled required="required">
+           <option value="" selected disabled></option>
+            {{#each vehicles}}
+                <option value="{{this.plate.plate}}">{{this.plate.brand}}</option>
+            {{/each}}
+        </select>
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col required">
+        <label for="brakeCModel">Car Model</label>
+         <select type = "text" id="brakeCModel"  name="brakeCModel" class="form-control" disabled required="required">
+            <option value="" selected disabled></option>
+            {{#each vehicles}}
+                <option value="{{this.plate.plate}}">{{this.plate.model}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <div class="form-group col required">
+        <label for="brakeCYear">Car Year</label>
+         <select type="text"  id="brakeCYear" name="brakeCYear" class="form-control" disabled required="required">
+            <option value="" selected disabled></option>
+            {{#each vehicles}}
+                <option value="{{this.plate.plate}}">{{this.plate.year}}</option>
+            {{/each}}
+        </select>
+
+    </div>
+    <div class="form-group col required" style="display: none;">
+        <label for="brakeChassis">Car Chassis</label>
+         <select type="text" id="brakeChassis"  name="brakeChassis" class="form-control" disabled required="required">
+             <option value="" selected disabled></option>
+            {{#each vehicles}}
+                <option value="{{this.plate.plate}}">{{this.plate.chassis}}</option>
+            {{/each}}
+        </select>
+    </div>
 </div>
 <div class="form-row">
     <div class="form-group col required">
@@ -50,66 +92,28 @@
     </div>
 </div>
 <div class="form-row">
-    <div class="form-group col required">
-        <label for="brakeCBrand">Car Brand</label>
-         <select type="text" id="brakeCBrand"  name="brakeCBrand" class="form-control" disabled required="required">
-           <option value="" selected disabled></option>
-            {{#each vehicles}}
-                <option value="{{this.plate}}">{{this.brand}}</option>
-            {{/each}}
-        </select>
+    <div class="for-group col required">
+        <label for="brakeBillPrice" >Total Price (VAT)</label>
+        <input type="number" placeholder = "0" id="brakeBillPrice" name="brakeBillPrice" class="form-control" step="0.01" required="required" onchange="getUnitPrice('brakeBillPrice', 'quantityBrakes', 'brakePrice')">
     </div>
-     <div class="form-group col required">
-        <label for="brakeCModel">Car Model</label>
-         <select type = "text" id="brakeCModel"  name="brakeCModel" class="form-control" disabled required="required">
-            <option value="" selected disabled></option>
-            {{#each vehicles}}
-                <option value="{{this.plate}}">{{this.model}}</option>
-            {{/each}}
-        </select>
-    </div>
-    
-</div>
-<div class="form-row">
-    <div class="form-group col required">
-        <label for="brakeCYear">Car Year</label>
-         <select type="text"  id="brakeCYear" name="brakeCYear" class="form-control" disabled required="required">
-            <option value="" selected disabled></option>
-            {{#each vehicles}}
-                <option value="{{this.plate}}">{{this.year}}</option>
-            {{/each}}
-        </select>
-
-    </div>
-    <div class="form-group col required">
-        <label for="brakeChassis">Car Chassis</label>
-         <select type="text" id="brakeChassis"  name="brakeChassis" class="form-control" disabled required="required">
-             <option value="" selected disabled></option>
-            {{#each vehicles}}
-                <option value="{{this.plate}}">{{this.chassis}}</option>
-            {{/each}}
-        </select>
-    </div>
-</div>
-<div class="form-row">
     <div class="form-group col required">
         <label for="quantityBrakes">Quantity</label>
-         <input type="number" id="quantityBrakes" name="quantityBrakes" class="form-control" required="required">
+         <input type="number" id="quantityBrakes" name="quantityBrakes" class="form-control" required="required" onchange="getUnitPrice('brakeBillPrice', 'quantityBrakes', 'brakePrice')">
+    </div>
+    <div class="form-group col required">
+        <label for="brakePrice">Price Per Box</label>
+         <input type="number" placeholder = "0" id="brakePrice" name="brakePrice" class="form-control" step="0.01" required="required" readonly>
+         
     </div>
     <div class="form-group col required">
         <label for="minQuantityBrakes">Minimum Quantity</label>
          <input type="number" id="minQuantityBrakes" name="minQuantityBrakes" class="form-control" required="required">  
     </div>
-    <div class="form-group col required">
-        <label for="brakePrice">Price Per Box</label>
-         <input type="number" placeholder = "0" id="brakePrice" name="brakePrice" class="form-control" step="0.01" required="required">
-         
-    </div>
 </div>
 
 <div class="form-row">
     <div class="form-group col">
-        <label for="quotation">Quotation Number</label>
+        <label for="quotation">Invoice Number</label>
         <input type="text" placeholder = "0" id="quotation" name="quotation" class="form-control">
     </div>
     <div class="form-group col">

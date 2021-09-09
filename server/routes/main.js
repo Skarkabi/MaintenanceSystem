@@ -119,7 +119,7 @@ router.get('/:req', (req, res, next) => {
             })
             let x = (materialRequests) => materialRequests.filter((v,i) => materialRequests.indexOf(v) === i)
             console.log(x(materialRequests));
-        
+            console.log(consumablesToSelect.supplier);
             Consumable.getDistinctConsumableValues().then(values => {
                 res.render('displayMain', {
                     title: (`Maintanence Request # ${found.req}`),

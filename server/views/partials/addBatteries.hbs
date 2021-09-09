@@ -21,15 +21,15 @@
 <div class="form-row ">
     <div class="for-group col required">
         <label for="batteryBillPrice" >Total Price (VAT)</label>
-        <input type="number" placeholder = "0" id="batteryBillPrice" name="batteryBillPrice" class="form-control" step="0.01" onchange="batteryUnitPrice()" required>
+        <input type="number" placeholder = "0" id="batteryBillPrice" name="batteryBillPrice" class="form-control" step="0.01" required onchange="getUnitPrice('batteryBillPrice', 'quantityBatteries', 'batteryPrice')" required>
     </div>
     <div class="for-group col required">
         <label for="quantityBatteries" >Quantity</label>
-        <input type="number" placeholder = "0" id="quantityBatteries" name="quantityBatteries" class="form-control" required onchange="batteryUnitPrice()">
+        <input type="number" placeholder = "0" id="quantityBatteries" name="quantityBatteries" class="form-control" required onchange="getUnitPrice('batteryBillPrice', 'quantityBatteries', 'batteryPrice')">
     </div>
     <div class="form-group col required">
         <label for="batteryPrice">Unit Price</label>
-        <input type="number" placeholder = "0" id="batteryPrice" name="batteryPrice" class="form-control" step="0.01" required disabled>
+        <input type="number" placeholder = "0" id="batteryPrice" name="batteryPrice" class="form-control" step="0.01" required readonly>
     </div>
     <div class="form-group col required">
         <label for="quantityMinBatteries">Minimum Quantity</label>

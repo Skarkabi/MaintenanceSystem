@@ -404,13 +404,18 @@ Brake.getWithSupplier = supplierId => {
             }
 
         }).then(foundBrakes => {
-            //Adding supplier Name to filters 
-            Supplier.getSupplierNames(foundBrakes).then(() => {
-                resolve(foundBrakes.rows);
-
+            //Adding supplier Name to filters
+            getVehicle(foundBrakes.rows).then(() => {
+                Supplier.getSupplierNames(foundBrakes).then(() => {
+                    resolve(foundBrakes.rows);
+    
+                }).catch(err => {
+                    reject(err);
+                });
             }).catch(err => {
                 reject(err);
-            });
+            })
+            
             
         }).catch(err => {
             reject(err);
@@ -430,19 +435,19 @@ Brake.groupSupplier = () => {
         Brake.findAll({
             //Declaring attributes to return from database
             attributes:
-              ['plateNumber', 'bBrand', 'singleCost', 'supplierId',
+              ['plateNumber', 'bBrand', 'preferredBrand', 'singleCost', 'supplierId',
               [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
             ],
 
             //Declaring how to group return values
-            group: ["plateNumber", "bBrand", "singleCost", "supplierId",   "preferredBrand",]
+            group: ["plateNumber", "bBrand", 'preferredBrand', "singleCost", "supplierId",   "preferredBrand",]
             
         }).then((values) => { 
             //Setting variable to return brakes with their supplier names
             getVehicle(values).then(() => {
                 var result = {count: values.length, rows: values}
                 Supplier.getSupplierNames(result).then(() => {
-                    console.log(result);
+                    console.log(result.rows);
                 resolve(result);
             
             }).catch(err => {
@@ -470,7 +475,7 @@ function getVehicle(brakes) {
                 vehicleMap.set(vehicles.plate, vehicles);
             });
             brakes.map(brake => {
-                brake.setDataValue('vehicle_data', vehicleMap.get(brake.plate));
+                brake.setDataValue('vehicle_data', vehicleMap.get(brake.plateNumber));
                 count++;
 
                 if(count === brakes.length){

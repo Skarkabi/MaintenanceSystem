@@ -3,6 +3,7 @@
         <label for="otherSupplierName">Supplier Name</label>
          <select type="text" id="otherSupplierName" name="otherSupplierName" class="form-control" required="required">
              <option value="Select One" selected disabled>Select One</option>
+             <option value ="" selected disabled>Choose One</option>
              {{#each values.supplier}}
                 <option value="{{this.id}}">{{this.name}}</option>
              {{/each}}       

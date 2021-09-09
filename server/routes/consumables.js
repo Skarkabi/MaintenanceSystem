@@ -9,6 +9,7 @@ import Quotation from '../models/Quotation';
 import fs from 'fs';
 import Other from '../models/consumables/Other';
 import open from 'open';
+import Vehicle from '../models/Vehicle';
 
 const router = express.Router();
 
@@ -24,16 +25,20 @@ router.get('/add', (req, res, next) =>
         console.log(flash);
         //If User exists get all distinct consumable and supplier values and load add new consumable page
         Consumable.getDistinctConsumableValues().then(values =>{
-            res.render('addConsumable', {
-                title: 'Add New Consumable',
-                jumbotronDescription: `Add a new user Consumable.`,
-                submitButtonText: 'Create',
-                action: "/upload/single",
-                values: values,
-                page: "add",
-                msgType: flash
-                
-            });
+            Vehicle.getMappedStock().then(vehicles => {
+                res.render('addConsumable', {
+                    title: 'Add New Consumable',
+                    jumbotronDescription: `Add a new user Consumable.`,
+                    submitButtonText: 'Create',
+                    action: "/upload/single",
+                    values: values,
+                    vehicles: vehicles,
+                    page: "add",
+                    msgType: flash
+                    
+                });
+            })
+           
 
         });
 
@@ -157,12 +162,9 @@ router.post('/add/brake', Quotation.uploadFile().single('upload'), (req,res,next
     }
 
     const newBrake = {
-        category: req.body.brakeCategory,
-        carBrand: req.body.brakeCBrand,
-        carYear: req.body.brakeCYear,
         bBrand: req.body.brakeBrand,
         preferredBrand: req.body.brakePBrand,
-        chassis: req.body.brakeChassis,
+        plateNumber: req.body.brakePlate,
         singleCost: req.body.brakePrice,
         minQuantity: req.body.minQuantityBrakes,
         supplierId: req.body.brakeSupplierName,
@@ -208,6 +210,7 @@ router.post('/add/brake', Quotation.uploadFile().single('upload'), (req,res,next
         });
                
         }).catch(err =>{
+            console.log(err);
             req.flash('error_msg', JSON.stringify(err));
             req.session.save(function() {
             res.redirect("/consumables/add");
@@ -216,6 +219,7 @@ router.post('/add/brake', Quotation.uploadFile().single('upload'), (req,res,next
         })
             
         }).catch(err => {
+            console.log(err);
             req.flash('error_msg', JSON.stringify(err));
             req.session.save(function() {
             res.redirect("/consumables/add");

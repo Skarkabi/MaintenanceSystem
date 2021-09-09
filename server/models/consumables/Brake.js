@@ -5,6 +5,7 @@ import sequelize from '../../mySQLDB';
 import Bluebird from 'bluebird';
 import Supplier from '../Supplier';
 import Quotation from '../Quotation';
+import Vehicle from '../Vehicle';
 
 /**
  * Declaring the datatypes used within the Brake class
@@ -15,17 +16,12 @@ const mappings = {
         autoIncrement: true,
         primaryKey: true
     },
-    category: {
+    plateNumber: {
         type: Sequelize.DataTypes.STRING,
-        allowNull: false,
+        allowNull: false
     },
-    carBrand:{
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
-    },
-    carYear:{
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
+    vehicle_data: {
+        type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.JSON, ['vehicle_data']),
     },
     bBrand:{
         type: Sequelize.DataTypes.STRING,
@@ -34,10 +30,6 @@ const mappings = {
     preferredBrand:{
         type: Sequelize.DataTypes.STRING,
         allowNull: false,
-    },
-    chassis:{
-        type: Sequelize.DataTypes.STRING,
-        allowNull:false,
     },
     singleCost:{
         type: Sequelize.DataTypes.DOUBLE,
@@ -93,20 +85,11 @@ const Brake = sequelize.define('brake_stocks', mappings, {
         fields: ['quantity'],
     },
     {
-        name: 'brake_carBrand_index',
+        name: 'brake_plateNumber_index',
         method: 'BTREE',
-        fields: ['carBrand']
+        fields: ['plateNumber']
     },
-    {
-        name: 'brake_carYear_index',
-        method: 'BTREE',
-        fields: ['carYear']
-    },
-    {
-        name: 'brake_chassis_index',
-        method: 'BTREE',
-        fields: ['chassis']
-    },
+    
     {
         name: 'brake_bBrand_index',
         method: 'BTREE',
@@ -219,7 +202,7 @@ Brake.updateConsumable = (newBrake, action) => {
                     resolve(newBrake.quantity + " Brakes Sucessfully Added!");
                     
                 }).catch(err =>{
-                    reject(err);
+                    reject(`This is my Err: ${err}`);
 
                 });
             }
@@ -251,14 +234,11 @@ Brake.addBrake = (newBrake) => {
         //Looking if the brake with exact specs and same quotation number already exists in stock
         Brake.findOne({
             where: {
-                category: newBrake.category,
-                carBrand: newBrake.carBrand,
-                carYear: newBrake.carYear,
                 bBrand: newBrake.bBrand,
                 preferredBrand: newBrake.preferredBrand,
-                chassis: newBrake.chassis,
                 supplierId: newBrake.supplierId,
                 quotationNumber: newBrake.quotationNumber,
+                plateNumber: newBrake.plateNumber,
             }
 
         }).then(foundBrake => {
@@ -310,7 +290,7 @@ Brake.getStock = () => {
                 resolve(breakes);
     
             }).catch(err => {
-                reject(err);
+                reject("This err:" + err);
           
             });
             
@@ -360,7 +340,7 @@ function getDistinct(values){
 Brake.getBrakeStock = () =>{
     return new Bluebird(async (resolve,reject) => {
         //Declaring all variables to be returned
-        var brakeC, brakeS, brakeCategory, brakeCBrand, brakeCYear, brakeCChassis, brakeBrand, brakePBrand, brakeQuantity;
+        var brakePlate, brakeC, brakeS, brakeBrand, brakePBrand, brakeQuantity;
         //Getting all suppliers saved in database
         Supplier.findAll().then(suppliers => {
             brakeS = suppliers
@@ -368,18 +348,15 @@ Brake.getBrakeStock = () =>{
             Brake.getStock().then(consumables => {
                 brakeC = consumables
                 //Mapping brake values to not return double values
-                brakeCategory = getDistinct(brakeC.rows.map(val => val.category))
-                brakeCBrand = getDistinct(brakeC.rows.map(val => val.carBrand))
-                brakeCYear = getDistinct(brakeC.rows.map(val => val.carYear))
-                brakeCChassis = getDistinct(brakeC.rows.map(val => val.chassis))
+                brakePlate = getDistinct(brakeC.rows.map(val => val.plateNumber))
                 brakePBrand = getDistinct(brakeC.rows.map(val => val.preferredBrand))
                 brakeQuantity = getDistinct(brakeC.rows.map(val => val.quantity))
                 brakeBrand = getDistinct(brakeC.rows.map(val => val.bBrand))
 
                 //Creating variable of all need variables to return
                 var values = {
-                    consumable: brakeC.rows, suppliers: brakeS, brakeCategory: brakeCategory, brakeCBrand: brakeCBrand, brakeCYear: brakeCYear,
-                    brakeCChassis: brakeCChassis, brakeBrand: brakeBrand, brakePBrand: brakePBrand, brakeQuantity: brakeQuantity
+                    consumable: brakeC.rows, suppliers: brakeS, plate: brakePlate,
+                    brakeBrand: brakeBrand, brakePBrand: brakePBrand, brakeQuantity: brakeQuantity
                 
                 };
                 resolve(values);
@@ -453,23 +430,27 @@ Brake.groupSupplier = () => {
         Brake.findAll({
             //Declaring attributes to return from database
             attributes:
-              ['category', 'carBrand', 'carYear', 'chassis', 'bBrand', 'singleCost', 'supplierId',
+              ['plateNumber', 'bBrand', 'singleCost', 'supplierId',
               [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
             ],
 
             //Declaring how to group return values
-            group: ["category", "carBrand", "carYear", "chassis", "bBrand", "singleCost", "supplierId",   "preferredBrand",]
+            group: ["plateNumber", "bBrand", "singleCost", "supplierId",   "preferredBrand",]
             
         }).then((values) => { 
             //Setting variable to return brakes with their supplier names
-            var result = {count: values.length, rows: values}
-            Supplier.getSupplierNames(result).then(() => {
+            getVehicle(values).then(() => {
+                var result = {count: values.length, rows: values}
+                Supplier.getSupplierNames(result).then(() => {
+                    console.log(result);
                 resolve(result);
             
             }).catch(err => {
                 reject(err);
 
             });
+            })
+            
 
         }).catch(err => {
             reject(err);
@@ -480,6 +461,28 @@ Brake.groupSupplier = () => {
     
 }
 
+function getVehicle(brakes) {
+    return new Bluebird((resolve, reject) => {
+        var count = 0;
+        Vehicle.getStock().then(foundVehicles => {
+            var vehicleMap = new Map();
+            foundVehicles.rows.map(vehicles => {
+                vehicleMap.set(vehicles.plate, vehicles);
+            });
+            brakes.map(brake => {
+                brake.setDataValue('vehicle_data', vehicleMap.get(brake.plate));
+                count++;
+
+                if(count === brakes.length){
+                    resolve("Set All");
+                }
+            });
+            
+        }).catch(err => {
+            reject(err);
+        });
+    })
+}
 
 
 export default Brake;

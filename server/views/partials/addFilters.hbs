@@ -2,6 +2,7 @@
     <div class="form-group col required">
         <label for="filterSupplierName">Supplier Name</label>
          <select type="text" id="filterSupplierName" name="filterSupplierName" class="form-control" required="required">
+             <option value ="" selected disabled>Choose One</option>
              {{#each values.supplier}}
                 <option value="{{this.id}}">{{this.name}}</option>
              {{/each}}       

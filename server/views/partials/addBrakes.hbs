@@ -1,22 +1,33 @@
 <form>
 <div class="form-row">
     <div class="form-group col required">
-        <label for="brakeCategory">Brake Category</label>
-         <input list="brakeCategory"  name="brakeCategory" class="form-control" required="required">
-         <datalist id="brakeCategory">
-            {{#each values.brakes.brakeCategory}}
-                <option value="{{this}}">{{this.brakeCategory}}</option>
-            {{/each}}
-        </datalist>
+        <label for="brakeCategory">Vehicle Category</label>
+        <select type="text" name="brakeCategory" id ="brakeCategory"  class="form-control" disabled required="required">
+            <option value="" selected disabled></option>
+                {{#each vehicles}}
+                    <option value="{{this.plate}}">{{this.category}}</option>
+                {{/each}}
+                             
+        </select>
     </div>
      <div class="form-group col required">
         <label for="brakeSupplierName">Supplier Name</label>
          <select type="text" id="brakeSupplierName" name="brakeSupplierName" class="form-control" required="required">
+             <option value ="" selected disabled>Choose One</option>
              {{#each values.supplier}}
                 <option value="{{this.id}}">{{this.name}}</option>
              {{/each}}       
         </select>
     </div>
+    <div class="form-group col">
+        <label for="brakePlate">Plate #</label>
+        <input list="brakePlate" id="brakePlateValue" name="brakePlate" placeholder="Select Plate #" class="form-control" onChange="setVehicleInfo()" required>
+            <datalist id="brakePlate">
+                {{#each vehicles}}
+                    <option value="{{this.plate}}">{{this.plate}}</option>
+                {{/each}}
+            </datalist>
+        </div>
 </div>
 <div class="form-row">
     <div class="form-group col required">
@@ -41,45 +52,43 @@
 <div class="form-row">
     <div class="form-group col required">
         <label for="brakeCBrand">Car Brand</label>
-         <input list="brakeCBrand"  name="brakeCBrand" class="form-control" required="required">
-         <datalist id="brakeCBrand">
-              <option value="\0">{{this.carBrand}}</option>
-            {{#each values.brakes.brakeCBrand}}
-                <option value="{{this}}">{{this.carBrand}}</option>
+         <select type="text" id="brakeCBrand"  name="brakeCBrand" class="form-control" disabled required="required">
+           <option value="" selected disabled></option>
+            {{#each vehicles}}
+                <option value="{{this.plate}}">{{this.brand}}</option>
             {{/each}}
-        </datalist>
+        </select>
     </div>
      <div class="form-group col required">
         <label for="brakeCModel">Car Model</label>
-         <input list="brakeCModel"  name="brakeCModel" class="form-control" required="required">
-         <datalist id="brakeCModel">
-              <option value="\0">{{this.carBrand}}</option>
-            {{#each values.brakes.brakeCBrand}}
-                <option value="{{this}}">{{this.carBrand}}</option>
+         <select type = "text" id="brakeCModel"  name="brakeCModel" class="form-control" disabled required="required">
+            <option value="" selected disabled></option>
+            {{#each vehicles}}
+                <option value="{{this.plate}}">{{this.model}}</option>
             {{/each}}
-        </datalist>
+        </select>
     </div>
     
 </div>
 <div class="form-row">
     <div class="form-group col required">
         <label for="brakeCYear">Car Year</label>
-         <input list="brakeCYear"  name="brakeCYear" class="form-control" required="required">
-         <datalist id="brakeCYear">
-            {{#each values.brakes.brakeCYear}}
-                <option value="{{this}}">{{this.carYear}}</option>
+         <select type="text"  id="brakeCYear" name="brakeCYear" class="form-control" disabled required="required">
+            <option value="" selected disabled></option>
+            {{#each vehicles}}
+                <option value="{{this.plate}}">{{this.year}}</option>
             {{/each}}
-        </datalist>
-        </datalist>
+        </select>
+
     </div>
     <div class="form-group col required">
         <label for="brakeChassis">Car Chassis</label>
-         <input list="brakeChassis"  name="brakeChassis" class="form-control" required="required">
-         <datalist id="brakeChassis">
-            {{#each values.brakes.brakeCChassis}}
-                <option value="{{this}}">{{this.chassis}}</option>
+         <select type="text" id="brakeChassis"  name="brakeChassis" class="form-control" disabled required="required">
+             <option value="" selected disabled></option>
+            {{#each vehicles}}
+                <option value="{{this.plate}}">{{this.chassis}}</option>
             {{/each}}
-        </datalist>
+        </select>
     </div>
 </div>
 <div class="form-row">

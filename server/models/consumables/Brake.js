@@ -404,13 +404,18 @@ Brake.getWithSupplier = supplierId => {
             }
 
         }).then(foundBrakes => {
-            //Adding supplier Name to filters 
-            Supplier.getSupplierNames(foundBrakes).then(() => {
-                resolve(foundBrakes.rows);
-
+            //Adding supplier Name to filters
+            getVehicle(foundBrakes.rows).then(() => {
+                Supplier.getSupplierNames(foundBrakes).then(() => {
+                    resolve(foundBrakes.rows);
+    
+                }).catch(err => {
+                    reject(err);
+                });
             }).catch(err => {
                 reject(err);
-            });
+            })
+            
             
         }).catch(err => {
             reject(err);
@@ -430,12 +435,12 @@ Brake.groupSupplier = () => {
         Brake.findAll({
             //Declaring attributes to return from database
             attributes:
-              ['plateNumber', 'bBrand', 'singleCost', 'supplierId',
+              ['plateNumber', 'bBrand', 'preferredBrand', 'singleCost', 'supplierId',
               [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
             ],
 
             //Declaring how to group return values
-            group: ["plateNumber", "bBrand", "singleCost", "supplierId",   "preferredBrand",]
+            group: ["plateNumber", "bBrand", 'preferredBrand', "singleCost", "supplierId",   "preferredBrand",]
             
         }).then((values) => { 
             //Setting variable to return brakes with their supplier names

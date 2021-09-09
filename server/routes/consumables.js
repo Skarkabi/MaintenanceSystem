@@ -13,6 +13,9 @@ import Vehicle from '../models/Vehicle';
 
 const router = express.Router();
 
+function getDistinct(values){
+    return values.filter((value, index, self) => self.indexOf(value) === index);
+}
 /**
  * Express route to get add a new consumbale page
  */
@@ -26,17 +29,33 @@ router.get('/add', (req, res, next) =>
         //If User exists get all distinct consumable and supplier values and load add new consumable page
         Consumable.getDistinctConsumableValues().then(values =>{
             Vehicle.getMappedStock().then(vehicles => {
+                var vehicleMap = [];
+                var plateMap = new Map();
+                var vehcilesToDisplay = [];
+                vehicles.map(vehicle => {
+                    plateMap.set(`${vehicle.category} ${vehicle.brand} ${vehicle.model} ${vehicle.year}`, vehicle)
+                    vehicleMap.push(`${vehicle.category} ${vehicle.brand} ${vehicle.model} ${vehicle.year}`)
+                })
+                var singleVehicles = getDistinct(vehicleMap);
+                console.log(singleVehicles);
+                console.log(plateMap);
+                singleVehicles.map(vehicle => {
+                    console.log("In");
+                    vehcilesToDisplay.push({plate: plateMap.get(vehicle), vehicleData: vehicle})
+                })
+                console.log(vehcilesToDisplay);
                 res.render('addConsumable', {
                     title: 'Add New Consumable',
                     jumbotronDescription: `Add a new user Consumable.`,
                     submitButtonText: 'Create',
                     action: "/upload/single",
                     values: values,
-                    vehicles: vehicles,
+                    vehicles: vehcilesToDisplay,
                     page: "add",
                     msgType: flash
                     
                 });
+                console.log("Out");
             })
            
 
@@ -164,13 +183,14 @@ router.post('/add/brake', Quotation.uploadFile().single('upload'), (req,res,next
     const newBrake = {
         bBrand: req.body.brakeBrand,
         preferredBrand: req.body.brakePBrand,
-        plateNumber: req.body.brakePlate,
+        plateNumber: req.body.realPlateValue,
         singleCost: req.body.brakePrice,
         minQuantity: req.body.minQuantityBrakes,
         supplierId: req.body.brakeSupplierName,
         quotationNumber: req.body.quotation
         
     }
+    console.log(req.body);
     console.log(1);
     Brake.findOne({where: newBrake}).then(found => {
        

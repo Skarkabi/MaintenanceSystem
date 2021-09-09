@@ -174,12 +174,15 @@
 
     function setVehicleInfo(){
         console.log("In here");
+        var value2send = document.querySelector("#brakePlate option[value='"+document.getElementById('brakePlateValue').value+"']").dataset.value;
+        console.log(value2send)
         console.log(document.getElementById('brakePlateValue').value)
-        document.getElementById("brakeCategory").value = document.getElementById('brakePlateValue').value
-        document.getElementById("brakeCBrand").value = document.getElementById('brakePlateValue').value
-        document.getElementById("brakeCModel").value = document.getElementById('brakePlateValue').value
-        document.getElementById("brakeCYear").value = document.getElementById('brakePlateValue').value
-        document.getElementById("brakeChassis").value = document.getElementById('brakePlateValue').value
+        document.getElementById("brakeCategory").value = value2send
+        document.getElementById("brakeCBrand").value = value2send
+        document.getElementById("brakeCModel").value = value2send
+        document.getElementById("brakeCYear").value = value2send
+        document.getElementById("brakeChassis").value = value2send
+        document.getElementById("realPlateValue").value = value2send
        //document.getElementById("hiddenPlate").value = document.getElementById("plate").value
        //console.log(document.getElementById("hiddenPlate").value)
       

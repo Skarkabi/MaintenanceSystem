@@ -165,11 +165,11 @@
         
     })
 
-    function batteryUnitPrice(){
-        var x = document.getElementById('batteryBillPrice').value;
-        var y = document.getElementById('quantityBatteries').value;
-        document.getElementById('batteryPrice').value =  parseFloat(x)/parseFloat(y);
-        console.log(document.getElementById('batteryPrice').value)
+    function getUnitPrice(bill,quantity,category){
+        var x = document.getElementById(bill).value;
+        var y = document.getElementById(quantity).value;
+        document.getElementById(category).value =  parseFloat(x)/parseFloat(y);
+        console.log(document.getElementById(category).value)
     }
 
     function setVehicleInfo(){

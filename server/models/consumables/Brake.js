@@ -442,7 +442,7 @@ Brake.groupSupplier = () => {
             getVehicle(values).then(() => {
                 var result = {count: values.length, rows: values}
                 Supplier.getSupplierNames(result).then(() => {
-                    console.log(result);
+                    console.log(result.rows);
                 resolve(result);
             
             }).catch(err => {
@@ -470,7 +470,7 @@ function getVehicle(brakes) {
                 vehicleMap.set(vehicles.plate, vehicles);
             });
             brakes.map(brake => {
-                brake.setDataValue('vehicle_data', vehicleMap.get(brake.plate));
+                brake.setDataValue('vehicle_data', vehicleMap.get(brake.plateNumber));
                 count++;
 
                 if(count === brakes.length){

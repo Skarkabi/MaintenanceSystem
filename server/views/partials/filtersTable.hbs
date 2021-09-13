@@ -4,18 +4,18 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Category</th>
+                <th scope="col">Brand</th>
+                <th scope="col">Model</th>
+                <th scope="col">Year</th>
                 <th scope="col">Filter Type</th>
                 <th scope="col">Filter Brand</th>
-                <th scope="col">Car Brand</th>
-                <th scope="col">Car Model</th>
-                <th scope="col">Car Year</th>
                 <th scope="col">Quantity (Boxes)</th>
                  {{#if (isdefined page "view")}}
-                <th scope="col">Single Cost</th>
+                <th scope="col">Unit Cost</th>
                 <th scope="col">Total Cost</th>
-                <th scope="brake">Supplier</th>
+                <th scope="col">Supplier</th>
                 {{else}}
-                <th scope="col">Quotation #</th>
+                <th scope="col">Invoice #</th>
                 {{/if}}
                 <th scope="col">Action</th>
                 
@@ -26,12 +26,12 @@
             {{#each consumables}}
                 <tr>
                     <th>{{counter @index}}</th>
-                    <td>{{this.category}}</td>
+                    <td>{{this.vehicle_data.category}}</td>
+                    <td>{{this.vehicle_data.model}}</td>
+                    <td>{{this.vehicle_data.brand}}</td>
+                    <td>{{this.vehicle_data.year}}</td>
                     <td>{{this.fType}}</td>
                     <td>{{this.actualBrand}}</td>
-                    <td>{{this.carModel}}</td>
-                    <td>{{this.carBrand}}</td>
-                    <td>{{this.carYear}}</td>
                     <td>{{this.quantity}}</td>
                     <td>{{this.singleCost}}</td>
                     <td>{{roundToTwo this.singleCost this.quantity}}</td>

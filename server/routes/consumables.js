@@ -384,10 +384,7 @@ router.post('/add/filter', Quotation.uploadFile().single('upload'), (req, res, n
     }
     //Creating new filter variable to be added to database   
     const newFilter = {
-        carBrand: req.body.filterCarBrand,
-        carModel: req.body.filterCarModel,
-        carYear: req.body.filterCarYear,
-        category: req.body.vehicleCategory,
+        plateNumber: req.body.realPlateValue,
         fType: req.body.filterType,
         preferredBrand: req.body.filterPBrand,
         actualBrand: req.body.filterABrand,

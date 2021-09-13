@@ -168,20 +168,21 @@
     function getUnitPrice(bill,quantity,category){
         var x = document.getElementById(bill).value;
         var y = document.getElementById(quantity).value;
-        document.getElementById(category).value =  parseFloat(x)/parseFloat(y);
-        console.log(document.getElementById(category).value)
+        document.getElementById(category).value =  parseFloat(x/y).toFixed(2);
     }
 
-    function setVehicleInfo(){
+    function setVehicleInfo(category){
         console.log("In here");
-        var value2send = document.querySelector("#brakePlate option[value='"+document.getElementById('brakePlateValue').value+"']").dataset.value;
+        console.log(document.getElementById(`${category}PlateValue`).value)
+        var categoryPlateValue = document.getElementById(`${category}PlateValue`).value
+        var value2send = document.querySelector(`#${category}Plate option[value='${categoryPlateValue}']`).dataset.value;
         console.log(value2send)
-        console.log(document.getElementById('brakePlateValue').value)
-        document.getElementById("brakeCategory").value = value2send
-        document.getElementById("brakeCBrand").value = value2send
-        document.getElementById("brakeCModel").value = value2send
-        document.getElementById("brakeCYear").value = value2send
-        document.getElementById("brakeChassis").value = value2send
+        console.log(document.getElementById(`${category}PlateValue`).value)
+        document.getElementById(`${category}Category`).value = value2send
+        document.getElementById(`${category}CBrand`).value = value2send
+        document.getElementById(`${category}CModel`).value = value2send
+        document.getElementById(`${category}CYear`).value = value2send
+        document.getElementById(`${category}Chassis`).value = value2send
         document.getElementById("realPlateValue").value = value2send
        //document.getElementById("hiddenPlate").value = document.getElementById("plate").value
        //console.log(document.getElementById("hiddenPlate").value)

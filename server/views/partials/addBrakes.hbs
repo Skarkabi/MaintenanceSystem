@@ -11,7 +11,7 @@
     </div>
     <div class="form-group col">
         <label for="brakePlate">Vehicle Information</label>
-        <input list="brakePlate" id="brakePlateValue" name="brakePlate" placeholder="Select Plate #" class="form-control" onChange="setVehicleInfo()" required>
+        <input list="brakePlate" id="brakePlateValue" name="brakePlate" placeholder="Select Vehicle" class="form-control" onChange="setVehicleInfo('brake')" required>
             <datalist id="brakePlate">
                 {{#each vehicles}}
                     <option value="{{this.vehicleData}}" data-value="{{this.plate.plate}}"></option>
@@ -32,7 +32,7 @@
         </select>
     </div>
     <div class="form-group col required">
-        <label for="brakeCBrand">Car Brand</label>
+        <label for="brakeCBrand">Vehicle Brand</label>
          <select type="text" id="brakeCBrand"  name="brakeCBrand" class="form-control" disabled required="required">
            <option value="" selected disabled></option>
             {{#each vehicles}}
@@ -43,7 +43,7 @@
 </div>
 <div class="form-row">
     <div class="form-group col required">
-        <label for="brakeCModel">Car Model</label>
+        <label for="brakeCModel">Vehicle Model</label>
          <select type = "text" id="brakeCModel"  name="brakeCModel" class="form-control" disabled required="required">
             <option value="" selected disabled></option>
             {{#each vehicles}}
@@ -52,7 +52,7 @@
         </select>
     </div>
     <div class="form-group col required">
-        <label for="brakeCYear">Car Year</label>
+        <label for="brakeCYear">Vehicle Year</label>
          <select type="text"  id="brakeCYear" name="brakeCYear" class="form-control" disabled required="required">
             <option value="" selected disabled></option>
             {{#each vehicles}}

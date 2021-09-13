@@ -4,6 +4,7 @@ import Consumable from '../Consumables';
 import sequelize from '../../mySQLDB';
 import Bluebird from 'bluebird';
 import Supplier from '../Supplier';
+import Vehicle from '../Vehicle';
 
 /**
  * Declaring the datatypes used within the Filter class
@@ -14,21 +15,12 @@ const mappings = {
         autoIncrement: true,
         primaryKey: true
     },
-    carBrand:{
+    plateNumber:{
         type: Sequelize.DataTypes.STRING,
         allowNull: false,
     },
-    carModel:{
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
-    },
-    carYear:{
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
-    },
-    category:{
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
+    vehicle_data:{
+        type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.JSON, ['vehicle_data']),
     },
     fType:{
         type: Sequelize.DataTypes.STRING,
@@ -99,21 +91,9 @@ const Filter = sequelize.define('filter_stocks', mappings, {
     },
     
     {
-        name: 'filter_carBrand_index',
+        name: 'filter_plateNumber_index',
         method: 'BTREE',
-        fields: ['carBrand'],
-    },
-    
-    {
-        name: 'filter_carYear_index',
-        method: 'BTREE',
-        fields: ['carYear'],
-    },
-    
-    {
-        name: 'filter_carModel_index',
-        method: 'BTREE',
-        fields: ['carModel'],
+        fields: ['plate'],
     },
     
     {
@@ -134,11 +114,6 @@ const Filter = sequelize.define('filter_stocks', mappings, {
         fields: ['actualBrand'],
     },
     
-    {
-        name: 'filter_category_index',
-        method: 'BTREE',
-        fields: ['category'],
-    },
     {
         name: 'filter_singleCost_index',
         method: 'BTREE',
@@ -280,12 +255,10 @@ Filter.addFilter = (newFilter) => {
         //Looking if the filter with exact specs and same quotation number already exists in stock
         Filter.findOne({
             where: {
-                carBrand: newFilter.carBrand,
-                carModel: newFilter.carModel,
-                category: newFilter.category,
                 fType: newFilter.fType,
                 preferredBrand: newFilter.preferredBrand,
                 actualBrand: newFilter.actualBrand,
+                supplierId: newFilter.supplierId,
                 singleCost: newFilter.singleCost
             }
 
@@ -395,7 +368,7 @@ function getDistinct(values){
 Filter.getFilterStock = () => {
     return new Bluebird(async (resolve, reject) => {
         //Declaring all variables to be returned
-        var filterC, filterS, typeF, carBrand, carModel, carYear, preferredBrand, carCategory, singleCost, actualBrand;
+        var filterC, filterS, typeF, filterPlate, preferredBrand, singleCost, actualBrand;
         //Getting all suppliers saved in database
         Supplier.findAll().then(suppliers => {
             filterS = suppliers
@@ -403,20 +376,16 @@ Filter.getFilterStock = () => {
             Filter.getStock().then(consumables => {
                 filterC = consumables;
                 //Mapping filter values to not return double values
-                carCategory = getDistinct(filterC.rows.map(val => val.category));
+                filterPlate = getDistinct(filterC.rows.map(val => val.plateNumber));
                 typeF = getDistinct(filterC.rows.map(val => val.fType));
-                carBrand = getDistinct(filterC.rows.map(val => val.carBrand));
-                carYear = getDistinct(filterC.rows.map(val => val.carYear));
-                carModel = getDistinct(filterC.rows.map(val => val.carModel));
                 preferredBrand = getDistinct(filterC.rows.map(val => val.preferredBrand));
                 actualBrand = getDistinct(filterC.rows.map(val => val.actualBrand));
                 singleCost = getDistinct(filterC.rows.map(val => val.singleCost));
 
                 //Creating variable of all need variables to return
                 var values = {
-                    consumable: filterC.rows, suppliers: filterS,filterType: typeF, carBrand: carBrand, 
-                    carModel: carModel, carYear: carYear, preferredBrand: preferredBrand, carCategory: carCategory,
-                    singleCost: singleCost, actualBrand: actualBrand
+                    consumable: filterC.rows, suppliers: filterS,filterType: typeF, plate: filterPlate, 
+                    preferredBrand: preferredBrand, singleCost: singleCost, actualBrand: actualBrand
             
                 };
 
@@ -451,13 +420,19 @@ Filter.getWithSupplier = supplierId => {
             }
         }).then(foundFilter => {
             //Adding supplier Name to filters 
-            Supplier.getSupplierNames(foundFilter).then(() => {
-                resolve(foundFilter.rows);
-            
-            }).catch(err => {
-                reject(err);
+            getVehicle(foundFilter.rows).then(() => {
+                Supplier.getSupplierNames(foundFilter).then(() => {
+                    resolve(foundFilter.rows);
+                
+                }).catch(err => {
+                    reject(err);
+    
+                });
 
-            });
+            }).catch(err=> {
+                reject(err);
+            })
+            
             
         }).catch(err => {
             reject(err);
@@ -478,23 +453,28 @@ Filter.groupSupplier = () => {
         Filter.findAll({
             //Declaring attributes to return from database
             attributes:
-              ['category', 'fType', 'actualBrand', 'carModel', 'carBrand', 'carYear', 'singleCost', 'supplierId',
+              ['fType', 'actualBrand','plateNumber', 'singleCost', 'supplierId',
               [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
             ],
 
             //Declaring how to group return values
-            group: ['category', 'fType', 'actualBrand', 'carModel', 'carBrand', 'carYear', 'singleCost', 'supplierId']
+            group: ['fType', 'actualBrand', 'plateNumber', 'singleCost', 'supplierId']
             
         }).then(async (values) => { 
             //Setting variable to return filters with their supplier names
             var result = {count: values.length, rows: values}
-            Supplier.getSupplierNames(result).then(() => {
-                resolve(result);
-
-            }).catch(err => {
-                reject(err);
-
-            });
+            getVehicle(values).then(() => {
+                Supplier.getSupplierNames(result).then(() => {
+                    resolve(result);
+    
+                }).catch(err => {
+                    reject(err);
+    
+                });
+            }).catch(err=> {
+                reject(err)
+            })
+            
            
         }).catch(err => {
             reject(err);
@@ -503,6 +483,29 @@ Filter.groupSupplier = () => {
 
     });
     
+}
+
+function getVehicle(filters) {
+    return new Bluebird((resolve, reject) => {
+        var count = 0;
+        Vehicle.getStock().then(foundVehicles => {
+            var vehicleMap = new Map();
+            foundVehicles.rows.map(vehicles => {
+                vehicleMap.set(vehicles.plate, vehicles);
+            });
+            filters.map(filter => {
+                filter.setDataValue('vehicle_data', vehicleMap.get(filter.plateNumber));
+                count++;
+
+                if(count === filters.length){
+                    resolve("Set All");
+                }
+            });
+            
+        }).catch(err => {
+            reject(err);
+        });
+    })
 }
 
 

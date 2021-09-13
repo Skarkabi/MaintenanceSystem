@@ -18,13 +18,65 @@
         </datalist>
     </div>
     <div class="form-group col required">
-        <label for="category">Vehicle Category</label>
-        <input list="vehicleCategory" name="vehicleCategory" class="form-control" required>
-        <datalist id="vehicleCategory">
-            {{#each values.filters.carCategory}}
-                <option value="{{this}}"></option>
+        <label for="filterPlate">Vehicle Information</label>
+        <input list="filterPlate" id="filterPlateValue" name="filterPlate" placeholder="Select Vehicle" class="form-control" onChange="setVehicleInfo('filter')" required>
+        <datalist id="filterPlate">
+            {{#each vehicles}}
+               <option value="{{this.vehicleData}}" data-value="{{this.plate.plate}}"></option>
             {{/each}}
         </datalist>
+        <input type="text" id="realPlateValue" name="realPlateValue" class="form-control" hidden>
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col required">
+        <label for="filterCategory">Vehicle Category</label>
+        <select type="text" name="filterCategory" id ="filterCategory"  class="form-control" disabled required="required">
+            <option value="" selected disabled></option>
+                {{#each vehicles}}
+                    <option value="{{this.plate.plate}}">{{this.plate.category}}</option>
+                {{/each}}
+                             
+        </select>
+    </div>
+    <div class="form-group col required">
+        <label for="filterCBrand">Vehicle Brand</label>
+         <select type="text" id="filterCBrand"  name="filterCBrand" class="form-control" disabled required="required">
+           <option value="" selected disabled></option>
+            {{#each vehicles}}
+                <option value="{{this.plate.plate}}">{{this.plate.brand}}</option>
+            {{/each}}
+        </select>
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col required">
+        <label for="filterCModel">Vehicle Model</label>
+         <select type = "text" id="filterCModel"  name="filterCModel" class="form-control" disabled required="required">
+            <option value="" selected disabled></option>
+            {{#each vehicles}}
+                <option value="{{this.plate.plate}}">{{this.plate.model}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <div class="form-group col required">
+        <label for="filterCYear">Vehicle Year</label>
+         <select type="text"  id="filterCYear" name="filterCYear" class="form-control" disabled required="required">
+            <option value="" selected disabled></option>
+            {{#each vehicles}}
+                <option value="{{this.plate.plate}}">{{this.plate.year}}</option>
+            {{/each}}
+        </select>
+
+    </div>
+    <div class="form-group col required" style="display: none;">
+        <label for="filterChassis">Car Chassis</label>
+         <select type="text" id="filterChassis"  name="filterChassis" class="form-control" disabled required="required">
+             <option value="" selected disabled></option>
+            {{#each vehicles}}
+                <option value="{{this.plate.plate}}">{{this.plate.chassis}}</option>
+            {{/each}}
+        </select>
     </div>
 </div>
 <div class="form-row">
@@ -43,47 +95,6 @@
         <datalist id="filterPBrand">
             {{#each values.filters.preferredBrand}}
                 <option value="{{this}}"></option>
-            {{/each}}
-        </datalist>
-    </div>
-</div>
-<div class="form-row">
-    <div class="form-group col required">
-        <label for="filterCarBrand">Vehicle Brand</label>
-        <input list="filterCarBrand" name="filterCarBrand" class="form-control" required>
-        <datalist id="filterCarBrand">
-            {{#each values.filters.carBrand}}
-                <option value="{{this}}"></option>
-            {{/each}}
-        </datalist>
-    </div>
-    <div class="form-group col required">
-        <label for="filterCarModel">Vehicle Model</label>
-        <input list="filterCarModel" name="filterCarModel" class="form-control" required>
-        <datalist id="filterCarModel">
-            {{#each values.filters.carModel}}
-                <option value="{{this}}"></option>
-            {{/each}}
-        </datalist>
-    </div>
-   
-</div>
-<div class="form-row">
-     <div class="form-group col required">
-        <label for="filterCarYear">Vehicle Year</label>
-        <input list="filterCarYear" name="filterCarYear" class="form-control" required>
-        <datalist id="filterCarYear">
-            {{#each values.filters.carYear}}
-                <option value="{{this}}"></option>
-            {{/each}}
-        </datalist>
-    </div>
-    <div class="form-group col required">
-        <label for="filterChassis">Car Chassis</label>
-         <input list="filterChassis"  name="filterChassis" class="form-control" required="required">
-         <datalist id="filterChassis">
-            {{#each values.brakes.brakeCChassis}}
-                <option value="{{this}}">{{this.chassis}}</option>
             {{/each}}
         </datalist>
     </div>

@@ -45,7 +45,7 @@
         {{{body}}}
     {{else}}
     <!-- h-100 takes the full height of the body-->
-    <div class="container-fluid h-100">
+    <div class="container-fluid h-100" id="sidebarDisplay">
         <div class="row">
             {{>sidebar}}
             <div class="col" style="padding: 0;">
@@ -60,6 +60,18 @@
                         
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div id="navBarDisplay">
+        {{>smallNavBar}}
+        <div class="container">
+            <div class="row">
+                {{!-- Page Header --}}
+                {{>pageHeader}}
+            
+                {{!-- Page Content --}}
+                {{{body}}}
             </div>
         </div>
     </div>

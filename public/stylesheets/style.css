@@ -265,6 +265,18 @@ td:empty:after {
   background: #666666;
 }
 
+@media only screen and (max-width:1400px){
+  #sidebarDisplay {
+    display:none;
+  }
+}
+
+@media not screen and (max-width:1400px){
+  #navBarDisplay {
+    display:none;
+  }
+}
+
 #vehcileMaintenanceValue {
   color: blue;
   font-weight: bold;

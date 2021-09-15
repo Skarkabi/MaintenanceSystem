@@ -177,19 +177,23 @@ h5.card-title {
 }
 
 table {
+  table-layout: fixed;
   border-collapse: collapse;
   width: 100%;
+  text-size-adjust: auto;
+  font-size: 0.86vw;
+  word-wrap:break-word;
   text-align: center;
 }
 
 table, tr, td, th {
   border: 1px solid black;
   text-transform: uppercase;
+  text-align:center;
+  
 }
 
-th {
-  vertical-align: top;
-}
+
 
 td:empty:after {
   content: "\00a0"; /* HTML entity of &nbsp; */

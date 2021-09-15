@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <form action="/" method="POST" id="displayMainForm">
 <div class="col-md-12">
     {{!-- Action Buttons --}}
@@ -146,7 +147,62 @@
 </form>
 
 <script type="text/javascript">
+    function split( val ) {
+        return val.split( /,\s*/ );
+    }
+
+    function extractLast( term ) {
+        return split( term ).pop();
+    }
+    $(document).ready(function(){
+        var items = [ 
+        'A/C SYSTEM', 'BATTERY', 'BREAKING SYSTEM', 'CAR BODY', 'COOLING SYSTEM',
+        'ELECTRICAL SYSTEM',  'ENGINE', 'EXHAUST SYSTEM', 'IGNITION SYSTEM', 'INTERIOR',
+        'OIL SERVICE', 'RECOVERY', 'SOUND SYSTEM', 'SUSPENSION',  'TRANSMISSION', 'TYRES'
+        ];
+        
+        $( "#discription" )
+        .autocomplete({
+             minLength: 0,
+             source: function( request, response ) {
+                 response( $.ui.autocomplete.filter(
+                     items, extractLast( request.term ) ) );
+             },
+             focus: function() {
+                 return false;
+             },
+            select: function( event, ui ) {
+                var terms = split( this.value );
+                terms.pop();
+                terms.push( ui.item.value );
+                terms.push( "" );
+                this.value = terms.join( ", " );
+                return false;
+            }
+        });
+    })
+     function getUnitPrice(bill,quantity,category, change){
+       var x = document.getElementById(bill).value;
+        var y = document.getElementById(quantity).value;
+        if(change){
+            x = (parseFloat(x) + (parseFloat(x) *0.05)).toFixed(2)
+            document.getElementById(bill).value = x
+        }
+        document.getElementById(category).value =  parseFloat(x/y).toFixed(2);
+    }
+    function getMaterialRequestUnitPrice(change){
+        var x = document.getElementById('receivedQuantity').value
+        var y = document.getElementById('receivedPrice').value
+        if (change){
+            y = (parseFloat(y) + (parseFloat(y) * 0.05)).toFixed(2)
+             document.getElementById('receivedPrice').value = y
+        }
+        
+        document.getElementById('unitPrice').value = parseFloat(y/x).toFixed(2)
+       
+    }
     function setTable(tableName){
+
         document.getElementById("tableSection").innerHTML = "";
         if(tableName === "material"){
             document.getElementById("tableSection").insertAdjacentHTML("afterbegin", `{{>mainMaterialTable}}`);
@@ -165,7 +221,7 @@
    function multiplyTable(x, y){
        return x*y;
    }
-   function requestModel(materialRequest, item, mainId){
+   function requestModel(materialRequest, item, mainId, itemName, pendingItemQuantity){
         var modal = document.getElementById("myModal");
         var mContent = document.getElementById("mContent")
         // Get the button that opens the modal
@@ -181,6 +237,8 @@
                                 <input type="text" id="mainId" name="mainId" class="form-control" value="${mainId}">
                             </div>`
         )
+        document.getElementById('receiveMaterial').value = itemName.toUpperCase()
+        document.getElementById('receivedPendingQuantity').value = pendingItemQuantity
         span.onclick = function() {
             modal.style.display = "none";
             mContent.innerHTML='';
@@ -223,6 +281,13 @@
             }
         }
     }
+
+    $(document).ready(function () {
+    $('#filterable-table').DataTable({
+        responsive: true,
+        pageLength: 10,
+    });
+});
 
     function changeToNull(){
         document.getElementById("category").value = "";
@@ -418,5 +483,11 @@
         })
         
     })
+
+    function setSupplierName(){
+        var supplierValue = document.getElementById('supplierListName').value
+        var value2send = document.querySelector(`#supplierList option[value='${supplierValue}']`).dataset.value;
+        document.getElementById('receivedSupplier').value = value2send
+    }
 
 </script>

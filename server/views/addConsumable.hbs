@@ -165,9 +165,13 @@
         
     })
 
-    function getUnitPrice(bill,quantity,category){
+    function getUnitPrice(bill,quantity,category, change){
         var x = document.getElementById(bill).value;
         var y = document.getElementById(quantity).value;
+        if(change){
+            x = (parseFloat(x) + (parseFloat(x) *0.05)).toFixed(2)
+            document.getElementById(bill).value = x
+        }
         document.getElementById(category).value =  parseFloat(x/y).toFixed(2);
     }
 

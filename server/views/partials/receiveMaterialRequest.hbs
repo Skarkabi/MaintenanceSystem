@@ -1,17 +1,40 @@
 <div class="form-row">
-    <div class="form-group col required">
-        <label for="receivedQuantity">Quantity</label>
-        <input type="number" id="receivedQuantity" name="receivedQuantity" class="form-control" required>
+     <div class="form-group col required">
+        <label for="supplierList">Supplier</label>
+        <input list="supplierList" placeholder="Choose One" id="supplierListName" name="supplierList" class="form-control" onchange="setSupplierName()"required>
+        <datalist id="supplierList">
+            {{#each consumableTable.supplier}}
+                <option value="{{this.name}}" data-value="{{this.id}}"></option>
+            {{/each}}  
+        </datalist>
+         <input type="text" id="receivedSupplier" name="receivedSupplier" class="form-control" hidden>
+             
     </div>
     <div class="form-group col required">
-        <label for="receivedPrice">Price</label>
-        <input type="number" id="receivedPrice" name="receivedPrice" class="form-control" required>     
+        <label for="receiveMaterial">Material</label>
+        <input type="text" id="receiveMaterial" name="receiveMaterial" class="form-control" required readonly>
+    </div>
+</div>
+<div class="form-row">
+     <div class="form-group col required">
+        <label for="receivedQuantity">Quantity Received</label>
+        <input type="number" id="receivedQuantity" name="receivedQuantity" class="form-control" onchange="getMaterialRequestUnitPrice(false)" required>
+    </div>
+    
+     <div class="form-group col required">
+        <label for="receivedPendingQuantity">Pending Quantity</label>
+        <input type="number" id="receivedPendingQuantity" name="receivedPendingQuantity" class="form-control" readonly>
+    </div>
+    
+</div>
+<div class="form-row">
+    <div class="form-group col required">
+        <label for="receivedPrice">Total Price (VAT incl 5%)</label>
+        <input type="number" id="receivedPrice" name="receivedPrice" class="form-control" onchange="getMaterialRequestUnitPrice(true)" required>     
     </div>
     <div class="form-group col required">
-        <label for="receivedSupplier">Supplier</label>
-        <select type="text" id="receivedSupplier" name="receivedSupplier" class="form-control" required>
-            <option value="1">1</option> 
-        </select>    
+        <label for="unitPrice">Unit Price (VAT incl 5%)</label>
+        <input type="number" id="unitPrice" name="unitPrice" class="form-control" required readonly>     
     </div>
 </div>
 <div class="form-row">

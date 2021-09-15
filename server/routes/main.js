@@ -91,7 +91,6 @@ router.post('/create', (req, res, next) => {
 router.get('/:req', (req, res, next) => {
     
     Consumable.getFullStock().then(consumablesToSelect => {
-        
         MaintenanceOrder.getByReq(req.params.req).then(found => {
            
             var materialRequests = [];
@@ -118,8 +117,7 @@ router.get('/:req', (req, res, next) => {
                
             })
             let x = (materialRequests) => materialRequests.filter((v,i) => materialRequests.indexOf(v) === i)
-            console.log(x(materialRequests));
-            console.log(consumablesToSelect.supplier);
+            console.log(found.consumable_data);
             Consumable.getDistinctConsumableValues().then(values => {
                 res.render('displayMain', {
                     title: (`Maintanence Request # ${found.req}`),

@@ -100,21 +100,24 @@
     </div>
 </div>
 <div class="form-row">
-    <div class="for-group col required">
-        <label for="filterBillPrice" >Total Price (VAT)</label>
-        <input type="number" placeholder = "0" id="filterBillPrice" name="filterBillPrice" class="form-control" step="0.01" required="required" onchange="getUnitPrice('filterBillPrice', 'quantityFilters', 'filterPrice')">
-    </div>
     <div class="form-group col required">
         <label for="quantityFilters">Filter Quantity</label>
-        <input type="number" id="quantityFilters" name="quantityFilters" class="form-control" onchange="getUnitPrice('filterBillPrice', 'quantityFilters', 'filterPrice')" required>
+        <input type="number" id="quantityFilters" name="quantityFilters" class="form-control" onchange="getUnitPrice('filterBillPrice', 'quantityFilters', 'filterPrice', false)" required>
     </div>
-    <div class="form-group col required">
-        <label for="filterPrice">Filter Price Per Item</label>
-        <input type="number" id="filterPrice" name="filterPrice" class="form-control" step="0.01"  onchange="getUnitPrice('filterBillPrice', 'quantityFilters', 'filterPrice')" readonly required>
-    </div>
-    <div class="form-group col required">
+     <div class="form-group col required">
         <label for="minFilterQuantity">Filter Minimum Quantity</label>
         <input type="number" id="minFilterQuantity" name="minFilterQuantity" class="form-control" required>
+    </div>
+</div>
+<div class="form-row">
+    <div class="for-group col required">
+        <label for="filterBillPrice" >Total Price (VAT incl 5%)</label>
+        <input type="number" placeholder = "0" id="filterBillPrice" name="filterBillPrice" class="form-control" step="0.01" required="required" onchange="getUnitPrice('filterBillPrice', 'quantityFilters', 'filterPrice', true)">
+    </div>
+    
+    <div class="form-group col required">
+        <label for="filterPrice">Filter Price Per Item (VAT incl 5%)</label>
+        <input type="number" id="filterPrice" name="filterPrice" class="form-control" step="0.01"  onchange="getUnitPrice('filterBillPrice', 'quantityFilters', 'filterPrice', true)" readonly required>
     </div>
 </div>
 <div class="form-row">

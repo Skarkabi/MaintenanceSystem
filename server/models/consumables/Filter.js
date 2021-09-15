@@ -93,7 +93,7 @@ const Filter = sequelize.define('filter_stocks', mappings, {
     {
         name: 'filter_plateNumber_index',
         method: 'BTREE',
-        fields: ['plate'],
+        fields: ['plateNumber'],
     },
     
     {

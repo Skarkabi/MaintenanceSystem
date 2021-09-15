@@ -16,8 +16,8 @@
                 <th scope="col">Unit Price</th>
                 <th scope="col">Total Price</th>
                  {{#if (isdefined page "view")}}
-                <th scope="brake">Supplier</th>
-                <th scope="col"  style="width: 15%;">Actoin</th>
+                <th scope="col">Supplier</th>
+                <th scope="col">Actoin</th>
                 {{else}}
                 <th scope="col">Invoice #</th>
                 <th scope="col">Actoin</th>
@@ -39,7 +39,7 @@
                     <td>{{this.singleCost}}</td>
                     <td>{{multiply this.singleCost this.quantity}}</td>
                     <td><a href="/consumables/brake/{{this.supplierId}}">{{this.supplierName}}</a></td>
-                    <td><a href="/consumables/brake/{{this.supplierId}}" style="padding-right: 25px;">View <i class="fas fa-external-link-alt"></i></a></td>
+                    <td><a href="/consumables/brake/{{this.supplierId}}">View <i class="fas fa-external-link-alt"></i></a></td>
                    
                 </tr>
             {{/each}}
@@ -62,7 +62,7 @@
                     <td>{{this.quotationNumber}}</td>
                      <td>
                         <div class="input-group-append">
-                            <a href="download/{{this.quotationNumber}}" style="padding-right: 25px;"><i class="fas fa-download"></i></a>
+                            <a href="download/{{this.quotationNumber}}"><i class="fas fa-download"></i></a>
                             {{#if (isdefined this.quotationNumber "N/A")}}
                             <a href="/consumables/brake/view/NotAvilable"><i class="fas fa-external-link-alt"></i></a>
                             {{else}}

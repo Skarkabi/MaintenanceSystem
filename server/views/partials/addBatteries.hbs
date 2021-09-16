@@ -21,7 +21,7 @@
 <div class="form-row ">
     <div class="for-group col required">
         <label for="quantityBatteries" >Quantity</label>
-        <input type="number" placeholder = "0" id="quantityBatteries" name="quantityBatteries" class="form-control" required onchange="getUnitPrice('batteryBillPrice', 'quantityBatteries', 'batteryPrice', false)">
+        <input type="number" placeholder = "0" id="quantityBatteries" name="quantityBatteries" class="form-control" required onchange="getUnitPrice('batteryBillPrice', 'quantityBatteries', 'batteryPrice', false); addBatterySerial();">
     </div>
     <div class="form-group col required">
         <label for="quantityMinBatteries">Minimum Quantity</label>
@@ -51,16 +51,7 @@
         </div>
     </div>
 </div>
-<div class="form-row">
-    <div class="for-group col required">
-        <label for="quotation">Serial Number</label>
-        <input type="text" placeholder = "0" id="serialNumber" name="serialNumber" class="form-control" required>
-    </div>
-    <div class="form-group col">
-        <label for="quotation">Select a File</label>
-        <div class="custom-file">
-            <input type="file" class="custom-file-input" id="warantiyCard" name="warantiyCard" accept="application/pdf, application/pdf">
-            <label for="warantiyCard" class="custom-file-label">No File Choosen</label>
-        </div>
-    </div>
+<div id="startSpot" name="startSpot">
+
 </div>
+

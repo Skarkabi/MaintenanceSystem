@@ -109,8 +109,40 @@
         })
         if(valid){
             document.getElementById("mainForm").action = "/consumables/add/" + document.getElementById("category").value;
+            
             if(document.getElementById("category").value === "battery"){
                 e.preventDefault();
+                var serials = [];
+                var wFiles = [];
+                for(var i =0; i<document.getElementsByName('serialNumber').length; i++){
+                    serials.push(document.getElementsByName('serialNumber')[i].value)
+                    wFiles.push(document.getElementsByName('warantiyCard')[i].value)
+                }
+                 $.ajax({
+                            url: `/consumables/add/${document.getElementById("category").value}`,
+                            type: 'POST',
+                            data: {
+                                "batSpec": document.getElementById('batterySpec').value,
+                                "batteriesSupplierName": document.getElementById('batteriesSupplierName').value,
+                                "quantityBatteries": document.getElementById('quantityBatteries').value,
+                                "quantityMinBatteries": document.getElementById('quantityMinBatteries').value,
+                                "batteryPrice": document.getElementById('batteryPrice').value,
+                                "quotation": document.getElementById('quotation').value,
+                                "warantiyCard": wFiles,
+                                "serialNumber": serials,
+                              
+
+                            },
+                            success: function(data) {
+                                window.location.href = `/consumables/add/sucess/${document.getElementById('quantityBatteries').value}`;
+                            },
+                            error: function(err){
+                                console.log('error happened:' + JSON.stringify(err));
+                            }
+                
+                        })
+                }
+                        /*
                 var firstReader = new FileReader();
                 var reader = new FileReader();
                 var invoiceFile = null, warantiyCardFile = null;
@@ -132,34 +164,13 @@
                         if(document.getElementById('warantiyCard').files.length > 0){
                             warantiyCardFile = reader.result
                         }
-                        $.ajax({
-                            url: `/consumables/add/${document.getElementById("category").value}`,
-                            type: 'POST',
-                            data: {
-                                "batSpec": document.getElementById('batterySpec').value,
-                                "batteriesSupplierName": document.getElementById('batteriesSupplierName').value,
-                                "quantityBatteries": document.getElementById('quantityBatteries').value,
-                                "quantityMinBatteries": document.getElementById('quantityMinBatteries').value,
-                                "batteryPrice": document.getElementById('batteryPrice').value,
-                                "quotation": document.getElementById('quotation').value,
-                                "invoiceFile": invoiceFile,
-                                "serialNumber": document.getElementById('serialNumber').value,
-                                "warantiyCard": warantiyCardFile
-                            },
-                            success: function(data) {
-                                window.location.href = `/consumables/add/sucess/${document.getElementById('quantityBatteries').value}`;
-                            },
-                            error: function(err){
-                                console.log('error happened:' + JSON.stringify(err));
-                            }
-                
-                        })
+                       
                         
                     }
                 
                 }
             
-            }
+            }*/
 
         } 
         
@@ -173,6 +184,16 @@
             document.getElementById(bill).value = x
         }
         document.getElementById(category).value =  parseFloat(x/y).toFixed(2);
+    }
+
+    function addBatterySerial(){
+        document.getElementById("startSpot").innerHTML = ''
+        var count = 0;
+        for(var i=0; i <  document.getElementById('quantityBatteries').value; i++){
+            count = i;
+            document.getElementById("startSpot").insertAdjacentHTML("beforeend",`<div id="addItemsSection-${count}" class="form-row"></div>`);
+            document.getElementById(`addItemsSection-${count}`).insertAdjacentHTML("beforeend", `<div class="form-group col required" style=""><p>item ${i+1}<p> {{>addBatterySerial}}<div>`);
+        }
     }
 
     function setVehicleInfo(category){

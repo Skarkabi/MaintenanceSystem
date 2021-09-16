@@ -99,7 +99,9 @@ router.get('/add/sucess/:q', (req, res, next) => {
  * Express route to add a new battery in database
  * Route takes battery and quotation data from user input 
  */
-router.post('/add/battery', (req, res, next) => {
+router.post('/add/battery',(req, res, next) => {
+    console.log(req.body);
+    /*
     var quotationNumber;
     if(!req.body.quotation || req.body.quotation === ""){
         quotationNumber = "N/A";
@@ -122,50 +124,55 @@ router.post('/add/battery', (req, res, next) => {
 
     Battery.findOne({where:newBattery}).then(found => {
         newBattery.consumanbleCategory = "battery";
-        newBattery.quantity = req.body.quantityBatteries
+        newBattery.quantity = 1
         if(found){
             newBattery.id = found.id
 
         }else{
             newBattery.id = 0
         }
-        //Adding new battery to database
-        Consumable.updateConsumable(newBattery, "add").then(output =>{
-            console.log("truing to add");
-            //Add quotation info to database if quotation was uploaded
-            if(req.body.warantiyCard){
-                var output =req.body.warantiyCard;
-                output = output.replace("data:application/pdf;base64,", "");
-                fs.writeFileSync(`./server/uploads/warantityCards/${req.body.serialNumber}.pdf`, output, 'base64')
+        for(var i = 0; i < req.body.quantityBatteries; i++){
+            //Adding new battery to database
+            Consumable.updateConsumable(newBattery, "add").then(output =>{
+                console.log("truing to add");
+                //Add quotation info to database if quotation was uploaded
+                if(req.body.warantiyCard[i]){
+                    var output =req.body.warantiyCard[i];
+                    output = output.replace("data:application/pdf;base64,", "");
+                    fs.writeFileSync(`./server/uploads/warantityCards/${req.body.serialNumber}.pdf`, output, 'base64')
             
-            }
-            if(req.body.invoiceFile){
-                var invoice =req.body.invoiceFile;
-                invoice = invoice.replace("data:application/pdf;base64,", "");
-                fs.writeFileSync(`./server/uploads/${req.body.quotation}.pdf`, invoice, 'base64')
-                Quotation.addQuotation(newQuotation);
-            }
+                }
+                if(req.body.invoiceFile && i === 0){
+                    var invoice =req.body.invoiceFile;
+                    invoice = invoice.replace("data:application/pdf;base64,", "");
+                    fs.writeFileSync(`./server/uploads/${req.body.quotation}.pdf`, invoice, 'base64')
+                    Quotation.addQuotation(newQuotation);
+                }
+
+                if(i === req.body.quantityBatteries){
+                    req.flash("success_msg", output);
+                    req.session.save(function() {
+                        res.redirect("/consumables/add");
+                    });
         
-            req.flash("success_msg", output);
-            req.session.save(function() {
-                res.redirect("/consumables/add");
+                }
+
+            }).catch(err =>{
+                console.log(`failed to add ${err}`);
+                req.flash('error_msg', JSON.stringify(err));
+                req.session.save(function() {
+                    res.redirect("/consumables/add");
+                });
             });
-        
-           
-        }).catch(err =>{
-            console.log(`failed to add ${err}`);
-            req.flash('error_msg', JSON.stringify(err));
-            req.session.save(function() {
-                res.redirect("/consumables/add");
-            });
-    
-        });
+
+        }
 
     }).catch(err => {
         console.log(`Thsi is why ${err}` )
     })
-
+*/
 });
+
 
 /**
  * Express route to add a new brake in database

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { reject } from 'lodash';
 import Bluebird from 'bluebird';
 import Sequelize from 'sequelize';
 import sequelize from '../mySQLDB';
@@ -6,6 +6,7 @@ import Vehicle from './Vehicle';
 import MaintenanceConsumables from './consumables/MaintenanceConsumables';
 import MaintenanceEmployees from './consumables/MaintenanceEmployee';
 import MaterialRequest from './consumables/MaterialRequest';
+import User from './User';
 
 const mappings = {
     req: {
@@ -22,6 +23,13 @@ const mappings = {
     plate: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false
+    },
+    user_id:{
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false
+    },
+    user_data:{
+        type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.JSON, ['user_data']),
     },
     material_request_data:{
         type: Sequelize.DataTypes.VIRTUAL(Sequelize.DataTypes.JSON, ['material_request_data']),
@@ -90,6 +98,11 @@ const MaintenanceOrder = sequelize.define('maintenance_orders', mappings, {
             fields: ['division']
         },
         {
+            name: 'maintenance_user_id_index',
+            method: 'BTREE',
+            fields: ['user_id']
+        },
+        {
             name: 'maintenance_order_plate_index',
             method: 'BTREE',
             fields: ['plate']
@@ -141,13 +154,20 @@ MaintenanceOrder.getOrders = () => {
             if(orders.length !== 0){
             getVehicle(orders).then( () => {
                 getAllMaterialRequests(orders).then(() => {
-                    setAllStatus(orders).then(() => {
-                        resolve(orders);
-
+                    getAllUsers(orders).then(() => {
+                        setAllStatus(orders).then(() => {
+                            console.log(orders);
+                            resolve(orders);
+                            
+                        }).catch(err => {
+                            reject(err);
+    
+                        })
                     }).catch(err => {
                         reject(err);
-
+    
                     })
+                    
 
                 }).catch(err => {
                     reject(err);
@@ -290,6 +310,8 @@ MaintenanceOrder.addOrder = order => {
     return new Bluebird((resolve, reject) => {
         MaintenanceOrder.create(order).then(() => {
             resolve("New Order added");
+        }).catch(err => {
+            reject(`Order Could not be Added to The System`)
         })
     })
 }
@@ -379,6 +401,23 @@ function getAllConsumables(orders){
             })
         }))
        
+    })
+}
+
+function getAllUsers(orders){
+    return new Bluebird(async (resolve, reject) => {
+        var count = 0;
+        await Promise.all(orders.map(o => {
+            User.getUserById(o.user_id).then(user => {
+                o.setDataValue('user_data', user)
+
+                count++;
+              
+                if(count === orders.length){
+                    resolve("done");
+                }
+            })
+        }))
     })
 }
 

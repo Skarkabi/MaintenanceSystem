@@ -6,9 +6,23 @@
 $(document).ready(function () {
     $('#filterable-table').DataTable({
         responsive: true,
+        pageLength: 25,
+    });
+    $('#filterable-table-consumable').DataTable({
+        responsive: true,
         pageLength: 10,
     });
+    $('#filterable-table-request').DataTable({
+        responsive: true,
+        pageLength: 10,
+    });
+    $('#filterable-table-job-batteries').DataTable({
+        responsive: true,
+        pageLength: 10,
+    });
+    
 });
+
 
 
 

@@ -12,9 +12,10 @@
             <tr>
                 <th scope="col" rowspan="2" style="vertical-align:middle;">#</th>
                 <th scope="col" rowspan="2" style="vertical-align:middle;">Date</th>
+                <th scope="col" rowspan="2" style="vertical-align:middle;">Created By</th>
                 <th scope="col" rowspan="2" style="vertical-align:middle;">Req#</th>
                 <th scope="col" rowspan="2" style="vertical-align:middle;">Division</th>
-                <th scope="col" colspan="5" style="vertical-align:middle;">Vehicle</th>
+                <th scope="col" colspan="2" style="vertical-align:middle;">Vehicle</th>
                 <th scope="col" rowspan="2" style="vertical-align:middle;">Status</th>
                 <th scope="col" rowspan="2" style="vertical-align:middle;">Maintenance Discription</th>
                 <th scope="col" rowspan="2" style="vertical-align:middle;">Remarks</th>
@@ -33,13 +34,14 @@
             <tr>
                 <td><a href="/maintanence/{{this.req}}">{{counter @index}}</a></td>
                 <td><a href="/maintanence/{{this.req}}">{{this.createdAt}}</a></td>
+                <td><a href="/maintanence/{{this.req}}">{{this.user_data.username}}</a></td>
                 <td><a href="/maintanence/{{this.req}}">{{this.req}}</a></td>
                 <td><a href="/maintanence/{{this.req}}">{{this.division}}</a></td>
                 <td><a href="/maintanence/{{this.req}}">{{this.plate}}</a></td>
-                <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.category}}</a></td>
+                <td hidden><a href="/maintanence/{{this.req}}">{{this.vehicle_data.category}}</a></td>
                 <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.brand}}</a></td>
-                <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.model}}</a></td>
-                <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.year}}</a></td>
+                <td hidden><a href="/maintanence/{{this.req}}">{{this.vehicle_data.model}}</a></td>
+                <td hidden><a href="/maintanence/{{this.req}}">{{this.vehicle_data.year}}</a></td>
                 {{#if (isdefined this.status "NOT STARTED")}}
                 <td bgcolor="red" style="color:white; font-weight:bold">NOT STARTED</td>
                 {{/if}}

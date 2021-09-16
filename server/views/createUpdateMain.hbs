@@ -64,7 +64,8 @@
                 <div class="form-row">
                      <div class="form-group col ">
                         <label for="employee">Created By</label>
-                        <input list="employee" name="employee" value="{{mainUser}}" class="form-control" readonly>
+                        <input type="text" name="employeeName" id="employeeName" value="{{mainUser.firstName}} {{mainUser.lastName}}" class="form-control" readonly>
+                        <input type="text" name="employeeId" id="employeeId" value="{{mainUser.id}}" class="form-control" hidden readonly>
                     </div>
                     <div class="form-group col ">
                         <label for="type">Maintanence Type</label>

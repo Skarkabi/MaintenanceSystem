@@ -27,7 +27,7 @@ const server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
- var serv = app.listen(port,"192.168.0.95");
+ var serv = app.listen(port,process.env.DB_HOST);
 server.on('error', onError);
 server.on('listening', onListening);
 

@@ -50,7 +50,7 @@ router.get('/create', (req,res,next) => {
                 vehicles: vehicles,
                 action: "/maintanence/create",
                 msgType: req.flash(),
-                mainUser: (mainUser.firstName + " " + mainUser.lastName)
+                mainUser: mainUser
         
             });
         })
@@ -78,11 +78,19 @@ router.post('/create', (req, res, next) => {
         req: req.body.reqNumber,
         division: "OPERATIONS",
         plate: req.body.plate,
-        discription: req.body.discription
+        discription: req.body.discription,
+        user_id: req.body.employeeId
     }
     MaintenanceOrder.addOrder(newOrder).then(output => {
         req.flash('success_msg', output);
-        res.redirect(`back`);
+        req.session.save(function() {
+            res.redirect(`back`);
+        })
+    }).catch(err => {
+        req.flash('error_msg', err);
+        req.session.save(function() {
+            res.redirect("back");
+        });
     })
 })
 /**
@@ -107,7 +115,6 @@ router.get('/:req', (req, res, next) => {
                
                 
             }
-            console.log(found.consumable_data);
             found.consumable_data.map(materialRequest => {
                 if(materialRequest.consumable.materialRequestNumber && materialRequest.consumable.materialRequestNumber.search("MWS") === 0){
 
@@ -117,7 +124,6 @@ router.get('/:req', (req, res, next) => {
                
             })
             let x = (materialRequests) => materialRequests.filter((v,i) => materialRequests.indexOf(v) === i)
-            console.log(found.consumable_data);
             Consumable.getDistinctConsumableValues().then(values => {
                 res.render('displayMain', {
                     title: (`Maintanence Request # ${found.req}`),

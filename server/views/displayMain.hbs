@@ -13,7 +13,7 @@
         <a href="/users/update/{{existingUser._id}}" role="button" class="btn btn-outline-dark" id="update"><i class="far fa-edit" aria-hidden="true"></i> Update</a>
         {{/if}}
     </div>
-    <body onload="setTable('material');">
+    <body onload="setTable('material')">
         <div class="section-wrapper">
             <div class="section-title">
                 <div class="row">
@@ -139,12 +139,34 @@
                 </div>
                 <hr class="my-3">
             </div>
-            <div class="section-content" id="tableSection">
+            <div class="section-content">
+                <div id="materialTableSection">
+                    {{>mainMaterialTable}}
+                    <div id="consumableModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <div id="consumableContent"></div>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="requestTableSection">
+                    {{>mainMaterialRequestTable}}
+                    <div id="requestModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <div id="requestContent"></div>
+
+                        </div>
+                    </div>
+                </div>
+                  <!-- Modal content -->
             </div>
         </div>
     </body>
 </div>
 </form>
+
 
 <script type="text/javascript">
     function split( val ) {
@@ -202,17 +224,32 @@
        
     }
     function setTable(tableName){
+        if(tableName==="material"){
+            document.getElementById('materialTableSection').style.display = 'block'
+            document.getElementById('requestTableSection').style.display = 'none'
+        }else if(tableName === "materialRequest"){
+            document.getElementById('materialTableSection').style.display = 'none'
+            document.getElementById('requestTableSection').style.display = 'block'
+        }
+    }
+    
 
-        document.getElementById("tableSection").innerHTML = "";
+    /*
+    function setTable(tableName){
+
         if(tableName === "material"){
-            document.getElementById("tableSection").insertAdjacentHTML("afterbegin", `{{>mainMaterialTable}}`);
+            $(document).ready(function(){
+                $("#tableSection").html(`{{>mainMaterialTable}}`)
+            })
+            
 
         }else if(tableName === "materialRequest"){
-            document.getElementById("tableSection").insertAdjacentHTML("afterbegin", `{{>mainMaterialRequestTable}}`);
+            document.getElementById("tableSection").innerHTML = `{{>mainMaterialRequestTable}}`;
 
         }
         
     }
+    */
 
     function changeColor(elementId){
         document.getElementById(elementId).style = "color:blue";
@@ -222,8 +259,8 @@
        return x*y;
    }
    function requestModel(materialRequest, item, mainId, itemName, pendingItemQuantity){
-        var modal = document.getElementById("myModal");
-        var mContent = document.getElementById("mContent")
+        var modal = document.getElementById("requestModal");
+        var mContent = document.getElementById("requestContent")
         // Get the button that opens the modal
         var btn = document.getElementById("create-new");
         // Get the <span> element that closes the modal
@@ -251,10 +288,11 @@
             }
         }
    }
+
     function test(tableName){
         // Get the modal
-        var modal = document.getElementById("myModal");
-        var mContent = document.getElementById("mContent")
+        var modal = document.getElementById(`${tableName}Modal`);
+        var mContent = document.getElementById(`${tableName}Content`)
         // Get the button that opens the modal
         var btn = document.getElementById("create-new");
         // Get the <span> element that closes the modal
@@ -281,13 +319,6 @@
             }
         }
     }
-
-    $(document).ready(function () {
-    $('#filterable-table').DataTable({
-        responsive: true,
-        pageLength: 10,
-    });
-});
 
     function changeToNull(){
         document.getElementById("category").value = "";
@@ -316,9 +347,12 @@
         }else if(category.value === "other"){
             document.getElementById("addSection").insertAdjacentHTML("afterbegin", `{{>addOther}}`);
             document.getElementById("eOrNSelect").insertAdjacentHTML("beforeend", `<label for="eOrN"> Existing/New </label> <select type="text" id="eOrN" name="eOrN" class="form-control" onChange='fromStockOrNew()'> <option value="new"> New </option><option value="existing"> Existing </option> </select>`);
-           
-            
+
         }
+        $('#filterable-table').DataTable({
+            responsive: true,
+            pageLength: 10,
+        });
         
     }
 
@@ -326,6 +360,10 @@
         document.getElementById("addSection").innerHTML = '';
         if(document.getElementById("eOrN").value === "existing"){
             document.getElementById("addSection").insertAdjacentHTML("afterbegin",`{{>jobOthers}}`);
+            $('#filterable-table').DataTable({
+                responsive: true,
+                pageLength: 10,
+            });
         }else if(document.getElementById("eOrN").value === "new"){
             document.getElementById("addSection").insertAdjacentHTML("afterbegin", `{{>addOther}}`);
         }

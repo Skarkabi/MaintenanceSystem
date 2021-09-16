@@ -214,7 +214,7 @@
     }
     function getMaterialRequestUnitPrice(change){
         var x = document.getElementById('receivedQuantity').value
-        var y = document.getElementById('receivedPrice').value
+        var y = parseFloat(document.getElementById('receivedPrice').value)
         if (change){
             y = (parseFloat(y) + (parseFloat(y) * 0.05)).toFixed(2)
              document.getElementById('receivedPrice').value = y

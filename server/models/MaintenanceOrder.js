@@ -156,7 +156,6 @@ MaintenanceOrder.getOrders = () => {
                 getAllMaterialRequests(orders).then(() => {
                     getAllUsers(orders).then(() => {
                         setAllStatus(orders).then(() => {
-                            console.log(orders);
                             resolve(orders);
                             
                         }).catch(err => {

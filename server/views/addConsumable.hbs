@@ -102,6 +102,22 @@
         
     }
 
+    function readFileAsText(file){
+        return new Promise(function(resolve,reject){
+            let fr = new FileReader();
+
+            fr.onload = function(){
+                resolve(fr.result);
+            };
+
+            fr.onerror = function(){
+                reject(fr);
+            };
+
+            fr.readAsDataURL(file);
+        });
+    }
+
     $('#submit').click(function(e){
         let valid = true;
         $('[required]').each(function() {
@@ -113,35 +129,65 @@
             if(document.getElementById("category").value === "battery"){
                 e.preventDefault();
                 var serials = [];
+                var warantiyCardFile = [];
                 var wFiles = [];
                 for(var i =0; i<document.getElementsByName('serialNumber').length; i++){
                     serials.push(document.getElementsByName('serialNumber')[i].value)
-                    wFiles.push(document.getElementsByName('warantiyCard')[i].value)
+                    
                 }
-                 $.ajax({
-                            url: `/consumables/add/${document.getElementById("category").value}`,
-                            type: 'POST',
-                            data: {
-                                "batSpec": document.getElementById('batterySpec').value,
-                                "batteriesSupplierName": document.getElementById('batteriesSupplierName').value,
-                                "quantityBatteries": document.getElementById('quantityBatteries').value,
-                                "quantityMinBatteries": document.getElementById('quantityMinBatteries').value,
-                                "batteryPrice": document.getElementById('batteryPrice').value,
-                                "quotation": document.getElementById('quotation').value,
-                                "warantiyCard": wFiles,
-                                "serialNumber": serials,
-                              
+                var readers = [];
+                var invoiceFile = null;
+                if(document.getElementById('upload').files.length > 0){
+                    console.log("In")
+                    readFileAsText(document.getElementById('upload').files[0]).then(outputFile => {
+                        invoiceFile = outputFile;
+                    })
+                }
+                console.log("out");
+                console.log(invoiceFile);
+                console.log("fuck");
+                for(var i = 0; i < parseInt(document.getElementById('quantityBatteries').value); i++){
+                    console.log("Why")
+                    var wFile = null;
+                    console.log(document.getElementById(`warantiyCard-${i}`).files.length )
+                    if(document.getElementById(`warantiyCard-${i}`).files.length > 0){
+                        console.log("Please")
+                        var wFile = new Blob();
+                        wFile = document.getElementById(`warantiyCard-${i}`).files[0]
+                        readers.push(readFileAsText(wFile))
+                    }
 
-                            },
-                            success: function(data) {
-                                window.location.href = `/consumables/add/sucess/${document.getElementById('quantityBatteries').value}`;
-                            },
-                            error: function(err){
-                                console.log('error happened:' + JSON.stringify(err));
-                            }
-                
-                        })
                 }
+
+                Promise.all(readers).then((values) => {
+                            $.ajax({
+                                    url: `/consumables/add/${document.getElementById("category").value}`,
+                                    type: 'POST',
+                                    data: {
+                                    "batSpec": document.getElementById('batterySpec').value,
+                                    "batteriesSupplierName": document.getElementById('batteriesSupplierName').value,
+                                    "quantityBatteries": document.getElementById('quantityBatteries').value,
+                                    "quantityMinBatteries": document.getElementById('quantityMinBatteries').value,
+                                    "batteryPrice": document.getElementById('batteryPrice').value,
+                                    "quotation": document.getElementById('quotation').value,
+                                    "warantiyCard": values,
+                                    "serialNumber": serials,
+                                    "invoiceNumber": document.getElementById('quotation').value,
+                                    "invoiceFile": invoiceFile
+
+                                    },
+                                    success: function(data) {
+                                        window.location.href = `/consumables/add/sucess/${document.getElementById('quantityBatteries').value}`;
+                                    },
+                                    error: function(err){
+                                        console.log('error happened:' + JSON.stringify(err));
+                                    }
+                
+                                })
+                        })
+
+                 
+            }
                         /*
                 var firstReader = new FileReader();
                 var reader = new FileReader();
@@ -176,6 +222,7 @@
         
     })
 
+
     function getUnitPrice(bill,quantity,category, change){
         var x = document.getElementById(bill).value;
         var y = document.getElementById(quantity).value;
@@ -192,7 +239,21 @@
         for(var i=0; i <  document.getElementById('quantityBatteries').value; i++){
             count = i;
             document.getElementById("startSpot").insertAdjacentHTML("beforeend",`<div id="addItemsSection-${count}" class="form-row"></div>`);
-            document.getElementById(`addItemsSection-${count}`).insertAdjacentHTML("beforeend", `<div class="form-group col required" style=""><p>item ${i+1}<p> {{>addBatterySerial}}<div>`);
+            document.getElementById(`addItemsSection-${count}`).insertAdjacentHTML("beforeend", `<div class="form-group col required" style=""><p>item ${i+1}<p> 
+                <div class="form-row">
+                    <div class="for-group col required">
+                        <label for="quotation">Serial Number</label>
+                        <input type="text" placeholder = "0" id="serialNumber" name="serialNumber" class="form-control" required>
+                    </div>
+                    <div class="form-group col">
+                        <label for="quotation">Select a File</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="warantiyCard-${count}" name="warantiyCard-${count}" accept="application/pdf, application/pdf">
+                            <label for="warantiyCard-${count}" class="custom-file-label">No File Choosen</label>
+                        </div>
+                    </div>
+                </div>
+            <div>`);
         }
     }
 

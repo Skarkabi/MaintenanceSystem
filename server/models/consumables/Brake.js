@@ -447,7 +447,6 @@ Brake.groupSupplier = () => {
             getVehicle(values).then(() => {
                 var result = {count: values.length, rows: values}
                 Supplier.getSupplierNames(result).then(() => {
-                    console.log(result.rows);
                 resolve(result);
             
             }).catch(err => {

@@ -12,7 +12,7 @@ import open from 'open';
 import Vehicle from '../models/Vehicle';
 
 const router = express.Router();
-
+var errorFlash = {error: false, msg:""};
 function getDistinct(values){
     return values.filter((value, index, self) => self.indexOf(value) === index);
 }
@@ -37,13 +37,9 @@ router.get('/add', (req, res, next) =>
                     vehicleMap.push(`${vehicle.category} ${vehicle.brand} ${vehicle.model} ${vehicle.year}`)
                 })
                 var singleVehicles = getDistinct(vehicleMap);
-                console.log(singleVehicles);
-                console.log(plateMap);
                 singleVehicles.map(vehicle => {
-                    console.log("In");
                     vehcilesToDisplay.push({plate: plateMap.get(vehicle), vehicleData: vehicle})
                 })
-                console.log(vehcilesToDisplay);
                 res.render('addConsumable', {
                     title: 'Add New Consumable',
                     jumbotronDescription: `Add a new user Consumable.`,
@@ -55,7 +51,6 @@ router.get('/add', (req, res, next) =>
                     msgType: flash
                     
                 });
-                console.log("Out");
             })
            
 
@@ -90,18 +85,25 @@ router.post('/update-battery/:action/:id', (req,res,next) => {
 });
 
 router.get('/add/sucess/:q', (req, res, next) => {
-    req.flash("success_msg", `${req.params.q} Batteries Sucessfully Added!`);
-    req.session.save(function() {
-        res.redirect("/consumables/add");
-    });
+    if(errorFlash.error){
+        errorFlash.error = false;
+        req.flash('error_msg', errorFlash.msg);
+        req.session.save(function() {
+            res.redirect("/consumables/add");
+        });
+    }else{
+        req.flash("success_msg", `${req.params.q} Batteries Sucessfully Added!`);
+        req.session.save(function() {
+            res.redirect("/consumables/add");
+        });
+    }
+   
 })
 /**
  * Express route to add a new battery in database
  * Route takes battery and quotation data from user input 
  */
-router.post('/add/battery',(req, res, next) => {
-    console.log(req.body);
-    /*
+router.post('/add/battery', async (req, res, next) => {
     var quotationNumber;
     if(!req.body.quotation || req.body.quotation === ""){
         quotationNumber = "N/A";
@@ -109,68 +111,80 @@ router.post('/add/battery',(req, res, next) => {
         quotationNumber = req.body.quotation;
     }
 
-    //Creating new battrey variable to be added to database   
-    const newBattery = {
-        batSpec: req.body.batSpec,
-        minQuantity: req.body.quantityMinBatteries,
-        supplierId: req.body.batteriesSupplierName,
-        singleCost: req.body.batteryPrice,
-        quotationNumber: quotationNumber,
-        serialNumber: req.body.serialNumber
-
-    }
-
-   
-
-    Battery.findOne({where:newBattery}).then(found => {
-        newBattery.consumanbleCategory = "battery";
-        newBattery.quantity = 1
-        if(found){
-            newBattery.id = found.id
-
-        }else{
-            newBattery.id = 0
+    //Creating new battrey variable to be added to database
+    for(var i = 0; i < parseInt(req.body.quantityBatteries); i++){
+        const newBattery = {
+            batSpec: req.body.batSpec,
+            minQuantity: req.body.quantityMinBatteries,
+            supplierId: req.body.batteriesSupplierName,
+            singleCost: req.body.batteryPrice,
+            quotationNumber: quotationNumber,
+            serialNumber: req.body.serialNumber[i]
+    
         }
-        for(var i = 0; i < req.body.quantityBatteries; i++){
-            //Adding new battery to database
-            Consumable.updateConsumable(newBattery, "add").then(output =>{
-                console.log("truing to add");
-                //Add quotation info to database if quotation was uploaded
-                if(req.body.warantiyCard[i]){
-                    var output =req.body.warantiyCard[i];
-                    output = output.replace("data:application/pdf;base64,", "");
-                    fs.writeFileSync(`./server/uploads/warantityCards/${req.body.serialNumber}.pdf`, output, 'base64')
+    
+       
+    
+        await Battery.findOne({where:{serialNumber: req.body.serialNumber[i]}}).then(async found => {
+            newBattery.consumanbleCategory = "battery";
+            newBattery.quantity = 1
+            if(found){
+                newBattery.id = found.id
+                errorFlash = {error: true, msg: "Serial Number Already Exists"}
+                throw "Serial Number Already Exists"
+            }else{
+                newBattery.id = 0
+            }
+                //Adding new battery to database
+                await Consumable.updateConsumable(newBattery, "add").then(output =>{
+                    //Add quotation info to database if quotation was uploaded
+                    console.log("This one is " + i);
+                    if(req.body.warantiyCard[i]){
+                        var output = req.body.warantiyCard[i];
+                        output = output.replace("data:application/pdf;base64,", "");
+                        fs.writeFileSync(`./server/uploads/warantityCards/${req.body.serialNumber[i]}.pdf`, output, 'base64')
+                
+                    }
+                    console.log("-----------------------------");
+                    console.log(req.body.invoiceFile);
+                    if(req.body.invoiceFile && i === 0){
+                        var invoice =req.body.invoiceFile;
+                        invoice = invoice.replace("data:application/pdf;base64,", "");
+                        fs.writeFileSync(`./server/uploads/${req.body.invoiceNumber}.pdf`, invoice, 'base64')
+                        var newQuotation = {
+                            quotationNumber: req.body.invoiceNumber,
+                            quotationPath: `./server/uploads/${req.body.invoiceNumber}.pdf`
+                        }
+                        Quotation.addQuotation(newQuotation);
+                    }
+                    console.log(`i: ${i}, quantity: ${req.body.quantityBatteries}`);
+                    if(i === parseInt(req.body.quantityBatteries) - 1){
+                        req.flash("success_msg", output);
+                        req.session.save(function() {
+                            res.redirect("/consumables/add");
+                        });
             
-                }
-                if(req.body.invoiceFile && i === 0){
-                    var invoice =req.body.invoiceFile;
-                    invoice = invoice.replace("data:application/pdf;base64,", "");
-                    fs.writeFileSync(`./server/uploads/${req.body.quotation}.pdf`, invoice, 'base64')
-                    Quotation.addQuotation(newQuotation);
-                }
-
-                if(i === req.body.quantityBatteries){
-                    req.flash("success_msg", output);
+                    }
+    
+                }).catch(err =>{
+                    console.log(`failed to add ${err}`);
+                    req.flash('error_msg', JSON.stringify(err));
                     req.session.save(function() {
                         res.redirect("/consumables/add");
                     });
-        
-                }
-
-            }).catch(err =>{
-                console.log(`failed to add ${err}`);
-                req.flash('error_msg', JSON.stringify(err));
-                req.session.save(function() {
-                    res.redirect("/consumables/add");
                 });
+    
+            
+    
+        }).catch(err => {
+            req.flash('error_msg', err);
+            req.session.save(function() {
+                res.redirect("/consumables/add");
             });
+        })
+    }   
+    
 
-        }
-
-    }).catch(err => {
-        console.log(`Thsi is why ${err}` )
-    })
-*/
 });
 
 
@@ -197,8 +211,6 @@ router.post('/add/brake', Quotation.uploadFile().single('upload'), (req,res,next
         quotationNumber: req.body.quotation
         
     }
-    console.log(req.body);
-    console.log(1);
     Brake.findOne({where: newBrake}).then(found => {
        
         newBrake.consumanbleCategory = "brake";
@@ -877,7 +889,6 @@ router.get('/:category/view/:quotationNumber', (req,res,next) => {
     var tempFile=path.replace('/dist/routes', `/server/uploads/${req.params.quotationNumber}.pdf`);
     //Opening selected quotation
     fs.readFile(tempFile, function (err,data){
-        console.log(tempFile);
         if(err) {
             req.flash("error_msg", "File Does Not Exist!");
             req.session.save(function() {
@@ -887,7 +898,6 @@ router.get('/:category/view/:quotationNumber', (req,res,next) => {
         }else{
             //res.contentType("application/pdf");
             //res.send(data);
-            console.log(tempFile)
             open(tempFile, {app: {name: 'google chrome'}}, function (err) {
                 if ( err ) throw err;    
             }).then(() => {

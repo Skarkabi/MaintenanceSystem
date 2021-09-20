@@ -39,6 +39,10 @@ const mappings = {
     primaryKey: true,
     allowNull: false,
   },
+  division: {
+    type: Sequelize.DataTypes.STRING,
+    allowNull: false
+  },
   kmDriven: {
     type: Sequelize.DataTypes.DOUBLE,
     allowNull: true,
@@ -81,6 +85,11 @@ const Vehicle = sequelize.define('vehicle_stocks', mappings, {
       name: 'vehicle_category_index',
       method: 'BTREE',
       fields: ['category'],
+    },
+    {
+      name: 'vehicle_divison_index',
+      method: 'BTREE',
+      fields: ['division'],
     },
     {
       name: 'vehicle_brand_index',
@@ -154,7 +163,8 @@ Vehicle.addVehicle = (createVehicled) => {
     chassis: createVehicled.chassis,
     kmDriven: createVehicled.kmDrive,
     kmForOilChange: createVehicled.kmTillOilChange,
-    oilType: createVehicled.oilType
+    oilType: createVehicled.oilType,
+    division: createVehicled.division
   }
 
   return new Bluebird ((resolve, reject) => {
@@ -296,7 +306,7 @@ function getDistinct(values){
 Vehicle.getVehicleStock = () => {
   return new Bluebird((resolve, reject) => {
     //Declaring all variables to be returned
-    var category, brand, model, year, plate, chassis, oilType;
+    var category, brand, model, year, plate, chassis, oilType, division;
     //Getting all vehicles from database
     Vehicle.getStock().then(vehicles => {
       //Mapping vehicle values to not return double values
@@ -307,11 +317,12 @@ Vehicle.getVehicleStock = () => {
       plate = getDistinct(vehicles.rows.map(val => val.plate));
       chassis = getDistinct(vehicles.rows.map(val => val.chassis));
       oilType = getDistinct(vehicles.rows.map(val => val.oilType));
+      division = getDistinct(vehicles.rows.map(val => val.division))
 
       //Creating variable of all need variables to return
       var values = {
         category: category, brands: brand, models: model, years: year,
-        plates: plate, chassis: chassis, oilTypes: oilType
+        plates: plate, chassis: chassis, oilTypes: oilType, division: division
 
       }
 

@@ -110,16 +110,16 @@ router.get('/:req', (req, res, next) => {
                     materialRequest.items.map(item => {
                         itemsCount += parseInt(item.pendingQuantity);
                     })
-                    materialRequests.push(materialRequest.material_request)
+                    materialRequests.push(materialRequest.material_request.toUpperCase())
                     
                 })
                
                 
             }
             found.consumable_data.map(materialRequest => {
-                if(materialRequest.consumable.materialRequestNumber && materialRequest.consumable.materialRequestNumber.search("MWS") === 0){
+                if(materialRequest.consumable.materialRequestNumber && (materialRequest.consumable.materialRequestNumber.search("MWS") === 0 || (materialRequest.consumable.materialRequestNumber.search("mws") === 0))){
 
-                        materialRequests.push(materialRequest.consumable.materialRequestNumber)
+                        materialRequests.push(materialRequest.consumable.materialRequestNumber.toUpperCase())
                     
                 }
                
@@ -357,7 +357,7 @@ router.post('/update/material_request/add_material/:req', async (req, res, next)
     }
     
     for(var i = 0; i < items.length; i++){
-        await sMaterialRequest.addMaterialRequest(items[i]).then(output => {
+        await MaterialRequest.addMaterialRequest(items[i]).then(output => {
             if(i === items.length){
                 req.flash('success_msg', `${req.body.otherMaterialRequest} Succesfully Updated For Order`);
                 res.redirect(`back`);

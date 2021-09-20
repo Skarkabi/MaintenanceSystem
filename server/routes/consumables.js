@@ -845,7 +845,7 @@ router.get('/:category/download/:quotationNumber', (req,res,next) => {
     //Setting directory location of selected quotation
     const path = `${__dirname}`;
     //Setting the location of the selected quotation
-    var tempFile = path.replace('/dist/routes', `/server/uploads/${req.params.quotationNumber}.pdf`);
+    var tempFile = path.replace('\\dist\\routes', `\\server\\uploads\\${req.params.quotationNumber}.pdf`);
     //Downloading selected quotation
     res.download(tempFile, function(err){
         if(err) {
@@ -863,8 +863,11 @@ router.get('/:category/download/:quotationNumber', (req,res,next) => {
 router.get('/:category/warantiy/:serialNumber', (req,res,next) => {
     //Setting directory location of selected quotation
     const path = `${__dirname}`;
+    console.log("------*******--------");
+    console.log(path);
     //Setting the location of the selected quotation
-    var tempFile = path.replace('/dist/routes', `/server/uploads/warantityCards/${req.params.serialNumber}.pdf`);
+    var tempFile = path.replace('\\dist\\routes', `\\server\\uploads\\warantityCards\\${req.params.serialNumber}.pdf`);
+    console.log(tempFile);
     //Downloading selected quotation
     res.download(tempFile, function(err){
         if(err) {
@@ -886,7 +889,7 @@ router.get('/:category/view/:quotationNumber', (req,res,next) => {
     //Setting directory location of selected quotation
     const path = `${__dirname}`;
     //Setting the location of the selected quotation
-    var tempFile=path.replace('/dist/routes', `/server/uploads/${req.params.quotationNumber}.pdf`);
+    var tempFile=path.replace('\\dist\\routes', `\\server\\uploads\\${req.params.quotationNumber}.pdf`);
     //Opening selected quotation
     fs.readFile(tempFile, function (err,data){
         if(err) {
@@ -913,7 +916,7 @@ router.get('/:category/viewWarantiy/:serialNumber', (req,res,next) => {
     //Setting directory location of selected quotation
     const path = `${__dirname}`;
     //Setting the location of the selected quotation
-    var tempFile=path.replace(`/dist/routes`, `/server/uploads/warantityCards/${req.params.serialNumber}.pdf`);
+    var tempFile=path.replace(`\\dist\\routes`, `\\server\\uploads\\warantityCards\\${req.params.serialNumber}.pdf`);
     console.log("In Here----------------------");
     //Opening selected quotation
     fs.readFile(tempFile, function (err,data){

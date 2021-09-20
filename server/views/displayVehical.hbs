@@ -31,23 +31,33 @@
         </div>
         <div class="section-content">
             <div class="form-row">
+                 <div class="form-group col-md-6 display-user">
+                    <label for="division">Division</label>
+                    <input type="text" class="form-control" name="division" id="division" value="{{existingVehicle.division}}" readonly>
+                </div>
                 <div class="form-group col-md-6 display-user">
                     <label for="category">Category</label>
                     <input type="text" class="form-control" name="type" id="type" value="{{existingVehicle.category}}" readonly>
                 </div>
+            </div>
+            <div class="form-row">
                 <div class="form-group col-md-6 display-user">
                     <label for="brand">Brand</label>
                     <input type="text" class="form-control" name="brand" id="brand" value="{{existingVehicle.brand}}" readonly>
                 </div>
-            </div>
-            <div class="form-row">
                 <div class="form-group col-md-6 display-user">
                     <label for="model">Model</label>
                     <input type="text" class="form-control" name="model" id="model" value="{{existingVehicle.model}}" readonly>
                 </div>
+            </div>
+            <div class="form-row">
                 <div class="form-group col-md-6 display-user">
                     <label for="year">Year</label>
                     <input type="text" class="form-control" name="year" id="year" value="{{existingVehicle.year}}" readonly>
+                </div>
+                <div class="form-group col-md-6 display-user">
+                    <label for="oilType">Oil Type</label>
+                    <input type="text" class="form-control" name="oilType" id="oilType" value="{{existingVehicle.oilType}}" readonly>
                 </div>
             </div>
             <div class="form-row">
@@ -61,10 +71,7 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group col-md-6 display-user">
-                    <label for="oilType">Oil Type</label>
-                    <input type="text" class="form-control" name="oilType" id="oilType" value="{{existingVehicle.oilType}}" readonly>
-                </div>
+                 
                 <div class="form-group col-md-6 display-user">
                     <label for="kmDriven">KM Driven</label>
                     <input type="text" class="form-control" name="kmDriven" id="kmDriven" value="{{existingVehicle.kmDriven}}" readonly>

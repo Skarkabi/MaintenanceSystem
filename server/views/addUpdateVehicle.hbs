@@ -8,6 +8,17 @@
             </div>
             <div class="section-content">
                 <div class="form-row">
+                     <div class="form-group col required">
+                        <label for="division">Division</label>
+                        <input list="division" placeholder="Divison" name="division" class="form-control" required>
+                        <datalist id="division">
+                            <option value="T.M.I. MAIN"></option>
+                            <option value="METAL PRODUCTS"></option>
+                            <option value="POWDER COATING"></option>
+                            <option value="GULF SAIL"></option>
+                            <option value="MANAGMENT"></option>
+                        </datalist>
+                    </div>
                     <div class="form-group col required">
                         <label for="type">Category</label>
                         <input list="category" name="category" class="form-control" required>
@@ -17,6 +28,9 @@
                             {{/each}}
                         </datalist>
                     </div>
+                    
+                </div>
+                <div class="form-row">
                     <div class="form-group col required">
                         <label for="brand">Brand</label>
                         <input list="brand"  name="brand" class="form-control" value="{{existingVehicle.model}}" required>
@@ -26,9 +40,7 @@
                             {{/each}}
                         </datalist>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col required">
+                     <div class="form-group col required">
                         <label for="model">Model</label>
                         <input list="model" name="model" class="form-control" required>
                         <datalist id="model">
@@ -37,7 +49,10 @@
                             {{/each}}
                         </datalist>
                     </div>
-                    <div class="form-group col required">
+                </div>
+                <div class="form-row">
+                   
+                     <div class="form-group col required">
                         <label for="year">Year</label>
                         <input list="year" name="year" class="form-control" value="{{existingVehicle.year}}" required>
                         <datalist id="year">
@@ -46,7 +61,11 @@
                             {{/each}}
                         </datalist>
                     </div>
-                </div>
+                     <div class="form-group col required">
+                        <label for="brand">Oil Type</label>
+                        <input type="text" placeholder="Type of Oil" id="oilType" name="oilType" class="form-control" value="{{existingVehicle.oilType}}" required>
+                    </div>
+                </div>s
                 <div class="form-row">
                     <div class="form-group col required">
                         <label for="type">Plate #</label>
@@ -66,10 +85,7 @@
                         <label for="brand">Km Till Next Oil Change</label>
                         <input type="text" placeholder="Km Till Oil Change" id="kmTillOilChange" name="kmTillOilChange" class="form-control" value="{{existingVehicle.kmTillOilChange}}" required>
                     </div>
-                    <div class="form-group col required">
-                        <label for="brand">Oil Type</label>
-                        <input type="text" placeholder="Type of Oil" id="oilType" name="oilType" class="form-control" value="{{existingVehicle.oilType}}" required>
-                    </div>
+                   
                 </div>
             </div>
         </div>

@@ -9,6 +9,7 @@
         <thead>
             <tr>
                 <th scope="col">#</th>
+                <th scope="col">Divison</th>
                 <th scope="col" style="width:15%">Category</th>
                 <th scope="col">Brand</th>
                 <th scope="col">Model</th>
@@ -24,6 +25,7 @@
             {{#each users}}
                 <tr>
                     <td><a href="/vehicles/display-vehicle/{{this.plate}}" id="vehicle-{{counter @index}}"> {{counter @index}}</a></td>
+                    <td><a href="/vehicles/display-vehicle/{{this.plate}}">{{this.division}}</a></td>
                     <td><a href="/vehicles/display-vehicle/{{this.plate}}">{{this.category}}</a></td>
                     <td><a href="/vehicles/display-vehicle/{{this.plate}}">{{this.brand}}</a></td>
                     <td><a href="/vehicles/display-vehicle/{{this.plate}}">{{this.model}}</a></td>

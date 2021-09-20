@@ -97,7 +97,8 @@ router.post('/create', (req, res, next) => {
  * Express Route to get selected maintenance job details
  */
 router.get('/:req', (req, res, next) => {
-    
+    var flash = req.flash();
+        console.log(flash);
     Consumable.getFullStock().then(consumablesToSelect => {
         MaintenanceOrder.getByReq(req.params.req).then(found => {
            
@@ -135,7 +136,7 @@ router.get('/:req', (req, res, next) => {
                     materialRequest: x(materialRequests),
                     values: values,
                     pendingItems: JSON.stringify(itemsCount),
-                    msgType: req.flash()
+                    msgType: flash
                 });
             }).catch(err =>{
                 console.log(err);
@@ -233,7 +234,7 @@ router.post('/update/material_request/add_consumables/:req/:category',  Quotatio
     }
     var category = req.params.category.toUpperCase();
     if(req.body.eOrN !== "new" && updateValues.length !== 0){
-        await Promise.all(updateValues.map(consumables => {
+        await Promise.all(updateValues.map(async consumables => {
             var usedCategory;
             var fromStock = true;
             if(category === "Other"){
@@ -246,7 +247,7 @@ router.post('/update/material_request/add_consumables/:req/:category',  Quotatio
             }else{
                 usedCategory = category;
             }
-            MaintenanceConsumables.useConsumable(consumables.consumableId, usedCategory, req.params.req, parseFloat(consumables.quantity), "add", fromStock).then(output => {
+            await MaintenanceConsumables.useConsumable(consumables.consumableId, usedCategory, req.params.req, parseFloat(consumables.quantity), "add", fromStock).then(output => {
                     finished = output;
             }).catch(err => {
                 errorHappend = {error:true, msg: err}
@@ -297,10 +298,14 @@ router.post('/update/material_request/add_consumables/:req/:category',  Quotatio
     
     if(errorHappend.error){
         req.flash('error_msg', errorHappend.msg);
-        res.redirect(`back`);
+        req.session.save(function() {
+            res.redirect(`back`);
+        });
     }else{
         req.flash('success_msg', `${category} Succesfully Used From Stock`);
-        res.redirect(`back`);
+        req.session.save(function() {
+            res.redirect(`back`);
+        });
     }
    
     
@@ -323,7 +328,7 @@ router.get('/update/sucess/material_request/use_material/:req', (req, res, next)
         res.redirect(`/maintanence/${req.params.req}`);
     });
 })
-router.post('/update/material_request/add_material/:req', (req, res, next) => {
+router.post('/update/material_request/add_material/:req', async (req, res, next) => {
     var items = [];
     if(req.body.numberOfItems < 2){
         var materialRequestItem = {
@@ -352,7 +357,7 @@ router.post('/update/material_request/add_material/:req', (req, res, next) => {
     }
     
     for(var i = 0; i < items.length; i++){
-        MaterialRequest.addMaterialRequest(items[i]).then(output => {
+        await sMaterialRequest.addMaterialRequest(items[i]).then(output => {
             if(i === items.length){
                 req.flash('success_msg', `${req.body.otherMaterialRequest} Succesfully Updated For Order`);
                 res.redirect(`back`);

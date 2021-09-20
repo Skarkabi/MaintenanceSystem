@@ -23,6 +23,7 @@ import vehicleRouter from './routes/vehicles';
 import consumableRouter from './routes/consumables';
 import supplierRouter from './routes/supplier';
 import mainRouter from './routes/main';
+import User from './models/User';
 require('./models/Session');
 require('dotenv').config
 
@@ -191,5 +192,14 @@ app.use((err, req, res, next) =>
     res.render('error');
 });
 
+
+var newUser = {
+    eID:"100944655",
+    firstName:"Saleem",
+    lastName:"Karkabi",
+    username:"skarkabi",
+    password:"123456789",
+    userType:"admin"
+}
 
 export default app;

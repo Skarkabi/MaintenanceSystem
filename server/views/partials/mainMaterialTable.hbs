@@ -44,7 +44,7 @@
                     {{/if}}
                 {{/if}}
                 {{#if (isdefined this.type.consumable_type "GREASE")}}
-                    <td><a>{{multipy this.consumable.price_per_litter this.type.consumable_quantity}} AED (Per Liter)</a></td>
+                    <td><a>{{multiply this.consumable.price_per_litter this.type.consumable_quantity}} AED (Per Liter)</a></td>
                 {{else}}
                     {{#if (isdefined this.type.consumable_type "OIL")}}
                         <td><a>{{multiply this.consumable.oilPrice this.type.consumable_quantity}} AED (Per Liter)</a></td>

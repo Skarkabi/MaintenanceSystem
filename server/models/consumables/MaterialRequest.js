@@ -110,9 +110,8 @@ MaterialRequest.getMaterialRequest = maintenance_req => {
     })
 }
 
-MaterialRequest.useItem = (materialRequest, item, quantity, supplierId, textPrice, quotationNumber) => {
+MaterialRequest.useItem = (materialRequest, item, quantity, supplierId, price, quotationNumber) => {
     return new Bluebird((resolve, reject) => {
-        var price = parseFloat(textPrice);
         MaterialRequest.findOne({
             where: {material_request: materialRequest}
         }).then(found => {
@@ -130,9 +129,9 @@ MaterialRequest.useItem = (materialRequest, item, quantity, supplierId, textPric
                             var newItem = {
                                 other_name: foundItem.other_name,
                                 quantity: quantity,
-                                singleCost: price/quantity,
+                                singleCost: price,
                                 pendingQuantity: 0,
-                                totalCost: price,
+                                totalCost: quantity * price,
                                 details: foundItem.details,
                                 supplierId: supplierId,
                                 quotationNumber: quotationNumber,
@@ -142,6 +141,7 @@ MaterialRequest.useItem = (materialRequest, item, quantity, supplierId, textPric
                             MaintenanceConsumables.useNonStockConsumable(newItem).then(() => {
                                 foundItem.pendingQuantity = parseInt(foundItem.pendingQuantity) - parseInt(quantity);
                                 foundItem.quantity = parseInt(foundItem.quantity) + parseInt(quantity);
+                                foundItem.quotationNumber = quotationNumber
                                 foundItem.save().then(() => {
                                     NonStockConsumables.findAll({
                                         where: {
@@ -182,9 +182,10 @@ MaterialRequest.useItem = (materialRequest, item, quantity, supplierId, textPric
                             console.log(foundItem);
                             foundItem.pendingQuantity = parseInt(foundItem.pendingQuantity) - parseInt(quantity);
                             foundItem.quantity = parseInt(foundItem.quantity) + parseInt(quantity);
-                            foundItem.singleCost =parseFloat(price);
-                            foundItem.totalCost = foundItem.singleCost * foundItem.quantity;
+                            foundItem.singleCost = parseFloat(price) / foundItem.quantity;
+                            foundItem.totalCost = foundItem.singleCost *  foundItem.quantity;
                             foundItem.supplierId = supplierId;
+                            foundItem.quotationNumber = quotationNumber
                             console.log(foundItem);
                             MaintenanceConsumables.findOne({where: {consumable_id: foundItem.id}}).then(foundConsumable => {
                                 foundItem.save().then(() => {

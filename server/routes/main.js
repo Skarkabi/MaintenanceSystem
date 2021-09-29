@@ -97,8 +97,7 @@ router.post('/create', (req, res, next) => {
  * Express Route to get selected maintenance job details
  */
 router.get('/:req', (req, res, next) => {
-    var flash = req.flash();
-        console.log(flash);
+    
     Consumable.getFullStock().then(consumablesToSelect => {
         MaintenanceOrder.getByReq(req.params.req).then(found => {
            
@@ -110,14 +109,14 @@ router.get('/:req', (req, res, next) => {
                     materialRequest.items.map(item => {
                         itemsCount += parseInt(item.pendingQuantity);
                     })
-                    materialRequests.push(materialRequest.material_request.toUpperCase())
+                    materialRequests.push(materialRequest.material_request)
                     
                 })
                
                 
             }
             found.consumable_data.map(materialRequest => {
-                if(materialRequest.consumable.materialRequestNumber && (materialRequest.consumable.materialRequestNumber.search("MWS") === 0 || (materialRequest.consumable.materialRequestNumber.search("mws") === 0))){
+                if(materialRequest.consumable.materialRequestNumber && (materialRequest.consumable.materialRequestNumber.search("MWS") === 0 || materialRequest.consumable.materialRequestNumber.search("mws") === 0)){
 
                         materialRequests.push(materialRequest.consumable.materialRequestNumber.toUpperCase())
                     
@@ -136,7 +135,7 @@ router.get('/:req', (req, res, next) => {
                     materialRequest: x(materialRequests),
                     values: values,
                     pendingItems: JSON.stringify(itemsCount),
-                    msgType: flash
+                    msgType: req.flash()
                 });
             }).catch(err =>{
                 console.log(err);
@@ -234,7 +233,7 @@ router.post('/update/material_request/add_consumables/:req/:category',  Quotatio
     }
     var category = req.params.category.toUpperCase();
     if(req.body.eOrN !== "new" && updateValues.length !== 0){
-        await Promise.all(updateValues.map(async consumables => {
+        await Promise.all(updateValues.map(consumables => {
             var usedCategory;
             var fromStock = true;
             if(category === "Other"){
@@ -247,7 +246,7 @@ router.post('/update/material_request/add_consumables/:req/:category',  Quotatio
             }else{
                 usedCategory = category;
             }
-            await MaintenanceConsumables.useConsumable(consumables.consumableId, usedCategory, req.params.req, parseFloat(consumables.quantity), "add", fromStock).then(output => {
+            MaintenanceConsumables.useConsumable(consumables.consumableId, usedCategory, req.params.req, parseFloat(consumables.quantity), "add", fromStock).then(output => {
                     finished = output;
             }).catch(err => {
                 errorHappend = {error:true, msg: err}
@@ -298,14 +297,10 @@ router.post('/update/material_request/add_consumables/:req/:category',  Quotatio
     
     if(errorHappend.error){
         req.flash('error_msg', errorHappend.msg);
-        req.session.save(function() {
-            res.redirect(`back`);
-        });
+        res.redirect(`back`);
     }else{
         req.flash('success_msg', `${category} Succesfully Used From Stock`);
-        req.session.save(function() {
-            res.redirect(`back`);
-        });
+        res.redirect(`back`);
     }
    
     
@@ -328,7 +323,7 @@ router.get('/update/sucess/material_request/use_material/:req', (req, res, next)
         res.redirect(`/maintanence/${req.params.req}`);
     });
 })
-router.post('/update/material_request/add_material/:req', async (req, res, next) => {
+router.post('/update/material_request/add_material/:req', (req, res, next) => {
     var items = [];
     if(req.body.numberOfItems < 2){
         var materialRequestItem = {
@@ -357,8 +352,12 @@ router.post('/update/material_request/add_material/:req', async (req, res, next)
     }
     
     for(var i = 0; i < items.length; i++){
-        await MaterialRequest.addMaterialRequest(items[i]).then(output => {
+        MaterialRequest.addMaterialRequest(items[i]).then(output => {
+            console.log(items.length);
+            console.log(i)
+            console.log(i - 1)
             if(i === items.length){
+                console.log("made it in");
                 req.flash('success_msg', `${req.body.otherMaterialRequest} Succesfully Updated For Order`);
                 res.redirect(`back`);
             }

@@ -448,12 +448,12 @@ Grease.groupSupplier = () => {
         Grease.findAll({
             //Declaring attributes to return from database
             attributes:
-              ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'supplierId',
+              ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'supplierId', 'minVolume',
               [sequelize.fn('sum', sequelize.col('volume')), 'volume'],
             ],
 
             //Declaring how to group return values
-            group: ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'supplierId']
+            group: ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'supplierId', 'minVolume']
             
         }).then((values) => { 
             //Setting variable to return brakes with their supplier names

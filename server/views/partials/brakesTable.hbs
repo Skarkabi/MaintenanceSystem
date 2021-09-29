@@ -1,5 +1,5 @@
 <div class="col-md-12">
-    <table id="filterable-table" class="table table-bordered table-striped">
+    <table id="filterable-table" class="table table-bordered table-custom-strip">
         <thead>
             <tr>
                 <th scope="col">#</th>
@@ -10,7 +10,7 @@
                 <th scope="col">Brake Brand</th>
                 <th scope="col">Preferred Brand</th>
                 <th scope="col">Quantity (Set)</th>
-                 {{#if (isdefined page "add")}}
+                 {{#if (isdefined page "view")}}
                 <th scope="col">Minimum Quantity</th>
                  {{/if}}
                 <th scope="col">Unit Price</th>
@@ -27,8 +27,12 @@
         <tbody>
             {{#if (isdefined page "view")}}
             {{#each consumables}}
+                {{#if (greaterThan this.minQuantity this.quantity)}}
+                <tr style="background-color: red; color: white; font-weight: bold;">
+                {{else}}
                 <tr>
-                    <th>{{counter @index}}</th>
+                {{/if}}
+                    <td>{{counter @index}}</td>
                     <td>{{this.vehicle_data.category}}</th>
                     <td>{{this.vehicle_data.brand}}</td>
                     <td>{{this.vehicle_data.model}}</td>
@@ -36,6 +40,7 @@
                     <td>{{this.bBrand}}</td>
                     <td>{{this.preferredBrand}}</td>
                     <td>{{this.quantity}}</td>
+                    <td>{{this.minQuantity}}</td>
                     <td>{{this.singleCost}}</td>
                     <td>{{multiply this.singleCost this.quantity}}</td>
                     <td><a href="/consumables/brake/{{this.supplierId}}">{{this.supplierName}}</a></td>
@@ -56,7 +61,6 @@
                     <td>{{this.bBrand}}</td>
                     <td>{{this.preferredBrand}}</td>
                     <td>{{this.quantity}}</td>
-                    <td>{{this.minQuantity}}</td>
                     <td>{{this.singleCost}}</td>
                     <td>{{multiply this.singleCost this.quantity}}</td>
                     <td>{{this.quotationNumber}}</td>

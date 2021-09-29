@@ -117,6 +117,10 @@ td.table-actions > a {
   margin-bottom: 2rem;
 }
 
+.table-custom-strip > tbody > tr:nth-child(odd) {
+  background-color: #F0F0F0	;
+  }
+
 /* Course instance page */
 .course-section-wrapper, .section-wrapper {
   margin-bottom: 2rem;
@@ -192,6 +196,7 @@ table, tr, td, th {
   text-align:center;
   
 }
+
 
 
 

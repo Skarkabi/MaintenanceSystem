@@ -98,6 +98,14 @@ handlebars.registerHelper('add', function (x, y){
     console.log(typeof y)
     return parseFloat(x) + parseFlaot(y);
 })
+
+handlebars.registerHelper('greaterThan', function(x, y){
+    console.log("Look here*************")
+    console.log((x))
+    console.log((y))
+    console.log  (parseFloat(x) > parseFloat(y));
+    return (parseFloat(x) > parseFloat(y))
+})
 const app = express();
 
 const multiHelpers = hbshelpers()

@@ -370,12 +370,12 @@ Battery.groupSupplier = () => {
         Battery.findAll({
             //Declating attributes to return from database
             attributes:
-              ['batSpec', 'supplierId',
+              ['batSpec', 'supplierId', 'minQuantity',
               [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
             ],
 
             //Declaring how to group return values
-            group: ["batSpec","supplierId"]
+            group: ["batSpec","supplierId", 'minQuantity']
             
         }).then((values) => { 
             //Setting variable to return batteries with their supplier names

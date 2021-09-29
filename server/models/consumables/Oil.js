@@ -378,12 +378,12 @@ Oil.groupSupplier = () => {
       Oil.findAll({
           //Declaring attributes to return from database
           attributes:
-            ['oilSpec', 'typeOfOil', 'supplierId',
+            ['oilSpec', 'typeOfOil', 'supplierId', 'minVolume',
             [sequelize.fn('sum', sequelize.col('volume')), 'volume'],
           ],
 
           //Declaring how to group return values
-          group: ['oilSpec', 'typeOfOil', 'supplierId']
+          group: ['oilSpec', 'typeOfOil', 'supplierId', 'minVolume']
           
       }).then((values) => { 
           //Setting variable to return oil with their supplier names

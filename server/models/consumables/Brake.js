@@ -435,12 +435,12 @@ Brake.groupSupplier = () => {
         Brake.findAll({
             //Declaring attributes to return from database
             attributes:
-              ['plateNumber', 'bBrand', 'preferredBrand', 'singleCost', 'supplierId',
+              ['plateNumber', 'bBrand', 'preferredBrand', 'singleCost', 'supplierId', 'minQuantity',
               [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
             ],
 
             //Declaring how to group return values
-            group: ["plateNumber", "bBrand", 'preferredBrand', "singleCost", "supplierId",   "preferredBrand",]
+            group: ["plateNumber", "bBrand", 'preferredBrand', "singleCost", "supplierId",   "preferredBrand", 'minQuantity']
             
         }).then((values) => { 
             //Setting variable to return brakes with their supplier names

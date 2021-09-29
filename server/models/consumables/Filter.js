@@ -453,12 +453,12 @@ Filter.groupSupplier = () => {
         Filter.findAll({
             //Declaring attributes to return from database
             attributes:
-              ['fType', 'actualBrand','plateNumber', 'singleCost', 'supplierId',
+              ['fType', 'actualBrand','plateNumber', 'singleCost', 'supplierId', 'minQuantity',
               [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
             ],
 
             //Declaring how to group return values
-            group: ['fType', 'actualBrand', 'plateNumber', 'singleCost', 'supplierId']
+            group: ['fType', 'actualBrand', 'plateNumber', 'minQuantity', 'singleCost', 'supplierId']
             
         }).then(async (values) => { 
             //Setting variable to return filters with their supplier names

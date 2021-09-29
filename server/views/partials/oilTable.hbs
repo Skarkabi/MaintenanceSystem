@@ -1,5 +1,5 @@
 <div class="col-md-12">
-    <table id="filterable-table" class="table table-bordered table-striped">
+    <table id="filterable-table" class="table table-bordered table-custom-strip">
         <thead>
             <tr>
                 <th scope="col">#</th>
@@ -7,7 +7,8 @@
                 <th scope="col">Oil Type</th>
                 <th scope="col">Volume</th>
                 {{#if (isdefined page "view")}}
-                <th scope="brake">Supplier</th>
+                <th scope="col">Min Volume</th>
+                <th scope="col">Supplier</th>
                 {{else}}
                 <th scope="col">Quotation #</th>
                 {{/if}}
@@ -17,11 +18,16 @@
         <tbody>
             {{#if (isdefined page "view")}}
             {{#each consumables}}
+                {{#if (greaterThan this.minVolume this.volume)}}
+                <tr style="background-color: red; color: white; font-weight: bold;">
+                {{else}}
                 <tr>
+                {{/if}}
                     <th>{{counter @index}}</th>
                     <td>{{this.oilSpec}}</td>
                     <td>{{this.typeOfOil}}</td>
                     <td>{{this.volume}}</td>
+                    <td>{{this.minVolume}}</td>
                     <td><a href="/consumables/oil/{{this.supplierId}}">{{this.supplierName}}</a></td>
                     <td><a href="/consumables/oil/{{this.supplierId}}" style="padding-right: 25px;">View <i class="fas fa-external-link-alt"></i></a></td>
                     

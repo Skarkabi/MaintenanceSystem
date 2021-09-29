@@ -1,5 +1,5 @@
 <div class="col-md-12">
-    <table id="filterable-table" class="table table-bordered table-striped">
+    <table id="filterable-table" class="table table-bordered table-custom-strip">
         <thead>
             <tr>
                 <th scope="col" rowspan="2">#</th>
@@ -7,8 +7,11 @@
                 <th scope="col" colspan="2">Filter</th>
                 <th scope="col" rowspan="2">Quantity (Boxes)</th>
                  {{#if (isdefined page "view")}}
+                <th scope="col" rowspan="2">Min Quantity</th>
+                {{/if}}
                 <th scope="col" rowspan="2">Unit Cost</th>
                 <th scope="col" rowspan="2">Total Cost</th>
+                {{#if (isdefined page "view")}}
                 <th scope="col" rowspan="2">Supplier</th>
                 {{else}}
                 <th scope="col" rowspan="2">Invoice #</th>
@@ -28,15 +31,20 @@
         <tbody>
             {{#if (isdefined page "view")}}
             {{#each consumables}}
+                {{#if (greaterThan this.minQuantity this.quantity)}}
+                <tr style="background-color: red; color: white; font-weight: bold;">
+                {{else}}
                 <tr>
-                    <th>{{counter @index}}</th>
-                    <td>{{this.vehicle_data.category}}</td>
+                {{/if}}
+                    <td value={{counter @index}}>{{counter @index}}</td>
+                    <td value={{this.vehicle_data.category}}>{{this.vehicle_data.category}}</td>
                     <td>{{this.vehicle_data.model}}</td>
                     <td>{{this.vehicle_data.brand}}</td>
                     <td>{{this.vehicle_data.year}}</td>
                     <td>{{this.fType}}</td>
                     <td>{{this.actualBrand}}</td>
                     <td>{{this.quantity}}</td>
+                    <td>{{this.minQuantity}}</td>
                     <td>{{this.singleCost}}</td>
                     <td>{{roundToTwo this.singleCost this.quantity}}</td>
                      <td><a href="/consumables/filter/{{this.supplierId}}">{{this.supplierName}}</a></td>
@@ -57,6 +65,8 @@
                     <td>{{this.fType}}</td>
                     <td>{{this.actualBrand}}</td>
                     <td>{{this.quantity}}</td>
+                    <td>{{this.singleCost}}</td>
+                    <td>{{roundToTwo this.singleCost this.quantity}}</td>
                     <td>{{this.quotationNumber}}</td>
                      <td>
                         <div class="input-group-append">
@@ -95,5 +105,6 @@
             document.getElementById("category").value = "Filter";
         }
     }
+
 
 </script>

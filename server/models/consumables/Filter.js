@@ -485,6 +485,70 @@ Filter.groupSupplier = () => {
     
 }
 
+Filter.groupWithOutSupplier = () => {
+    return new Bluebird((resolve, reject) => {
+        //Finding filters from database and returning specified attributes 
+        Filter.findAll({
+            //Declaring attributes to return from database
+            attributes:
+              ['fType', 'actualBrand','plateNumber', 'minQuantity',
+              [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
+              [sequelize.fn('sum', sequelize.col('totalCost')), 'totalCost']
+            ],
+
+            //Declaring how to group return values
+            group: ['fType', 'actualBrand', 'plateNumber', 'minQuantity']
+            
+        }).then(async (values) => { 
+            //Setting variable to return filters with their supplier names
+            getVehicle(values).then(() => {
+                    resolve(values);
+
+            }).catch(err=> {
+                reject(err)
+            })
+            
+           
+        }).catch(err => {
+            reject(err);
+
+        });
+
+    });
+    
+}
+
+Filter.findMinimums= () => {
+    return new Bluebird((resolve, reject) => {
+        Filter.findAll({
+            attributes:
+            ['fType', 'actualBrand','plateNumber', 'minQuantity',
+            [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
+            [sequelize.fn('sum', sequelize.col('totalCost')), 'totalCost']
+          ],
+
+          //Declaring how to group return values
+          group: ['fType', 'actualBrand', 'plateNumber', 'minQuantity'],
+          where: {
+            minQuantity: {[Sequelize.Op.gt]: sequelize.col('quantity')}
+            }
+        }).then(values => {
+            if(values.length > 0){
+            var notification = "</br>Filters:</br>";
+            getVehicle(values).then(() => {
+                Promise.all(values.map(filter => {
+                    notification = notification + ` - ${filter.vehicle_data.category} ${filter.vehicle_data.brand} ${filter.vehicle_data.model} ${filter.vehicle_data.year} ${filter.fType} ${filter.actualBrand}</br>`
+                })).then(() => {
+                    resolve(notification);
+                })
+            })
+        }else{
+            resolve("");
+        }
+        })
+    })
+}
+
 function getVehicle(filters) {
     return new Bluebird((resolve, reject) => {
         var count = 0;

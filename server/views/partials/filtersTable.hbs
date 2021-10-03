@@ -7,14 +7,18 @@
                 <th scope="col" colspan="2">Filter</th>
                 <th scope="col" rowspan="2">Quantity (Boxes)</th>
                  {{#if (isdefined page "view")}}
-                <th scope="col" rowspan="2">Min Quantity</th>
+                    <th scope="col" rowspan="2">Min Quantity</th>
                 {{/if}}
-                <th scope="col" rowspan="2">Unit Cost</th>
+                {{#if supplier}}
+                    <th scope="col" rowspan="2">Unit Cost</th>
+                {{/if}}
                 <th scope="col" rowspan="2">Total Cost</th>
                 {{#if (isdefined page "view")}}
-                <th scope="col" rowspan="2">Supplier</th>
+                    {{#if supplier}}
+                        <th scope="col" rowspan="2">Supplier</th>
+                    {{/if}}
                 {{else}}
-                <th scope="col" rowspan="2">Invoice #</th>
+                    <th scope="col" rowspan="2">Invoice #</th>
                 {{/if}}
                 <th scope="col" rowspan="2">Action</th>
                 
@@ -31,11 +35,13 @@
         <tbody>
             {{#if (isdefined page "view")}}
             {{#each consumables}}
+                {{#unless this.singleCost}}
                 {{#if (greaterThan this.minQuantity this.quantity)}}
                 <tr style="background-color: red; color: white; font-weight: bold;">
                 {{else}}
                 <tr>
                 {{/if}}
+                {{/unless}}
                     <td value={{counter @index}}>{{counter @index}}</td>
                     <td value={{this.vehicle_data.category}}>{{this.vehicle_data.category}}</td>
                     <td>{{this.vehicle_data.model}}</td>
@@ -45,11 +51,15 @@
                     <td>{{this.actualBrand}}</td>
                     <td>{{this.quantity}}</td>
                     <td>{{this.minQuantity}}</td>
+                    {{#if this.singleCost}}
                     <td>{{this.singleCost}}</td>
                     <td>{{roundToTwo this.singleCost this.quantity}}</td>
-                     <td><a href="/consumables/filter/{{this.supplierId}}">{{this.supplierName}}</a></td>
+                    <td><a href="/consumables/filter/{{this.supplierId}}">{{this.supplierName}}</a></td>
                     <td><a href="/consumables/filter/{{this.supplierId}}" style="padding-right: 25px;">View <i class="fas fa-external-link-alt"></i></a></td>
-
+                    {{else}}
+                    <td>{{roundToTwo this.totalCost "1"}}</td>
+                    <td><a href="/consumables/filter/full">View <i class="fas fa-external-link-alt"></i></a></td>
+                    {{/if}}
                 </tr>
             {{/each}}
             {{/if}}

@@ -24,6 +24,7 @@ import consumableRouter from './routes/consumables';
 import supplierRouter from './routes/supplier';
 import mainRouter from './routes/main';
 import User from './models/User';
+import Consumable from './models/Consumables';
 require('./models/Session');
 require('dotenv').config
 
@@ -209,5 +210,10 @@ var newUser = {
     password:"123456789",
     userType:"admin"
 }
+
+Consumable.checkMinimums().then(found => {
+    console.log(found.batteries);
+    console.log(found.brakes);
+})
 
 export default app;

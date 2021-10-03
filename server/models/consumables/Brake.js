@@ -437,6 +437,7 @@ Brake.groupSupplier = () => {
             attributes:
               ['plateNumber', 'bBrand', 'preferredBrand', 'singleCost', 'supplierId', 'minQuantity',
               [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
+              [sequelize.fn('sum', sequelize.col('totalCost')), 'totalCost']
             ],
 
             //Declaring how to group return values
@@ -465,6 +466,64 @@ Brake.groupSupplier = () => {
     
 }
 
+Brake.groupWithOutSupplier = () => {
+    return new Bluebird((resolve, reject) => {
+        //Finding brakes from database and returning specified attributes 
+        Brake.findAll({
+            //Declaring attributes to return from database
+            attributes:
+              ['plateNumber', 'bBrand', 'preferredBrand', 'minQuantity',
+              [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
+              [sequelize.fn('sum', sequelize.col('totalCost')), 'totalCost']
+            ],
+
+            //Declaring how to group return values
+            group: ["plateNumber", "bBrand", 'preferredBrand',  "preferredBrand", 'minQuantity']
+            
+        }).then((values) => { 
+            //Setting variable to return brakes with their supplier names
+            getVehicle(values).then(() => {
+                resolve(values);
+            })
+            
+
+        }).catch(err => {
+            reject(err);
+
+        });
+
+    });
+    
+}
+
+Brake.findMinimums = () => {
+    return new Bluebird((resolve, reject) => {
+        Brake.findAll({
+            attributes: 
+                ['plateNumber', 'bBrand', 'preferredBrand', 'minQuantity',
+                [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
+            ],
+
+            group:["plateNumber", "bBrand", 'preferredBrand',  "preferredBrand", 'minQuantity'],
+            where: {
+                minQuantity: {[Sequelize.Op.gt]: sequelize.col('quantity')}
+            }
+        }).then(values => {
+            if(values.length > 0){
+                var notification = "</br>Brakes:</br>";
+                getVehicle(values).then(() => {
+                    Promise.all(values.map(brake => {
+                        notification = notification + ` - ${brake.vehicle_data.category} ${brake.vehicle_data.brand} ${brake.vehicle_data.model} ${brake.vehicle_data.year } ${brake.preferredBrand}</br>`
+                    })).then(() => {
+                        resolve(notification);
+                    })
+                })
+            }else{
+                resolve("");
+            }   
+        })
+    })
+}
 function getVehicle(brakes) {
     return new Bluebird((resolve, reject) => {
         var count = 0;

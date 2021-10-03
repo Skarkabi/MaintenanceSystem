@@ -1,3 +1,14 @@
+ <div class="container" style="padding-bottom: 10px">
+        <button class="btn btn-outline-secondary btn-lg" id="Trigger"><i class="far fa-bell"></i></button>
+
+        <div id="Slider" class="slideup">
+            <!-- content has to be wrapped so that the padding and
+                margins don't effect the transition's height -->
+            <div id="Actual">
+               <p>{{{minimums}}}</p>
+            </div>
+        </div>
+    </div>
 <div class="col-md-12">
 	<div class="row row-cols-1 row-cols-md-5">
 		<div class="col mb-4">
@@ -173,5 +184,11 @@
 </style>
 
 <script>
-
+	 // slideup/slidedown
+        $("#Trigger").click(function () {
+            if ($("#Slider").hasClass("slideup"))
+                $("#Slider").removeClass("slideup").addClass("slidedown");
+            else
+                $("#Slider").removeClass("slidedown").addClass("slideup");
+        });
 </script>

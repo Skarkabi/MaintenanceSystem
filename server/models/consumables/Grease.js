@@ -448,12 +448,13 @@ Grease.groupSupplier = () => {
         Grease.findAll({
             //Declaring attributes to return from database
             attributes:
-              ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'supplierId', 'minVolume',
+              ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'supplierId', 'minVolume', 'price_per_litter',
               [sequelize.fn('sum', sequelize.col('volume')), 'volume'],
+              [sequelize.fn('sum', sequelize.col('totalCost')), 'totalCost']
             ],
 
             //Declaring how to group return values
-            group: ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'supplierId', 'minVolume']
+            group: ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'supplierId', 'minVolume', 'price_per_litter']
             
         }).then((values) => { 
             //Setting variable to return brakes with their supplier names
@@ -473,6 +474,58 @@ Grease.groupSupplier = () => {
 
     });
     
+}
+
+Grease.groupWithOutSupplier = () => {
+    return new Bluebird((resolve, reject) => {
+        //Finding grease from database and returning specified attributes 
+        Grease.findAll({
+            //Declaring attributes to return from database
+            attributes:
+              ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'minVolume',
+              [sequelize.fn('sum', sequelize.col('volume')), 'volume'],
+              [sequelize.fn('sum', sequelize.col('totalCost')), 'totalCost']
+            ],
+
+            //Declaring how to group return values
+            group: ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'minVolume']
+            
+        }).then((values) => { 
+            //Setting variable to return brakes with their supplier names
+            resolve(values);
+
+        }).catch(err => {
+            reject(err);
+
+        });
+
+    });
+    
+}
+
+Grease.findMinimums = () => {
+    return new Bluebird((resolve, reject) => {
+        Grease.findAll({
+            attributes:
+            ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'minVolume',
+            [sequelize.fn('sum', sequelize.col('volume')), 'volume'],
+            [sequelize.fn('sum', sequelize.col('totalCost')), 'totalCost']
+          ],
+
+          //Declaring how to group return values
+          group: ['greaseSpec', 'typeOfGrease', 'carBrand', 'carYear', 'minVolume'],
+          where: {
+            minVolume: {[Sequelize.Op.gt]: sequelize.col('volume')}
+            }
+        }).then(values => {
+            var notification = "</br>Grease:</br>";
+            Promise.all(values.map(grease => {
+                notification = notification + ` - ${grease.greaseSpec} ${grease.typeOfGrease} ${grease.carBrand} ${grease.carYear}</br>`
+            })).then(() => {
+                resolve(notification);
+            })
+        })
+    })
 }
 
 export default Grease;

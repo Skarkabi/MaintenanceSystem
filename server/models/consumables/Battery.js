@@ -360,6 +360,7 @@ Battery.getWithSupplier = supplierId => {
     });
 }
 
+
 /**
  * Function to find different batteries from a specific suppleir 
  * @returns list of batter values from specific supplier regardless of quotation numbers
@@ -372,6 +373,7 @@ Battery.groupSupplier = () => {
             attributes:
               ['batSpec', 'supplierId', 'minQuantity',
               [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
+              [sequelize.fn('sum', sequelize.col('totalCost')), 'totalCost']
             ],
 
             //Declaring how to group return values
@@ -395,6 +397,57 @@ Battery.groupSupplier = () => {
 
     });
 
+}
+
+Battery.groupWithOutSupplier = () => {
+    return new Bluebird((resolve, reject) => {
+        Battery.findAll({
+            attributes:
+                ['batSpec', 'minQuantity',
+                [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
+                [sequelize.fn('sum', sequelize.col('totalCost')), 'totalCost']
+            ],
+            group: ["batSpec", "minQuantity"]
+          
+        }).then(values => {
+            console.log(values);
+            resolve(values);
+        })
+    })
+}
+
+Battery.findMinimums = () => {
+    return new Bluebird((resolve, reject) => {
+        Battery.findAll({
+            attributes:
+              ['batSpec', 'minQuantity',
+              [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
+            ],
+
+            //Declaring how to group return values
+            group: ["batSpec", 'minQuantity'],
+            where: {
+                minQuantity: {[Sequelize.Op.gt]: sequelize.col('quantity')}
+            }
+        }).then(values => {
+            var result = {count: values.length, rows: values}
+            if(values.length > 0){
+                var notification = "Batteries:</br>";
+                Supplier.getSupplierNames(result).then(()=>{
+                Promise.all(result.rows.map(battery => {
+                    notification = notification + ` - ${battery.batSpec}</br>`;
+                })).then(() => {
+                    resolve(notification);
+                })
+               
+                
+            })
+            }else{
+                resolve("")
+            }
+            
+        })
+    })
 }
 
 export default Battery;

@@ -405,6 +405,63 @@ Oil.groupSupplier = () => {
 
 }
 
+Oil.groupWithOutSupplier = () => {
+  return new Bluebird((resolve, reject) => {
+    //Finding oil from database and returning specified attributes 
+    Oil.findAll({
+        //Declaring attributes to return from database
+        attributes:
+          ['oilSpec', 'typeOfOil', 'minVolume',
+          [sequelize.fn('sum', sequelize.col('volume')), 'volume'],
+          [sequelize.fn('sum', sequelize.col('totalCost')), 'totalCost'],
+        ],
+
+        //Declaring how to group return values
+        group: ['oilSpec', 'typeOfOil', 'minVolume']
+        
+    }).then((values) => { 
+        //Setting variable to return oil with their supplier names
+        var result = {count: values.length, rows: values}
+          resolve(values);
+       
+    }).catch(err => {
+      reject(err);
+
+  });
+
+});
+
+}
+
+Oil.findMinimums = () => {
+  return new Bluebird((resolve, reject) => {
+    Oil.findAll({
+      attributes:
+          ['oilSpec', 'typeOfOil', 'minVolume',
+          [sequelize.fn('sum', sequelize.col('volume')), 'volume'],
+          [sequelize.fn('sum', sequelize.col('totalCost')), 'totalCost'],
+        ],
+
+        //Declaring how to group return values
+        group: ['oilSpec', 'typeOfOil', 'minVolume'],
+        where: {
+          minVolume: {[Sequelize.Op.gt]: sequelize.col('volume')}
+        }
+    }).then(values => {
+      if(values.length > 0){
+        var notifcation = "</br>Oil:</br>";
+        Promise.all(values.map(oil => {
+          notifcation = notifcation + ` - ${oil.oilSpec} ${oil.typeOfOil}</br>`;
+        })).then(() => {
+          resolve(notifcation)
+        })
+      }else{
+        resolve("")
+      }
+    })
+  })
+}
+
 /**
  * Function to find all oil in database with specific supplier ID
  * Function takes in the supplier ID of the supplier being searched for

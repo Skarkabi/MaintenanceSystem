@@ -386,6 +386,27 @@ Consumable.getDistinctConsumableValues = () => {
 
 }
 
+Consumable.checkMinimums = () => {
+  return new Bluebird((resolve, reject) => {
+    Battery.findMinimums().then(foundBatteries => {
+      Brake.findMinimums().then(foundBrakes => {
+        Filter.findMinimums().then(foundFilters => {
+          Grease.findMinimums().then(foundGrease => {
+            Oil.findMinimums().then(foundOil => {
+              var output = `${foundBatteries}${foundBrakes}${foundFilters}${foundGrease}${foundOil}`
+              resolve(output.toUpperCase());
+            })
+           
+          })
+          
+        })
+      })
+     
+    })
+  })
+ 
+}
+
 
 /**
  * Function to see if consumable category exists

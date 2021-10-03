@@ -769,15 +769,16 @@ router.get('/:category', (req, res, next) => {
             });
 
         }else{
-            model.groupSupplier().then(consumables => {
+            model.groupWithOutSupplier().then(consumables => {
                 //Loading page to display consumable category info by supplier 
                 res.render("displaySpecificConsumables", {
                     title: title,
                     typeOf: req.params.category,
                     jumbotronDescription: "View all " + req.params.category + " in the system.",
-                    consumables: consumables.rows,
+                    consumables: consumables,
                     page: "view",
-                    msgType: req.flash()
+                    msgType: req.flash(),
+                    supplier:false
     
                 });
     
@@ -786,6 +787,29 @@ router.get('/:category', (req, res, next) => {
 
     }
 
+});
+
+router.get('/:category/full', (req, res, next) =>{
+    if(req.user){
+        //Variable to set the title of page as the selected consumable category
+        var title = req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1);
+        //Creating the appropriate consumable category model
+        const model = getConsumableModel(req.params.category);
+        //Grouping consumable category by the suppliers
+        model.groupSupplier().then(consumables => {
+                //Loading page to display consumable category info by supplier 
+                res.render("displaySpecificConsumables", {
+                    title: title,
+                    typeOf: req.params.category,
+                    jumbotronDescription: "View all " + req.params.category + " in the system.",
+                    consumables: consumables.rows,
+                    page: "view",
+                    msgType: req.flash(),
+                    supplier: true
+                });
+    
+        });
+    }
 });
 
 /**
@@ -810,7 +834,7 @@ router.get('/:category/:supplier', (req, res, next) => {
                     consumables: foundModel,
                     page: "add",
                     specfic: true,
-                    msgType: req.flash()
+                    msgType: req.flash(),
     
                 });
 
@@ -826,7 +850,8 @@ router.get('/:category/:supplier', (req, res, next) => {
                     consumables: foundModel,
                     page: "add",
                     specfic: true,
-                    msgType: req.flash()
+                    msgType: req.flash(),
+                    supplier: true
     
                 });
     

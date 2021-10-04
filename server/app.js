@@ -24,6 +24,8 @@ import consumableRouter from './routes/consumables';
 import supplierRouter from './routes/supplier';
 import mainRouter from './routes/main';
 import User from './models/User';
+import EmailSender from './EmailSender';
+import cron from 'node-cron';
 import Consumable from './models/Consumables';
 require('./models/Session');
 require('dotenv').config
@@ -215,5 +217,17 @@ Consumable.checkMinimums().then(found => {
     console.log(found.batteries);
     console.log(found.brakes);
 })
+
+cron.schedule('0 0 7 * * Saturday', () => {
+    Consumable.checkMinimums().then(found => {
+        var re = new RegExp("</BR>", 'g');
+        var formatedReport = found.replace(re,"\n")
+        console.log(formatedReport);
+        var fields = {email: "maintenance@tmico.ae", password: "password", report:formatedReport}
+        EmailSender.emailConfirmation(fields);
+    })
+  });
+
+//
 
 export default app;

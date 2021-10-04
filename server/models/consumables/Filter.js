@@ -537,7 +537,7 @@ Filter.findMinimums= () => {
             var notification = "</br>Filters:</br>";
             getVehicle(values).then(() => {
                 Promise.all(values.map(filter => {
-                    notification = notification + ` - ${filter.vehicle_data.category} ${filter.vehicle_data.brand} ${filter.vehicle_data.model} ${filter.vehicle_data.year} ${filter.fType} ${filter.actualBrand}</br>`
+                    notification = notification + ` - ${filter.vehicle_data.category} ${filter.vehicle_data.brand} ${filter.vehicle_data.model} ${filter.vehicle_data.year} ${filter.fType} ${filter.actualBrand} (Minimum: ${filter.minQuantity}, Current: ${filter.quantity})</br>`
                 })).then(() => {
                     resolve(notification);
                 })

@@ -451,7 +451,7 @@ Oil.findMinimums = () => {
       if(values.length > 0){
         var notifcation = "</br>Oil:</br>";
         Promise.all(values.map(oil => {
-          notifcation = notifcation + ` - ${oil.oilSpec} ${oil.typeOfOil}</br>`;
+          notifcation = notifcation + ` - ${oil.oilSpec} ${oil.typeOfOil} (Minimum: ${oil.minVolume}, Current: ${oil.volume})</br>`;
         })).then(() => {
           resolve(notifcation)
         })

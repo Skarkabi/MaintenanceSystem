@@ -520,7 +520,7 @@ Grease.findMinimums = () => {
         }).then(values => {
             var notification = "</br>Grease:</br>";
             Promise.all(values.map(grease => {
-                notification = notification + ` - ${grease.greaseSpec} ${grease.typeOfGrease} ${grease.carBrand} ${grease.carYear}</br>`
+                notification = notification + ` - ${grease.greaseSpec} ${grease.typeOfGrease} ${grease.carBrand} ${grease.carYear} (Minimum: ${grease.minVolume}, Current: ${grease.volume})</br>`
             })).then(() => {
                 resolve(notification);
             })

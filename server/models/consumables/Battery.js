@@ -433,15 +433,11 @@ Battery.findMinimums = () => {
             var result = {count: values.length, rows: values}
             if(values.length > 0){
                 var notification = "Batteries:</br>";
-                Supplier.getSupplierNames(result).then(()=>{
                 Promise.all(result.rows.map(battery => {
-                    notification = notification + ` - ${battery.batSpec}</br>`;
+                    notification = notification + ` - ${battery.batSpec} (Minimum: ${battery.minQuantity}, Current: ${battery.quantity})</br>`;
                 })).then(() => {
                     resolve(notification);
                 })
-               
-                
-            })
             }else{
                 resolve("")
             }

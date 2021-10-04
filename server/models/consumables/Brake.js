@@ -513,7 +513,7 @@ Brake.findMinimums = () => {
                 var notification = "</br>Brakes:</br>";
                 getVehicle(values).then(() => {
                     Promise.all(values.map(brake => {
-                        notification = notification + ` - ${brake.vehicle_data.category} ${brake.vehicle_data.brand} ${brake.vehicle_data.model} ${brake.vehicle_data.year } ${brake.preferredBrand}</br>`
+                        notification = notification + ` - ${brake.vehicle_data.category} ${brake.vehicle_data.brand} ${brake.vehicle_data.model} ${brake.vehicle_data.year } ${brake.preferredBrand} (Minimum: ${brake.minQuantity}, Current: ${brake.quantity})</br>`
                     })).then(() => {
                         resolve(notification);
                     })

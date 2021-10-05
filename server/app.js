@@ -27,6 +27,7 @@ import User from './models/User';
 import EmailSender from './EmailSender';
 import cron from 'node-cron';
 import Consumable from './models/Consumables';
+
 require('./models/Session');
 require('dotenv').config
 
@@ -157,6 +158,10 @@ app.use(passport.session());
 app.use(function (req, res, next){
     app.locals.user = req.user;
     Consumable.checkMinimums().then(found => {
+        if(found === ""){
+            console.log("This------------------------");
+            found = "Satisfactory Stock Levels"
+        }
         var re = new RegExp("</BR>", 'g');
         var formatedReport = found.replace(re,"\r\n")
         req.minimums = found;
@@ -224,11 +229,6 @@ var newUser = {
     password:"123456789",
     userType:"admin"
 }
-
-Consumable.checkMinimums().then(found => {
-    console.log(found.batteries);
-    console.log(found.brakes);
-})
 
 cron.schedule('0 0 7 * * Saturday', () => {
     Consumable.checkMinimums().then(found => {

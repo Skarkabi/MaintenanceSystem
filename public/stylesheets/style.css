@@ -8,6 +8,67 @@ body {
   font-size: 0.9rem;
 }
 
+.notifications {
+  width: auto;
+  height: 0px;
+  opacity: 0;
+  position: absolute;
+  top: 63px;
+  right: 62px;
+  border-radius: 5px 0px 5px 5px;
+  background-color: #666666;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
+}
+
+.notifications h2 {
+  font-size: 20px;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-bottom: 1px solid #000000;
+  color: #eee
+}
+
+.notifications-item .text p {
+  color: #eee;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 18px
+}
+
+.notifications-item {
+  display: flex;
+  border-bottom: 1px solid #eee;
+  padding: 6px 9px;
+  margin-bottom: 0px;
+  cursor: pointer
+}
+
+.fa-stack{
+  cursor: pointer
+}
+
+.fa-stack:hover > .far.fa-bell.fa-lg.fa-stack-1x{
+  color: lightskyblue;
+}
+.far.fa-bell.fa-lg.fa-stack-1x{
+  position: relative;
+  display: inline-block;
+  color: white;
+  border: none;
+  font-size: 1.4em;
+
+}
+
+.fas.fa-certificate.fa-xs.fa-stack-1x{
+  position: absolute;
+  color: darkorange;
+  font-size: .7em;
+  bottom: 1em;
+  left: .7em;
+
+}
+
 a {
   color: #000;
   text-decoration: none !important;

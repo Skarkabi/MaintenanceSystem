@@ -505,16 +505,18 @@ Brake.findMinimums = () => {
             ],
 
             group:["plateNumber", "bBrand", 'preferredBrand',  "preferredBrand", 'minQuantity'],
-            where: {
-                minQuantity: {[Sequelize.Op.gt]: sequelize.col('quantity')}
-            }
         }).then(values => {
             if(values.length > 0){
-                var notification = "</br>Brakes:</br>";
+                var notification = "";
                 getVehicle(values).then(() => {
                     Promise.all(values.map(brake => {
-                        notification = notification + ` - ${brake.vehicle_data.category} ${brake.vehicle_data.brand} ${brake.vehicle_data.model} ${brake.vehicle_data.year } ${brake.preferredBrand} (Minimum: ${brake.minQuantity}, Current: ${brake.quantity})</br>`
+                        if(brake.minQuantity > brake.quantity){
+                            notification = notification + ` - ${brake.vehicle_data.category} ${brake.vehicle_data.brand} ${brake.vehicle_data.model} ${brake.vehicle_data.year } ${brake.preferredBrand} (Minimum: ${brake.minQuantity}, Current: ${brake.quantity})</br>`
+                        }
                     })).then(() => {
+                        if(notification !== ""){
+                            notification = `</br>Brakes:</br>${notification}`
+                        }
                         resolve(notification);
                     })
                 })

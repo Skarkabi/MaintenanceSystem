@@ -444,16 +444,19 @@ Oil.findMinimums = () => {
 
         //Declaring how to group return values
         group: ['oilSpec', 'typeOfOil', 'minVolume'],
-        where: {
-          minVolume: {[Sequelize.Op.gt]: sequelize.col('volume')}
-        }
     }).then(values => {
       if(values.length > 0){
-        var notifcation = "</br>Oil:</br>";
+        var notification = "";
         Promise.all(values.map(oil => {
-          notifcation = notifcation + ` - ${oil.oilSpec} ${oil.typeOfOil} (Minimum: ${oil.minVolume}, Current: ${oil.volume})</br>`;
+          if(oil.minVolume > oil.volume){
+            notification = notification + ` - ${oil.oilSpec} ${oil.typeOfOil} (Minimum: ${oil.minVolume}, Current: ${oil.volume})</br>`;
+          }
+        
         })).then(() => {
-          resolve(notifcation)
+          if(notification !== ""){
+            notification = `</br>Oil:</br>${notification}`
+        }
+          resolve(notification)
         })
       }else{
         resolve("")

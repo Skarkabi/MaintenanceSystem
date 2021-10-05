@@ -109,6 +109,10 @@ handlebars.registerHelper('greaterThan', function(x, y){
     console.log  (parseFloat(x) > parseFloat(y));
     return (parseFloat(x) > parseFloat(y))
 })
+
+handlebars.registerHelper('stringify', function(string){
+    return JSON.stringify(string);
+})
 const app = express();
 
 const multiHelpers = hbshelpers()
@@ -152,7 +156,15 @@ app.use(passport.session());
 
 app.use(function (req, res, next){
     app.locals.user = req.user;
-    next();
+    Consumable.checkMinimums().then(found => {
+        var re = new RegExp("</BR>", 'g');
+        var formatedReport = found.replace(re,"\r\n")
+        req.minimums = found;
+        app.locals.minimums = req.minimums;
+        next();
+    })
+    
+   
 })
 
 

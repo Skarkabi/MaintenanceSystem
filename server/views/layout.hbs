@@ -67,4 +67,14 @@
     
  
 </body>
+<script>
+	 // slideup/slidedown
+        $("#Trigger").click(function () {
+            console.log("In here");
+            if ($("#Slider").hasClass("slideup"))
+                $("#Slider").removeClass("slideup").addClass("slidedown");
+            else
+                $("#Slider").removeClass("slidedown").addClass("slideup");
+        });
+</script>
 </html>

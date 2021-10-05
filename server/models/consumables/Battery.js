@@ -4,6 +4,7 @@ import Sequelize from 'sequelize';
 import Consumable from '../Consumables'
 import sequelize from '../../mySQLDB';
 import Supplier from '../Supplier';
+var os = require('os');
 
 /**
  * Declaring the datatypes used within the Battery class
@@ -422,20 +423,23 @@ Battery.findMinimums = () => {
             attributes:
               ['batSpec', 'minQuantity',
               [sequelize.fn('sum', sequelize.col('quantity')), 'quantity'],
+              [sequelize.fn('sum', sequelize.col('totalCost')), 'totalCost']
             ],
 
             //Declaring how to group return values
             group: ["batSpec", 'minQuantity'],
-            where: {
-                minQuantity: {[Sequelize.Op.gt]: sequelize.col('quantity')}
-            }
         }).then(values => {
-            var result = {count: values.length, rows: values}
             if(values.length > 0){
-                var notification = "Batteries:</br>";
-                Promise.all(result.rows.map(battery => {
-                    notification = notification + ` - ${battery.batSpec} (Minimum: ${battery.minQuantity}, Current: ${battery.quantity})</br>`;
+                var notification = "";
+                Promise.all(values.map(battery => {
+                    if(battery.minQuantity > battery.quantity){
+                        console.log(battery);
+                        notification = notification + ` - ${battery.batSpec} (Minimum: ${battery.minQuantity}, Current: ${battery.quantity})</br>`;
+                    }
                 })).then(() => {
+                    if(notification !== ""){
+                        notification = `Batteries:<br>${notification}`
+                    }
                     resolve(notification);
                 })
             }else{

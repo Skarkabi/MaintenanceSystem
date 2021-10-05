@@ -46,7 +46,7 @@ CREATE TABLE `other_stocks` (
   KEY `other_supplierId_index` (`supplierId`),
   KEY `other_quotationNumber_index` (`quotationNumber`),
   KEY `other_materialRequestNumber_index` (`materialRequestNumber`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -55,7 +55,7 @@ CREATE TABLE `other_stocks` (
 
 LOCK TABLES `other_stocks` WRITE;
 /*!40000 ALTER TABLE `other_stocks` DISABLE KEYS */;
-INSERT INTO `other_stocks` VALUES (1,'Spark Plug',80,2,10,'This is a test for the other stock',1,'N/A','MCM123','2021-08-18 17:57:52','2021-08-25 10:40:02'),(3,'Spark Plug',90,2,10,'This is a test for the other stock',1,'12324','MCM123','2021-08-18 18:11:09','2021-08-25 10:40:02'),(4,'Random Piece',73,10,40,'Testing if my add will work',1,'N/A','MCM00029','2021-08-22 06:31:47','2021-08-25 10:40:02'),(5,'Random Piece',58,11,33,'Testing with a quotation',1,'10039482','MCM38498','2021-08-22 06:32:34','2021-08-25 10:40:02');
+INSERT INTO `other_stocks` VALUES (2,'REFRIGERANT GAS',1,605.85,605.85,'REFRIGERANT 134A (A/C GAS)',2,'N/A','0','2021-09-27 12:35:53','2021-09-27 12:35:53'),(3,'CANTER AC COMPRESSOR',5,262.5,1312.5,'MISTUBISHI 3 TON CANTER A/C COMPRESSOR',2,'N/A','0','2021-09-27 12:38:14','2021-09-27 12:38:14');
 /*!40000 ALTER TABLE `other_stocks` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -68,4 +68,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-08-26 11:32:03
+-- Dump completed on 2021-10-05 10:56:02

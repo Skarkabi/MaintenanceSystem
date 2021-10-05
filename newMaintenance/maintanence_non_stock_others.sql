@@ -26,10 +26,11 @@ CREATE TABLE `non_stock_others` (
   `id` int NOT NULL AUTO_INCREMENT,
   `other_name` varchar(255) NOT NULL,
   `quantity` int NOT NULL,
+  `pendingQuantity` int NOT NULL,
   `singleCost` double DEFAULT NULL,
   `totalCost` double DEFAULT NULL,
   `details` varchar(255) NOT NULL,
-  `supplierId` int NOT NULL,
+  `supplierId` int DEFAULT NULL,
   `quotationNumber` varchar(255) NOT NULL,
   `materialRequestNumber` varchar(255) NOT NULL,
   `maintenanceReq` varchar(255) NOT NULL,
@@ -48,7 +49,7 @@ CREATE TABLE `non_stock_others` (
   KEY `non_stock_other_quotationNumber_index` (`quotationNumber`),
   KEY `non_stock_other_materialRequestNumber_index` (`materialRequestNumber`),
   KEY `non_stock_other_maintenanceReq_index` (`maintenanceReq`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -57,7 +58,7 @@ CREATE TABLE `non_stock_others` (
 
 LOCK TABLES `non_stock_others` WRITE;
 /*!40000 ALTER TABLE `non_stock_others` DISABLE KEYS */;
-INSERT INTO `non_stock_others` VALUES (3,'Spark Plug',4,2,30,'Testing if this works',1,'N/A','MCM124','TMC6938','2021-08-22 09:49:57','2021-08-22 09:49:57'),(4,'Test',12,34,408,'This si a test',1,'TEST10001','TEST1010','TMC6938','2021-08-22 11:27:02','2021-08-22 11:27:02'),(5,'Test',12,34,408,'This si a test',1,'TEST10001','TEST1010','TMC9912','2021-08-22 11:27:49','2021-08-22 11:27:49'),(6,'Test',12,34,408,'This si a test',1,'TEST10001','TEST1010','TMC9912','2021-08-22 11:27:59','2021-08-22 11:27:59'),(7,'Test',12,34,408,'This si a test',1,'TEST10001','TEST1010','TMC9912','2021-08-22 11:45:38','2021-08-22 11:45:38'),(8,'Test',12,34,408,'This si a test',1,'TEST10001','TEST1010','TMC9912','2021-08-22 11:47:32','2021-08-22 11:47:32'),(9,'Test',12,34,408,'This si a test',1,'TEST10001','TEST1010','TMC9912','2021-08-22 11:48:44','2021-08-22 11:48:44'),(10,'Test',12,34,408,'This si a test',1,'TEST10001','TEST1010','TMC9912','2021-08-22 11:49:54','2021-08-22 11:49:54'),(11,'Test',12,34,408,'This si a test',1,'TEST10001','TEEEST1010','TMC9912','2021-08-22 11:50:28','2021-08-22 11:50:28'),(12,'Test',12,34,408,'This si a test',1,'TEST10001','TEEEST1010','TMC9912','2021-08-22 11:56:17','2021-08-22 11:56:17'),(13,'Test',12,34,408,'This si a test',1,'TEST10001','TEEEST1010','TMC9912','2021-08-25 10:39:06','2021-08-25 10:39:06'),(14,'Test',12,34,408,'This si a test',1,'TEST10001','TEEEST1010','TMC9912','2021-08-25 10:39:27','2021-08-25 10:39:27');
+INSERT INTO `non_stock_others` VALUES (9,'BRAKE PAD ',1,0,65.1,65.1,'BRAKE PAD FRONT 1 SET',8,'17571','0','TMC18','2021-09-28 07:17:00','2021-09-28 07:17:00'),(10,'REFRIGERANT GAS',1,0,105,105,'AC GAS ',2,'NA','NA','TMC18','2021-09-28 07:22:17','2021-09-28 07:22:17');
 /*!40000 ALTER TABLE `non_stock_others` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -70,4 +71,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-08-26 11:32:04
+-- Dump completed on 2021-10-05 10:56:02

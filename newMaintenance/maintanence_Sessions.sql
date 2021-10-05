@@ -16,13 +16,13 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `Sessions`
+-- Table structure for table `sessions`
 --
 
-DROP TABLE IF EXISTS `Sessions`;
+DROP TABLE IF EXISTS `sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `Sessions` (
+CREATE TABLE `sessions` (
   `sid` varchar(255) NOT NULL,
   `expires` datetime DEFAULT NULL,
   `data` text,
@@ -34,13 +34,13 @@ CREATE TABLE `Sessions` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `Sessions`
+-- Dumping data for table `sessions`
 --
 
-LOCK TABLES `Sessions` WRITE;
-/*!40000 ALTER TABLE `Sessions` DISABLE KEYS */;
-INSERT INTO `Sessions` VALUES ('HtZqsm8xZbpC8mxUtQMCFdEPM0KiUqeV','2021-08-26 09:25:29','{\"cookie\":{\"originalMaxAge\":7200000,\"expires\":\"2021-08-26T07:52:12.966Z\",\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":\"100933847\"},\"flash\":{}}','2021-08-26 05:52:12','2021-08-26 07:25:29'),('J4Ig1bBIHsMGUaZqDCSx7NV6ldDvrqoG','2021-08-25 15:02:25','{\"cookie\":{\"originalMaxAge\":7200000,\"expires\":\"2021-08-25T13:02:42.575Z\",\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":\"100933847\"},\"flash\":{}}','2021-08-25 11:02:42','2021-08-25 13:02:25'),('YHyY_uOmT6YOIPeRKnaTlGfnMoVkQf34','2021-08-25 15:03:32','{\"cookie\":{\"originalMaxAge\":7200000,\"expires\":\"2021-08-25T15:02:46.907Z\",\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}','2021-08-25 13:02:46','2021-08-25 13:03:32');
-/*!40000 ALTER TABLE `Sessions` ENABLE KEYS */;
+LOCK TABLES `sessions` WRITE;
+/*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
+INSERT INTO `sessions` VALUES ('ahoC7m5o8HIklAp7d9P9R3kvXkdqkb2i','2021-10-04 13:40:44','{\"cookie\":{\"originalMaxAge\":7200000,\"expires\":\"2021-10-04T11:41:02.887Z\",\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":\"100933847\"},\"flash\":{}}','2021-10-04 09:41:02','2021-10-04 11:40:44'),('KeGTJgIBj3GbG5NKLhJe6DWOfRJdIJnv','2021-10-04 10:36:47','{\"cookie\":{\"originalMaxAge\":7200000,\"expires\":\"2021-10-04T09:00:47.113Z\",\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":\"100933847\"},\"flash\":{}}','2021-10-04 07:00:47','2021-10-04 08:36:47'),('tFYqqvogPIqaf5qiN1psZY5Ou69wIeqZ','2021-10-04 14:19:35','{\"cookie\":{\"originalMaxAge\":7200000,\"expires\":\"2021-10-04T13:44:01.601Z\",\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":\"100933847\"},\"flash\":{}}','2021-10-04 11:44:01','2021-10-04 12:19:35');
+/*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -52,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-08-26 11:32:04
+-- Dump completed on 2021-10-05 10:56:01

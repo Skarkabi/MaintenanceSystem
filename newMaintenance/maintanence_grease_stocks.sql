@@ -34,8 +34,8 @@ CREATE TABLE `grease_stocks` (
   `quotationNumber` varchar(255) NOT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
-  `price_per_litter` double NOT NULL,
   `totalCost` double NOT NULL,
+  `price_per_litter` double NOT NULL,
   PRIMARY KEY (`id`),
   KEY `grease_id_index` (`id`),
   KEY `grease_volume_index` (`volume`),
@@ -48,10 +48,9 @@ CREATE TABLE `grease_stocks` (
   KEY `grease_updatedAt_index` (`updatedAt`),
   KEY `grease_supplierId_index` (`supplierId`),
   KEY `grease_quotationNumber_index` (`quotationNumber`),
-  KEY `grease_total_price_index` (`totalCost`),
-  KEY `grease_price_per_litter_index` (`price_per_litter`),
-  KEY `grease_totalCost_index` (`totalCost`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `grease_totalCost_index` (`totalCost`),
+  KEY `grease_price_per_litter_index` (`price_per_litter`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -60,7 +59,7 @@ CREATE TABLE `grease_stocks` (
 
 LOCK TABLES `grease_stocks` WRITE;
 /*!40000 ALTER TABLE `grease_stocks` DISABLE KEYS */;
-INSERT INTO `grease_stocks` VALUES (1,'tester','tester','Ford','2020',10,1,1,'N/A','2021-07-26 12:19:43','2021-08-17 13:20:21',10,100),(2,'NEW','NEW','MITSUBISHI','2018',15,10,1,'N/A','2021-08-18 15:49:02','2021-08-22 15:56:27',10,900);
+INSERT INTO `grease_stocks` VALUES (2,'lithium grease ','nlgi-3','all','all',12,3,2,'na','2021-09-28 06:08:54','2021-09-28 06:08:54',126,10.5),(3,'lithium grease ','nlgi-3','all','all',3,4,2,'na','2021-09-28 06:08:54','2021-09-28 06:08:54',126,10.5);
 /*!40000 ALTER TABLE `grease_stocks` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -73,4 +72,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-08-26 11:32:04
+-- Dump completed on 2021-10-05 10:56:02

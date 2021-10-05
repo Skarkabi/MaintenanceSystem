@@ -24,10 +24,7 @@ DROP TABLE IF EXISTS `filter_stocks`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `filter_stocks` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `carBrand` varchar(255) NOT NULL,
-  `carModel` varchar(255) NOT NULL,
-  `carYear` varchar(255) NOT NULL,
-  `category` varchar(255) NOT NULL,
+  `plateNumber` varchar(255) NOT NULL,
   `fType` varchar(255) NOT NULL,
   `preferredBrand` varchar(255) NOT NULL,
   `actualBrand` varchar(255) NOT NULL,
@@ -42,13 +39,10 @@ CREATE TABLE `filter_stocks` (
   PRIMARY KEY (`id`),
   KEY `filter_id_index` (`id`),
   KEY `filter_quantity_index` (`quantity`),
-  KEY `filter_carBrand_index` (`carBrand`),
-  KEY `filter_carYear_index` (`carYear`),
-  KEY `filter_carModel_index` (`carModel`),
+  KEY `filter_plateNumber_index` (`plateNumber`),
   KEY `filter_fType_index` (`fType`),
   KEY `filter_preferredBrand_index` (`preferredBrand`),
   KEY `filter_actualBrand_index` (`actualBrand`),
-  KEY `filter_category_index` (`category`),
   KEY `filter_singleCost_index` (`singleCost`),
   KEY `filter_totalCost_index` (`totalCost`),
   KEY `filter_minQuantity_index` (`minQuantity`),
@@ -56,7 +50,7 @@ CREATE TABLE `filter_stocks` (
   KEY `filter_updatedAt_index` (`updatedAt`),
   KEY `filter_supplierId_index` (`supplierId`),
   KEY `filter_quotationNumber_index` (`quotationNumber`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,7 +59,7 @@ CREATE TABLE `filter_stocks` (
 
 LOCK TABLES `filter_stocks` WRITE;
 /*!40000 ALTER TABLE `filter_stocks` DISABLE KEYS */;
-INSERT INTO `filter_stocks` VALUES (1,'FORD','MUSTANG','2020','CAR','Oil','Genuine parts','GENUINE PARTS',12,120,12,1,1,'N/A','2021-07-26 12:19:28','2021-08-22 12:08:07'),(2,'FORD','MUSTANG','2020','CAR','A/C','Genuine parts','GENUINE PARTS',12,1392,70,10,1,'N/A','2021-08-18 15:41:38','2021-08-25 10:50:56');
+INSERT INTO `filter_stocks` VALUES (1,'69512','OIL FILTER','OSK-0-7320 / ME013307','OSK-0-7320 / ME013307',13.65,122.85000000000001,9,2,10,'','2021-09-27 08:05:08','2021-09-27 08:05:08'),(2,'69512','DIESEL FILTER','OSK-F-7320 / ME016823','OSK-F-7320 / ME016823',10.5,42,4,2,10,'','2021-09-27 08:19:54','2021-09-27 08:19:54'),(3,'81955','oil filter','MITSUBISHI MOTORS-MZ690115','MITSUBISHI MOTORS-MZ690115',15.75,110.25,7,2,2,'','2021-09-27 11:37:53','2021-09-27 11:37:53'),(4,'52674','oil filter','KIA GENUINE PARTS-2630035505','KIA GENUINE PARTS-2630035505',12.6,75.6,6,2,2,'','2021-09-27 11:43:08','2021-09-27 11:43:08'),(5,'88342','oil filter','TOYOTA GENIUINE PARTS / 04152-31090','TOYOTA GENIUINE PARTS / 04152-31090',15.75,15.75,1,2,2,'','2021-09-27 11:48:38','2021-09-27 11:48:38'),(6,'28190','oil filter','TOYOTA GENIUINE PARTS / 04152-37010','TOYOTA GENIUINE PARTS / 04152-37010',15.75,78.75,5,2,2,'','2021-09-27 11:49:57','2021-09-27 11:49:57'),(7,'87065','AIR FILTER','QMP / P/NO : 28113-C1100','QMP / P/NO : 28113-C1100',52.5,262.5,5,2,2,'','2021-09-27 12:41:58','2021-09-27 12:41:58'),(8,'52674','A/C FILTER','QMP / P/NO : 97133-C4000','QMP / P/NO : 97133-C4000',78.75,630,8,2,2,'','2021-09-27 12:45:41','2021-09-27 12:45:41'),(9,'1','oil filter','CAT-32A4000400C','CAT-32A4000400C',7.5,52.5,7,3,2,'','2021-09-28 05:42:13','2021-09-28 05:42:13'),(10,'69512','OIL FILTER','OSK-0-7320 / ME013307','OSK-0-7320 / ME013307',10.5,10.5,1,2,10,'','2021-09-30 11:23:05','2021-09-30 11:23:05');
 /*!40000 ALTER TABLE `filter_stocks` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -78,4 +72,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-08-26 11:32:05
+-- Dump completed on 2021-10-05 10:56:01

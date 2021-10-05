@@ -28,11 +28,10 @@ CREATE TABLE `maintenance_employees` (
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   PRIMARY KEY (`employee_id`,`maintenance_req`),
-  KEY `maitenance_employee_id_index` (`employee_id`),
+  KEY `maintenance_employee_id_index` (`employee_id`),
   KEY `maintenance_req_index` (`maintenance_req`),
   KEY `maintenance_createdAt_index` (`createdAt`),
-  KEY `maintenance_updatedAt_index` (`updatedAt`),
-  KEY `maintenance_employee_id_index` (`employee_id`)
+  KEY `maintenance_updatedAt_index` (`updatedAt`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -42,7 +41,6 @@ CREATE TABLE `maintenance_employees` (
 
 LOCK TABLES `maintenance_employees` WRITE;
 /*!40000 ALTER TABLE `maintenance_employees` DISABLE KEYS */;
-INSERT INTO `maintenance_employees` VALUES ('100944655','TMC6938','2021-07-25 11:54:18','2021-07-25 11:54:18'),('T11538','TMC6938','2021-07-25 11:54:18','2021-07-25 11:54:18');
 /*!40000 ALTER TABLE `maintenance_employees` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -55,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-08-26 11:32:05
+-- Dump completed on 2021-10-05 10:56:02

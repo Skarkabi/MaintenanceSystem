@@ -42,14 +42,12 @@ CREATE TABLE `oil_stocks` (
   KEY `oil_oilSpec_index` (`oilSpec`),
   KEY `oil_typeOfOil_index` (`typeOfOil`),
   KEY `oil_oilPrice_index` (`oilPrice`),
+  KEY `oil_totalCost_index` (`totalCost`),
   KEY `oil_createdAt_index` (`createdAt`),
   KEY `oil_updatedAt_index` (`updatedAt`),
   KEY `oil_supplierId_index` (`supplierId`),
-  KEY `oil_quotationNumber_index` (`quotationNumber`),
-  KEY `grease_total_price_index` (`totalCost`),
-  KEY `oil_total_price_index` (`totalCost`),
-  KEY `oil_totalCost_index` (`totalCost`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `oil_quotationNumber_index` (`quotationNumber`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -58,7 +56,7 @@ CREATE TABLE `oil_stocks` (
 
 LOCK TABLES `oil_stocks` WRITE;
 /*!40000 ALTER TABLE `oil_stocks` DISABLE KEYS */;
-INSERT INTO `oil_stocks` VALUES (2,'10W-40','DIESEL',14,1,'WURTH',12,12,1,'Stock-1','2021-08-08 07:46:36','2021-08-17 13:36:43'),(3,'30W-40','PETROL',80,10,'TEST',123,11808,1,'N/A','2021-08-18 15:53:28','2021-08-25 10:42:13');
+INSERT INTO `oil_stocks` VALUES (1,'20W50','PETROL ENGINE OIL',140,30,'NATIONAL LUBE',10.13,1418.2,2,'NA','2021-09-28 07:59:10','2021-09-28 07:59:10'),(2,'15W40','DIESEL ENGINE OIL',110,100,'WURTH',10.13,1013.0000000000001,2,'NA','2021-09-28 08:08:37','2021-09-28 08:18:47');
 /*!40000 ALTER TABLE `oil_stocks` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -71,4 +69,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-08-26 11:32:04
+-- Dump completed on 2021-10-05 10:56:02

@@ -25,28 +25,26 @@ DROP TABLE IF EXISTS `battery_stocks`;
 CREATE TABLE `battery_stocks` (
   `id` int NOT NULL AUTO_INCREMENT,
   `batSpec` varchar(255) NOT NULL,
-  `carBrand` varchar(255) NOT NULL,
-  `carYear` varchar(255) NOT NULL,
   `minQuantity` varchar(255) NOT NULL,
   `singleCost` double DEFAULT NULL,
   `totalCost` double DEFAULT NULL,
   `quantity` int DEFAULT NULL,
   `supplierId` int NOT NULL,
   `quotationNumber` varchar(255) NOT NULL,
+  `serialNumber` varchar(255) NOT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `battery_id_index` (`id`),
   KEY `battery_quantity_index` (`quantity`),
   KEY `battery_batSpec_index` (`batSpec`),
-  KEY `battery_carBrand_index` (`carBrand`),
-  KEY `battery_carYear_index` (`carYear`),
   KEY `battery_minQuantity_index` (`minQuantity`),
   KEY `brake_singleCost_index` (`singleCost`),
   KEY `brake_totalCost_index` (`totalCost`),
   KEY `battery_createdAt_index` (`createdAt`),
   KEY `battery_updatedAt_index` (`updatedAt`),
   KEY `battery_supplierId_index` (`supplierId`),
+  KEY `battery_serialNumber_index` (`serialNumber`),
   KEY `battery_quotationNumber_index` (`quotationNumber`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -57,7 +55,7 @@ CREATE TABLE `battery_stocks` (
 
 LOCK TABLES `battery_stocks` WRITE;
 /*!40000 ALTER TABLE `battery_stocks` DISABLE KEYS */;
-INSERT INTO `battery_stocks` VALUES (1,'75 AH','FORD','2020','5',11.44,137.28,16,1,'N/A','2021-08-08 10:51:34','2021-08-25 10:37:58'),(2,'75 AH','FORD','2020','5',11.44,137.28,30,1,'N/A','2021-08-08 10:51:34','2021-08-18 14:49:00'),(6,'100 AH','FORD','2020','1',1,100,57,1,'N/A','2021-08-18 15:21:02','2021-08-18 15:33:52'),(7,'225 AH','KIA','2302','1',12,144,9,1,'N/A','2021-08-18 15:40:49','2021-08-22 11:05:46'),(8,'225 AH','KIA','2020','5',13.98,167.76,12,2,'N/A','2021-08-25 10:58:09','2021-08-25 10:58:09');
+INSERT INTO `battery_stocks` VALUES (1,'110 AH','4',2,2,1,2,'N/A','TEST','2021-09-27 08:05:08','2021-09-27 08:05:08'),(2,'110 AH','4',2,2,1,1,'N/A','TEST','2021-09-27 08:05:08','2021-09-27 08:05:08'),(6,'110 AH','4',2,2,1,2,'N/A','B1','2021-10-03 06:32:02','2021-10-03 06:32:02'),(7,'536 AH','1',52.5,52.5,1,2,'N/A','B2','2021-10-03 06:32:02','2021-10-03 06:32:02');
 /*!40000 ALTER TABLE `battery_stocks` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -70,4 +68,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-08-26 11:32:04
+-- Dump completed on 2021-10-05 10:56:02

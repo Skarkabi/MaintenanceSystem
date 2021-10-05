@@ -16,35 +16,34 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `consumable_stocks`
+-- Table structure for table `material_requests`
 --
 
-DROP TABLE IF EXISTS `consumable_stocks`;
+DROP TABLE IF EXISTS `material_requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `consumable_stocks` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `category` varchar(255) NOT NULL,
-  `quantity` double DEFAULT NULL,
-  `createdAt` datetime DEFAULT NULL,
-  `updatedAt` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `consumable_id_index` (`id`),
-  KEY `consumable_category_index` (`category`),
-  KEY `consumable_quantity_index` (`quantity`),
-  KEY `consumable_createdAt_index` (`createdAt`),
-  KEY `consumable_updatedAt_index` (`updatedAt`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `material_requests` (
+  `material_request` varchar(255) NOT NULL,
+  `maintenance_req` varchar(255) NOT NULL,
+  `cost` double DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  PRIMARY KEY (`material_request`),
+  KEY `material_request_material_request_index` (`material_request`),
+  KEY `material_request_maintenance_req_index` (`maintenance_req`),
+  KEY `material_request_cost_index` (`cost`),
+  KEY `material_request_createdAt_index` (`createdAt`),
+  KEY `material_request_updatedAt_index` (`updatedAt`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `consumable_stocks`
+-- Dumping data for table `material_requests`
 --
 
-LOCK TABLES `consumable_stocks` WRITE;
-/*!40000 ALTER TABLE `consumable_stocks` DISABLE KEYS */;
-INSERT INTO `consumable_stocks` VALUES (2,'filter',53,'2021-09-27 08:05:09','2021-09-30 11:23:05'),(4,'REFRIGERANT GAS',1,'2021-09-27 12:35:53','2021-09-27 12:35:53'),(5,'CANTER AC COMPRESSOR',5,'2021-09-27 12:38:14','2021-09-27 12:38:14'),(7,'grease',12,'2021-09-28 06:08:54','2021-09-28 06:08:54'),(8,'oil',239,'2021-09-28 07:59:11','2021-09-28 08:18:47'),(9,'battery',3,'2021-09-28 07:59:11','2021-10-03 06:32:02'),(10,'brake',1,'2021-09-29 11:37:49','2021-09-29 11:37:49');
-/*!40000 ALTER TABLE `consumable_stocks` ENABLE KEYS */;
+LOCK TABLES `material_requests` WRITE;
+/*!40000 ALTER TABLE `material_requests` DISABLE KEYS */;
+/*!40000 ALTER TABLE `material_requests` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

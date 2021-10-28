@@ -48,6 +48,7 @@
                             {{else}}
                             <a href="/consumables/other/view/{{this.quotationNumber}}"><i class="fas fa-external-link-alt"></i></a>
                             {{/if}}
+                             <a id="deleteOther" role="button" onclick="deleteOther({{this.id}}, '{{this.other_name}}')"><i class="fas fa-trash-alt"></i></a>
                         </div>
                     </td>
                 </tr>
@@ -76,6 +77,11 @@
             //document.getElementById("mainForm").method = "GET";
             document.getElementById("category").value = "Oil";
         }
+    }
+
+    function deleteOther(id, otherName){
+        let quantity = prompt("How Many to Delete? ")
+        window.location.href = `/consumables/deleteOther/${otherName}/${id}/${quantity}`;
     }
 
 </script>

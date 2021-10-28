@@ -1,12 +1,13 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <form action="/" method="POST" id="displayMainForm">
+<input id="reqNumber" value="{{existingMain.req}}" hidden> 
 <div class="col-md-12">
     {{!-- Action Buttons --}}
     <div class="header-action-buttons pull-right">
         <button class="btn btn-primary" id="materialReques-update" disabled="" onclick='setAction(event, "update", "{{existingMain.req}}")'><i class="fas fa-edit"></i>Update</button>
         <button class="btn btn-success" id="confirmUpdate" onclick='setAction(event, "complete", "{{existingMain.req}}")' data-confirm="Confirm This Job is Completed?"><i class="fas fa-check"></i>Complete</button>
         {{#if user.admin}}
-        <a href="/vehicles/delete/{{existingVehicle.plate}}/{{existingVehicle.chassis}}" role="button" class="btn btn-danger delete" id="delete" class="delete" data-confirm="Are you sure to delete {{existingVehicle.brand}} {{existingVehicle.model}} With Plate # {{existingVehicle.plate}}?"><i class="fas fa-trash" aria-hidden="true"></i> Delete</a>
+        <a href="/maintanence/delete/{{existingMain.req}}" role="button" class="btn btn-danger delete" id="delete" class="delete" data-confirm="Are you sure to delete order # {{existingMain.req}}?"><i class="fas fa-trash" aria-hidden="true"></i> Delete</a>
        
         {{/if}}
         {{#if showPii}}
@@ -526,6 +527,22 @@
         var supplierValue = document.getElementById('supplierListName').value
         var value2send = document.querySelector(`#supplierList option[value='${supplierValue}']`).dataset.value;
         document.getElementById('receivedSupplier').value = value2send
+    }
+
+    function deleteConsumables(stock, id, name){
+        alert(`${document.getElementById('reqNumber').value}`)
+        let quantity = prompt("How Many to Delete? ")
+        if(!stock){
+            
+            window.location.href = `/maintanence/delete/item/${id}/${quantity}/${document.getElementById('reqNumber').value}/${name}`;
+            
+            
+        }else{
+            if(confirm("Are you sure you want to remove this item from job?")){
+                window.location.href = `/maintanence/return/item/${id}/${quantity}/${document.getElementById('reqNumber').value}/${name}`;
+            }
+        }
+        
     }
 
 </script>

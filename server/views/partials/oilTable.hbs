@@ -58,6 +58,7 @@
                             {{else}}
                             <a href="/consumables/oil/view/{{this.quotationNumber}}"><i class="fas fa-external-link-alt"></i></a>
                             {{/if}}
+                            <a id="deleteOil" role="button" onclick="deleteOil({{this.id}})"><i class="fas fa-trash-alt"></i></a>
                         </div>
                     </td>
                 </tr>
@@ -88,4 +89,8 @@
         }
     }
 
+    function deleteOil(id){
+        let quantity = prompt("How Many to Delete? ")
+        window.location.href = `/consumables/delete/oil/${id}/${quantity}`;
+    }
 </script>

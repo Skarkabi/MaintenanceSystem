@@ -84,6 +84,7 @@
                             {{else}}
                             <a href="/consumables/brake/view/{{this.quotationNumber}}"><i class="fas fa-external-link-alt"></i></a>
                             {{/if}}
+                             <a id="deleteBrake" role="button" onclick="deleteBrake({{this.id}})"><i class="fas fa-trash-alt"></i></a>
                         </div>
                     </td>
                 </tr>
@@ -113,5 +114,10 @@
             //document.getElementById("mainForm").method = "GET";
             document.getElementById("category").value = "Brake";
         }
+    }
+
+    function deleteBrake(id){
+        let quantity = prompt("How Many to Delete? ")
+        window.location.href = `/consumables/delete/brake/${id}/${quantity}`;
     }
 </script>

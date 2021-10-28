@@ -190,7 +190,7 @@ Filter.updateConsumable = (newFilter, action) => {
                 //If quantity is > 0 the brake quantity is updated
                 }else{
                     //looking for the filter to update and setting the new quantity
-                    Filter.update({quantity:quant}, {
+                    Filter.update({quantity:quant, totalCost: foundFilter.singleCost * quant}, {
                         where: {
                             id: newFilter.id
                         }

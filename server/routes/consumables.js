@@ -92,10 +92,7 @@ router.get('/add/sucess/:q', (req, res, next) => {
             res.redirect("/consumables/add");
         });
     }else{
-        req.flash("success_msg", `${req.params.q} Batteries Sucessfully Added!`);
-        req.session.save(function() {
-            res.redirect("/consumables/add");
-        });
+        c
     }
    
 })
@@ -241,8 +238,6 @@ router.post('/add/brake', Quotation.uploadFile().single('upload'), (req,res,next
                 Quotation.addQuotation(newQuotation);
     
             }
-            
-            console.log(output);
             req.flash('success_msg',  output);
             req.session.save(function() {
             res.redirect("/consumables/add");
@@ -975,6 +970,38 @@ router.get('/view_file/:req', (req,res,next) =>{
 router.get('/close', (req,res,next)=>{
     res.render("closeWindow");
 
+})
+
+router.get('/delete/:category/:id/:quantity', (req, res, next) => {
+    let deleteConsumable = {consumanbleCategory: req.params.category, id: req.params.id, quantity: req.params.quantity}
+    Consumable.updateConsumable(deleteConsumable, 'delet').then(output => {
+        req.flash("success_msg", `Consumable Deleted From Stock!!!`);
+        req.session.save(function() {
+            res.redirect("back");
+        })
+
+    }).catch(err => {
+        req.flash("error_msg", err);
+        req.session.save(function() {
+            res.redirect("back");
+        });
+    })
+})
+
+router.get('/deleteOther/:category/:id/:quantity', (req, res, next) => {
+    let deleteConsumable = {other_name: req.params.category, id: req.params.id, quantity: req.params.quantity}
+    Consumable.updateOtherConsumable(deleteConsumable, 'delet').then(output => {
+        req.flash("success_msg", `Consumable Deleted From Stock!!!`);
+        req.session.save(function() {
+            res.redirect("back");
+        })
+
+    }).catch(err => {
+        req.flash("error_msg", err);
+        req.session.save(function() {
+            res.redirect("back");
+        });
+    })
 })
 
 /**

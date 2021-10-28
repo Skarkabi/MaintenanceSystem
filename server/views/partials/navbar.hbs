@@ -51,6 +51,9 @@
       </ul>
     </li>
 
+	<div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+		
+	</div>
     <!-- Avatar -->
     <li class="nav-item dropdown" style="color: black;">
       <a
@@ -84,3 +87,20 @@
     </li>
   </ul>
 </nav>
+
+{{#if breadcrumbs}}
+	{{!-- Breadcrumb --}}
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb">
+			{{#each breadcrumbs}}
+				<li class="breadcrumb-item"><a href="{{this.url}}">{{this.name}}</a></li>
+			{{/each}}
+		</ol>
+	</nav>
+
+	<style>
+		.breadcrumb {
+			margin-top: -2rem;
+		}
+	</style>
+{{/if}}

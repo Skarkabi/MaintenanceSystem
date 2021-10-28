@@ -79,13 +79,14 @@
                     <td>{{roundToTwo this.singleCost this.quantity}}</td>
                     <td>{{this.quotationNumber}}</td>
                      <td>
-                        <div class="input-group-append">
-                            <a href="download/{{this.quotationNumber}}" style="padding-right: 25px;"><i class="fas fa-download"></i></a>
+                        <div class="input-group-append" style="text-align: center;">
+                            <a href="download/{{this.quotationNumber}}"><i class="fas fa-download"></i></a>
                             {{#if (isdefined this.quotationNumber "N/A")}}
                             <a href="/consumables/filter/view/NotAvilable"><i class="fas fa-external-link-alt"></i></a>
                             {{else}}
                             <a href="/consumables/filter/view/{{this.quotationNumber}}"><i class="fas fa-external-link-alt"></i></a>
                             {{/if}}
+                            <a id="deleteFilter" value={{this.id}} role="button" onclick="deleteFilter({{this.id}})"><i class="fas fa-trash-alt"></i></a>
                         </div>
                     </td>
                 </tr>
@@ -116,5 +117,9 @@
         }
     }
 
+    function deleteFilter(id){
+        let quantity = prompt("How Many to Delete? ")
+        window.location.href = `/consumables/delete/filter/${id}/${quantity}`;
+    }
 
 </script>

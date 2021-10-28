@@ -315,6 +315,37 @@ MaintenanceOrder.addOrder = order => {
     })
 }
 
+MaintenanceOrder.deleteOrder = req => {
+    return new Bluebird((resolve, reject) => {
+        MaintenanceOrder.getByReq(req).then( order => {
+            Promise.all(order.consumable_data.map(async consumable => {
+                if(consumable.type.from_stock){
+                    let consumableReturn = {id: consumable.type.consumable_id, quant: consumable.type.consumable_quantity, consumable_type: consumable.type.consumable_type, maintenance_req: req};
+                    await MaintenanceConsumables.returnStockConsumable(consumableReturn)
+                }else{
+                    let consumableDelete = {id: consumable.type.consumable_id, quant: consumable.type.consumable_quantity, other_name: consumable.type.consumable_type, maintenance_req: req};
+                    await MaintenanceConsumables.useNonStockConsumable(consumableDelete, "delete")
+                }
+            })).then(() => {
+                
+                MaintenanceOrder.findOne({
+                    where: {req: req}
+                }).then(found => {
+                    found.destroy().then(() => {
+                        resolve("Removed");
+                    }).catch(err => {
+                        reject(err);
+                    })
+                }).catch(err => {
+                    reject(err);
+                })
+            }).catch(err => {
+                reject(err)
+            })
+        })
+    })
+}
+
 function setStatus(o){
     getConsumables(o).then(output => {
         if((!o.material_request_data  || o.material_request_data === "") && (o.consumable_data === undefined || o.consumable_data.length === 0)){

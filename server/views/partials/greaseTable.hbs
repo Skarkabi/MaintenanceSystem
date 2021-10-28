@@ -76,6 +76,7 @@
                             {{else}}
                             <a href="/consumables/grease/view/{{this.quotationNumber}}"><i class="fas fa-external-link-alt"></i></a>
                             {{/if}}
+                             <a id="deleteGrease" role="button" onclick="deleteGrease({{this.id}})"><i class="fas fa-trash-alt"></i></a>
                         </div>
                     </td>
                 </tr>
@@ -108,5 +109,10 @@
             //document.getElementById("mainForm").method = "GET";
             document.getElementById("category").value = "Grease";
         }
+    }
+
+    function deleteGrease(id){
+        let quantity = prompt("How Many to Delete? ")
+        window.location.href = `/consumables/delete/grease/${id}/${quantity}`;
     }
 </script>

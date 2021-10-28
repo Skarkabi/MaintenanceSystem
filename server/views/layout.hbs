@@ -11,14 +11,17 @@
     <link rel='stylesheet' href='https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css' />
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.js"></script>
+    
     <script src="/xlsx/xlsx.full.min.js"></script>
     <script src="/file-saver/FileSaver.min.js"></script>  
     <script src="/exceljs/exceljs.js"></script>
+    
     <script src="https://kit.fontawesome.com/5575288f45.js" crossorigin="anonymous"></script>
+    
     {{!-- jQuery --}}
     <script src="https://code.jquery.com/jquery-3.5.1.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
+    
     {{!-- jQuery Data Tables --}}
     <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
@@ -35,9 +38,7 @@
     <script src="/javascripts/countdown.min.js"></script>
     <script src="/javascripts/main.js"></script>
     <script src="/javascripts/excelExporter.js"></script>
-
-     
-
+    
 
 </head>
 
@@ -45,36 +46,33 @@
     {{#if landingPage}}
         {{{body}}}
     {{else}}
-    <!-- h-100 takes the full height of the body-->
-    <div class="container-fluid h-100" id="sidebarDisplay">
-        <div class="row">
-            {{>sidebar}}
-            <div class="col" style="padding: 0;">
-                {{>navbar}}
-               
-                    <div clas="row">
-                        <div style="padding-left: 5%; padding-right:5%; padding-bottom: 5%">
-                            {{>pageHeader}}
-                            {{>flashMessage}}
-                            {{{body}}}
-                        </div>
-                        
-                    </div>
-            </div>
+    <div class="wrapper">
+        {{>sidebar}}
+        <div id="content">
+            {{>navbar}}
+            <main id="mainBody" style="margin:58px;">
+                {{>pageHeader}}
+                {{>flashMessage}}
+                {{{body}}}
+            </main>
         </div>
     </div>
     {{/if}}
     
  
 </body>
-<script>
-	 // slideup/slidedown
-        $("#Trigger").click(function () {
-            console.log("In here");
-            if ($("#Slider").hasClass("slideup"))
-                $("#Slider").removeClass("slideup").addClass("slidedown");
-            else
-                $("#Slider").removeClass("slidedown").addClass("slideup");
-        });
-</script>
 </html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+    $('#sidebarCollapse').on('click', function () {
+        // open or close navbar
+        $('#sidebar').toggleClass('active');
+        // close dropdowns
+        $('.collapse.in').toggleClass('in');
+        // and also adjust aria-expanded attributes we use for the open/closed arrows
+        // in our CSS
+        $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+    });
+    });
+</script>

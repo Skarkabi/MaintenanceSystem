@@ -529,19 +529,21 @@ Filter.findMinimums= () => {
 
           //Declaring how to group return values
           group: ['fType', 'actualBrand', 'plateNumber', 'minQuantity'],
-          where: {
-            minQuantity: {[Sequelize.Op.gt]: sequelize.col('quantity')}
-            }
         }).then(values => {
             if(values.length > 0){
-            var notification = "</br>Filters:</br>";
-            getVehicle(values).then(() => {
-                Promise.all(values.map(filter => {
-                    notification = notification + ` - ${filter.vehicle_data.category} ${filter.vehicle_data.brand} ${filter.vehicle_data.model} ${filter.vehicle_data.year} ${filter.fType} ${filter.actualBrand} (Minimum: ${filter.minQuantity}, Current: ${filter.quantity})</br>`
-                })).then(() => {
-                    resolve(notification);
+                var notification = "";
+                getVehicle(values).then(() => {
+                    Promise.all(values.map(filter => {
+                        if(filter.minQuantity > filter.quantity){
+                            notification = notification + ` - ${filter.vehicle_data.category} ${filter.vehicle_data.brand} ${filter.vehicle_data.model} ${filter.vehicle_data.year} ${filter.fType} ${filter.actualBrand} (Minimum: ${filter.minQuantity}, Current: ${filter.quantity})</br>`
+                        }
+                    })).then(() => {
+                        if(notification !== ""){
+                            notification = `Filters:<br>${notification}<br>`
+                        }
+                        resolve(notification);
+                    })
                 })
-            })
         }else{
             resolve("");
         }

@@ -523,7 +523,7 @@ Grease.findMinimums = () => {
                 }
             })).then(() => {
                 if(notification !== ""){
-                    notification = `</br>Grease:</br>${notification}`
+                    notification = `Grease:<br>${notification}<br>`
                 }
                 resolve(notification);
             })

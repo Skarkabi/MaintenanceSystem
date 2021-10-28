@@ -20,7 +20,11 @@ body {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
 }
 
-.notifications h2 {
+#box {
+  background-color: #666666;
+}
+
+#notifications h2 {
   font-size: 20px;
   padding: 10px;
   padding-left: 20px;
@@ -41,7 +45,6 @@ body {
   border-bottom: 1px solid #eee;
   padding: 6px 9px;
   margin-bottom: 0px;
-  cursor: pointer
 }
 
 .fa-stack{
@@ -54,10 +57,15 @@ body {
 .far.fa-bell.fa-lg.fa-stack-1x{
   position: relative;
   display: inline-block;
-  color: white;
+  color: black;
   border: none;
   font-size: 1.4em;
 
+}
+
+#content {
+  width: auto;
+  flex-grow: 1;
 }
 
 .fas.fa-certificate.fa-xs.fa-stack-1x{
@@ -145,7 +153,6 @@ section#login {
 /* Navbar */
 .navbar {
   margin-bottom: 2rem;
-  border-bottom: 1px solid #eaeaea;
   min-width: 10px;
   max-width: 100%;
   color: #fff;
@@ -167,13 +174,12 @@ section#login {
 
 .dropdown-item {
   border-bottom: 1px solid #e9ecef;
-  padding: 0.8rem 1.6rem;
   font-size: 0.9rem;
   
 }
 
 .nav-link {
-  color: #fff !important;
+  color: black !important;
 }
 
 /* Filterable table */
@@ -259,7 +265,7 @@ h5.card-title {
 table {
   table-layout: fixed;
   border-collapse: collapse;
-  width: 100%;
+  width: 50%;
   text-size-adjust: auto;
   font-size: 0.86vw;
   word-wrap:break-word;
@@ -270,11 +276,12 @@ table, tr, td, th {
   border: 1px solid black;
   text-transform: uppercase;
   text-align:center;
-  
+  min-width: 100%;
+  max-width: 100%;
+  white-space: normal;
+  text-overflow: ellipsis;
+  flex-grow: 1;
 }
-
-
-
 
 td:empty:after {
   content: "\00a0"; /* HTML entity of &nbsp; */
@@ -282,87 +289,104 @@ td:empty:after {
 
 .wrapper {
   display: flex;
-  align-items: stretch;
+  width: 100%;
 }
 
+/* Sidebar */
 #sidebar {
-  min-width: 150px;
-  max-width: 150px;
+  background: #666666;
+  color: #666666;
+  min-width:200px;
+  max-width: 200px;
   min-height: 100vh;
+  color: #fff;
+  transition: all 0.3s;
+  margin-left: -200px;
+
 }
 
 #sidebar.active {
-  margin-left: -250px;
+  margin-left: 0;
 }
 
-.container.body-container{
-  padding: 0px;
-  background-color: #FF0000;
+#sidebar a {
+  color: #fff;
+  background: #666666;
+  width: 100%;
+  text-align: left;
+  padding:10%
 }
+
+#sidebar ul{
+  margin: 0%;
+  padding: 0%;
+}
+
+
+#sidebar ul li{
+  color: #fff;
+  background: #333333;
+  padding:10%
+  
+}
+
+#sidebar a[aria-expanded="false"]{
+  background-color: #666666;
+  color: #fff;
+  padding:10%
+}
+
+#sidebar ul li a{
+  font-size: 1.1em;
+  text-align:left;
+  text-decoration: none;
+  background: #333333;
+  gap: 10px;
+
+  padding:10%
+}
+
+a[data-toggle="collapse"] {
+  position: relative;
+}
+
+
+.dropdown-toggle::after {
+  display: flex;
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+}
+
+#sidebar a:hover {
+  color: #333333;
+  background: #fff;
+}
+
+#sidebar ul li:hover {
+  color: #333333;
+  background: #fff;
+}
+
+#sidebar ul li:hover >  a {
+  color: #333333;
+  background: #fff;
+}
+
+#sidebarCollapse {
+  color: #666666;
+}
+
 
 @media (max-width: 768px) {
   #sidebar {
-      margin-left: -250px;
+      margin-left: -200px;
   }
   #sidebar.active {
       margin-left: 0;
   }
 }
-
-#sidebar {
-  /* don't forget to add all the previously mentioned styles here too */
-  background: #666666;
-  color: #fff;
-  transition: all 0.3s;
-}
-
-#sidebar .sidebar-header {
-  padding-top: 20px;
-  padding-left: 5px;
-  padding-bottom: 10px;
-  background: #333333;
-  text-align:center;
-}
-
-#sidebar ul.components {
-  padding: 20px 0;
-  border-bottom: 1px solid #666666;
-}
-
-#sidebar ul p {
-  color: #fff;
-  padding: 10px;
-}
-
-#sidebar ul li a {
-  padding: 20px;
-  font-size: 1.1em;
-  display: block;
-  text-align:left;
-}
-#sidebar ul li a:hover {
-  color: #666666;
-  background: #fff;
-}
-
-#sidebar ul li.active > a, a[aria-expanded="true"] {
-  color: #fff;
-  background: #666666;
-}
-
-/*
-@media only screen and (max-width:1400px){
-  #sidebarDisplay {
-    display:none;
-  }
-}
-
-@media not screen and (max-width:1400px){
-  #navBarDisplay {
-    display:none;
-  }
-}
-*/
 
 #vehcileMaintenanceValue {
   color: blue;

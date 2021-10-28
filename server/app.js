@@ -162,7 +162,7 @@ app.use(function (req, res, next){
             console.log("This------------------------");
             found = "Satisfactory Stock Levels"
         }
-        var re = new RegExp("</BR>", 'g');
+        var re = new RegExp("<BR>", 'g');
         var formatedReport = found.replace(re,"\r\n")
         req.minimums = found;
         app.locals.minimums = req.minimums;

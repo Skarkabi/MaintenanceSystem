@@ -454,7 +454,7 @@ Oil.findMinimums = () => {
         
         })).then(() => {
           if(notification !== ""){
-            notification = `</br>Oil:</br>${notification}`
+            notification = `Oil:<br>${notification}`
         }
           resolve(notification)
         })

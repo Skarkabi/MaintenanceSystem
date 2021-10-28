@@ -438,7 +438,7 @@ Battery.findMinimums = () => {
                     }
                 })).then(() => {
                     if(notification !== ""){
-                        notification = `Batteries:<br>${notification}`
+                        notification = `Batteries:<br>${notification}<br>`
                     }
                     resolve(notification);
                 })

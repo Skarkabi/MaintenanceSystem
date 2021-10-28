@@ -515,7 +515,7 @@ Brake.findMinimums = () => {
                         }
                     })).then(() => {
                         if(notification !== ""){
-                            notification = `</br>Brakes:</br>${notification}`
+                            notification = `Brakes:<br>${notification}<br>`
                         }
                         resolve(notification);
                     })

@@ -310,14 +310,26 @@ MaintenanceConsumables.useNonStockConsumable = (nonStockConsumable, action) => {
             }).then(found => {
                 if (found) {
                     NonStockConsumables.removeConsumable(nonStockConsumable.id, nonStockConsumable.quant).then(output => {
-                        MaintenanceConsumables.update({consumable_quantity: parseFloat(found.consumable_quantity) - parseFloat(nonStockConsumable.quant)}, {
-                            where: {
-                                consumable_id: nonStockConsumable.id,
-                                consumable_type: nonStockConsumable.other_name,
-                                maintenance_req: nonStockConsumable.maintenance_req,
-                            }
-                        })
-                        resolve(output)
+                        if((parseFloat(found.consumable_quantity) - parseFloat(nonStockConsumable.quant)) === 0){
+                            found.destroy().then(() => {
+                                resolve("Consumable returned to stock!!!");
+                            }).catch(err => {
+                                reject("first"  +  err)
+                            })
+                        }else{
+                            MaintenanceConsumables.update({consumable_quantity: parseFloat(found.consumable_quantity) - parseFloat(nonStockConsumable.quant)}, {
+                                where: {
+                                    consumable_id: nonStockConsumable.id,
+                                    consumable_type: nonStockConsumable.other_name,
+                                    maintenance_req: nonStockConsumable.maintenance_req,
+                                }
+                            }).then(() => {
+                                resolve(output)
+                            }).catch(err => {
+                                reject(err)
+                            })
+                        }
+                        
                     }).catch(err => {
                         reject(err);
                     })
@@ -329,6 +341,53 @@ MaintenanceConsumables.useNonStockConsumable = (nonStockConsumable, action) => {
         }
         
     })
+}
+
+MaintenanceConsumables.returnStockConsumable = (stockConsumable) => {
+    return new Bluebird((resolve, reject) => {
+        MaintenanceConsumables.findOne({
+            where: {
+                consumable_id: stockConsumable.id,
+                consumable_type: stockConsumable.consumable_type,
+                maintenance_req: stockConsumable.maintenance_req,
+            }
+        }).then(found => {
+            if(found){
+                let addConsumable = {consumanbleCategory: found.consumable_type, id: found.consumable_id, quantity: stockConsumable.quant}
+                Consumable.updateConsumable(addConsumable, "add").then(() => {
+                    if((parseFloat(found.consumable_quantity) - parseFloat(stockConsumable.quant)) === 0){
+                        found.destroy().then(() => {
+                            resolve("Consumable returned to stock!!!");
+                        }).catch(err => {
+                            reject("first"  +  err)
+                        })
+                    }else{
+                        MaintenanceConsumables.update({consumable_quantity: parseFloat(found.consumable_quantity) - parseFloat(stockConsumable.quant)}, {
+                            where: {
+                                consumable_id: stockConsumable.id,
+                                consumable_type: stockConsumable.consumable_type,
+                                maintenance_req: stockConsumable.maintenance_req,
+                            }
+                            }).then(() => {
+                                resolve("Consumable returned to stock!!!");
+                            }).catch(err => {
+                                reject("first"  +  err)
+                            })
+                    }
+                    
+                    
+                }).catch(err => {
+                    reject("second " + err)
+                });
+            }else{
+                reject("third " + err)
+            }
+            
+        }).catch(err => {
+            reject("fourth " + err)
+        })
+    })
+
 }
 
 function getConsumableModel(consumableModel) {

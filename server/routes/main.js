@@ -213,6 +213,17 @@ router.get('/delete/item/:id/:quantity/:req/:name', (req, res, next) => {
     console.log("Deleteing")
 })
 
+router.get('/return/item/:id/:quantity/:req/:name', (req, res, next) => {
+    let consumableDelete = {id: req.params.id, quant: req.params.quantity, consumable_type: req.params.name, maintenance_req: req.params.req};
+    MaintenanceConsumables.returnStockConsumable(consumableDelete).then(output => {
+        req.flash('success_msg', output);
+        res.redirect(`back`);
+    }).catch(err => {
+        req.flash('error_msg', err);
+        res.redirect(`back`);
+    })
+})
+
 router.post('/update/material_request/add_consumables/:req/:category',  Quotation.uploadFile().single('uploadOther'), async (req, res, next) => {
     var updateValues = [];
     var numOfInputs = 0;

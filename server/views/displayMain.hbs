@@ -531,13 +531,16 @@
 
     function deleteConsumables(stock, id, name){
         alert(`${document.getElementById('reqNumber').value}`)
+        let quantity = prompt("How Many to Delete? ")
         if(!stock){
-            if(confirm("Are you sure you want to remove this item from job?")){
-                window.location.href = `/maintanence/delete/item/${id}/1/${document.getElementById('reqNumber').value}/${name}`;
-            }
+            
+            window.location.href = `/maintanence/delete/item/${id}/${quantity}/${document.getElementById('reqNumber').value}/${name}`;
+            
             
         }else{
-            alert("NOt")
+            if(confirm("Are you sure you want to remove this item from job?")){
+                window.location.href = `/maintanence/return/item/${id}/${quantity}/${document.getElementById('reqNumber').value}/${name}`;
+            }
         }
         
     }

@@ -275,7 +275,7 @@ Oil.updateConsumable = (newOil,action) => {
         //If quantity is > 0 the grease quantity is updated
         }else{
           
-          Oil.update({volume: quant}, {
+          Oil.update({volume: quant, totalCost: foundOil.volume * quant}, {
             where: {
               id: newOil.id
             }

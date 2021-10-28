@@ -169,7 +169,7 @@ Other.updateConsumable = (newOther, action) => {
                     resolve(newOther.other_name + " Added to Stock");
 
                 }).catch(err => {
-                    reject(err);
+                    reject(err + " NOP IN HERE");
 
                 });
             }else{
@@ -190,7 +190,7 @@ Other.updateConsumable = (newOther, action) => {
                         }).then(() => {
                             resolve(newOther.other_name + "Used for Order");
                         }).catch(err => {
-                            reject(err);
+                            reject(err + " IN HERE");
                         })
                     }else{
                         newOther.singleCost = parseFloat(newOther.singleCost);

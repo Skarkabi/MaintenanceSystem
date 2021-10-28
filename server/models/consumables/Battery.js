@@ -165,7 +165,7 @@ Battery.updateConsumable = (newBattery, action) => {
                 //If quantity is > 0 the battery quantity is updated
                 }else{
                     //looking for the battery to update and setting the new quantity
-                    Battery.update({quantity: quant}, {
+                    Battery.update({quantity: quant, totalCost: foundBattery.singleCost * quant}, {
                         where: {
                             id: newBattery.id
                         }
@@ -173,7 +173,10 @@ Battery.updateConsumable = (newBattery, action) => {
                     }).then(() =>{
                         //Updating the value from the consumables database
                         if(action === "delet"){
-                            resolve(newBattery.quantity + " Batteries Sucessfully Deleted from Existing Stock!");
+                            foundBattery.destroy().then(() => {
+                                resolve(newBattery.quantity + " Batteries Sucessfully Deleted from Existing Stock!");
+                            })
+                            
                         }else if(action === "add"){
                             resolve(newBattery.quantity + " Batteries Sucessfully Added to Existing Stock!");
                         }

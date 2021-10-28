@@ -58,6 +58,7 @@
 
             {{#if (isdefined page "add")}}
                 {{#each consumables}}
+                {{#unless (isdefined consumable.quantity "0")}}
                 <tr>
                     <th>{{counter @index}}</th>
                     <td>{{this.batSpec}}</th>
@@ -78,9 +79,10 @@
                         {{else}}
                             <a href="/consumables/battery/view/{{this.quotationNumber}}"><i class="fas fa-external-link-alt"></i></a>
                         {{/if}}
-                        
+                        <a id="deleteBattery" role="button" onclick="deleteBattery({{this.id}}, '{{this.serialNumber}}')"><i class="fas fa-trash-alt"></i></a>
                     </td>
                 </tr>
+                {{/unless}}
                 {{/each}}
             {{/if}}
             
@@ -110,6 +112,14 @@
         }else{
             //document.getElementById("mainForm").method = "GET";
             document.getElementById("category").value = "Battery";
+        }
+        
+    }
+
+    function deleteBattery(id,serialNumber){
+       confimation = confirm(`Are You Sure You Want to delete Battery ${serialNumber}`)
+        if(confimation){
+            window.location.href = `/consumables/delete/battery/${id}/1`;
         }
         
     }

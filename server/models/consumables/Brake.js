@@ -175,7 +175,7 @@ Brake.updateConsumable = (newBrake, action) => {
                 //If quantity is > 0 the brake quantity is updated
                 }else{
                     //looking for the brake to update and setting the new quantity
-                    Brake.update({quantity:quant}, {
+                    Brake.update({quantity:quant, totalCost: foundBrake.singleCost * quant}, {
                         where: {
                             id: newBrake.id
                         }

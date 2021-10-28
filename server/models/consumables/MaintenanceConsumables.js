@@ -279,26 +279,55 @@ MaintenanceConsumables.useConsumable = (conusmableId, consumableCategory, reqNum
 
 }
 
-MaintenanceConsumables.useNonStockConsumable = (nonStockConsumable) => {
+MaintenanceConsumables.useNonStockConsumable = (nonStockConsumable, action) => {
     return new Bluebird((resolve, reject) => {
-        NonStockConsumables.addNewConsumable(nonStockConsumable).then(consumable => {
-            const newMaintenanceConsumable = {
-                consumable_id: consumable.id,
-                consumable_type: nonStockConsumable.other_name,
-                maintenance_req: nonStockConsumable.maintenanceReq,
-                consumable_quantity: nonStockConsumable.quantity,
-                from_stock: false
-            }
-            
-            MaintenanceConsumables.create(newMaintenanceConsumable).then(() => {
-                resolve("Added to");
+        if(action === "add"){
+            NonStockConsumables.addNewConsumable(nonStockConsumable).then(consumable => {
+                const newMaintenanceConsumable = {
+                    consumable_id: consumable.id,
+                    consumable_type: consumable.other_name,
+                    maintenance_req: consumable.maintenanceReq,
+                    consumable_quantity: consumable.quantity,
+                    from_stock: false
+                }
+                
+                MaintenanceConsumables.create(newMaintenanceConsumable).then(() => {
+                    resolve("Added to");
+                }).catch(err => {
+                    reject(err);
+                })
+                
             }).catch(err => {
                 reject(err);
             })
+        }else{
+            MaintenanceConsumables.findOne({
+                where: {
+                    consumable_id: nonStockConsumable.id,
+                    consumable_type: nonStockConsumable.other_name,
+                    maintenance_req: nonStockConsumable.maintenance_req,
+                }
+            }).then(found => {
+                if (found) {
+                    NonStockConsumables.removeConsumable(nonStockConsumable.id, nonStockConsumable.quant).then(output => {
+                        MaintenanceConsumables.update({consumable_quantity: parseFloat(found.consumable_quantity) - parseFloat(nonStockConsumable.quant)}, {
+                            where: {
+                                consumable_id: nonStockConsumable.id,
+                                consumable_type: nonStockConsumable.other_name,
+                                maintenance_req: nonStockConsumable.maintenance_req,
+                            }
+                        })
+                        resolve(output)
+                    }).catch(err => {
+                        reject(err);
+                    })
+                } else{
+                    reject("Not Found")
+                }
+            })
             
-        }).catch(err => {
-            reject(err);
-        })
+        }
+        
     })
 }
 

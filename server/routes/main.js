@@ -201,14 +201,16 @@ router.post('/update/material_request/:req', (req, res,next) => {
     });
 })
 
-router.get('/delete/:id', (req, res, next) => {
-    NonStockConsumables.removeConsumable(req.params.id).then(() => {
+router.get('/delete/item/:id/:quantity/:req/:name', (req, res, next) => {
+    let consumableDelete = {id: req.params.id, quant: req.params.quantity, other_name: req.params.name, maintenance_req: req.params.req};
+    MaintenanceConsumables.useNonStockConsumable(consumableDelete, "delete").then(output => {
         req.flash('success_msg', "Item Deleted");
         res.redirect(`back`);
     }).catch(err => {
         req.flash('error_msg', err);
         res.redirect(`back`);
     })
+    console.log("Deleteing")
 })
 
 router.post('/update/material_request/add_consumables/:req/:category',  Quotation.uploadFile().single('uploadOther'), async (req, res, next) => {
@@ -282,7 +284,7 @@ router.post('/update/material_request/add_consumables/:req/:category',  Quotatio
              }
          }
         
-        await MaintenanceConsumables.useNonStockConsumable(testItem).then(output => {
+        await MaintenanceConsumables.useNonStockConsumable(testItem, "add").then(output => {
             if(req.file){
                 Quotation.addQuotation(newQuotation);
 

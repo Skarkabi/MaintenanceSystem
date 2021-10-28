@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <form action="/" method="POST" id="displayMainForm">
+<input id="reqNumber" value="{{existingMain.req}}" hidden> 
 <div class="col-md-12">
     {{!-- Action Buttons --}}
     <div class="header-action-buttons pull-right">
@@ -526,6 +527,19 @@
         var supplierValue = document.getElementById('supplierListName').value
         var value2send = document.querySelector(`#supplierList option[value='${supplierValue}']`).dataset.value;
         document.getElementById('receivedSupplier').value = value2send
+    }
+
+    function deleteConsumables(stock, id, name){
+        alert(`${document.getElementById('reqNumber').value}`)
+        if(!stock){
+            if(confirm("Are you sure you want to remove this item from job?")){
+                window.location.href = `/maintanence/delete/item/${id}/1/${document.getElementById('reqNumber').value}/${name}`;
+            }
+            
+        }else{
+            alert("NOt")
+        }
+        
     }
 
 </script>

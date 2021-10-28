@@ -4,6 +4,7 @@ import Sequelize from 'sequelize';
 import sequelize from '../../mySQLDB';
 import Supplier from '../Supplier';
 import MaintenanceConsumables from './MaintenanceConsumables';
+import Consumable from '../Consumables';
 
 const mappings = {
     id: {
@@ -146,12 +147,38 @@ NonStockConsumables.addNewConsumable = newConsumable => {
     
 }
 
-NonStockConsumables.removeConsumable = id => {
+NonStockConsumables.removeConsumable = (id, quant) => {
     return new Bluebird((resolve, reject) => {
         NonStockConsumables.findOne({where: {id: id}}).then(found =>{
-            resolve(found.destroy());
+            if(found){
+                let quantity = found.quantity - parseFloat(quant)
+                NonStockConsumables.update({quantity: quantity, totalCost:(quantity * found.singleCost)},{
+                    where: {
+                        id: id
+                    }
+                }).then(() => {
+                   let otherConsumable = {
+                    other_name: found.other_name,
+                    details: found.details,
+                    quantity: quant,
+                    singleCost: found.singleCost,
+                    supplierId: found.supplierId,
+                    materialRequestNumber: found.materialRequestNumber,
+                    quotationNumber: found.quotationNumber
+                   }
+
+                   Consumable.updateOtherConsumable(otherConsumable, "add").then(output => {
+                        resolve(output);
+                   }).catch(err => {
+                       reject("First " + err);
+                   })
+                }).catch(err => {
+                    reject("SEcond " + err);
+                })
+            }
+            
         }).catch(err => {
-            reject(err);
+            reject("Third " + err);
         })
     })
     

@@ -7,7 +7,7 @@
         <button class="btn btn-primary" id="materialReques-update" disabled="" onclick='setAction(event, "update", "{{existingMain.req}}")'><i class="fas fa-edit"></i>Update</button>
         <button class="btn btn-success" id="confirmUpdate" onclick='setAction(event, "complete", "{{existingMain.req}}")' data-confirm="Confirm This Job is Completed?"><i class="fas fa-check"></i>Complete</button>
         {{#if user.admin}}
-        <a href="/vehicles/delete/{{existingVehicle.plate}}/{{existingVehicle.chassis}}" role="button" class="btn btn-danger delete" id="delete" class="delete" data-confirm="Are you sure to delete {{existingVehicle.brand}} {{existingVehicle.model}} With Plate # {{existingVehicle.plate}}?"><i class="fas fa-trash" aria-hidden="true"></i> Delete</a>
+        <a href="/maintanence/delete/{{existingMain.req}}" role="button" class="btn btn-danger delete" id="delete" class="delete" data-confirm="Are you sure to delete order # {{existingMain.req}}?"><i class="fas fa-trash" aria-hidden="true"></i> Delete</a>
        
         {{/if}}
         {{#if showPii}}

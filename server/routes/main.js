@@ -201,6 +201,16 @@ router.post('/update/material_request/:req', (req, res,next) => {
     });
 })
 
+router.get('/delete/:req', (req, res, next) => {
+    MaintenanceOrder.deleteOrder(req.params.req).then(output => {
+        req.flash('success_msg', output);
+        res.redirect(`/maintanence`);
+    }).catch(err => {
+        req.flash('error_msg', err);
+        res.redirect(`back`);
+    })
+
+})
 router.get('/delete/item/:id/:quantity/:req/:name', (req, res, next) => {
     let consumableDelete = {id: req.params.id, quant: req.params.quantity, other_name: req.params.name, maintenance_req: req.params.req};
     MaintenanceConsumables.useNonStockConsumable(consumableDelete, "delete").then(output => {

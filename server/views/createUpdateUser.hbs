@@ -43,11 +43,12 @@
                     </div>
                      <div class="form-group col {{#unless isUpdate}}required{{/unless}}">
                         <label for="password">Password</label>
-                        <input type="password" placeholder="{{#unless isUpdate}}Enter Password{{else}}Update Password{{/unless}}" id="password" name="password" class="form-control" {{#unless isUpdate}}required{{/unless}}>
-                    </div>
-                    <div class="form-group col">
-                        <label for="showPassword" style="display: block;">Show Password</label>
-                        <div onclick="showPass()" class="btn btn-light"><i class="far fa-eye" style="margin-right: 0px;"></i></div>
+                        <div class="input-group">
+                            <input type="password" placeholder="{{#unless isUpdate}}Enter Password{{else}}Update Password{{/unless}}" id="password" name="password" class="form-control" {{#unless isUpdate}}required{{/unless}}>
+                            <div class="input-group-append">
+                                <div onclick="showPass()" class="btn btn-secondary"><i onclick="showPass()" class="far fa-eye" style="margin-right: 0px;"></i></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

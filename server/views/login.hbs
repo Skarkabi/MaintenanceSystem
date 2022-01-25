@@ -1,88 +1,66 @@
-<section id="login" class="min-vh-100">
-	<div class="container">
-		<div class="row">
-			<div class="col-xl-5 col-lg-6 col-md-8 col-sm-10 form p-7 bg-white-box">
-				<h1 class="display-8 py-2 font-weight-bold">Login</h1>
-				<div class="px-2">
-					<form action="/login" method="POST" class="justify-content-left">
-						<div class="form-group">
-							<label>Username</label>
-							<input type="text" name="fName" data-test="fName" id="fName" id="fName" class="form-control" placeholder="Enter Username">
-						</div>
 
-						<div class="form-group">
-							<label>Password</label>
-							<input type="password" id="lName" data-test="lName" name="lName" class="form-control" placeholder="Enter Password">
-						</div>
+<div class="container-fluid" style="
+	display: flex; justify-content: center;
+  	align-items: center;
+	height: 100vh">
+	<div class="row">
+		
+	</div>
+	<h3 style="display: flex; justify-content:center; color:white;">Maintenance Department</h3>
+	<div class="container  bg-white-box">
+		<div class="px-2">
+			<div class="row">
+				<form action="/login" method="POST" class="justify-content">
+					<div class="form-group" style="display: flex; justify-content:center; margin-bottom:50px">
+						<h1 class="display-8 py-2 font-weight-bold">Login</h1>
+					</div>
+					<div class="form-floating  display-signin mb-3" style="display: flex; justify-content:center">
+						<input type="text" name="fName" data-test="fName" id="fName" class="form-control" placeholder="Enter Username">
+						<label for="fName">Username</label>
+					</div>
 
-						<div class="form-group">
-							<small><a href="#">Forgot password?</a></small>
-						</div>
+					<div class="form-floating  display-signin" style="display: flex; justify-content:center;  margin-bottom:50px">
+						<input type="password" id="lName" data-test="lName" name="lName" class="form-control" placeholder="Enter Password">
+						<label for="lName">Password</label>
+					</div>
+
+					<div class="form-group mb-3" style="display: flex; justify-content:center">
+						<small><a href="#">Forgot password?</a></small>
+					</div>
+					<div class="form-group mb-3" style="display: flex; justify-content:center">
 						<button type="submit" id="login-btn" data-test="login-btn" class="btn btn-primary justfiy-content-end">Login</button>
-					</form>
-					<div class="registration-errors">
-						{{#if error}}
+					</div>
+						
+				</form>
+				<div class="registration-errors">
+					{{#if error}}
 						<div class="alert alert-danger alert-dismissible fade show" role="alert">
 							{{#each error}}
-							<div><small>{{this}}</small></div>
+								<div><small>{{this}}</small></div>
 							{{/each}}
 							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 								<span aria-hidden="true">&times;</span>
 							</button>
 						</div>
-						{{/if}}
+					{{/if}}
 
-						{{#if error_msg}}
+					{{#if error_msg}}
 						<div class="alert alert-danger alert-dismissible fade show" role="alert">
 							<small><strong>Error:</strong> {{error_msg}}</small>
 							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 								<span aria-hidden="true">&times;</span>
-							</button>
-							
+							</button>	
 						</div>
-						{{/if}}
+					{{/if}}
 				</div>
-			</div>
+			</div>		
 		</div>
 	</div>
-</section>
+</div>
+	
+
 <style>
 	body {
-		background: #36D1DC;
-		/* fallback for old browsers */
-		background: -webkit-linear-gradient(to right, #5B86E5, #36D1DC);
-		/* Chrome 10-25, Safari 5.1-6 */
-		background: linear-gradient(to right, #5B86E5, #36D1DC);
-		/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+		background-image: url('./images/sign-in.jpg');
 	}
 </style>
-<script src="https://code.jquery.com/jquery-3.5.1.js" crossorigin="anonymous"></script>
-<script src="/xlsx/xlsx.full.min.js"></script>
-<script src="/file-saver/FileSaver.min.js"></script>
-<script>
- var wb = XLSX.utils.book_new();
-	wb.Props = 
-    {
-        Title: "SheetJS Tutorial",
-        Subject: "Test",
-        Author: "Red Stapler",
-        CreatedDate: new Date(2017,12,19)
-    };
-        
-	wb.SheetNames.push("Test Sheet");
-	var ws_data = [['hello' , 'world']];
-	var ws = XLSX.utils.aoa_to_sheet(ws_data);
-	wb.Sheets["Test Sheet"] = ws;
-	var wbout = XLSX.write(wb, {bookType:'xlsx',  type: 'binary'});
-	function s2ab(s) {
-    	var buf = new ArrayBuffer(s.length);
-    	var view = new Uint8Array(buf);
-    	for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
-    	return buf;
-                
-	}
-
-	 $("#button-a").click(function(){
-                saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'test.xlsx');
-        });
-</script>

@@ -133,7 +133,6 @@ const Battery = sequelize.define('battery_stocks', mappings, {
  * @returns 
  */
 Battery.updateConsumable = (newBattery, action) => {
-    console.log("battery");
     return new Bluebird((resolve, reject) => {
         //Creating the new Consumable value to be updated in the consumable databse
         const newConsumable = {
@@ -414,7 +413,6 @@ Battery.groupWithOutSupplier = () => {
             group: ["batSpec", "minQuantity"]
           
         }).then(values => {
-            console.log(values);
             resolve(values);
         })
     })
@@ -436,7 +434,6 @@ Battery.findMinimums = () => {
                 var notification = "";
                 Promise.all(values.map(battery => {
                     if(battery.minQuantity > battery.quantity){
-                        console.log(battery);
                         notification = notification + ` - ${battery.batSpec} (Minimum: ${battery.minQuantity}, Current: ${battery.quantity})</br>`;
                     }
                 })).then(() => {

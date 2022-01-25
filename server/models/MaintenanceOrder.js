@@ -288,6 +288,7 @@ MaintenanceOrder.completeOrder = reqNumber => {
 }
 
 MaintenanceOrder.updateMaterialRequest = (reqNumber, materialRequest, discription, remark, work_hour, hour_cost) => {
+    console.log(hour_cost)
     return new Bluebird((resolve, reject) => {
         MaintenanceOrder.update({material_request: materialRequest, discription: discription, remarks: remark, work_hours: work_hour, hour_cost: hour_cost}, {
             where: {

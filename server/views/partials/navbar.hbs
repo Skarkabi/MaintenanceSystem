@@ -1,5 +1,6 @@
 <nav 
-  class="navbar navbar-expand-lg navbar-light bg-light"
+  class="navbar navbar-expand-lg sticky-top"
+  style="background-color: #222222;"
   >
   <!-- Container wrapper -->
   <div class="container-fluid">
@@ -10,11 +11,6 @@
 		      <i class="fas fa-align-left fa-lg"></i>
         </a>
       </div>
-      <div class="col" id="navHeader">
-        <a href="/" style="color: black;">
-          <h3>T.M.I.</h3>
-        </a>
-      </div>
     </div>
   </div>
   <!-- Brand -->
@@ -22,69 +18,65 @@
   <!-- Right links -->
   <ul class="navbar-nav ms-auto d-flex flex-row">
     <!-- Notification dropdown -->
-    <li class="nav-item dropdown">
-      <a
-        class="nav-link me-3 me-lg-0 hidden-arrow"
-        href="#"
-        id="bell"
-        role="button"
-        data-toggle="dropdown"
-        aria-expanded="false"
-        >
-        <span class="fa-stack">
-				  <i class="far fa-bell fa-lg fa-stack-1x"></i> 
-				  {{#unless (isdefined minimums "Satisfactory Stock Levels")}}
-				    <i class="fas fa-certificate fa-xs fa-stack-1x" style="color:Tomato"></i> 
-				  {{/unless}}
-			  </span>
-      </a>
-      <ul
-        class="dropdown-menu dropdown-menu-right"
-        aria-labelledby="bell"
-        >
-        <li>
-          <a class="dropdown-item" href="#">
-            <h2>Stock Deficits</h2>
-				    <p>{{{minimums}}}</p>
-          </a>
-        </li>
-      </ul>
-    </li>
+	  <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+		  <li class="nav-item dropdown">
+        <a
+          class="nav-link me-3 me-lg-0 hidden-arrow"
+          href="#"
+          id="bell"
+          role="button"
+          data-toggle="dropdown"
+          aria-expanded="false"
+          >
+          <span class="fa-stack">
+				    <i class="far fa-bell fa-lg fa-stack-1x"></i> 
+				    {{#unless (isdefined minimums "Satisfactory Stock Levels")}}
+				      <i class="fas fa-certificate fa-xs fa-stack-1x" style="color:Tomato"></i> 
+				    {{/unless}}
+			    </span>
+        </a>
+        <ul
+          class="dropdown-menu dropdown-menu-right"
+          aria-labelledby="bell"
+          >
+          <li>
+            <a class="dropdown-item" id="stockDeficit">
+              <h2>Stock Deficits</h2>
+				      {{{minimums}}}
+            </a>
+          </li>
+        </ul>
+      </li>
+      <!-- Avatar -->
+      <li class="nav-item dropdown-toggle hidden-arrow dropdown">
+        <a
+          class="nav-link hidden-arrow align-items-left"
+          href="#"
+          id="userInfoNav"
+          role="button"
+          data-toggle="dropdown"
+          aria-expanded="false"
+          >
+          {{user.id}}
+          &nbsp;
+          <img
+            src="/profilePictures/{{user.profilePicture}}"
+            class="rounded-circle"
+            height="40"
 
-	<div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
-		
-	</div>
-    <!-- Avatar -->
-    <li class="nav-item dropdown" style="color: black;">
-      <a
-        class="nav-link dropdown-toggle hidden-arrow d-flex align-items-center"
-        href="#"
-        id="userInfoNav"
-        role="button"
-        data-toggle="dropdown"
-        aria-expanded="false"
-        >
-        {{user.id}}
-        &nbsp;
-			  {{console user}}
-        <img
-          src="/profilePictures/{{user.profilePicture}}"
-          class="rounded-circle"
-          height="40"
-          alt=""
-          loading="lazy"
-        />
-      </a>
-      <ul
-        class="dropdown-menu dropdown-menu-right"
-        aria-labelledby="userInfoNav"
-        >
-        <li><a class="dropdown-item" id="editAccount" href="/users/edit/{{user.id}}">Edit Account</a></li>
-        <li><a class="dropdown-item" href="/users/display-user/{{user.id}}" id="viewAccount"><i class="far fa-user"></i> View Account</a></li>
-        <li><a class="dropdown-item" href="/users/update/{{user.id}}" id="updateAccount"><i class="fas fa-cog"></i> View Jobs</a></li>
-        <li><a class="dropdown-item" id="logout" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-      </ul>
-    </li>
+          />
+        </a>
+        <ul
+          class="dropdown-menu dropdown-menu-right"
+          aria-labelledby="userInfoNav"
+          >
+          <li><a class="dropdown-item" id="editAccount" href="/users/edit/{{user.id}}">Edit Account</a></li>
+          <li><a class="dropdown-item" href="/users/display-user/{{user.id}}" id="viewAccount"><i class="far fa-user"></i> View Account</a></li>
+          <li><a class="dropdown-item" href="/users/update/{{user.id}}" id="updateAccount"><i class="fas fa-cog"></i> View Jobs</a></li>
+          <li><a class="dropdown-item" id="logout" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+      </li>
+	  </div>
   </ul>
 </nav>
 

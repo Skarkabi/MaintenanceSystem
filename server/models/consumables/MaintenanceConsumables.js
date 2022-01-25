@@ -301,6 +301,7 @@ MaintenanceConsumables.useNonStockConsumable = (nonStockConsumable, action) => {
                 reject(err);
             })
         }else{
+            console.log("Breaking in here")
             MaintenanceConsumables.findOne({
                 where: {
                     consumable_id: nonStockConsumable.id,

@@ -15,6 +15,7 @@ const mySQLDB = new Sequelize(dbName, dbUserName,process.env.DB_PASSWORD, {
     host: "localhost",
     port: dbPort,
     dialect: 'mysql',
+    logging: false
 });
 
 const importer = new Importer({

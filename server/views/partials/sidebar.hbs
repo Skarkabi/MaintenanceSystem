@@ -1,10 +1,12 @@
 <nav
     id="sidebar"
     >
-     <div class="sidebar-header">
-            <h3>Bootstrap Sidebar</h3>
+    <div id="accordion" class="sticky-top" style="padding-top: 10%; justify-content: space-between;"> 
+     
+        <div class="sidebar-header sticky-top" id="sidebarHeader" onclick="home()">
+            <h3 class="font-effect-shadow-multiple">T.M.I.</h3>
         </div>
-    <div id="accordion" style="padding-top: 10%; justify-content: space-between;"> 
+    
       <a
         id="headingJob"
         class="btn btn-link collapsed"
@@ -29,7 +31,7 @@
           <a href="/maintanence/create" id="createJob"><i class="fas fa-plus"></i>Create New Job Request</a>
         </li>
         <li class="list-group-item py-1">
-          <a href="maintanence"><i class="fab fa-buffer"></i>View Job Requests</a>
+          <a href="/maintanence"><i class="fab fa-buffer"></i>View Job Requests</a>
         </li>
       </ul>
       <a
@@ -140,3 +142,9 @@
       </ul>
     </div>
   </nav>
+
+  <script>
+    function home(){
+      window.location.href = "/"
+    }
+  </script>

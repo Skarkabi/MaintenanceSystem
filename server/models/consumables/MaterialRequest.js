@@ -69,7 +69,7 @@ MaterialRequest.addMaterialRequest = newMaterialRequest => {
             maintenance_req: newMaterialRequest.maintenanceReq,
             items: newMaterialRequest
         }
-        MaintenanceConsumables.useNonStockConsumable(newMaterialRequest).then(output => {
+        MaintenanceConsumables.useNonStockConsumable(newMaterialRequest, "add").then(output => {
             MaterialRequest.create(materialRequest).then(() => {
                 resolve("Material Request Added");
     
@@ -97,6 +97,8 @@ MaterialRequest.getMaterialRequest = maintenance_req => {
                         if(count === found.length){
                             resolve(found);
                         }
+                    }).catch(err => {
+                        reject(err);
                     })
                 })) 
             }else{
@@ -138,7 +140,7 @@ MaterialRequest.useItem = (materialRequest, item, quantity, supplierId, price, q
                                 materialRequestNumber: foundItem.materialRequestNumber,
                                 maintenanceReq: foundItem.maintenanceReq,
                             }
-                            MaintenanceConsumables.useNonStockConsumable(newItem).then(() => {
+                            MaintenanceConsumables.useNonStockConsumable(newItem,"add").then(() => {
                                 foundItem.pendingQuantity = parseInt(foundItem.pendingQuantity) - parseInt(quantity);
                                 foundItem.quantity = parseInt(foundItem.quantity) + parseInt(quantity);
                                 foundItem.quotationNumber = quotationNumber
@@ -169,6 +171,8 @@ MaterialRequest.useItem = (materialRequest, item, quantity, supplierId, price, q
 
                                         }    
 
+                                    }).catch(err => {
+                                        reject(err)
                                     })
                                     
                                 }).catch(err => {

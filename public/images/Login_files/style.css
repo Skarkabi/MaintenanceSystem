@@ -135,7 +135,6 @@ i.far.fa-save {
   width:60%;
   height:80%;
   justify-content: center;
-  align-items: center;
 }
 
 .p-7 {
@@ -420,7 +419,7 @@ a[data-toggle="collapse"] {
 }
 
 
-@media (min-width: 768px) {
+@media (max-width: 768px) {
   #sidebar {
       margin-left: -200px;
   }

@@ -9,24 +9,23 @@
 <div class="col-md-12">
     <table id="filterable-table" name="table"class="table table-bordered table-striped">
         <thead>
-            <tr>
-                <th scope="col" rowspan="2" style="vertical-align:middle;">#</th>
-                <th scope="col" rowspan="2" style="vertical-align:middle;">Date</th>
-                <th scope="col" rowspan="2" style="vertical-align:middle;">Created By</th>
-                <th scope="col" rowspan="2" style="vertical-align:middle;">Req#</th>
-                <th scope="col" rowspan="2" style="vertical-align:middle;">Division</th>
-                <th scope="col" colspan="2" style="vertical-align:middle;">Vehicle</th>
-                <th scope="col" rowspan="2" style="vertical-align:middle;">Status</th>
-                <th scope="col" rowspan="2" style="vertical-align:middle;">Maintenance Discription</th>
-                <th scope="col" rowspan="2" style="vertical-align:middle;">Remarks</th>
+            <tr name="tableHead">
+                <th scope="col" rowspan="2">#</th>
+                <th scope="col" rowspan="2">Date</th>
+                <th scope="col" rowspan="2">Req#</th>
+                <th scope="col" rowspan="2">Division</th>
+                <th scope="col" colspan="5">Vehicle</th>
+                <th scope="col" rowspan="2">Status</th>
+                <th scope="col" rowspan="2">Maintenance Discription</th>
+                <th scope="col" rowspan="2">Remarks</th>
                 
             </tr>
             <tr>
                 <td scope="col">Plate#</td>
-                <td scope="col" hidden>Category</td>
+                <td scope="col">Category</td>
                 <td scope="col">Brand</td>
-                <td scope="col" hidden>Model</td>
-                <td scope="col" hidden>Year</td>
+                <td scope="col">Model</td>
+                <td scope="col">Year</td>
             </tr>
         </thead>
         <tbody>
@@ -34,14 +33,13 @@
             <tr>
                 <td><a href="/maintanence/{{this.req}}">{{counter @index}}</a></td>
                 <td><a href="/maintanence/{{this.req}}">{{this.createdAt}}</a></td>
-                <td><a href="/maintanence/{{this.req}}">{{this.user_data.username}}</a></td>
                 <td><a href="/maintanence/{{this.req}}">{{this.req}}</a></td>
                 <td><a href="/maintanence/{{this.req}}">{{this.division}}</a></td>
                 <td><a href="/maintanence/{{this.req}}">{{this.plate}}</a></td>
-                <td hidden><a href="/maintanence/{{this.req}}">{{this.vehicle_data.category}}</a></td>
+                <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.category}}</a></td>
                 <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.brand}}</a></td>
-                <td hidden><a href="/maintanence/{{this.req}}">{{this.vehicle_data.model}}</a></td>
-                <td hidden><a href="/maintanence/{{this.req}}">{{this.vehicle_data.year}}</a></td>
+                <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.model}}</a></td>
+                <td><a href="/maintanence/{{this.req}}">{{this.vehicle_data.year}}</a></td>
                 {{#if (isdefined this.status "NOT STARTED")}}
                 <td bgcolor="red" style="color:white; font-weight:bold">NOT STARTED</td>
                 {{/if}}

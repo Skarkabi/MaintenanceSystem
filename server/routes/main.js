@@ -191,6 +191,7 @@ router.get('/exportExcel/newTable', (req,res,next) => {
 })
 
 router.post('/update/material_request/:req', (req, res,next) => {
+    console.log(req.body)
     MaintenanceOrder.updateMaterialRequest(req.params.req, req.body.materialRequest, req.body.discription, req.body.remark, req.body.work_hour, req.body.hour_cost).then(output => {
         req.flash('success_msg', output);
         res.redirect(`back`);
@@ -376,11 +377,7 @@ router.post('/update/material_request/add_material/:req', (req, res, next) => {
     
     for(var i = 0; i < items.length; i++){
         MaterialRequest.addMaterialRequest(items[i]).then(output => {
-            console.log(items.length);
-            console.log(i)
-            console.log(i - 1)
             if(i === items.length){
-                console.log("made it in");
                 req.flash('success_msg', `${req.body.otherMaterialRequest} Succesfully Updated For Order`);
                 res.redirect(`back`);
             }
